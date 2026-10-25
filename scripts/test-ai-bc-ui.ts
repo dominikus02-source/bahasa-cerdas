@@ -79,6 +79,9 @@ test("parseSseData: payload kosong → null", () => parseSseData("data:  ") === 
 test("parser menangani frame tanpa penutup ganda (sisa buffer)", () =>
   read("components/ai-bc/ai-bc-stream.ts").includes("frames.pop()") &&
   read("components/ai-bc/ai-bc-stream.ts").includes("buffer.trim()"));
+test("galat 429 punya salinan rate-limit sendiri (bukan 'sedang sibuk')", () =>
+  read("components/ai-bc/ai-bc-stream.ts").includes("res.status === 429") &&
+  read("components/ai-bc/ai-bc-stream.ts").includes("Kamu mengirim pesan terlalu cepat"));
 
 // 6. Aksesibilitas & a11y dasar
 const chat = read("components/ai-bc/AiBcChatView.tsx");
