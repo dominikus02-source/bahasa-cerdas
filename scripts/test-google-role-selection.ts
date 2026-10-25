@@ -179,8 +179,11 @@ console.log("\n🔑 EMAIL/PASSWORD REGRESSION (static)\n");
 const loginRoute = src("../app/api/auth/login/route.ts");
 const registerAction = src("../app/actions/register.ts");
 assert(
-  loginRoute.includes("signInWithPassword") && loginRoute.includes("user_metadata?.role"),
-  "Password login path unchanged (metadata role still flows)"
+  loginRoute.includes("signInWithPassword") &&
+    !loginRoute.includes("user_metadata?.role") &&
+    !loginRoute.includes("db.user.create") &&
+    loginRoute.includes("/auth/pilih-peran"),
+  "Password login never provisions from user_metadata; missing row → server-side role selection"
 );
 assert(
   registerAction.includes("db.user.create") && registerAction.includes("parsed.data"),
