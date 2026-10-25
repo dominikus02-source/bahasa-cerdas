@@ -415,7 +415,7 @@ export default function AiBcGuruWorkspace({
       )}
 
       {/* Komposer — SELALU tampil (tanpa gerbang), melekat di dasar workspace */}
-      <div className="ai-bc-guru-composer shrink-0 border-t border-slate-200/70 bg-white/80 px-3 pb-2 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 safe-area-bottom">
+      <div className="ai-bc-guru-composer shrink-0 border-t border-border bg-background/80 px-3 pb-2 pt-3 backdrop-blur safe-area-bottom">
         <div className="mx-auto w-full max-w-[900px]">
           <div
             className={`${styles.composerField} flex min-w-0 items-end gap-2 rounded-2xl border border-input bg-card px-3 py-2`}

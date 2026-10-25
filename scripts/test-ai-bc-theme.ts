@@ -106,6 +106,11 @@ test("wordmark NARA tebal (900) + gradasi audiens, dipakai di header/lobby/landi
   return block.includes("font-weight: 900") && block.includes("var(--bc-grad-aud") &&
     users.every((f) => read(f).includes("styles.naraWordmark"));
 });
+test("composer guru memakai token desain (tanpa slate/white hardcode)", () => {
+  const src = read("components/ai-bc/AiBcGuruWorkspace.tsx");
+  const line = src.split("\n").find((l) => l.includes("ai-bc-guru-composer")) ?? "";
+  return line.includes("border-border") && line.includes("bg-background/80") && !/slate-|bg-white/.test(line);
+});
 test("placeholder per peran", () => {
   const t = read("components/ai-bc/ai-bc-types.ts");
   return t.includes('student: "Tulis pesan untuk Nara…"') && t.includes('teacher: "Tulis pesan untuk Nara atau tempel teks untuk dikoreksi…"');
