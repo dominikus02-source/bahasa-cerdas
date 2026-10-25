@@ -42,7 +42,7 @@ await build({
       const teacher = role === 'teacher';
       const hints = [{label:'Arti kata',prompt:'Jelaskan arti apresiasi.'},{label:'Arti kata duplikat',prompt:'Jelaskan arti apresiasi.'}];
       const content = role === 'public' ? await PublicPage() : role === 'tool'
-        ? <div className="bc-guru mx-auto max-w-xl space-y-6 p-4">
+        ? <div data-audience="guru" className="bc-guru mx-auto max-w-xl space-y-6 p-4">
             <BCAssistantForm loading={false} onSubmit={value=>{window.qaToolPayload=value}} />
             <AgentResultPanel agentId="bc-assistant" loading={false} error={null}
               result={{success:true, output:{reply:'## Hasil diskusi\\n\\nContoh materi dengan **penjelasan**.\\n\\n'+'kata'.repeat(80), suggestedAgent:'soal'}, text:null, error:null, warnings:[], qualityScore:90, provider:'fixture', model:'fixture', latencyMs:10}}
@@ -50,6 +50,7 @@ await build({
               onSuggestedAgent={agent=>{window.qaSuggestedAgent=agent}} />
           </div>
         : <ShellLayout
+            rootClassName={teacher ? 'bc-guru-shell' : ''}
             sidebar={<div>BahasaCerdas</div>}
             header={<header className="h-14 shrink-0 border-b border-border bg-background px-4">BahasaCerdas</header>}
             mainClassName={teacher ? 'bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full' : 'mx-auto px-0 w-full py-0'}
