@@ -163,7 +163,7 @@ export function LivePulseCard() {
 
           <div>
             <div className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300">
-              <MapPin size={13} className="text-emerald-500" />
+              <MapPin size={13} className="text-bc-success" />
               Menu aktif
             </div>
             {data.onlineLocations.length === 0 ? (

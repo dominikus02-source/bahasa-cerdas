@@ -85,14 +85,14 @@ export default function AdaptivePracticePage({ params }: { params: Promise<{ ses
   }
 
   if (loading) {
-    return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-violet-600" /></div>;
+    return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-bc-violet" /></div>;
   }
 
   if (error || !session || !question) {
     return (
       <div className="mx-auto max-w-lg py-20 px-5 text-center">
         <p className="text-sm text-slate-600 dark:text-slate-300">{error || "Latihan tidak tersedia."}</p>
-        <button type="button" onClick={() => router.push("/murid/beranda")} className="mt-4 text-sm font-semibold text-violet-600 hover:underline">
+        <button type="button" onClick={() => router.push("/murid/beranda")} className="mt-4 text-sm font-semibold text-bc-violet hover:underline">
           Kembali ke Beranda
         </button>
       </div>
@@ -109,7 +109,7 @@ export default function AdaptivePracticePage({ params }: { params: Promise<{ ses
           <p className="text-[10px] uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Latihan Personal</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{session.actionTitle || "Latihan Hari Ini"}</p>
         </div>
-        <span className="text-xs text-slate-500">{index + 1}/{session.questions.length}</span>
+        <span className="text-xs text-bc-text-3">{index + 1}/{session.questions.length}</span>
       </div>
 
       <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 mb-8 overflow-hidden">

@@ -358,7 +358,7 @@ export default async function ExecutiveDashboard() {
       {/* ═══ SECTION 6: Investor Growth Intelligence ═══ */}
       <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
         <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-4 flex items-center gap-2 text-sm">
-          <BarChart3 size={14} className="text-blue-500" /> Investor Growth Intelligence
+          <BarChart3 size={14} className="text-bc-info" /> Investor Growth Intelligence
         </h2>
 
         {/* Row 1: User Growth + Engagement + Monetization */}

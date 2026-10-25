@@ -37,7 +37,7 @@ export default function ArenaDailyTargets({
         </div>
         {streak > 0 && (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-2.5 py-1 text-xs font-black text-orange-700 dark:bg-orange-400/15 dark:text-orange-200">
-            <Flame size={14} className="text-orange-500" /> {streak} hari
+            <Flame size={14} className="text-bc-warning" /> {streak} hari
           </span>
         )}
       </div>

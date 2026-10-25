@@ -114,7 +114,7 @@ export function PaymentHealthAlert({ data }: { data: PaymentHealthData }) {
             )}
           </div>
         </div>
-        <button onClick={() => setExpanded(!expanded)} className="text-red-400 hover:text-red-600 shrink-0 mt-1">
+        <button onClick={() => setExpanded(!expanded)} className="text-bc-danger/70 hover:text-bc-danger shrink-0 mt-1">
           <ArrowRight size={16} className={`transition-transform ${expanded ? "rotate-90" : ""}`} />
         </button>
       </div>
@@ -195,29 +195,29 @@ export function PaymentHealthAlert({ data }: { data: PaymentHealthData }) {
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100">Fix Premium Entitlement</h3>
-                <p className="text-[10px] text-slate-500">Tindakan ini akan mengaktifkan premium untuk user ini.</p>
+                <p className="text-[10px] text-bc-text-3">Tindakan ini akan mengaktifkan premium untuk user ini.</p>
               </div>
             </div>
 
             <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4 mb-4 space-y-2 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">User</span>
+                <span className="text-bc-text-3">User</span>
                 <span className="font-medium text-slate-900 dark:text-slate-100">{confirmUser.fullName}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Email</span>
+                <span className="text-bc-text-3">Email</span>
                 <span className="text-slate-700 dark:text-slate-300">{confirmUser.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Transaction</span>
+                <span className="text-bc-text-3">Transaction</span>
                 <span className="text-slate-700 dark:text-slate-300">{confirmTx.reference || confirmTx.type}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Amount</span>
+                <span className="text-bc-text-3">Amount</span>
                 <span className="font-medium text-red-600 dark:text-red-400">{formatRp(confirmTx.amount)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Date</span>
+                <span className="text-bc-text-3">Date</span>
                 <span className="text-slate-700 dark:text-slate-300">{new Date(confirmTx.createdAt).toLocaleDateString("id-ID")}</span>
               </div>
             </div>

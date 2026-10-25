@@ -55,11 +55,11 @@ export default function TesAwalPage(){
     finally{setBusy(false);}
   }
 
-  if(loading)return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-violet-600"/></div>;
+  if(loading)return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-bc-violet"/></div>;
   if(!state)return <main className="mx-auto max-w-2xl px-5 py-16 text-center"><p className="text-sm text-slate-600 dark:text-slate-300">{feedback}</p></main>;
 
   if(state.status==="AVAILABLE")return <main className="mx-auto max-w-4xl px-5 py-8 sm:py-12">
-    <Link href="/murid/beranda" className="inline-flex items-center gap-2 text-xs font-bold text-slate-500"><ArrowLeft className="h-4 w-4"/>Beranda</Link>
+    <Link href="/murid/beranda" className="inline-flex items-center gap-2 text-xs font-bold text-bc-text-3"><ArrowLeft className="h-4 w-4"/>Beranda</Link>
     <section className="relative mt-5 overflow-hidden rounded-[2rem] bg-[#07152f] px-6 py-10 text-white shadow-xl sm:px-10 lg:px-14 lg:py-14">
       <div className="pointer-events-none absolute inset-0"><div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-violet-500/25 blur-3xl"/><div className="absolute -bottom-32 right-0 h-80 w-80 rounded-full bg-cyan-400/15 blur-3xl"/></div>
       <div className="relative max-w-2xl">
@@ -67,14 +67,14 @@ export default function TesAwalPage(){
         <h1 className="mt-5 text-4xl font-black leading-[1.02] sm:text-5xl">Kenali kemampuanmu.</h1>
         <p className="mt-4 text-sm leading-6 text-blue-100/75 sm:text-base">10 tantangan terarah dan 1 tugas menulis untuk membangun gambaran awal kemampuanmu. Ini bukan tes Jalur Cerdas dan tidak mengunci kamu ke satu jalur belajar.</p>
         <div className="mt-6 flex flex-wrap gap-2"><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">5 kompetensi</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">3 tingkat kesulitan</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">✍️ Menulis</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">±15 menit</span></div>
-        <button onClick={()=>post({action:"start"})} disabled={busy} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-60">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Brain className="h-4 w-4"/>}Mulai Tes Awal<ArrowRight className="h-4 w-4"/></button>
+        <button onClick={()=>post({action:"start"})} disabled={busy} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-60">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Brain className="h-4 w-4"/>}Mulai Tes Awal<ArrowRight className="h-4 w-4"/></button>
         {feedback&&<p role="alert" className="mt-4 max-w-xl rounded-xl border border-rose-300/30 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-100">{feedback}</p>}
       </div>
     </section>
   </main>;
 
   if(state.status==="QUIZ"&&state.question)return <main className="mx-auto max-w-3xl px-5 py-6 sm:py-10">
-    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-slate-500"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-violet-600">Tes Awal</span><span className="text-xs font-bold text-slate-500">{state.answeredCount??0}/{state.totalQuestions??10}</span></div>
+    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-bc-text-3"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-bc-violet">Tes Awal</span><span className="text-xs font-bold text-bc-text-3">{state.answeredCount??0}/{state.totalQuestions??10}</span></div>
     <div className="mt-5 h-2 overflow-hidden rounded-full bg-slate-100 dark:bg-white/[.08]"><div className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400" style={{width:`${Math.min(100,((state.answeredCount??0)/(state.totalQuestions??10))*100)}%`}}/></div>
     <section className="mt-6 rounded-[2rem] border border-slate-200 bg-white p-6 shadow-xl dark:border-white/10 dark:bg-[#10182d] sm:p-8">
       <p className="text-[10px] font-black uppercase tracking-[.18em] text-violet-600 dark:text-violet-300">{labels[state.question.skill]??state.question.skill} · {state.question.difficulty??"Tantangan"}</p>
@@ -86,7 +86,7 @@ export default function TesAwalPage(){
   </main>;
 
   if(state.status==="WRITING"&&state.writing)return <main className="mx-auto max-w-3xl px-5 py-6 sm:py-10">
-    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-slate-500"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-fuchsia-600">Bagian Menulis</span><span className="text-xs font-bold text-slate-500">11/11</span></div>
+    <div className="flex items-center justify-between"><Link href="/murid/beranda" className="p-2 text-bc-text-3"><ArrowLeft className="h-5 w-5"/></Link><span className="text-[10px] font-black uppercase tracking-[.18em] text-fuchsia-600">Bagian Menulis</span><span className="text-xs font-bold text-bc-text-3">11/11</span></div>
     <section className="mt-5 overflow-hidden rounded-[2rem] bg-gradient-to-br from-[#17123b] via-[#251553] to-[#09263b] p-6 text-white shadow-xl sm:p-8">
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-fuchsia-500 to-cyan-400"><PenLine className="h-6 w-6"/></div>
       <h1 className="mt-5 text-3xl font-black">{state.writing.title}</h1><p className="mt-3 text-sm leading-6 text-blue-100/80">{state.writing.prompt}</p>
@@ -94,7 +94,7 @@ export default function TesAwalPage(){
       <textarea value={writing} onChange={e=>setWriting(e.target.value)} rows={11} placeholder="Tulis dengan bahasamu sendiri..." className="mt-6 w-full rounded-2xl border border-white/10 bg-white/[.08] p-4 text-sm leading-6 text-white placeholder:text-white/35 outline-none focus:border-cyan-300/60"/>
       <p className="mt-2 text-[11px] text-blue-100/60">{writing.trim()?writing.trim().split(/\s+/).filter(Boolean).length:0} kata</p>
       {feedback&&<p className="mt-3 text-sm text-rose-200">{feedback}</p>}
-      <button onClick={()=>state.sessionId&&post({action:"writing",sessionId:state.sessionId,text:writing})} disabled={!writing.trim()||busy} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-50">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:"Kirim tulisan"}<CheckCircle2 className="h-4 w-4"/></button>
+      <button onClick={()=>state.sessionId&&post({action:"writing",sessionId:state.sessionId,text:writing})} disabled={!writing.trim()||busy} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-50">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:"Kirim tulisan"}<CheckCircle2 className="h-4 w-4"/></button>
     </section>
   </main>;
 
@@ -109,6 +109,6 @@ export default function TesAwalPage(){
     </section>
   </main>;
 
-  if(state.status==="DONE")return <main className="mx-auto max-w-2xl px-5 py-16 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-emerald-500"/><h1 className="mt-4 text-3xl font-black">Tes awal selesai.</h1></main>;
+  if(state.status==="DONE")return <main className="mx-auto max-w-2xl px-5 py-16 text-center"><CheckCircle2 className="mx-auto h-12 w-12 text-bc-success"/><h1 className="mt-4 text-3xl font-black">Tes awal selesai.</h1></main>;
   return <main className="mx-auto max-w-2xl px-5 py-16 text-center"><p className="text-sm text-slate-600 dark:text-slate-300">{feedback??"Tes awal belum bisa dimuat."}</p></main>;
 }

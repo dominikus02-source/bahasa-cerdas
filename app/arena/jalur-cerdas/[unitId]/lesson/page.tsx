@@ -233,7 +233,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
           <button onClick={() => router.push(`/arena/jalur-cerdas/${unitId}`)} className="text-gray-500 hover:text-gray-700 dark:text-slate-300">
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <span className="text-[11px] font-black uppercase tracking-[0.16em] text-violet-500">Jalur Cerdas · Materi</span>
+          <span className="text-[11px] font-black uppercase tracking-[0.16em] text-bc-violet">Jalur Cerdas · Materi</span>
         </div>
 
         <div className="flex-1 overflow-y-auto px-4 pb-8">
@@ -486,7 +486,7 @@ export default function LessonPage({ params }: { params: Promise<{ unitId: strin
                   >
                     {String.fromCharCode(65 + i)}
                   </span>
-                  <span className="flex-1 text-gray-800">{opt}</span>
+                  <span className="flex-1 text-gray-800 dark:text-gray-800">{opt}</span>
                 </button>
               ))}
               {q.tipe === "benar_salah" && (

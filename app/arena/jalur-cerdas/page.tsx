@@ -151,7 +151,7 @@ export default async function JalurCerdasPage() {
                 <UnitIcon emoji={activeUnit.emoji} className="h-6 w-6 text-white" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-500">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-bc-violet">
                   Langkah berikutnya
                 </p>
                 <h2 className="mt-1 truncate text-base font-extrabold text-slate-900 dark:text-white">
@@ -173,7 +173,7 @@ export default async function JalurCerdasPage() {
 
         <div className="mb-5 flex items-end justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-500">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-bc-violet">
               Peta perjalanan
             </p>
             <h2 className="mt-1 text-xl font-black tracking-tight text-slate-900 dark:text-white">

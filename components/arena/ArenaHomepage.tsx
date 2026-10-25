@@ -28,7 +28,7 @@ const arenaShortcuts = [
     description: "Tukar koinmu dengan item favorit.",
     action: "Jelajahi toko",
     icon: Coins,
-    color: "from-amber-300 to-orange-400 text-amber-950 border-amber-200/60 shadow-amber-500/20 focus-visible:ring-amber-500",
+    color: "from-amber-300 to-orange-400 text-amber-950 border-amber-200/60 dark:border-amber-200/60 shadow-amber-500/20 focus-visible:ring-amber-500",
     iconColor: "bg-white/40 text-amber-950",
     actionColor: "bg-white/30 text-amber-950",
   },

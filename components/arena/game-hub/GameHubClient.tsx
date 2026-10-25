@@ -144,7 +144,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
         >
           <div className="hidden sm:flex sm:flex-col items-end leading-none gap-0.5">
             <span className="flex items-center gap-1 text-xs font-extrabold text-slate-800 dark:text-[#F1F0FF]">
-              <Zap size={11} className="text-amber-500" />
+              <Zap size={11} className="text-bc-warning" />
               LV {level} · {user.xp.toLocaleString("id-ID")} XP
             </span>
             <RankChip rank={rank} size={13} showTitle={false} compact className="text-[11px]" />
@@ -183,7 +183,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
             <Link
               href={hero.href}
               onClick={() => recordPlay(hero.id)}
-              className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3 text-sm font-extrabold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
+              className="mt-5 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3 text-sm font-extrabold text-violet-700 shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl active:scale-95"
             >
               <Play size={16} fill="currentColor" /> MAIN SEKARANG
             </Link>

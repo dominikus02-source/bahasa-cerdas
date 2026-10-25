@@ -109,7 +109,7 @@ export default function TeacherRiskPage() {
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
       <header>
         <div className="flex items-center gap-2">
-          <ShieldAlert className="h-6 w-6 text-amber-500" />
+          <ShieldAlert className="h-6 w-6 text-bc-warning" />
           <h1 className="text-2xl font-bold text-foreground">Risiko Guru</h1>
         </div>
         <p className="mt-1 text-sm text-muted-foreground">
@@ -144,7 +144,7 @@ export default function TeacherRiskPage() {
         <p className="py-10 text-center text-sm text-muted-foreground">Memuat antrean…</p>
       ) : cases.length === 0 ? (
         <div className="rounded-2xl bg-card border border-border py-10 text-center">
-          <ShieldCheck className="mx-auto h-8 w-8 text-emerald-500" />
+          <ShieldCheck className="mx-auto h-8 w-8 text-bc-success" />
           <p className="mt-2 text-sm font-medium text-foreground">Tidak ada case aktif</p>
         </div>
       ) : (

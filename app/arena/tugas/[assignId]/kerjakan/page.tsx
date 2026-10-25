@@ -335,7 +335,7 @@ export default function KerjakanTugasPage() {
                   <p className="text-[11px] text-gray-400 mt-1.5">
                     Contoh: YouTube · Canva · Google Drive · Website · dokumen lain. BC hanya menyimpan tautan, bukan video.
                   </p>
-                  {linkError && <p className="text-[11px] text-red-500 mt-1">{linkError}</p>}
+                  {linkError && <p className="text-[11px] text-bc-danger mt-1">{linkError}</p>}
                 </div>
               )}
             </div>

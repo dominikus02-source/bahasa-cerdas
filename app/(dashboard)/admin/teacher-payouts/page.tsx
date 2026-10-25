@@ -300,7 +300,7 @@ export default function TeacherPayoutsPage() {
               <ul className="mt-2 space-y-1.5">
                 {data.alerts.map((a) => (
                   <li key={a.code} className="flex items-start gap-2 text-sm">
-                    <ShieldAlert className={`mt-0.5 h-4 w-4 shrink-0 ${a.severity === "CRITICAL" ? "text-red-500" : "text-amber-500"}`} />
+                    <ShieldAlert className={`mt-0.5 h-4 w-4 shrink-0 ${a.severity === "CRITICAL" ? "text-bc-danger" : "text-bc-warning"}`} />
                     <span className="text-muted-foreground">{a.detail}</span>
                   </li>
                 ))}

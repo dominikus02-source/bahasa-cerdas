@@ -223,7 +223,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
                     {m.user.avatar ? <img src={m.user.avatar} alt={m.user.fullName} className="w-full h-full rounded-full object-cover" /> : m.user.fullName.charAt(0)}
                   </div>
                   <span className="text-sm font-medium text-[var(--clr-text)]">{m.user.fullName}</span>
-                  {m.role === "ketua" && <span className="ml-auto text-[10px] font-bold text-amber-500 bg-amber-400/10 px-2 py-0.5 rounded-full">Ketua</span>}
+                  {m.role === "ketua" && <span className="ml-auto text-[10px] font-bold text-bc-warning bg-amber-400/10 px-2 py-0.5 rounded-full">Ketua</span>}
                 </div>
               ))}
               {members.length === 0 && <p className="text-xs text-[var(--clr-text-3)]">Belum ada anggota lain.</p>}
@@ -327,11 +327,11 @@ function StreamItem({ item }: { item: { kind: "materi" | "tugas" | "latihan" | "
   return (
     <div className={`bc-card p-4 ${p.pinned ? "border-[var(--clr-warning)]" : ""}`}>
       <div className="flex items-start gap-3">
-        <span className="w-10 h-10 rounded-xl bg-amber-400/15 text-amber-500 flex items-center justify-center shrink-0"><Megaphone size={18} /></span>
+        <span className="w-10 h-10 rounded-xl bg-amber-400/15 text-bc-warning flex items-center justify-center shrink-0"><Megaphone size={18} /></span>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <p className="text-[11px] font-bold uppercase tracking-wide text-[var(--clr-text-3)]">Pengumuman</p>
-            {p.pinned && <Pin size={12} className="text-amber-500" />}
+            {p.pinned && <Pin size={12} className="text-bc-warning" />}
           </div>
           <p className="text-[15px] font-bold text-[var(--clr-text)]">{p.judul}</p>
           {p.deskripsi && <p className="text-sm text-[var(--clr-text-2)] mt-0.5 whitespace-pre-line">{p.deskripsi}</p>}

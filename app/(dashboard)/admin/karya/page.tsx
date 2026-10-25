@@ -81,7 +81,7 @@ export default function AdminKaryaPage() {
       ) : karya.length === 0 ? (
         <div className="text-center py-20 bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700">
           <ShoppingBag className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-slate-500">Belum ada produk guru yang terdaftar.</p>
+          <p className="text-sm font-medium text-bc-text-3">Belum ada produk guru yang terdaftar.</p>
           <p className="text-xs text-slate-400 mt-1">Produk marketplace akan muncul setelah guru mempublikasikan materi di Toko Karya.</p>
         </div>
       ) : (
@@ -142,12 +142,12 @@ export default function AdminKaryaPage() {
           {pages > 1 && (
             <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 dark:border-slate-700">
               <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-40">
+                className="flex items-center gap-1 px-3 py-1.5 text-xs text-bc-text-3 hover:text-bc-text disabled:opacity-40">
                 <ArrowLeft size={12} /> Sebelumnya
               </button>
               <span className="text-xs text-gray-400">Halaman {page} dari {pages}</span>
               <button onClick={() => setPage((p) => Math.min(pages, p + 1))} disabled={page === pages}
-                className="flex items-center gap-1 px-3 py-1.5 text-xs text-gray-500 hover:text-gray-700 disabled:opacity-40">
+                className="flex items-center gap-1 px-3 py-1.5 text-xs text-bc-text-3 hover:text-bc-text disabled:opacity-40">
                 Selanjutnya <ArrowRight size={12} />
               </button>
             </div>

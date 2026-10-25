@@ -148,7 +148,7 @@ export default function BelajarPage() {
               <span className="absolute left-[22%] top-[24%] h-3 w-3 rounded-full bg-cyan-200 shadow-[0_0_18px_rgba(165,243,252,0.9)]" />
               <span className="absolute right-[18%] top-[31%] h-2.5 w-2.5 rounded-full bg-fuchsia-300 shadow-[0_0_18px_rgba(240,171,252,0.8)]" />
               <span className="absolute bottom-[22%] left-[25%] h-2.5 w-2.5 rounded-full bg-[#ffd24a] shadow-[0_0_18px_rgba(255,210,74,0.8)]" />
-              <span className="absolute bottom-[18%] right-[25%] h-2 w-2 rounded-full bg-white shadow-[0_0_16px_rgba(255,255,255,0.8)]" />
+              <span className="absolute bottom-[18%] right-[25%] h-2 w-2 rounded-full bg-white dark:bg-white/90 shadow-[0_0_16px_rgba(255,255,255,0.8)]" />
               <div className="absolute bottom-5 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[9px] font-black uppercase tracking-[0.18em] text-white/70 backdrop-blur">
                 Pusat Tantangan
               </div>
@@ -205,7 +205,7 @@ export default function BelajarPage() {
                 ))}
               </div>
             </div>
-            <span className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition-transform group-hover:translate-x-1">
+            <span className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition-transform group-hover:translate-x-1">
               Lanjutkan
               <ArrowRight className="h-4 w-4" />
             </span>

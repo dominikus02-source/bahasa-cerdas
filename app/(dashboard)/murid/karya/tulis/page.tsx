@@ -178,7 +178,7 @@ function TulisKaryaForm() {
               onClick={() => setOpenTypeMenu((value) => !value)}
               className={`flex w-full items-center gap-3 rounded-2xl border-2 bg-bc-surface px-4 py-3.5 text-left shadow-sm transition-all ${openTypeMenu ? `${TYPE_STYLES[type]?.border || "border-violet-500"} ring-4 ring-violet-100 dark:ring-violet-950/40` : "border-bc-line"}`}
             >
-              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TYPE_STYLES[type]?.bg || "bg-bc-violet-soft"} ${TYPE_STYLES[type]?.text || "text-violet-600"}`}>
+              <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${TYPE_STYLES[type]?.bg || "bg-bc-violet-soft"} ${TYPE_STYLES[type]?.text || "text-bc-violet"}`}>
                 <selected.icon size={20} />
               </span>
               <span className="min-w-0 flex-1">
