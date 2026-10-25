@@ -13,6 +13,7 @@
 
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles";
 import { requireRpgPlayAccess } from "@/lib/game/rpg/server-access";
 import RpgClient from "./RpgClient";
 import RpgLocked from "./RpgLocked";
@@ -20,6 +21,9 @@ import RpgLocked from "./RpgLocked";
 export default async function RpgPage() {
   const user = await getUser();
   if (!user) redirect("/arena/login");
+  // UMUM: halaman ini di luar allowlist Arena UMUM (lib/auth/roles.ts).
+  // Guard di level halaman karena layout tidak dirender ulang saat navigasi klien.
+  if (isUmum(user.role)) redirect(UMUM_HOME);
 
   // P2.10-FREEZE: Founder/admin bypass — always allow access even when unpublished.
   const isPrivileged = user.isFounder || user.role === "ADMIN";

@@ -1,4 +1,5 @@
 import { getUser } from "@/lib/supabase/server"
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles"
 import { isApk } from "@/lib/apk"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
@@ -42,6 +43,9 @@ const GROUP_SELECT = {
 export default async function ChatPage() {
   const user = await getUser()
   if (!user) redirect("/arena/login")
+  // UMUM: halaman ini di luar allowlist Arena UMUM (lib/auth/roles.ts).
+  // Guard di level halaman karena layout tidak dirender ulang saat navigasi klien.
+  if (isUmum(user.role)) redirect(UMUM_HOME)
 
   const isPotentialTeacher = user.role === "GURU" || user.role === "ADMIN" || user.isFounder
 

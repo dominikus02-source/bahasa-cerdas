@@ -17,14 +17,15 @@ import { ArrowLeft } from "lucide-react";
  *
  * Tidak pernah mengarahkan keluar Arena — user tidak kehilangan konteks.
  */
-function fallbackFor(pathname: string): string {
+function fallbackFor(pathname: string, homeHref: string): string {
   if (pathname.startsWith("/arena/game/")) return "/arena/game";
   if (pathname.startsWith("/arena/player/")) return "/arena/player";
-  if (pathname === "/arena/game") return "/arena";
-  return "/arena";
+  if (pathname === "/arena/game") return homeHref;
+  return homeHref;
 }
 
-export function ArenaBackButton({ iconOnly = false, className = "" }: { iconOnly?: boolean; className?: string }) {
+/** `homeHref` default "/arena" (perilaku lama); UMUM memakai beranda UMUM. */
+export function ArenaBackButton({ iconOnly = false, className = "", homeHref = "/arena" }: { iconOnly?: boolean; className?: string; homeHref?: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -35,8 +36,8 @@ export function ArenaBackButton({ iconOnly = false, className = "" }: { iconOnly
       router.back();
       return;
     }
-    router.push(fallbackFor(pathname ?? ""));
-  }, [pathname, router]);
+    router.push(fallbackFor(pathname ?? "", homeHref));
+  }, [pathname, router, homeHref]);
 
   return (
     <button

@@ -1,6 +1,7 @@
 import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 import { db } from "@/lib/db"
 import { getUser } from "@/lib/supabase/server"
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, Heart, MessageCircle, Eye, Clock, Sparkles, BookOpen, FileText, Smile, Music, MessageSquare } from "lucide-react"
@@ -28,6 +29,9 @@ const typeLabel: Record<string, string> = {
 export default async function FeedDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getUser()
   if (!user) redirect("/arena/login")
+  // UMUM: halaman ini di luar allowlist Arena UMUM (lib/auth/roles.ts).
+  // Guard di level halaman karena layout tidak dirender ulang saat navigasi klien.
+  if (isUmum(user.role)) redirect(UMUM_HOME)
 
   const { id } = await params
 

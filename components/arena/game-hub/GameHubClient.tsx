@@ -14,6 +14,7 @@ import { RankChip } from "@/components/gamification/RankChip";
 import BannerSlideshow, { type BannerSlide } from "@/components/public/BannerSlideshow";
 import GameCard, { type GameView } from "@/components/arena/game-hub/GameCard";
 import { trackProductEvent } from "@/lib/analytics/product-track";
+import { isUmumGameId } from "@/lib/auth/roles";
 
 /**
  * Game Hub Arena 2.0 — game launcher BahasaCerdas.
@@ -37,6 +38,13 @@ export interface GameHubClientProps {
   level: number;
   rank: string;
   multiplayerEnabled: boolean;
+  /**
+   * Mode UMUM (pengguna umum): katalog dibatasi ke gim solo di allowlist
+   * (lib/auth/roles.ts → UMUM_GAME_IDS) dan tautan ke halaman khusus murid
+   * (Profil pemain, Leaderboard, Badge, Misi, promo Kuis Tempur) disembunyikan.
+   * Default false — tampilan Murid/Guru tidak berubah.
+   */
+  umumMode?: boolean;
 }
 
 export type { GameView };
@@ -70,7 +78,7 @@ function waktuLalu(ts: number): string {
 
 const POPULAR_ORDER = ["kuis-tempur", "petualangan-kata", "teka-teki-silang", "lari-kata", "menara"];
 
-export default function GameHubClient({ user, level, rank, multiplayerEnabled }: GameHubClientProps) {
+export default function GameHubClient({ user, level, rank, multiplayerEnabled, umumMode = false }: GameHubClientProps) {
   const [category, setCategory] = useState<"Semua" | GameCategory>("Semua");
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [heroArtBroken, setHeroArtBroken] = useState(false);
@@ -95,14 +103,14 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
   // TIDAK muncul di katalog, kategori, Baru, Populer, maupun Terakhir —
   // satu titik filter untuk semua discovery hub.
   const games = useMemo<GameView[]>(() => {
-    return GAME_REGISTRY.filter((g) => !g.unpublished).map((g): GameView => {
+    return GAME_REGISTRY.filter((g) => !g.unpublished && (!umumMode || isUmumGameId(g.id))).map((g): GameView => {
       if (!g.multiplayer || multiplayerEnabled) return { ...g, status: "LIVE" };
       if (g.soloSaatOffline) {
         return { ...g, status: "LIVE", players: g.soloSaatOffline.players, description: g.soloSaatOffline.desc };
       }
       return { ...g, status: "SOON" };
     }).sort((a, b) => Number(a.status === "SOON") - Number(b.status === "SOON"));
-  }, [multiplayerEnabled]);
+  }, [multiplayerEnabled, umumMode]);
 
   const filtered = useMemo(
     () => (category === "Semua" ? games : games.filter((g) => g.categories.includes(category))),
@@ -119,7 +127,9 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
     return recentIds.map((id) => byId.get(id)).filter((g): g is GameView => Boolean(g)).slice(0, 3);
   }, [games, recentIds]);
 
-  const hero = featuredGame();
+  // UMUM: gim unggulan default (bisa multipemain) mungkin di luar allowlist —
+  // pakai gim LIVE pertama yang diizinkan.
+  const hero = umumMode ? (games.find((g) => g.status === "LIVE") ?? games[0] ?? featuredGame()) : featuredGame();
 
   return (
     <div className="px-5 pb-10 sm:px-6 relative z-10">
@@ -137,8 +147,8 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
             Mainkan. Belajar. Naik Level.
           </p>
         </div>
-        <Link
-          href="/arena/player"
+        <MaybeLink
+          href={umumMode ? null : "/arena/player"}
           className="group flex items-center gap-2.5 rounded-full border border-slate-200 dark:border-[rgba(124,58,237,0.25)] bg-white/70 dark:bg-[#16122A]/70 backdrop-blur px-3 py-1.5 shadow-sm transition-all hover:shadow-md active:scale-95"
           aria-label="Buka profil pemain"
         >
@@ -150,7 +160,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
             <RankChip rank={rank} size={13} showTitle={false} compact className="text-[11px]" />
           </div>
           <UserAvatar name={user.fullName} avatar={user.avatar} size={38} />
-        </Link>
+        </MaybeLink>
       </header>
 
       {/* ── HERO — GAME UNGGULAN ── */}
@@ -350,6 +360,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
         </div>
       </section>
 
+      {!umumMode && (<>
       {/* ── PROMO — banner RANK BC (kiri) + slide gim Kuis Tempur ↔ Teka-Teki Silang (kanan) ── */}
       <section className="mt-7" aria-label="Promo rank dan gim">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -415,6 +426,29 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled }:
           ))}
         </div>
       </section>
+      </>)}
     </div>
   );
+}
+
+/** Link bila ada href; selain itu wadah statis (mode UMUM tanpa profil pemain). */
+function MaybeLink({
+  href,
+  className,
+  children,
+  ...rest
+}: {
+  href: string | null;
+  className?: string;
+  children: React.ReactNode;
+  "aria-label"?: string;
+}) {
+  if (href) {
+    return (
+      <Link href={href} className={className} {...rest}>
+        {children}
+      </Link>
+    );
+  }
+  return <div className={className}>{children}</div>;
 }
