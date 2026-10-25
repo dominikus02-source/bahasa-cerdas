@@ -74,7 +74,7 @@ test("15. OAuth Google preserved (provider existing)", () =>
   page.includes("signInWithOAuth") && page.includes('provider: "google"'));
 test("16. register route preserved for web and Arena scope", () =>
   page.includes('const registerHref = isArenaEntry ? "/arena/register" : "/register"') &&
-  page.includes("href={registerHref}") && page.includes("Daftar sekarang"));
+  page.includes("href={registerWithNext}") && page.includes(": registerHref;") && page.includes("Daftar sekarang"));
 
 console.log("\n── Preservasi logic auth ──");
 test("17. password login memakai Supabase browser client (IP pengguna, bukan egress Vercel)", () =>

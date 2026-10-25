@@ -50,6 +50,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
   const [next, setNext] = useState("");
+  // Tautan undangan (mis. JUMPA) tetap dibawa saat pengguna baru memilih daftar.
+  const registerWithNext =
+    !isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref;
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   useEffect(() => {
@@ -370,7 +373,7 @@ export default function LoginPage() {
             <div className="mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Belum punya akun?{" "}
-                <Link href={!isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
+                <Link href={registerWithNext} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
                   Daftar sekarang
                 </Link>
               </p>
