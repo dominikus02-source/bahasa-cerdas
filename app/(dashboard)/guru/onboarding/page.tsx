@@ -442,7 +442,7 @@ export default function GuruOnboardingPage() {
                 href={waShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#25D366] text-white rounded-xl font-semibold hover:brightness-95 transition"
+                className={"w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#25D366] text-white rounded-xl font-semibold hover:brightness-95 transition" /* warna-izin: hijau merek WhatsApp */}
               >
                 <MessageCircle className="w-5 h-5" /> Bagikan via WhatsApp
               </a>
