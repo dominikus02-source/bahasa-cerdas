@@ -11,6 +11,37 @@ const FOLDER_TYPES: Record<string, string[]> = {
   PDF: ["PDF"],
 };
 
+// SECURITY (M2b): identitas HANYA dari sesi Supabase (cookie). supabaseId dari
+// query/formData/body TIDAK dipakai lagi — dulu siapa pun yang tahu supabaseId
+// seorang guru bisa membaca/menulis/mengedit/menghapus materi atas namanya.
+// Klien lama yang masih mengirim supabaseId tetap jalan: nilainya diabaikan.
+async function resolveSessionGuru(): Promise<{ dbUser: any; authId: string } | { res: NextResponse }> {
+  let authId: string | null = null;
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    authId = user?.id ?? null;
+  } catch {}
+  if (!authId) {
+    return { res: NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 }) };
+  }
+  const dbUser = await db.user.findUnique({ where: { supabaseId: authId } });
+  if (!dbUser || dbUser.email?.endsWith("@account.invalid")) {
+    return { res: NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 }) };
+  }
+  if (!isTeacherOrStudent(dbUser)) {
+    return { res: NextResponse.json({ error: "Khusus guru." }, { status: 403 }) };
+  }
+  return { dbUser, authId };
+}
+
+// Field Materi yang boleh diubah lewat PUT. uploaderId/downloads/id/createdAt
+// tidak boleh dioper dari body (mass-assignment).
+const PUT_EDITABLE_FIELDS = [
+  "title", "description", "content", "grade", "semester", "tahunAjaran",
+  "tema", "subtema", "subject", "isPublished", "isPremium", "price",
+] as const;
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
@@ -23,28 +54,9 @@ export async function GET(req: NextRequest) {
     const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
     const folder = (searchParams.get("folder") || "").trim().toUpperCase(); // "PPT" | "PDF"
 
-    let dbUser: any = null
-
-    // Try Supabase auth first
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-      }
-    } catch {}
-
-    // Fallback: supabaseId query param (for Next.js 16 Route Handler cookie bug)
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) {
-        dbUser = await db.user.findUnique({ where: { supabaseId: sid } });
-      }
-    }
-
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
 
     // Basis: materi yang dipublikasikan (bank bersama) atau milik sendiri.
     // Ditambah filter pencarian tema/kata kunci/kelas/mapel (AND).
@@ -110,22 +122,9 @@ export async function POST(req: NextRequest) {
     console.log("Materi POST request received");
     const formData = await req.formData();
 
-    // Try Supabase auth first, then fallback to formData supabaseId
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-      }
-    } catch {}
-    if (!dbUser) {
-      const sid = formData.get("supabaseId") as string
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
     const file = formData.get("file") as File | null;
 
     const title = formData.get("title") as string;
@@ -251,21 +250,15 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
 
-    const { id, ...data } = body;
+    const id = body?.id;
+    const data: Record<string, unknown> = {};
+    for (const key of PUT_EDITABLE_FIELDS) {
+      if (body && Object.prototype.hasOwnProperty.call(body, key)) data[key] = body[key];
+    }
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -289,19 +282,9 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
