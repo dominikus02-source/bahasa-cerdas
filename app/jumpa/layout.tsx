@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 };
 
 /**
- * JUMPA selalu gelap (class `dark` → token gelap dari app/globals.css),
- * terlepas dari tema pilihan user di dasbor. Tidak ada provider tema kedua.
+ * JUMPA mengikuti tema global (next-themes: class `dark` di <html>, default
+ * mengikuti prefers-color-scheme). Tidak ada provider tema kedua.
  */
 export default function JumpaLayout({ children }: { children: React.ReactNode }) {
   if (!JUMPA_ENABLED) notFound();
-  return <div className="dark jumpa-scope">{children}</div>;
+  return <div className="jumpa-scope">{children}</div>;
 }

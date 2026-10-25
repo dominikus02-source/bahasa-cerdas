@@ -15,6 +15,7 @@ import { formatWib, formatWibTime } from "@/lib/jumpa/schedule";
 import { JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM } from "@/lib/jumpa/tiers";
 import { UpgradeSheet } from "./TierUi";
 import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
+import JumpaThemeToggle from "./JumpaThemeToggle";
 
 const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
 
@@ -146,10 +147,13 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   };
 
   return (
-    <main className="jumpa-home jumpa-root mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:px-6" data-theme="dark">
+    <main className="jumpa-home jumpa-root mx-auto flex min-h-[100dvh] w-full max-w-3xl flex-col gap-5 px-4 pb-10 pt-[max(16px,env(safe-area-inset-top))] sm:px-6">
       <header className="flex items-center justify-between gap-3">
         <p className="jumpa-brand"><span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>JUMPA</p>
-        <Link href={dashboardHref} className="jumpa-ghost !min-h-[40px] !px-4 text-sm">Dasbor</Link>
+        <div className="flex items-center gap-2">
+          <JumpaThemeToggle />
+          <Link href={dashboardHref} className="jumpa-ghost !min-h-[40px] !px-4 text-sm">Dasbor</Link>
+        </div>
       </header>
 
       <section className="jumpa-hero jumpa-in-up">
