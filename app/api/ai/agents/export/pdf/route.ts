@@ -6,6 +6,7 @@ import { z } from "zod";
 import { checkExportQuota, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { checkDailyExportLimit } from "@/lib/billing/limits";
+import { umumGuruToolForbidden } from "@/lib/auth/umum-guard";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -35,6 +36,8 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+    const umumBlocked = umumGuruToolForbidden(user);
+    if (umumBlocked) return umumBlocked;
 
     // PDF exports are free (0 credits), but we still check quota for consistency
     await ensureMonthlyLedger(user);

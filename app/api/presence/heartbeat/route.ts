@@ -28,6 +28,9 @@ export async function POST(request: Request) {
       role = "ADMIN"
     } else if (user.role === "GURU") {
       role = "GURU"
+    } else if (user.role === "UMUM") {
+      // UMUM dihitung terpisah — sebelumnya jatuh ke default MURID.
+      role = "UMUM"
     }
 
     let pathname: string | null = null

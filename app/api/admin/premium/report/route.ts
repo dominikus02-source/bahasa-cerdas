@@ -242,7 +242,10 @@ export async function GET(req: NextRequest) {
       }
 
       // Map audience from role
-      const rowAudience = user.role === "MURID" ? "MURID" : "GURU";
+      // Eksplisit: hanya GURU yang dilabeli GURU. UMUM (atau peran lain bila
+      // filter berubah) TIDAK pernah dihitung sebagai GURU.
+      const rowAudience =
+        user.role === "MURID" ? "MURID" : user.role === "GURU" ? "GURU" : user.role === "UMUM" ? "UMUM" : String(user.role);
 
       // Compute days until expiry
       let daysUntilExpiry: number | null = null;

@@ -6,6 +6,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { umumGuruToolForbidden } from "@/lib/auth/umum-guard";
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,6 +24,8 @@ export async function POST(req: NextRequest) {
       if (sid) user = await db.user.findUnique({ where: { supabaseId: sid } })
     }
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const umumBlocked = umumGuruToolForbidden(user);
+    if (umumBlocked) return umumBlocked;
 
     const quota = await checkAIQuota(user, "soal");
     if (!quota.allowed) {

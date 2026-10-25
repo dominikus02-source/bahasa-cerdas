@@ -347,7 +347,7 @@ export default function AdminPremiumReportPage() {
                     </td>
                     <td className="py-3 px-4">
                       <span className={`inline-flex items-center text-[10px] px-2 py-0.5 rounded-full border font-medium ${AUDIENCE_BADGE[u.audience] || ""}`}>
-                        {u.audience === "MURID" ? "🎓 Murid" : "👨‍🏫 Guru"}
+                        {u.audience === "MURID" ? "🎓 Murid" : u.audience === "GURU" ? "👨‍🏫 Guru" : u.audience === "UMUM" ? "Umum" : u.audience}
                       </span>
                     </td>
                     <td className="py-3 px-4">
@@ -449,7 +449,7 @@ export default function AdminPremiumReportPage() {
               <div className="flex justify-between">
                 <span className="text-slate-500 dark:text-slate-400">Audience</span>
                 <span className={`inline-flex items-center text-[10px] px-2 py-0.5 rounded-full border font-medium ${AUDIENCE_BADGE[detail.audience] || ""}`}>
-                  {detail.audience === "MURID" ? "🎓 Murid" : "👨‍🏫 Guru"}
+                  {detail.audience === "MURID" ? "🎓 Murid" : detail.audience === "GURU" ? "👨‍🏫 Guru" : detail.audience === "UMUM" ? "Umum" : detail.audience}
                 </span>
               </div>
               <div className="flex justify-between">

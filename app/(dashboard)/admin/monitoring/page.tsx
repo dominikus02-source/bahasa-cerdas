@@ -15,6 +15,7 @@ import {
   GraduationCap,
   UserRound,
   ShieldCheck,
+  Compass,
 } from "lucide-react";
 
 interface PresenceLocation {
@@ -24,6 +25,7 @@ interface PresenceLocation {
   guru: number;
   murid: number;
   admin: number;
+  umum?: number;
 }
 
 interface LiveSnapshot {
@@ -34,6 +36,8 @@ interface LiveSnapshot {
     onlineGuru: number;
     onlineMurid: number;
     onlineAdmin: number;
+    /** Aditif — respons lama tanpa field ini dibaca sebagai 0. */
+    onlineUmum?: number;
     locations: PresenceLocation[];
     available: boolean;
     ttlSeconds: number;
@@ -159,7 +163,7 @@ export default function MonitoringPage() {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-5">
           <PresenceStat
             icon={<Users className="h-5 w-5" />}
             label="Total Online"
@@ -176,6 +180,12 @@ export default function MonitoringPage() {
             icon={<UserRound className="h-5 w-5" />}
             label="Murid"
             value={data.presence.available ? data.presence.onlineMurid : "—"}
+            tone="violet"
+          />
+          <PresenceStat
+            icon={<Compass className="h-5 w-5" />}
+            label="Umum"
+            value={data.presence.available ? data.presence.onlineUmum ?? 0 : "—"}
             tone="violet"
           />
           <PresenceStat
@@ -216,6 +226,7 @@ export default function MonitoringPage() {
                     {[
                       location.guru > 0 ? `${location.guru} guru` : null,
                       location.murid > 0 ? `${location.murid} murid` : null,
+                      (location.umum ?? 0) > 0 ? `${location.umum} umum` : null,
                       location.admin > 0 ? `${location.admin} admin` : null,
                     ].filter(Boolean).join(" · ")}
                   </p>

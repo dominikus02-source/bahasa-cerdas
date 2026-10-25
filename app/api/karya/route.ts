@@ -32,6 +32,11 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // UMUM (termasuk kategori Dosen/Mahasiswa) tidak menjual di Toko Karya.
+    // Celah lama untuk peran lain sengaja tidak diubah di sini (di luar lingkup).
+    if (user.role === "UMUM" && !user.isFounder) {
+      return NextResponse.json({ error: "Penjualan karya khusus guru." }, { status: 403 });
+    }
 
     const body = await req.json();
     const { title, description, type, price, fileUrl, grade, subject } = body;
