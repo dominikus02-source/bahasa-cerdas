@@ -118,6 +118,13 @@ check("Guru lain (bukan pemilik) tidak bisa masuk kelas", code(evaluateJoin({ ..
 check("Murid kelas lain tidak bisa masuk ruang guru", code(evaluateJoin({ ...joinBase, room: { ...joinBase.room, kind: "GURU" }, now: new Date("2026-10-18T07:25:00Z") })) === "NOT_INVITED")
 check("Dibatalkan → ROOM_CANCELLED", code(evaluateJoin({ ...joinBase, room: { ...joinBase.room, status: "ENDED", endReason: "CANCELLED" } })) === "ROOM_CANCELLED")
 check("Selesai → ROOM_ENDED", code(evaluateJoin({ ...joinBase, room: { ...joinBase.room, status: "ENDED", endReason: "HOST" } })) === "ROOM_ENDED")
+{
+  const started = new Date(joinBase.now.getTime() - 5 * 60_000);
+  check("Tutup karena kosong, durasi belum habis → boleh masuk lagi", evaluateJoin({ ...joinBase, room: { ...joinBase.room, status: "ENDED", endReason: "EMPTY", startedAt: started } }).ok)
+  const old = new Date(joinBase.now.getTime() - (joinBase.room.maxDurationMin + 1) * 60_000);
+  check("Tutup karena kosong, durasi habis → ROOM_EXPIRED", code(evaluateJoin({ ...joinBase, room: { ...joinBase.room, status: "ENDED", endReason: "EMPTY", startedAt: old } })) === "ROOM_EXPIRED")
+  check("Diakhiri waktu habis → ROOM_ENDED", code(evaluateJoin({ ...joinBase, room: { ...joinBase.room, status: "ENDED", endReason: "TIME_LIMIT", startedAt: started } })) === "ROOM_ENDED")
+}
 check("Dikunci → ROOM_LOCKED", code(evaluateJoin({ ...joinBase, now: new Date("2026-10-18T07:25:00Z"), room: { ...joinBase.room, isLocked: true } })) === "ROOM_LOCKED")
 check("Penuh → ROOM_FULL", code(evaluateJoin({ ...joinBase, now: new Date("2026-10-18T07:25:00Z"), activeOthers: 30 })) === "ROOM_FULL")
 check("Ruang instan (tanpa jadwal) tidak terkena gerbang", evaluateJoin({ ...joinBase, room: { ...joinBase.room, scheduledAt: null } }).ok)
