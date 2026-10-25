@@ -35,6 +35,32 @@ async function resolveSessionGuru(): Promise<{ dbUser: any; authId: string } | {
   return { dbUser, authId };
 }
 
+// SECURITY: metadata file yang diunggah dari klien (Supabase Storage langsung)
+// harus menunjuk ke berkas milik pengunggah sendiri di bucket "documents".
+// Mencegah (a) fileKey milik orang lain — yang nanti ikut dihapus saat DELETE —
+// dan (b) fileUrl sembarang (mis. javascript:) yang dibuka guru lain via preview.
+function validatePreUploadedFile(opts: { fileUrl: string | null; fileKey: string | null; fileType: string | null; authId: string; dbUserId: string }): string | null {
+  const { fileUrl, fileKey, fileType, authId, dbUserId } = opts;
+  if (fileType && !["PDF", "PPTX"].includes(fileType.toUpperCase())) return "File harus PDF atau PPTX";
+  if (fileKey) {
+    if (fileKey.includes("..") || fileKey.startsWith("/")) return "Lokasi file tidak valid";
+    if (!fileKey.startsWith(`${authId}/`) && !fileKey.startsWith(`${dbUserId}/`)) return "Lokasi file tidak valid";
+  }
+  if (fileUrl) {
+    let parsed: URL;
+    try { parsed = new URL(fileUrl); } catch { return "URL file tidak valid"; }
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (base) {
+      let origin = "";
+      try { origin = new URL(base).origin; } catch {}
+      if (!origin || parsed.origin !== origin || !parsed.pathname.startsWith("/storage/v1/object/public/documents/")) return "URL file tidak valid";
+    } else if (parsed.protocol !== "https:") {
+      return "URL file tidak valid";
+    }
+  }
+  return null;
+}
+
 // Field Materi yang boleh diubah lewat PUT. uploaderId/downloads/id/createdAt
 // tidak boleh dioper dari body (mass-assignment).
 const PUT_EDITABLE_FIELDS = [
@@ -175,9 +201,12 @@ export async function POST(req: NextRequest) {
       fileType = fileExt.toUpperCase();
     } else {
       // Client-side pre-uploaded — use provided metadata
-      fileUrl = formData.get("fileUrl") as string | null;
-      fileKey = formData.get("fileKey") as string | null;
-      fileType = formData.get("fileType") as string | null;
+      fileUrl = (formData.get("fileUrl") as string | null) || null;
+      fileKey = (formData.get("fileKey") as string | null) || null;
+      fileType = (formData.get("fileType") as string | null) || null;
+      const invalid = validatePreUploadedFile({ fileUrl, fileKey, fileType, authId: auth.authId, dbUserId: dbUser.id });
+      if (invalid) return NextResponse.json({ error: invalid }, { status: 400 });
+      if (fileType) fileType = fileType.toUpperCase();
     }
 
     const materi = await db.materi.create({
