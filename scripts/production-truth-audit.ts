@@ -513,8 +513,7 @@ for (const s of soalByType) {
   }
 
   // ─── 22. MRR (Monthly Recurring Revenue) ──────────────────
-  console.log("\n── 22. MRR (Monthly Recurring Revenue) ──
-");
+  console.log("\n── 22. MRR (Monthly Recurring Revenue) ──\n");
 
   // Group successful transactions by month
   const allSuccessTxns = await prisma.transaksi.findMany({
@@ -550,8 +549,7 @@ for (const s of soalByType) {
   }
 
   // ─── 23. SUPABASE PROJECT INVENTORY ──────────────────────
-  console.log("\n── 23. SUPABASE PROJECT INVENTORY ──
-");
+  console.log("\n── 23. SUPABASE PROJECT INVENTORY ──\n");
   console.log("  NOTE: Run 'npx supabase projects list' manually to check for unused projects.");
   console.log("  Known projects: Bahasa Cerdas DB (prod), bahasa-cerdas-staging, sepedamania");
   console.log("  ACTION: Pause any unused Pro-plan projects to save $25/month each.");
