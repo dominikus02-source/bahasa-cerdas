@@ -131,7 +131,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
         <p className="mt-2 text-xs text-[var(--jp-text-3)]">{done.invited > 0 ? `${done.invited} orang diberi tahu.` : "Belum ada yang diberi tahu."}</p>
         <div className="mt-5 grid gap-2.5">
           {!done.cancelled && (
-            <button type="button" className="jumpa-primary" onClick={() => setShare({ code: done.code, title: done.title, kind, scheduledAt: done.scheduledAt, canLink: kind === "GURU" })}>
+            <button type="button" className={`jumpa-primary${kind === "GURU" ? " jumpa-guru" : ""}`} onClick={() => setShare({ code: done.code, title: done.title, kind, scheduledAt: done.scheduledAt, canLink: kind === "GURU" })}>
               <Share2 size={18} /> Bagikan
             </button>
           )}
@@ -156,8 +156,9 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
         <>
           <div className="jumpa-seg !grid-cols-2" role="radiogroup" aria-label="Jenis JUMPA">
             <button type="button" role="radio" aria-checked={kind === "KELAS"} className="jumpa-seg-btn" disabled={data.groups.length === 0} onClick={() => setKind("KELAS")}><GraduationCap size={16} /> Kelas</button>
-            <button type="button" role="radio" aria-checked={kind === "GURU"} className="jumpa-seg-btn" onClick={() => setKind("GURU")}><Users size={16} /> Ruang guru</button>
+            <button type="button" role="radio" aria-checked={kind === "GURU"} className="jumpa-seg-btn jumpa-guru" onClick={() => setKind("GURU")}><Users size={16} /> Ruang guru</button>
           </div>
+          {data.groups.length === 0 && <p className="-mt-2 text-xs text-[var(--jp-text-3)]">Kelas belum tersedia: kamu belum punya kelas.</p>}
 
           {kind === "KELAS" ? (
             <label className="jumpa-field">
@@ -268,7 +269,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
 
       {error && <p role="alert" className="text-sm text-[var(--clr-danger)]">{error}</p>}
 
-      <button type="submit" className="jumpa-primary w-full" disabled={busy !== null || (kind === "KELAS" && !editing && !groupId)}>
+      <button type="submit" className={`jumpa-primary w-full${kind === "GURU" ? " jumpa-guru" : ""}`} disabled={busy !== null || (kind === "KELAS" && !editing && !groupId)}>
         {busy === "save" ? <Loader2 size={18} className="animate-spin" /> : <CalendarClock size={18} />} {editing ? "Simpan jadwal" : "Jadwalkan"}
       </button>
 

@@ -1514,3 +1514,25 @@ html:not(.dark) .jumpa-scope {
   --clr-accent: var(--clr-accent-strong);
   --clr-warning: var(--clr-warning-strong);
 }
+
+/* ── Dialog konfirmasi (pengganti window.confirm) ── */
+.jumpa-confirm { border-color: color-mix(in srgb, var(--clr-danger) 35%, var(--jp-line)); text-align: center; }
+.jumpa-confirm::before { display: none; }
+.jumpa-confirm-icon { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 auto 12px; border-radius: 999px; color: var(--jp-danger); background: var(--clr-danger-soft); }
+.jumpa-confirm-danger {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 0 14px;
+  border-radius: 999px; font-weight: 700; color: var(--clr-bg); background: var(--clr-danger);
+}
+.jumpa-confirm-danger:hover { background: color-mix(in srgb, var(--clr-danger) 85%, var(--clr-text)); }
+.jumpa-confirm-danger:disabled { opacity: .6; cursor: not-allowed; }
+.jumpa-confirm .jumpa-ghost { min-height: 52px; }
+
+/* ── Aksen biru area guru (aturan v4) ── */
+.jumpa-guru {
+  --jp-accent: var(--clr-info);
+  --jp-accent-strong: color-mix(in srgb, var(--clr-info) 72%, var(--clr-text));
+  --jp-accent-glow: color-mix(in srgb, var(--clr-info) 38%, transparent);
+}
+
+/* ── Tab nonaktif (mis. Kelas tanpa kelas) ── */
+.jumpa-seg-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
