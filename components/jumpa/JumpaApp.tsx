@@ -114,9 +114,13 @@ export default function JumpaApp(props: JumpaAppProps) {
     [props.code, props.inviteToken, props.tier],
   );
 
-  // Auto-join jika datang dari tautan undangan.
+  // Auto-join jika datang dari tautan undangan — sekali saja. Bila gagal
+  // (mis. ruang penuh), pesan galat tampil di lobi; jangan mengulang terus.
+  const autoJoined = useRef(false);
   useEffect(() => {
+    if (autoJoined.current) return;
     if (props.inviteToken && props.canJoin && phase.name === "lobby" && !joining) {
+      autoJoined.current = true;
       void join(DEFAULT_MEDIA_PREFS);
     }
   }, [props.inviteToken, props.canJoin, phase.name, joining, join]);

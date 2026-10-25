@@ -406,7 +406,7 @@ export async function recordJoinGranted(params: {
   now?: Date;
 }): Promise<{ startedAt: Date | null; wentLive: boolean }> {
   const now = params.now ?? new Date();
-  const [, live] = await db.$transaction([
+  const [, live, resumed] = await db.$transaction([
     db.jumpaParticipant.upsert({
       where: { roomId_userId: { roomId: params.room.id, userId: params.userId } },
       create: { roomId: params.room.id, userId: params.userId, roomRole: params.roomRole, accessVia: params.accessVia },
@@ -416,11 +416,20 @@ export async function recordJoinGranted(params: {
       where: { id: params.room.id, status: "SCHEDULED" },
       data: { status: "LIVE", startedAt: now },
     }),
+    // Ruang yang ditutup karena kosong dibuka lagi (evaluateJoin sudah memastikan
+    // durasinya belum habis). startedAt tetap → batas waktu tidak bertambah.
+    db.jumpaRoom.updateMany({
+      where: { id: params.room.id, status: "ENDED", endReason: "EMPTY" },
+      data: { status: "LIVE", endedAt: null, endReason: null, endedById: null },
+    }),
     db.jumpaEvent.create({
       data: { roomId: params.room.id, actorId: params.userId, action: "JOIN_GRANTED", metadata: { roomRole: params.roomRole, accessVia: params.accessVia } },
     }),
   ]);
   const fresh = await db.jumpaRoom.findUnique({ where: { id: params.room.id }, select: { startedAt: true } });
+  if (resumed.count > 0) {
+    await db.jumpaEvent.create({ data: { roomId: params.room.id, actorId: params.userId, action: "ROOM_RESUMED" } }).catch(() => undefined);
+  }
   return { startedAt: fresh?.startedAt ?? null, wentLive: live.count > 0 };
 }
 

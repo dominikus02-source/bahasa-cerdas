@@ -178,7 +178,11 @@ export function evaluateJoin(
   if (!role) return deny("ROLE_NOT_ALLOWED", "Akun ini belum bisa memakai JUMPA.");
 
   if (room.status === "ENDED" && room.endReason === "CANCELLED") return deny("ROOM_CANCELLED", "JUMPA ini dibatalkan.");
-  if (room.status === "ENDED") return deny("ROOM_ENDED", "Ruang ini sudah selesai.");
+  // Ditutup LiveKit karena kosong ≠ diakhiri. Tautan undangan (24 jam) & host
+  // yang kembali boleh membuka lagi selama durasi ruang belum habis; dulu ruang
+  // mati 60 detik setelah host keluar dan tautan yang baru dibagikan jadi buntu.
+  if (room.status === "ENDED" && room.endReason !== "EMPTY") return deny("ROOM_ENDED", "Ruang ini sudah selesai.");
+  if (room.status === "ENDED" && !room.startedAt) return deny("ROOM_ENDED", "Ruang ini sudah selesai.");
   if (isPastDuration(room.startedAt, room.maxDurationMin, input.now)) {
     return deny("ROOM_EXPIRED", "Waktu ruang ini sudah habis.");
   }
