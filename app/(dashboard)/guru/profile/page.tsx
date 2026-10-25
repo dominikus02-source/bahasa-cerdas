@@ -562,9 +562,9 @@ export default function GuruProfilePage() {
                 </span>
               </div>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-60 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.25))] dark:hidden" />
+              <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-60 [filter:drop-shadow(0_2px_8px_color-mix(in_srgb,black_25%,transparent))] dark:hidden" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-icon-dark.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-60 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.4))] hidden dark:block" />
+              <img src="/brand/bc2026-icon-dark.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-60 [filter:drop-shadow(0_2px_8px_color-mix(in_srgb,black_40%,transparent))] hidden dark:block" />
             </div>
             <div className="px-4 sm:px-6 md:px-8 pb-6 -mt-14 sm:-mt-16 md:-mt-20">
               <div className="space-y-5 pt-16 sm:pt-20">
@@ -607,9 +607,9 @@ export default function GuruProfilePage() {
               <div className="absolute inset-0 bg-gradient-to-b from-white/10 via-white/10 to-white dark:from-slate-900/40 dark:via-slate-900/50 dark:to-slate-900" />
               {/* BC Logo Mark — single icon, dual-mode variants */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.25))] dark:hidden" />
+              <img src="/brand/bc2026-icon.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_color-mix(in_srgb,black_25%,transparent))] dark:hidden" />
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/brand/bc2026-icon-dark.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_rgba(0,0,0,0.4))] hidden dark:block" />
+              <img src="/brand/bc2026-icon-dark.png" alt="" className="absolute top-4 right-4 h-10 sm:h-12 md:h-14 object-contain opacity-80 [filter:drop-shadow(0_2px_8px_color-mix(in_srgb,black_40%,transparent))] hidden dark:block" />
             </div>
 
             {/* Name / identity area — overlaps cover like Facebook */}
