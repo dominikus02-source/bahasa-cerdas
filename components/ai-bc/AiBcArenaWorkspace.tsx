@@ -182,8 +182,12 @@ export default function AiBcArenaWorkspace({
   const handleRetry = () => {
     const text = lastUserTextRef.current;
     if (!text || streaming) return;
+    // Buang pesan user terakhir yang gagal agar tidak tampil dobel saat dicoba ulang.
+    const prior = messages.filter((message) => !message.isError);
+    const lastUserIndex = prior.map((message) => message.role).lastIndexOf("user");
+    if (lastUserIndex >= 0) prior.splice(lastUserIndex, 1);
     const next: BcClientMessage[] = [
-      ...messages.filter((m) => !m.isError),
+      ...prior,
       { role: "user", content: text },
     ];
     setMessages(next);
