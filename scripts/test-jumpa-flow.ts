@@ -261,6 +261,7 @@ check("Bagikan (ruang guru): tautan undangan dibuat otomatis saat dibuka", /useE
 check("Bagikan: url = tautan undangan bila ada", share.includes("const url = link24 ?? "))
 check("Bagikan: opsi menunggu tautan undangan", /pending = Boolean\(target\.canLink\) && !link24/.test(share) && (share.match(/disabled=\{pending\}/g) ?? []).length >= 2 && share.includes("href={pending ? undefined"))
 check("Bagikan: tanpa tombol tautan terpisah", !share.includes("Tautan undangan 24 jam"))
+check("Peran ruang dari token dipakai sebelum metadata LiveKit tiba", read("components/jumpa/JumpaApp.tsx").includes("roomRole: body.roomRole") && read("components/jumpa/room-controller.tsx").includes("?? self.roomRole ?? \"MEMBER\""))
 check("Undangan LINK memakai linkInviteExpiry", read("lib/jumpa/room-actions.ts").includes("linkInviteExpiry(now, room.scheduledAt)"))
 {
   const now = new Date("2026-10-25T14:00:00Z")
