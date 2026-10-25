@@ -72,7 +72,7 @@ const process = [
 
 export default async function AkuSastrawanPage() {
   const user = await getUser();
-  const startHref = user ? "#program" : "/login?next=%2Faku-sastrawan";
+  const startHref = user ? "/aku-sastrawan/kurikulum" : "/login?next=%2Faku-sastrawan";
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
