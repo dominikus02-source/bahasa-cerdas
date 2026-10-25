@@ -110,7 +110,7 @@ export default function MonitoringPage() {
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-bold text-slate-800 dark:text-slate-100">
-            <Activity className="h-5 w-5 text-emerald-500" /> Live Pulse
+            <Activity className="h-5 w-5 text-bc-success" /> Live Pulse
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Pengguna online dan menu yang sedang dibuka · diperbarui {new Date(data.generatedAt).toLocaleTimeString("id-ID")} · refresh {POLL_MS / 1000}s

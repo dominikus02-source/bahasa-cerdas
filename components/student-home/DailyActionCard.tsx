@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { Brain, CheckCircle, XCircle, Loader2, ChevronRight, ArrowRight, BookOpen, Target } from "lucide-react";
+import { buttonClass } from "@/components/ui/button";
 import type {
   DailyActionResponse,
   DailyActionPending,
@@ -125,12 +126,12 @@ export function DailyActionCard() {
   // ── Loading State ──
   if (loading) {
     return (
-      <div className="rounded-2xl border border-slate-200/60 bg-white/60 p-4 dark:border-slate-700/60 dark:bg-slate-800/40">
+      <div className="rounded-2xl border border-bc-border bg-bc-surface/70 p-4">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 animate-pulse rounded-xl bg-slate-100 dark:bg-slate-700" />
+          <div className="h-10 w-10 animate-pulse rounded-xl bg-bc-surface-2" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 w-40 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
-            <div className="h-3 w-28 animate-pulse rounded bg-slate-100 dark:bg-slate-700" />
+            <div className="h-4 w-40 animate-pulse rounded bg-bc-surface-2" />
+            <div className="h-3 w-28 animate-pulse rounded bg-bc-surface-2" />
           </div>
         </div>
       </div>
@@ -151,16 +152,16 @@ export function DailyActionCard() {
   if (action?.status === "COMPLETED" && !result) {
     const completed = action as DailyActionCompleted;
     return (
-      <div className="rounded-2xl border border-emerald-200/60 bg-emerald-50/60 p-4 dark:border-emerald-800/40 dark:bg-emerald-950/30">
+      <div className="rounded-2xl border border-bc-success/30 bg-bc-success-soft p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 dark:bg-emerald-900/50">
-            <CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bc-success-soft">
+            <CheckCircle size={20} className="text-bc-success" />
           </div>
           <div>
-            <p className="text-sm font-bold text-emerald-800 dark:text-emerald-200">
+            <p className="text-sm font-bold text-bc-success">
               Tantangan Hari Ini Selesai!
             </p>
-            <p className="text-xs text-emerald-600 dark:text-emerald-400">
+            <p className="text-xs text-bc-success">
               {completed.isCorrect ? "Jawaban benar!" : "Terus berlatih ya!"}
             </p>
           </div>
@@ -175,58 +176,58 @@ export function DailyActionCard() {
       <div
         className={`rounded-2xl border p-4 ${
           result.correct
-            ? "border-emerald-200/60 bg-emerald-50/60 dark:border-emerald-800/40 dark:bg-emerald-950/30"
-            : "border-amber-200/60 bg-amber-50/60 dark:border-amber-800/40 dark:bg-amber-950/30"
+            ? "border-bc-success/30 bg-bc-success-soft"
+            : "border-bc-warning/30 bg-bc-warning-soft"
         }`}
       >
         <div className="flex items-start gap-3">
           <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
               result.correct
-                ? "bg-emerald-100 dark:bg-emerald-900/50"
-                : "bg-amber-100 dark:bg-amber-900/50"
+                ? "bg-bc-success-soft"
+                : "bg-bc-warning-soft"
             }`}
           >
             {result.correct ? (
-              <CheckCircle size={20} className="text-emerald-600 dark:text-emerald-400" />
+              <CheckCircle size={20} className="text-bc-success" />
             ) : (
-              <XCircle size={20} className="text-amber-600 dark:text-amber-400" />
+              <XCircle size={20} className="text-bc-warning-strong" />
             )}
           </div>
           <div className="flex-1">
             <p
               className={`text-sm font-bold ${
                 result.correct
-                  ? "text-emerald-800 dark:text-emerald-200"
-                  : "text-amber-800 dark:text-amber-200"
+                  ? "text-bc-success"
+                  : "text-bc-warning-strong"
               }`}
             >
               {result.correct ? "Benar! Kamu hebat!" : "Belum benar, tetap semangat!"}
             </p>
             <div className="mt-1 flex items-center gap-3 text-xs">
-              <span className="font-semibold text-violet-600 dark:text-violet-400">
+              <span className="font-semibold text-bc-violet">
                 +{result.xpEarned} XP
               </span>
-              <span className="font-semibold text-amber-600 dark:text-amber-400">
+              <span className="font-semibold text-bc-warning-strong">
                 +{result.coinEarned} Koin
               </span>
             </div>
             {result.explanation && (
-              <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-400">
+              <p className="mt-2 text-xs leading-relaxed text-bc-text-2">
                 {result.explanation}
               </p>
             )}
             {result.correctAnswer && !result.correct && (
-              <p className="mt-1 text-xs text-slate-500 dark:text-slate-500">
+              <p className="mt-1 text-xs text-bc-text-2">
                 Jawaban: <span className="font-medium">{result.correctAnswer}</span>
               </p>
             )}
             {/* Skill feedback */}
             {(result.skillLabel || skillLabel) && (
-              <div className="mt-2.5 flex items-center gap-2 rounded-lg bg-white/50 px-2.5 py-1.5 dark:bg-slate-800/40">
-                <Target size={13} className="shrink-0 text-violet-500 dark:text-violet-400" />
-                <span className="text-[11px] text-slate-600 dark:text-slate-400">
-                  Kemampuan: <span className="font-semibold text-slate-800 dark:text-slate-200">{result.skillLabel || skillLabel}</span>
+              <div className="mt-2.5 flex items-center gap-2 rounded-lg bg-bc-surface/70 px-2.5 py-1.5">
+                <Target size={13} className="shrink-0 text-bc-violet" />
+                <span className="text-[11px] text-bc-text-2">
+                  Kemampuan: <span className="font-semibold text-bc-text">{result.skillLabel || skillLabel}</span>
                 </span>
               </div>
             )}
@@ -234,7 +235,7 @@ export function DailyActionCard() {
             {cta && (
               <a
                 href={cta.href}
-                className="mt-2.5 flex items-center gap-2 rounded-lg bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 transition-colors hover:bg-violet-100 dark:bg-violet-900/30 dark:text-violet-300 dark:hover:bg-violet-900/50"
+                className="mt-2.5 flex items-center gap-2 rounded-lg bg-bc-violet-soft px-3 py-2 text-xs font-semibold text-bc-violet transition-colors hover:bg-bc-violet/20"
               >
                 <BookOpen size={14} />
                 {cta.label}
@@ -264,24 +265,24 @@ export function DailyActionCard() {
           : "Pilihan Ganda";
 
     return (
-      <div className="rounded-2xl border border-violet-200/60 bg-gradient-to-br from-violet-50/80 to-purple-50/60 p-4 dark:border-violet-800/40 dark:from-violet-950/40 dark:to-purple-950/30">
+      <div className="rounded-bc-card border border-bc-violet/30 bg-bc-surface p-4 shadow-bc-1 sm:p-5">
         {/* Header */}
         <div className="mb-3 flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-100 dark:bg-violet-900/50">
-            <Brain size={18} className="text-violet-600 dark:text-violet-400" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-bc-violet-soft">
+            <Brain size={18} className="text-bc-violet" />
           </div>
           <div>
-            <p className="text-sm font-bold text-slate-900 dark:text-slate-100">
+            <p className="text-sm font-bold text-bc-text">
               Tantangan Bahasa Hari Ini
             </p>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+            <p className="text-[11px] text-bc-text-2">
               {pendingSkillLabel ? `${pendingSkillLabel} · ` : ""}1 soal · ±2 menit · {typeLabel}
             </p>
           </div>
         </div>
 
         {/* Question */}
-        <div className="mb-3 rounded-xl bg-white/70 p-3 text-sm leading-relaxed text-slate-800 dark:bg-slate-800/60 dark:text-slate-200">
+        <div className="mb-3 rounded-xl bg-bc-surface/70 p-3 text-sm leading-relaxed text-bc-text">
           {pending.questionText}
         </div>
 
@@ -293,13 +294,13 @@ export function DailyActionCard() {
                 key={idx}
                 onClick={() => setSelectedAnswer(String(idx))}
                 disabled={submitting}
-                className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition-all ${
+                className={`flex w-full items-start gap-2 rounded-xl border px-3 py-2 text-left text-sm transition-all ${
                   selectedAnswer === String(idx)
-                    ? "border-violet-400 bg-violet-100 font-semibold text-violet-900 dark:border-violet-500 dark:bg-violet-900/40 dark:text-violet-100"
-                    : "border-slate-200 bg-white/60 text-slate-700 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-600"
+                    ? "border-bc-violet bg-bc-violet-soft font-semibold text-bc-text"
+                    : "border-bc-border bg-bc-surface/70 text-bc-text hover:border-bc-border-strong hover:bg-bc-surface"
                 }`}
               >
-                <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold">
+                <span className="mt-px inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold">
                   {String.fromCharCode(65 + idx)}
                 </span>
                 {opt}
@@ -316,8 +317,8 @@ export function DailyActionCard() {
               disabled={submitting}
               className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 text-base font-bold transition-all ${
                 selectedAnswer === "0"
-                  ? "border-emerald-400 bg-emerald-100 text-emerald-800 dark:border-emerald-500 dark:bg-emerald-900/40 dark:text-emerald-200"
-                  : "border-slate-200 bg-white/60 text-slate-700 hover:border-emerald-300 hover:bg-emerald-50 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-emerald-600"
+                  ? "border-bc-success bg-bc-success-soft text-bc-success"
+                  : "border-bc-border bg-bc-surface/70 text-bc-text hover:border-bc-success/60 hover:bg-bc-success-soft"
               }`}
             >
               <CheckCircle size={20} />
@@ -328,8 +329,8 @@ export function DailyActionCard() {
               disabled={submitting}
               className={`flex items-center justify-center gap-2 rounded-xl border-2 px-4 py-4 text-base font-bold transition-all ${
                 selectedAnswer === "1"
-                  ? "border-rose-400 bg-rose-100 text-rose-800 dark:border-rose-500 dark:bg-rose-900/40 dark:text-rose-200"
-                  : "border-slate-200 bg-white/60 text-slate-700 hover:border-rose-300 hover:bg-rose-50 dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-rose-600"
+                  ? "border-bc-danger bg-bc-danger-soft text-bc-danger"
+                  : "border-bc-border bg-bc-surface/70 text-bc-text hover:border-bc-danger/60 hover:bg-bc-danger-soft"
               }`}
             >
               <XCircle size={20} />
@@ -341,7 +342,7 @@ export function DailyActionCard() {
         {/* ── ISIAN_SINGKAT: Text input ── */}
         {questionType === "ISIAN_SINGKAT" && (
           <div className="mb-3">
-            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-violet-600 dark:text-violet-400">
+            <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-bc-violet">
               Pilih jawaban yang paling tepat:
             </p>
             <div className="space-y-1.5">
@@ -350,13 +351,13 @@ export function DailyActionCard() {
                   key={idx}
                   onClick={() => setSelectedAnswer(String(idx))}
                   disabled={submitting}
-                  className={`w-full rounded-xl border px-3 py-2 text-left text-sm transition-all ${
+                  className={`flex w-full items-start gap-2 rounded-xl border px-3 py-2 text-left text-sm transition-all ${
                     selectedAnswer === String(idx)
-                      ? "border-violet-400 bg-violet-100 font-semibold text-violet-900 dark:border-violet-500 dark:bg-violet-900/40 dark:text-violet-100"
-                      : "border-slate-200 bg-white/60 text-slate-700 hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-800/40 dark:text-slate-300 dark:hover:border-slate-600"
+                      ? "border-bc-violet bg-bc-violet-soft font-semibold text-bc-text"
+                      : "border-bc-border bg-bc-surface/70 text-bc-text hover:border-bc-border-strong hover:bg-bc-surface"
                   }`}
                 >
-                  <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-bold">
+                  <span className="mt-px inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-bold">
                     {String.fromCharCode(65 + idx)}
                   </span>
                   {opt}
@@ -368,12 +369,12 @@ export function DailyActionCard() {
 
         {/* Submit Button */}
         {error && (
-          <p className="mb-2 text-xs text-red-500 dark:text-red-400">{error}</p>
+          <p className="mb-2 text-xs text-bc-danger">{error}</p>
         )}
         <button
           onClick={handleSubmit}
           disabled={(!selectedAnswer.trim() && !textInput.trim()) || submitting}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-purple-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-violet-600/20 transition-all hover:from-violet-700 hover:to-purple-700 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 dark:from-violet-500 dark:to-purple-500"
+          className={buttonClass({ variant: "accent", block: true, className: "disabled:cursor-not-allowed disabled:opacity-50" })}
         >
           {submitting ? (
             <Loader2 size={16} className="animate-spin" />

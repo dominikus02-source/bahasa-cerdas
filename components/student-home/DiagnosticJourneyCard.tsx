@@ -88,7 +88,7 @@ export function DiagnosticJourneyCard() {
             </>
           ) : (
             <>
-              <Brain className="h-4 w-4 text-violet-500" />
+              <Brain className="h-4 w-4 text-bc-violet" />
               <span className="text-xs font-bold text-slate-700 dark:text-slate-200">Tantangan {data.answeredCount ?? 0}/{data.totalQuestions ?? 4}</span>
             </>
           )}

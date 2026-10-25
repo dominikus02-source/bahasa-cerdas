@@ -16,12 +16,14 @@ type BadgeItem = {
   condition?: { type?: string; target?: number }
 }
 
-const RARITY_STYLE: Record<string, { chip: string; border: string; glow: string }> = {
-  BRONZE:    { chip: "bg-orange-100 text-orange-700",       border: "border-orange-200",       glow: "shadow-orange-200/50" },
-  SILVER:    { chip: "bg-slate-100 text-slate-600",         border: "border-slate-300",         glow: "shadow-slate-300/50" },
-  GOLD:      { chip: "bg-amber-100 text-amber-700",         border: "border-amber-300",         glow: "shadow-amber-300/50" },
-  LEGENDARY: { chip: "bg-violet-100 text-violet-700",       border: "border-violet-300",        glow: "shadow-violet-300/50" },
+const RARITY_STYLE: Record<string, { chip: string; border: string }> = {
+  BRONZE:    { chip: "bg-bc-warning-soft text-bc-warning-strong", border: "border-bc-warning/40" },
+  SILVER:    { chip: "bg-bc-surface-2 text-bc-text-2",            border: "border-bc-border-strong" },
+  GOLD:      { chip: "bg-bc-warning-soft text-bc-warning-strong", border: "border-bc-warning/70" },
+  LEGENDARY: { chip: "bg-bc-violet-soft text-bc-violet",          border: "border-bc-violet/50" },
 }
+
+const CARD = "rounded-bc-card border border-bc-border bg-bc-surface p-4 shadow-bc-1 sm:p-5"
 
 /** Lencana guru: tampilkan yang khusus guru (kode guru-*) + status unlock. */
 export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }) {
@@ -45,11 +47,11 @@ export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }
 
   if (loading) {
     return (
-      <div className="bg-white rounded-[24px] border border-blue-100 p-5 sm:p-6 shadow-[0_10px_28px_rgba(25,72,140,.07)] dark:border-blue-950/80">
-        <div className="h-5 bg-gray-100 rounded w-40 mb-4 animate-pulse" />
+      <div className={CARD}>
+        <div className="h-5 bg-bc-surface-2 rounded w-40 mb-4 animate-pulse" />
         <div className={compact ? "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3" : "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3"}>
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-24 bg-gray-50 rounded-xl animate-pulse" />
+            <div key={i} className="h-24 bg-bc-surface-2 rounded-bc-tile animate-pulse" />
           ))}
         </div>
       </div>
@@ -61,18 +63,18 @@ export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }
   const unlockedCount = badges.filter(b => b.unlocked).length
 
   return (
-    <div className="bg-white rounded-[24px] border border-blue-100 p-5 sm:p-6 shadow-[0_10px_28px_rgba(25,72,140,.07)] dark:border-blue-950/80">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-semibold text-gray-900 flex items-center gap-2">
-          <Award size={16} className="text-amber-500" /> Lencana Guru
+    <div className={CARD}>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <h3 className="font-bold text-bc-text flex items-center gap-2">
+          <Award size={16} className="text-bc-warning" /> Lencana Guru
         </h3>
-        <Link href="/arena/player/badges" className="text-xs font-semibold text-blue-700 hover:text-blue-800 dark:text-blue-300 flex items-center gap-1">
+        <Link href="/arena/player/badges" className="shrink-0 text-xs font-semibold text-bc-aud hover:underline flex items-center gap-1">
           {unlockedCount}/{badges.length} terbuka
         </Link>
       </div>
 
       {badges.length === 0 ? (
-        <p className="text-sm text-gray-500 text-center py-6">
+        <p className="text-sm text-bc-text-2 text-center py-6">
           Lencana guru belum tersedia — jalankan seed badge guru.
         </p>
       ) : (
@@ -87,26 +89,26 @@ export default function GuruBadgeGrid({ compact = false }: { compact?: boolean }
               <div
                 key={b.code}
                 title={`${b.description}${b.unlocked ? "" : ` (progres ${b.progress.toLocaleString()})`}`}
-                className={`rounded-xl border p-3 text-center transition-all ${
+                className={`min-w-0 rounded-bc-tile border p-3 text-center transition-all ${
                   b.unlocked
-                    ? `bg-gradient-to-b from-white to-amber-50/40 ${st.border} shadow-sm ${st.glow}`
-                    : "border-gray-100 bg-gray-50/60 opacity-70"
+                    ? `bg-bc-surface ${st.border} shadow-bc-1`
+                    : "border-bc-border bg-bc-surface-2"
                 }`}
               >
-                <div className={`relative w-11 h-11 mx-auto mb-1.5 rounded-full flex items-center justify-center ${b.unlocked ? "bg-gradient-to-br from-amber-100 to-orange-100" : "bg-gray-200"}`}>
+                <div className={`relative w-11 h-11 mx-auto mb-1.5 rounded-full flex items-center justify-center ${b.unlocked ? "bg-bc-warning-soft" : "bg-bc-surface"}`}>
                   {b.unlocked ? (
                     <BadgeIcon icon={b.icon} alt={b.name} size={36} className="w-9 h-9" />
                   ) : (
-                    <Lock size={14} className="text-gray-400" />
+                    <Lock size={14} className="text-bc-text-3" />
                   )}
                 </div>
-                <p className={`text-[11px] font-bold leading-tight ${b.unlocked ? "text-gray-900" : "text-gray-400"}`}>{b.name}</p>
+                <p className={`text-[11px] font-bold leading-tight break-words ${b.unlocked ? "text-bc-text" : "text-bc-text-2"}`}>{b.name}</p>
                 <span className={`inline-block mt-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wide ${st.chip}`}>
                   {b.rarity}
                 </span>
-                <div className="mt-1.5 h-1 rounded-full bg-gray-200 overflow-hidden">
+                <div className="mt-1.5 h-1 rounded-full bg-bc-border overflow-hidden">
                   <div
-                    className={`h-full rounded-full ${b.unlocked ? "bg-amber-400" : "bg-gray-300"}`}
+                    className={`h-full rounded-full ${b.unlocked ? "bg-bc-warning" : "bg-bc-text-3"}`}
                     style={{ width: `${pct}%` }}
                   />
                 </div>

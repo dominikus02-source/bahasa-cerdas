@@ -150,7 +150,7 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
                   <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-950/50 dark:text-violet-300">
                     L{band.minLevel}–L{band.maxLevel}
                   </span>
-                  {band.provisional && <Flag size={15} className="text-amber-500" aria-label="Sementara" />}
+                  {band.provisional && <Flag size={15} className="text-bc-warning" aria-label="Sementara" />}
                 </div>
                 <p className="mt-2 text-xs leading-relaxed text-slate-600 dark:text-slate-300">{band.note}</p>
               </div>
@@ -191,7 +191,7 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
       {ability ? (
         <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-            <GraduationCap size={16} className="text-violet-500" /> Profil Awalmu
+            <GraduationCap size={16} className="text-bc-violet" /> Profil Awalmu
           </h3>
           <p className="mt-3 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
             Ini gambaran awal — akan semakin akurat setelah kamu berlatih.{" "}
@@ -232,7 +232,7 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
       {result.insightText ? (
         <div className="rounded-3xl border border-violet-200/70 bg-violet-50/60 p-6 dark:border-violet-900/60 dark:bg-violet-950/20">
           <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-            <Sparkles size={16} className="text-violet-500" /> Kesimpulan untukmu
+            <Sparkles size={16} className="text-bc-violet" /> Kesimpulan untukmu
           </h3>
           <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">{result.insightText}</p>
         </div>
@@ -240,7 +240,7 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
 
       <div className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70">
         <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-100">
-          <Sparkles size={16} className="text-violet-500" /> Apa yang bisa kamu lakukan sekarang
+          <Sparkles size={16} className="text-bc-violet" /> Apa yang bisa kamu lakukan sekarang
         </h3>
         <p className="mt-3 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           Hasil ini bersifat sementara dan hanya gambaran awal. Latihan rutin di Jalur Cerdas, kuis, dan karya akan
@@ -381,7 +381,7 @@ if (data.status === "COMPLETED" && data.result) {
   }
 
   if (loading) {
-    return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-violet-600" /></div>;
+    return <div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-bc-violet" /></div>;
   }
 
   if (pendingAdaptive) {
@@ -395,7 +395,7 @@ if (data.status === "COMPLETED" && data.result) {
             <p className="text-[10px] uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Tes Awal</p>
             <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">Sesi Selesai</p>
           </div>
-          <span className="text-xs text-slate-500">{session?.answeredCount ?? 0}/{session?.sessionSize ?? "?"}</span>
+          <span className="text-xs text-bc-text-3">{session?.answeredCount ?? 0}/{session?.sessionSize ?? "?"}</span>
         </div>
         <section className="rounded-3xl border border-slate-200/70 bg-white/80 p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900/70 md:p-8">
           <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -415,7 +415,7 @@ if (data.status === "COMPLETED" && data.result) {
       return (
         <div className="mx-auto max-w-lg py-20 px-5 text-center">
           <p className="text-sm text-slate-600 dark:text-slate-300">{error}</p>
-          <button type="button" onClick={() => router.push("/murid/beranda")} className="mt-4 text-sm font-semibold text-violet-600 hover:underline">
+          <button type="button" onClick={() => router.push("/murid/beranda")} className="mt-4 text-sm font-semibold text-bc-violet hover:underline">
             Kembali ke Beranda
           </button>
         </div>
@@ -440,7 +440,7 @@ if (data.status === "COMPLETED" && data.result) {
     return (
       <div className="mx-auto max-w-lg py-20 px-5 text-center">
         <p className="text-sm text-slate-600 dark:text-slate-300">{error || "Tes awal tidak tersedia."}</p>
-        <button type="button" onClick={() => router.push("/murid/beranda")} className="mt-4 text-sm font-semibold text-violet-600 hover:underline">
+        <button type="button" onClick={() => router.push("/murid/beranda")} className="mt-4 text-sm font-semibold text-bc-violet hover:underline">
           Kembali ke Beranda
         </button>
       </div>
@@ -475,7 +475,7 @@ if (data.status === "COMPLETED" && data.result) {
           <p className="text-[10px] uppercase tracking-[0.18em] text-violet-600 dark:text-violet-300">Tes Awal</p>
           <p className="text-sm font-semibold text-slate-900 dark:text-slate-100 truncate">{session.actionTitle || "Kenali Kemampuanmu"}</p>
         </div>
-        <span className="text-xs text-slate-500">{Math.max(progressCount, 1)}/{progressTotal}</span>
+        <span className="text-xs text-bc-text-3">{Math.max(progressCount, 1)}/{progressTotal}</span>
       </div>
 
       <div className="h-1.5 rounded-full bg-slate-200 dark:bg-slate-800 mb-8 overflow-hidden">

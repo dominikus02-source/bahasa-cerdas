@@ -111,7 +111,12 @@ function scanLightOnly(re: RegExp): { total: number; samples: string[] } {
     // StudentHomeHero juga light-by-design: artwork "banner herocard Arena.png"
     // berkomposisi terang (area putih kiri) sehingga hero card sengaja putih
     // di kedua tema — identitas/CTA memakai teks gelap kontras tinggi di atasnya.
-    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/") || f.endsWith("components/student-home/StudentHomeHero.tsx")) continue;
+    // ProfileHero memilih tinta lewat helper runtime t(light, dark): string `dark`
+    // diberi prefiks `dark:` saat dirender, dan string `light` sengaja dipakai di
+    // KEDUA tema bila latar kosmetik profil terang (isDarkInk). Pemindai baris tidak
+    // bisa melihat prefiks runtime itu, dan token bc-* di sisi light justru salah
+    // (ikut berubah gelap di atas latar kosmetik terang).
+    if (f.includes("app/arena/bottom-nav.tsx") || f.includes("/game/") || f.endsWith("components/student-home/StudentHomeHero.tsx") || f.endsWith("components/profile/ProfileHero.tsx")) continue;
     readFileSync(f, "utf8")
       .split("\n")
       .forEach((line) => {

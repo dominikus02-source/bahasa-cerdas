@@ -56,7 +56,7 @@ export default function ArticleCoverLightbox({ src, title }: ArticleCoverLightbo
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group relative mb-2 block aspect-video w-full overflow-hidden rounded-2xl bg-slate-100 text-left shadow-lg outline-none ring-offset-2 transition focus-visible:ring-2 focus-visible:ring-red-500"
+        className="group relative mb-2 block aspect-video w-full overflow-hidden rounded-2xl bg-bc-surface-2 text-left shadow-lg outline-none ring-offset-2 transition focus-visible:ring-2 focus-visible:ring-red-500"
         aria-label={`Perbesar foto untuk ${title}`}
       >
         <SafeMediaImage

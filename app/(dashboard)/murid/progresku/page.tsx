@@ -137,7 +137,7 @@ export default function ProgresPage() {
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
-            <BookOpen className="h-4 w-4 text-violet-500" />
+            <BookOpen className="h-4 w-4 text-bc-violet" />
             <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{totalAttempts}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">Jawaban objektif</p>
           </div>
@@ -147,7 +147,7 @@ export default function ProgresPage() {
             <p className="text-xs text-slate-500 dark:text-slate-400">Kemampuan terukur</p>
           </div>
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
-            <TrendingUp className="h-4 w-4 text-emerald-500" />
+            <TrendingUp className="h-4 w-4 text-bc-success" />
             <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{overallAccuracy === null ? "—" : `${overallAccuracy}%`}</p>
             <p className="text-xs text-slate-500 dark:text-slate-400">Ketepatan keseluruhan</p>
           </div>
@@ -179,7 +179,7 @@ export default function ProgresPage() {
         <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/50">
             <div className="mb-5 flex items-center gap-2">
-              <BarChart3 size={18} className="text-violet-500" />
+              <BarChart3 size={18} className="text-bc-violet" />
               <h2 className="font-bold text-slate-900 dark:text-white">Kemampuan bahasa</h2>
             </div>
             <div className="space-y-5">
@@ -214,7 +214,7 @@ export default function ProgresPage() {
 
           <aside className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/50">
             <div className="mb-4 flex items-center gap-2">
-              <Flame size={18} className="text-amber-500" />
+              <Flame size={18} className="text-bc-warning" />
               <h2 className="font-bold text-slate-900 dark:text-white">Yang perlu kamu tahu</h2>
             </div>
             <div className="space-y-3">

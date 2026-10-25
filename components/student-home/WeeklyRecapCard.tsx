@@ -114,7 +114,7 @@ export function WeeklyRecapCard() {
   if (error) {
     return (
       <div className="px-card bc-tint-teal px-5 py-4">
-        <p className="text-xs text-red-500">{error}</p>
+        <p className="text-xs text-bc-danger">{error}</p>
       </div>
     );
   }
@@ -161,9 +161,9 @@ export function WeeklyRecapCard() {
       {/* Strength */}
       {recap.strength && (
         <div className="flex items-start gap-2">
-          <TrendingUp size={12} className="mt-0.5 shrink-0 text-emerald-500" />
+          <TrendingUp size={12} className="mt-0.5 shrink-0 text-bc-success" />
           <p className="text-xs text-[var(--px-text-dim)]">
-            <span className="font-semibold text-emerald-600">Kekuatan:</span>{" "}
+            <span className="font-semibold text-bc-success">Kekuatan:</span>{" "}
             {recap.strength.label} ({recap.strength.accuracy}%)
           </p>
         </div>

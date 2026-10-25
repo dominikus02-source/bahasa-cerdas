@@ -130,6 +130,8 @@
   margin-top: 10px; font-size: clamp(52px, 15vw, 92px); line-height: .9; font-weight: 900; letter-spacing: -.045em;
   background: linear-gradient(95deg, var(--clr-accent), var(--clr-info) 50%, var(--clr-violet)); -webkit-background-clip: text; background-clip: text; color: transparent;
 }
+/* Dua kolom: ukuran wordmark mengikuti lebar kolom (bukan 15vw layar penuh) agar tidak terpotong di laptop 1024px. */
+@media (min-width: 900px) { .jpb-word { font-size: clamp(52px, 6.5vw, 92px); } }
 .jpb-sub { margin-top: 10px; max-width: 26ch; font-size: clamp(16px, 4.4vw, 21px); line-height: 1.3; font-weight: 500; color: var(--clr-text-2); }
 .jpb-cta {
   display: inline-flex; align-items: center; gap: 12px; width: fit-content; margin-top: 18px; min-height: 52px; padding: 0 8px 0 22px; border-radius: 999px;

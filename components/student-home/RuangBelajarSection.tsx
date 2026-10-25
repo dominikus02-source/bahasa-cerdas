@@ -27,7 +27,7 @@ export function RuangBelajarSection() {
           aria-label="Buka kelas"
         >
           <div className="flex items-start gap-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--px-royal)]/10 text-[var(--px-royal)] dark:bg-blue-500/15 dark:text-blue-300">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-bc-info-soft text-bc-info">
               <Users size={21} strokeWidth={2} />
             </span>
             <div className="min-w-0 flex-1">
@@ -48,7 +48,7 @@ export function RuangBelajarSection() {
 
         <div className="px-card px-4 py-4">
           <div className="flex items-start gap-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:bg-emerald-500/15 dark:text-emerald-300">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-bc-success-soft text-bc-success">
               <BookOpen size={21} strokeWidth={2} />
             </span>
             <div className="min-w-0 flex-1">
@@ -62,7 +62,7 @@ export function RuangBelajarSection() {
               <div className="mt-3 flex items-center gap-3">
                 <Link
                   href="/arena/tugas"
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-500/10 px-3 py-2 text-[11px] font-extrabold text-emerald-700 transition-colors hover:bg-emerald-500/15 dark:text-emerald-300"
+                  className="inline-flex items-center gap-1.5 rounded-xl bg-bc-success-soft px-3 py-2 text-[11px] font-extrabold text-bc-success transition-colors hover:bg-bc-success/20"
                   aria-label="Buka tugas"
                 >
                   <ClipboardList size={13} />

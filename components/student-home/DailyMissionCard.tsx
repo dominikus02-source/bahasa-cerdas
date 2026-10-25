@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
+import { buttonClass } from "@/components/ui/button";
 import { ArrowRight, Check, Gift, Loader2, RotateCw, Sparkles } from "lucide-react";
 import { getQuestMeta, questProgressText } from "@/lib/quest-meta";
 import type { DailyQuestView } from "@/lib/gamification/client-types";
@@ -124,19 +125,19 @@ export function DailyMissionCard() {
   const overallPct = Math.min(100, Math.round((doneCount / quests.length) * 100));
 
   return (
-    <section aria-label="Misi harian" className="my-day-hero px-card bc-tint-orange px-5 py-6">
+    <section aria-label="Misi harian" className="my-day-hero px-card bc-tint-orange h-full px-5 py-6">
       {/* HEADER */}
       <div className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           {allDone ? (
-            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-emerald-500 dark:text-emerald-300">
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-bc-success">
               Semua Misi Selesai!
             </p>
           ) : (
             <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--px-gold)]">Misi Harian</p>
           )}
           <h2 className="mt-0.5 flex items-center gap-2 text-base font-extrabold text-[var(--px-text)]">
-            {allDone ? <Sparkles size={16} className="text-emerald-500 dark:text-emerald-300" /> : <Gift size={16} className="text-[var(--px-gold)]" />}
+            {allDone ? <Sparkles size={16} className="text-bc-success" /> : <Gift size={16} className="text-[var(--px-gold)]" />}
             {allDone ? "Keren! Semua misi selesai" : "Misi Hari Ini"}
           </h2>
           <p className="mt-0.5 text-xs text-[var(--px-text-dim)]">
@@ -160,14 +161,14 @@ export function DailyMissionCard() {
         </div>
         <div className="h-1.5 overflow-hidden rounded-full bg-[var(--px-track)]">
           <div
-            className={`h-full rounded-full transition-all ${allDone ? "bg-emerald-500" : "bg-[var(--px-gold)]"}`}
+            className={`h-full rounded-full transition-all ${allDone ? "bg-bc-success" : "bg-[var(--px-gold)]"}`}
             style={{ width: `${overallPct}%` }}
           />
         </div>
       </div>
 
       {error && (
-        <p className="mb-3 rounded-lg bg-rose-500/10 px-3 py-2 text-xs font-semibold text-rose-500 dark:text-rose-300">{error}</p>
+        <p className="mb-3 rounded-lg bg-bc-danger-soft px-3 py-2 text-xs font-semibold text-bc-danger">{error}</p>
       )}
 
       {/* MISSIONS */}
@@ -183,8 +184,8 @@ export function DailyMissionCard() {
           return (
             <div
               key={q.id}
-              className={`flex items-center gap-3 rounded-xl border p-3 ${
-                isClaimed ? "border-emerald-500/20 bg-emerald-500/[0.06]" : "border-[var(--px-border)] bg-white/[0.03]"
+              className={`grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 rounded-xl border p-3 sm:grid-cols-[auto_minmax(0,1fr)_auto] ${
+                isClaimed ? "border-bc-success/30 bg-bc-success-soft" : "border-[var(--px-border)] bg-[var(--px-glass)]"
               }`}
             >
               <div
@@ -194,24 +195,22 @@ export function DailyMissionCard() {
               </div>
 
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-bold text-[var(--px-text)]">{meta.label}</p>
-                <div className="mt-1.5 flex items-center gap-2">
-                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--px-track)]">
+                <p className="line-clamp-2 break-words text-sm font-bold leading-snug text-[var(--px-text)]">{meta.label}</p>
+                <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[var(--px-track)]">
                     <div
-                      className={`h-full rounded-full transition-all ${isClaimed || isDone ? "bg-emerald-500" : "bg-[var(--px-gold)]"}`}
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <span className="shrink-0 text-[10px] font-bold text-[var(--px-text-faint)]">
-                    {q.progress}/{q.target} · {questProgressText(q.progress, q.target, isDone)}
-                  </span>
+                      className={`h-full rounded-full transition-all ${isClaimed || isDone ? "bg-bc-success" : "bg-[var(--px-gold)]"}`}
+                    style={{ width: `${pct}%` }}
+                  />
                 </div>
+                <p className="mt-1 text-[11px] font-semibold text-[var(--px-text-faint)]">
+                  {q.progress}/{q.target} · {questProgressText(q.progress, q.target, isDone)}
+                </p>
               </div>
 
-              <div className="flex shrink-0 flex-col items-end gap-1.5">
+              <div className="col-span-2 flex items-center justify-between gap-2 sm:col-span-1 sm:flex-col sm:items-end sm:gap-1.5">
                 <span className="text-[11px] font-bold text-[var(--px-gold)]">+{q.rewardCoins} Koin</span>
                 {isClaimed ? (
-                  <span className="px-chip text-emerald-500 dark:text-emerald-300">
+                  <span className="px-chip text-bc-success">
                     <Check size={11} className="mr-0.5 inline" /> Diterima
                   </span>
                 ) : isDone ? (
@@ -219,7 +218,7 @@ export function DailyMissionCard() {
                     type="button"
                     onClick={() => claim(q.id)}
                     disabled={claimingId === q.id}
-                    className="px-btn-gold inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold disabled:cursor-wait"
+                    className={buttonClass({ variant: "accent", size: "sm", className: "disabled:cursor-wait" })}
                     aria-label={`Ambil reward misi ${meta.label}`}
                   >
                     {claimingId === q.id ? <Loader2 size={12} className="animate-spin" /> : null}
@@ -228,7 +227,7 @@ export function DailyMissionCard() {
                 ) : (
                   <Link
                     href={cta.href}
-                    className="inline-flex items-center gap-1 rounded-full border border-[var(--px-border)] px-3 py-1.5 text-[11px] font-bold text-[var(--px-royal-2)] transition-colors hover:bg-white/[0.05]"
+                    className="inline-flex items-center gap-1 rounded-full border border-[var(--px-border)] px-3 py-1.5 text-[11px] font-bold text-[var(--px-royal-2)] transition-colors hover:bg-[var(--px-glass)]"
                     aria-label={`Mulai misi ${meta.label}`}
                   >
                     {cta.label}
@@ -243,13 +242,13 @@ export function DailyMissionCard() {
 
       {/* COMPLETION MOMENT */}
       {allDone && (
-        <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.06] p-3">
-          <p className="text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+        <div className="mt-4 flex items-center justify-between gap-3 rounded-xl border border-bc-success/30 bg-bc-success-soft p-3">
+          <p className="text-xs font-semibold text-bc-success">
             Besok ada misi baru lagi. Jaga rentetan belajarmu!
           </p>
           <Link
             href="/arena/jalur-cerdas"
-            className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-600 px-3 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-emerald-700"
+            className={buttonClass({ variant: "secondary", size: "sm", className: "shrink-0" })}
           >
             Lanjut Belajar
             <ArrowRight size={11} />

@@ -6,81 +6,58 @@ import { ArrowRight, BookOpenCheck, CheckCircle2, Sparkles, Target, Zap } from "
 
 export function JalurCerdasHomeCard() {
   return (
-    <section aria-label="Jalur Cerdas">
+    <section aria-label="Jalur Cerdas" className="h-full">
       <Link
         href="/arena/jalur-cerdas"
-        className="group relative block overflow-hidden rounded-[1.5rem] border border-white/10 bg-gradient-to-br from-[#09142f] via-[#14265a] to-[#243b9b] p-5 shadow-[0_20px_50px_-28px_rgba(43,75,255,0.8)] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-[0_24px_60px_-28px_rgba(43,75,255,0.95)] sm:p-6"
+        className="group px-card bc-tint-blue flex h-full flex-col p-5 transition-transform duration-200 hover:-translate-y-0.5 sm:p-6"
       >
-        <div
-          className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-cyan-300/20 blur-3xl"
-          aria-hidden="true"
-        />
-        <div
-          className="pointer-events-none absolute -bottom-24 left-1/3 h-52 w-52 rounded-full bg-fuchsia-500/20 blur-3xl"
-          aria-hidden="true"
-        />
+        <div className="flex min-w-0 items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-bc-icon bg-bc-info-soft text-bc-info">
+            <BookOpenCheck size={24} strokeWidth={2.2} />
+          </div>
 
-        <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex min-w-0 items-start gap-4">
-            <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-300 to-violet-500 shadow-lg shadow-cyan-500/20">
-              <BookOpenCheck size={28} className="text-white drop-shadow" strokeWidth={2.2} />
-              <span className="absolute -right-1.5 -top-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-[#14265a] bg-[#ffd24a] text-[#1b1205]">
-                <Sparkles size={12} strokeWidth={3} />
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-bc-info">
+                Jalur belajar utama
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-bc-success-soft px-2 py-0.5 text-[10px] font-extrabold text-bc-success">
+                <CheckCircle2 size={11} />
+                Bertahap
               </span>
             </div>
 
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/10 px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-[0.18em] text-cyan-200 ring-1 ring-white/10">
-                  Jalur belajar utama
-                </span>
-                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2.5 py-1 text-[10px] font-extrabold text-emerald-200 ring-1 ring-emerald-300/15">
-                  <CheckCircle2 size={11} />
-                  Bertahap
-                </span>
-              </div>
-
-              <h2 className="mt-2 text-[22px] font-extrabold tracking-tight text-white sm:text-2xl">
-                Jalur Cerdas
-              </h2>
-              <p className="mt-1 max-w-xl text-sm leading-relaxed text-blue-100/80">
-                Belajar Bahasa Indonesia selangkah demi selangkah, dari dasar sampai makin mahir.
-                Tinggal lanjutkan unit berikutnya.
-              </p>
-
-              <div className="mt-3 flex flex-wrap items-center gap-3 text-[11px] font-semibold text-blue-100/70">
-                <span className="inline-flex items-center gap-1.5">
-                  <Target size={13} className="text-cyan-300" />
-                  Latihan terarah
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <Zap size={13} className="text-[#ffd24a]" />
-                  Dapatkan XP
-                </span>
-                <span className="inline-flex items-center gap-1.5">
-                  <BookOpenCheck size={13} className="text-fuchsia-300" />
-                  Progres tersimpan
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className="shrink-0">
-            <span className={buttonClass({ variant: "primary", size: "lg", className: "w-full px-5 font-extrabold transition-transform group-hover:translate-x-0.5 sm:w-auto" })}>
-              Lanjutkan
-              <ArrowRight size={17} strokeWidth={2.5} />
-            </span>
+            <h2 className="mt-1 text-xl font-extrabold tracking-tight text-[var(--px-text)]">
+              Jalur Cerdas
+            </h2>
+            <p className="mt-1 text-sm leading-relaxed text-[var(--px-text-dim)]">
+              Belajar Bahasa Indonesia selangkah demi selangkah, dari dasar sampai makin mahir.
+              Tinggal lanjutkan unit berikutnya.
+            </p>
           </div>
         </div>
 
-        <div className="relative mt-5 grid grid-cols-3 gap-2" aria-hidden="true">
-          <div className="h-1.5 rounded-full bg-gradient-to-r from-cyan-300 to-blue-400" />
-          <div className="h-1.5 rounded-full bg-white/15" />
-          <div className="h-1.5 rounded-full bg-white/15" />
+        <ul className="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold text-[var(--px-text-dim)]">
+          <li className="inline-flex items-center gap-1.5">
+            <Target size={13} className="text-bc-info" />
+            Latihan terarah
+          </li>
+          <li className="inline-flex items-center gap-1.5">
+            <Zap size={13} className="text-bc-warning-strong" />
+            Dapatkan XP
+          </li>
+          <li className="inline-flex items-center gap-1.5">
+            <Sparkles size={13} className="text-bc-violet" />
+            Progres tersimpan
+          </li>
+        </ul>
+
+        <div className="mt-auto pt-5">
+          <span className={buttonClass({ variant: "secondary", className: "w-full font-extrabold sm:w-auto" })}>
+            Lanjutkan Jalur Cerdas
+            <ArrowRight size={16} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
+          </span>
         </div>
-        <p className="relative mt-2 text-[11px] font-semibold text-blue-100/75">
-          Jalur Cerdas selalu tersedia dari Beranda saat kamu ingin belajar.
-        </p>
       </Link>
     </section>
   );

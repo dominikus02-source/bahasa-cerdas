@@ -100,8 +100,11 @@ ok("kelas XP reference idempoten (kelas-create-<id>)", /kelas-create-/.test(grou
 
 // ── 8. Integrasi dashboard ─────────────────────────────────────────────────
 const beranda = read("app/(dashboard)/guru/beranda/page.tsx");
-ok("beranda memasang GuruLeaderboardCard", /GuruLeaderboardCard/.test(beranda));
-ok("beranda memasang GuruBerkarya", /GuruBerkarya/.test(beranda));
+// Beranda guru = page.tsx → GuruBerandaClient → TeacherHomeV3. Kartu GuruLeaderboardCard
+// penuh tidak lagi di beranda; V3 menampilkan ringkasan peringkat mingguan + tautan ke papan lengkap.
+const homeV3Lit = read("components/guru/TeacherHomeV3.tsx");
+ok("beranda menampilkan ringkasan peringkat mingguan → /guru/game/leaderboard", /\/api\/guru\/leaderboard\?period=WEEKLY/.test(homeV3Lit) && /href="\/guru\/game\/leaderboard"/.test(homeV3Lit));
+ok("beranda memasang GuruBerkarya", /GuruBerandaClient/.test(beranda) && /<GuruBerkarya/.test(homeV3Lit));
 
 // ── 9. Otorisasi endpoint baru ─────────────────────────────────────────────
 for (const p of [

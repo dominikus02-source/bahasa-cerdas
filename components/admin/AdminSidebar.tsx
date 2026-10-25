@@ -327,7 +327,7 @@ export function AdminSidebar({ user }: Props) {
                   <Icon className={`${NAV_ICON_CLASS} ${hasActive ? NAV_ICON_ACTIVE : NAV_ICON_INACTIVE}`} strokeWidth={NAV_ICON_STROKE} />
                   <span className="shell-label flex-1 text-left">{entry.label}</span>
                   <GroupIcon
-                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"} ${hasActive ? "text-violet-500" : "text-slate-400"}`}
+                    className={`w-4 h-4 shrink-0 transition-transform duration-200 ${isOpen ? "rotate-0" : "-rotate-90"} ${hasActive ? "text-bc-violet" : "text-slate-400"}`}
                     strokeWidth={2}
                   />
                 </button>

@@ -109,7 +109,7 @@ async function revokeBinding(formData: FormData): Promise<BindingActionResult> {
 export default async function TelegramBindingPage() {
   const access = await authorizeFounder();
   if (!access.ok) {
-    return <p className="p-6 text-sm text-red-600">Akses ditolak.</p>;
+    return <p className="p-6 text-sm text-bc-danger">Akses ditolak.</p>;
   }
 
   const bindings = await db.agentTelegramBinding.findMany({
@@ -177,14 +177,14 @@ export default async function TelegramBindingPage() {
 
       <section className="space-y-2">
         <h2 className="text-sm font-semibold">Binding terdaftar</h2>
-        {bindings.length === 0 && <p className="text-xs text-slate-500">Belum ada binding.</p>}
+        {bindings.length === 0 && <p className="text-xs text-bc-text-3">Belum ada binding.</p>}
         <ul className="space-y-2">
           {bindings.map((b) => (
             <li key={b.id} className="flex items-center justify-between rounded border border-slate-200 px-3 py-2 text-xs dark:border-slate-700">
               <div>
                 <span className="font-mono">{b.telegramUserId}</span> → chat <span className="font-mono">{b.telegramChatId}</span>
-                {b.label ? <span className="text-slate-500"> • {b.label}</span> : null}
-                <span className={b.revokedAt ? "text-red-500" : "text-emerald-600"}> • {b.revokedAt ? "dicabut" : "aktif"}</span>
+                {b.label ? <span className="text-bc-text-3"> • {b.label}</span> : null}
+                <span className={b.revokedAt ? "text-bc-danger" : "text-bc-success"}> • {b.revokedAt ? "dicabut" : "aktif"}</span>
               </div>
               {!b.revokedAt && (
                 <BindingForm

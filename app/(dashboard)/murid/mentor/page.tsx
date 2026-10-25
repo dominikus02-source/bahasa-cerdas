@@ -111,7 +111,7 @@ function MentorRoom() {
             </p>
             <Link
               href="/murid/premium"
-              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5"
+              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5" /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */
             >
               Buka Premium
               <Gem className="h-4 w-4" />
@@ -168,7 +168,7 @@ function MentorRoom() {
             <button
               onClick={askMentor}
               disabled={loading}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"
+              className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70" /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
               {loading ? "NARA Mentor sedang membaca…" : result ? "Perbarui analisis" : "Tanya NARA Mentor"}
@@ -250,7 +250,7 @@ function MentorRoom() {
               )}
 
               <div className="mt-5 flex items-start gap-2 rounded-2xl bg-slate-50 px-4 py-3 dark:bg-white/[0.04]">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-violet-500" />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-bc-violet" />
                 <p className="text-xs italic leading-5 text-slate-500 dark:text-slate-300/65">{result.encouragement}</p>
               </div>
             </div>
@@ -272,7 +272,7 @@ function MentorRoom() {
                 "Respons punya fallback saat AI bermasalah",
               ].map((item) => (
                 <div key={item} className="flex items-start gap-2 text-xs text-slate-600 dark:text-slate-300/70">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-emerald-500" />
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-bc-success" />
                   {item}
                 </div>
               ))}

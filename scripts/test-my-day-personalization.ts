@@ -67,7 +67,8 @@ check("5. Session page POST answer dan complete", sessionPage.includes('action: 
 check("5. Session page menampilkan progress dan navigasi", sessionPage.includes("index + 1") && sessionPage.includes("Soal Berikutnya"));
 
 // 6 — My Day hierarchy: satu CTA dominan + skill + premium dari konteks
-check("6. SkillRadar membaca learnerState dari My Day", page.includes("<SkillRadar") && page.includes("skills=") && page.includes("learnerState"));
+// SkillRadar tidak lagi dirender di beranda (penyederhanaan); komponennya tetap menerima learnerState via prop.
+check("6. SkillRadar menerima learnerState lewat prop (tidak dirender di beranda sederhana)", !page.includes("<SkillRadar") && skillRadar.includes("LearnerSkillState"));
 check("6. SkillRadar tidak fetch sendiri", !skillRadar.includes("/api/player/skills") && !skillRadar.includes("useEffect"));
 check("6. Tidak ada MentorCard/aksi duplikat di beranda (hero tunggal; MentorCard data-prop opsional)", !page.includes("MentorCard") && mentorCard.includes("data?: MentorCardData"));
 

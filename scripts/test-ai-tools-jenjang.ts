@@ -6,7 +6,8 @@ const ok = (l: string, c: boolean) => { if (!c) fail++; console.log(`${c ? "PASS
 
 // Grades: SD must exist now
 ok("kelas SD I-VI tersedia", ["I","II","III","IV","V","VI"].every(g => GRADE_OPTIONS.some(o => o.value === g)));
-ok("total 12 kelas (I-XII)", GRADE_OPTIONS.length === 12);
+// 13 = TK/PAUD (Fase Fondasi) + kelas I-XII; TK ditambahkan saat jenjang PAUD masuk.
+ok("total 13 kelas (TK + I-XII)", GRADE_OPTIONS.length === 13 && GRADE_OPTIONS.some(o => o.value === "TK"));
 ok("Fase B -> kelas III & IV", gradesForPhase("B").map(g=>g.value).join(",") === "III,IV");
 ok("Fase A -> kelas I & II", gradesForPhase("A").map(g=>g.value).join(",") === "I,II");
 ok("kelas IV -> fase B", phaseForGrade("IV") === "B");

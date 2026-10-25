@@ -35,43 +35,46 @@ check("Wrapper .px-theme di root", page.includes('className="px-theme'));
 // Container dipersempit ke 1180px pada redesain beranda murid.
 check("Container max-w-[1180px]", /max-w-\[(1180|1200)px\]/.test(page));
 
-// 2 — Hierarki Personal Learning Home: HERO → SKILL (kemampuan) → MOTIVASI → PREMIUM
-// → PINTAS (AI BC + JOURNEY) → RUANG → SIMULASI → KARYA → KABAR
+// 2 — Hierarki beranda sederhana (fix/beranda-dark-sederhana):
+// HERO → BELAJAR HARI INI (Jalur Cerdas + Tantangan | Misi) → TEMAN BELAJAR
+// (NARA | Mentor) → RUANG → SIMULASI → INSPIRASI → KARYA.
+// SkillRadar/ArenaHomeSection/PremiumValueCard/LearningJourneySection/
+// SecondaryLearningInfo sudah tidak dirender sejak redesain sebelumnya (tes lama
+// gagal di main); kini dipastikan TIDAK dihidupkan lagi agar beranda tidak ramai.
 // ContinueLearningCard TIDAK dirender — fungsi aksi/state diambil alih Hero.
 check("ContinueLearningCard TIDAK dirender di beranda", !page.includes("ContinueLearningCard"));
 const required = [
   "StudentHomeHero",
-  "SkillRadar",
-  "ArenaHomeSection",
-  "PremiumValueCard",
+  "JalurCerdasHomeCard",
+  "DailyActionCard",
+  "DailyMissionCard",
   "AIBCHomeCard",
-  "LearningJourneySection",
+  "MentorHomeCard",
   "RuangBelajarSection",
   "SimulasiUjianSection",
+  "StudentDailyInspiration",
   "RecentWorksSection",
-  "SecondaryLearningInfo",
 ];
-for (const c of required) {
-  // SkillRadar di-render multiline (<SkillRadar\n  skills=...) — cocokkan tag-nya
-  // secara whitespace-tolerant, bukan string literal kaku.
-  check(`Halaman merender <${c} />`, c === "SkillRadar" ? page.includes("<SkillRadar") && page.includes("skills=") : page.includes(`<${c} />`));
-}
+for (const c of required) check(`Halaman merender <${c} />`, page.includes(`<${c} />`));
+for (const c of ["SkillRadar", "ArenaHomeSection", "PremiumValueCard", "LearningJourneySection", "SecondaryLearningInfo", "TrialStatusCard"])
+  check(`Kartu lama tidak dihidupkan lagi: <${c}>`, !page.includes(`<${c}`));
 check("QuickActions TIDAK dirender", !page.includes("QuickActions"));
-const marker = (c: string) => (c === "SkillRadar" ? "<SkillRadar" : `<${c} />`);
+const marker = (c: string) => `<${c} />`;
 const order = (a: string, b: string, label: string) =>
-  check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(marker(a)) < page.indexOf(marker(b)));
-order("StudentHomeHero", "SkillRadar", "hero dulu, kemampuan naik natural");
-order("SkillRadar", "ArenaHomeSection", "skill sebelum motivasi");
-order("ArenaHomeSection", "PremiumValueCard", "motivasi sebelum premium");
-order("PremiumValueCard", "AIBCHomeCard", "premium sebelum pintas belajar");
-order("AIBCHomeCard", "LearningJourneySection", "AI BC sebelum journey");
-order("LearningJourneySection", "RuangBelajarSection", "pintas sebelum ruang");
+  check(`Urutan: ${a} sebelum ${b} (${label})`, page.indexOf(marker(a)) >= 0 && page.indexOf(marker(a)) < page.indexOf(marker(b)));
+order("StudentHomeHero", "JalurCerdasHomeCard", "hero dulu, lalu jalur belajar");
+order("JalurCerdasHomeCard", "DailyActionCard", "jalur sebelum tantangan harian");
+order("DailyActionCard", "DailyMissionCard", "tantangan sebelum misi");
+order("DailyMissionCard", "AIBCHomeCard", "belajar sebelum teman belajar");
+order("AIBCHomeCard", "MentorHomeCard", "NARA sebelum mentor");
+order("MentorHomeCard", "RuangBelajarSection", "teman belajar sebelum ruang");
 order("RuangBelajarSection", "SimulasiUjianSection", "ruang sebelum simulasi");
-order("SimulasiUjianSection", "RecentWorksSection", "simulasi sebelum karya");
-order("RecentWorksSection", "SecondaryLearningInfo", "karya sebelum kabar");
+order("SimulasiUjianSection", "StudentDailyInspiration", "simulasi sebelum inspirasi");
+order("StudentDailyInspiration", "RecentWorksSection", "inspirasi sebelum karya");
 check(
-  "Desktop: skill/motivasi & AI BC/journey berbagi baris (grid lg:grid-cols-2)",
-  page.includes("grid grid-cols-1 lg:grid-cols-2 gap-6")
+  "Desktop: belajar hari ini 2 kolom (xl) & teman belajar 2 kolom (lg)",
+  page.includes('aria-label="Belajar hari ini" className="grid grid-cols-1 gap-5 xl:grid-cols-2') &&
+    page.includes('aria-label="Teman belajar" className="grid grid-cols-1 gap-5 lg:grid-cols-2"')
 );
 
 // 3 — Heartbeat dipertahankan
@@ -159,12 +162,10 @@ check("Karya → CTA /murid/karya", works.includes('href="/murid/karya"') && wor
 // 10 — Personal Learning Home: hero = single learning entry + learning-first order
 console.log("\nPERSONAL LEARNING HOME (additive):\n");
 const page3 = read("app/(dashboard)/murid/beranda/page.tsx");
-check("3.0 Misi Harian (motivasi) pindah SETELAH perjalanan belajar (journey)",
-  page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />"));
-check("3.0 Urutan learning-first utuh: hero → skill → journey → misi → ruang (tanpa kartu aksi duplikat)",
-  page3.indexOf("<StudentHomeHero />") < page3.indexOf("<SkillRadar") &&
-  page3.indexOf("<SkillRadar") < page3.indexOf("<LearningJourneySection />") &&
-  page3.indexOf("<LearningJourneySection />") < page3.indexOf("<DailyMissionCard />") &&
+check("3.0 Urutan learning-first utuh: hero → jalur → misi → ruang (tanpa kartu aksi duplikat)",
+  page3.indexOf("<StudentHomeHero />") >= 0 &&
+  page3.indexOf("<StudentHomeHero />") < page3.indexOf("<JalurCerdasHomeCard />") &&
+  page3.indexOf("<JalurCerdasHomeCard />") < page3.indexOf("<DailyMissionCard />") &&
   page3.indexOf("<DailyMissionCard />") < page3.indexOf("<RuangBelajarSection />"));
 const hero3 = read("components/student-home/StudentHomeHero.tsx");
 check("3.0 Hero = satu-satunya CTA utama di home (tanpa px-btn-gold lain)",
