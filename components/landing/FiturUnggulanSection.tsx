@@ -38,7 +38,8 @@ const features = [
     icon: Bot,
     title: "NARA",
     desc: "Teman ngobrol untuk belajar.",
-    href: "/arena/ai",
+    // Laman publik NARA; pengguna yang sudah masuk diarahkan sesuai peran.
+    href: "/ai-bc",
     color: "bg-amber-100 text-amber-600",
   },
   {
@@ -66,7 +67,7 @@ export default function FiturUnggulanSection() {
         </motion.div>
 
         <motion.div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
@@ -75,7 +76,7 @@ export default function FiturUnggulanSection() {
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <motion.div key={f.title} variants={fadeInUp}>
+              <motion.div key={f.title} variants={fadeInUp} className="min-w-0">
                 <Link
                   href={f.href}
                   className="group flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-4 hover:border-zinc-200 hover:shadow-md transition-all"
@@ -87,7 +88,7 @@ export default function FiturUnggulanSection() {
                     <h3 className="font-semibold text-zinc-900 group-hover:text-primary transition-colors">
                       {f.title}
                     </h3>
-                    <p className="text-sm text-zinc-500 truncate">{f.desc}</p>
+                    <p className="text-sm text-zinc-500 line-clamp-2">{f.desc}</p>
                   </div>
                   <ArrowRight size={16} className="text-zinc-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                 </Link>
