@@ -54,8 +54,8 @@ await build({
             header={<header className="h-14 shrink-0 border-b border-border bg-background px-4">BahasaCerdas</header>}
             mainClassName={teacher ? 'bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full' : 'mx-auto px-0 w-full py-0'}
             bottomNav={teacher ? <GuruMobileNav role="GURU" isFounder={false} /> : role === 'apk' ? <BottomNav /> : <MuridMobileNav />}>
-              {teacher ? <Teacher userName="Guru QA" personaTitle="Teman Guru" greeting="Halo, mari berdiskusi." hints={hints}/>
-                : <div className="w-full py-0 md:px-6"><Student userName="Murid QA" personaTitle="Teman Belajarmu" greeting="Halo, mari belajar." hints={hints}/></div>}
+              {teacher ? <Teacher userName="Guru QA" personaTitle="Teman Berpikir, Berkata, dan Berkarya." greeting="Halo, mari berdiskusi." hints={hints}/>
+                : <div className="w-full py-0 md:px-6"><Student userName="Murid QA" personaTitle="Teman Berpikir, Berkata, dan Berkarya." greeting="Halo, mari belajar." hints={hints}/></div>}
           </ShellLayout>;
       createRoot(document.getElementById('root')).render(content);
     `,
@@ -170,7 +170,7 @@ async function checkBounds(label) {
       limit: nav?.height > 0 ? nav.top : innerHeight,
       teacherEdges: workspace && shell && [Math.abs(workspace.left-shell.left), Math.abs(workspace.right-shell.right)],
       placeholderClipped: (() => {
-        const input = document.querySelector('[aria-label="Pertanyaan untuk AI BC"]');
+        const input = document.querySelector('[aria-label="Tulis pesan untuk Nara"]');
         return input && !input.value && input.scrollHeight > input.clientHeight + 1;
       })() };
   });
@@ -198,7 +198,7 @@ try {
         await page.screenshot({ path: path.join(outputDir, `${role}-${theme}-${width}-lobby.png`) });
         const release = holdNextStream();
         await page.getByRole("button", { name: "Bahas soal", exact: true }).click();
-        await page.getByText("Sebentar, aku pikirkan…", { exact: true }).waitFor();
+        await page.getByText("Nara sedang berpikir…", { exact: true }).waitFor();
         assert.ok(await page.getByRole("button", { name: "Kirim pertanyaan", exact: true }).isDisabled());
         release();
         await page.getByText("Selesai memahami materi.", { exact: true }).waitFor({ state: "attached" });
@@ -220,7 +220,7 @@ try {
     await page.getByRole("button", { name: "Arti kata", exact: true }).click();
     await page.getByText("Selesai memahami materi.", { exact: true }).waitFor();
     await page.getByRole("button", { name: "Mulai percakapan baru" }).click();
-    const input = page.getByRole("textbox", { name: "Pertanyaan untuk AI BC" });
+    const input = page.getByRole("textbox", { name: "Tulis pesan untuk Nara" });
     mode = "error";
     await input.fill("Bahas teks ini");
     await input.press("Shift+Enter");
@@ -230,8 +230,8 @@ try {
     mode = "ok";
     await page.getByRole("button", { name: "Coba Lagi", exact: true }).click();
     await page.getByText("Selesai memahami materi.", { exact: true }).waitFor();
+    assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Bahas teks ini").length, 1, `${role} retry sends one copy of the latest question`);
     if (role === "teacher") {
-      assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Bahas teks ini").length, 1, "teacher retry sends one copy of the latest question");
       await page.getByRole("button", { name: "Tanya ulang", exact: true }).last().click();
       await page.locator('[role="status"]').waitFor({ state: "detached" });
       assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Bahas teks ini").length, 1, "teacher regenerate sends one copy of the latest question");
@@ -270,12 +270,12 @@ try {
   }
   await page.getByRole("textbox", { name: "Pesan", exact: true }).fill("Bantu bahas soal.");
   await page.getByRole("textbox", { name: "Konteks tambahan", exact: false }).fill("Kelas X");
-  await page.getByRole("button", { name: "Tanya AI BC" }).click();
+  await page.getByRole("button", { name: "Tanya Nara" }).click();
   assert.deepEqual(await page.evaluate(() => window.qaToolPayload), { message: "Bantu bahas soal.", context: "Kelas X", mode: "guru" });
   await page.getByRole("heading", { name: "Hasil diskusi" }).waitFor();
   await page.getByRole("button", { name: "Buka alat yang disarankan" }).click();
   assert.equal(await page.evaluate(() => window.qaSuggestedAgent), "soal");
-  await page.getByText("Jawaban AI BC siap", { exact: true }).waitFor();
+  await page.getByText("Jawaban Nara siap", { exact: true }).waitFor();
   await page.getByRole("button", { name: "Tanya ulang", exact: true }).click();
   assert.equal(await page.evaluate(() => window.qaRegenerate), true);
   assert.ok(requests.length >= 24);
