@@ -57,6 +57,12 @@ export const JUMPA_MURID_MAX_ACTIVE_ROOMS = 1;
 /** Umur maksimum tautan undangan guru (ruang GURU). */
 export const JUMPA_LINK_INVITE_TTL_HOURS = 24;
 
+/** Kedaluwarsa tautan undangan: 24 jam sejak dibuat, atau sejak jam mulai bila ruang dijadwalkan lebih lambat. */
+export function linkInviteExpiry(now: Date, scheduledAt?: Date | null): Date {
+  const base = scheduledAt && scheduledAt.getTime() > now.getTime() ? scheduledAt : now;
+  return new Date(base.getTime() + JUMPA_LINK_INVITE_TTL_HOURS * 3_600_000);
+}
+
 /** Ruang terjadwal: peserta boleh masuk N menit sebelum jam mulai (pemandu kapan saja). */
 export const JUMPA_EARLY_JOIN_MIN = 10;
 
