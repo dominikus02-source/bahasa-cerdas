@@ -77,11 +77,7 @@ export default function ResetPasswordPage() {
     );
 
     // Also check if session already exists (e.g., page refresh after successful recovery)
-    supabase.auth.getSession().then(({ data }) => {
-      if (!cancelled && !hasRecoveryTokens && data.session) {
-        setRecoveryReady(true);
-      }
-    });
+    // A regular signed-in session is not evidence of password recovery.
 
     // Timeout: if recovery session not established in 15s, link is likely invalid
     const timeout = setTimeout(() => {
