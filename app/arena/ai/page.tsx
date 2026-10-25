@@ -3,8 +3,12 @@ import { getBcHints } from "@/lib/ai-bc/context";
 import { STUDENT_PERSONA } from "@/src/ai/bc/personas";
 import AiBcArenaWorkspace from "@/components/ai-bc/AiBcArenaWorkspace";
 
+export const metadata = {
+  title: "NARA — Teman Berpikir, Berkata, dan Berkarya",
+};
+
 /**
- * AI BC — Teman Belajarmu (Student Shell / Arena).
+ * NARA (dahulu AI BC) — permukaan murid (Student Shell / Arena).
  *
  * AI BC 2.1 — permukaan murid kini workspace percakapan layar-penuh
  * (AiBcArenaWorkspace) DI DALAM Unified App Shell: shell + header global

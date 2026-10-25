@@ -43,7 +43,10 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
   });
 
   if (!res.ok) {
-    let detail = "Layanan AI sedang sibuk.";
+    let detail =
+      res.status === 401
+        ? "Sesi kamu sudah berakhir. Silakan masuk lagi untuk ngobrol dengan Nara."
+        : "Maaf, Nara sedang sibuk. Coba lagi sebentar ya.";
     try {
       const data = (await res.json()) as { error?: string };
       if (data.error) detail = data.error;
@@ -54,7 +57,7 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
   }
 
   if (!res.body) {
-    throw new BcStreamError("Respons tidak dapat dibaca.");
+    throw new BcStreamError("Jawaban Nara tidak dapat dibaca. Coba lagi ya.");
   }
 
   const reader = res.body.getReader();
@@ -81,7 +84,7 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
         break;
       }
       case "error": {
-        throw new BcStreamError(typeof data.message === "string" ? data.message : "Layanan AI sedang sibuk.");
+        throw new BcStreamError(typeof data.message === "string" ? data.message : "Maaf, Nara sedang sibuk. Coba lagi sebentar ya.");
       }
     }
   };
@@ -112,13 +115,13 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
     }
 
     if (!text.trim()) {
-      throw new BcStreamError("AI BC belum mengirim jawaban. Silakan coba lagi.");
+      throw new BcStreamError("Nara belum mengirim jawaban. Silakan coba lagi.");
     }
 
     return { text, provider, model };
   } catch (e) {
     if (e instanceof BcStreamError) throw e;
-    throw new BcStreamError("Koneksi terputus. Coba lagi.");
+    throw new BcStreamError("Koneksi ke Nara terputus. Periksa internetmu, lalu coba lagi.");
   } finally {
     reader.releaseLock();
   }

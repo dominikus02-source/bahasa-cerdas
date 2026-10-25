@@ -37,7 +37,7 @@ const EXAMPLES = [
 ];
 
 /**
- * AI BC — halaman publik.
+ * NARA (dahulu AI BC) — halaman publik. Rute /ai-bc dipertahankan.
  *
  * Pengguna yang masuk diarahkan ke pengalaman sesuai perannya
  * (murid → /arena/ai, guru/founder → /guru/ai-bc). Pengunjung
@@ -62,15 +62,20 @@ export default async function AiBcPage() {
           priority
           className="mx-auto mb-4"
         />
-        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-          AI BC
+        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+          <span className={styles.naraWordmark}>NARA</span>
         </h1>
+        <p
+          className={`${styles.naraBadge} mx-auto mt-3 inline-flex rounded-full px-3 py-1 text-xs font-semibold`}
+        >
+          Narasumber Andalan, Rekan Anda
+        </p>
         <p className="mt-3 text-lg font-medium text-muted-foreground">
-          Teman cerdas untuk belajar dan mengajar Bahasa Indonesia.
+          Teman Berpikir, Berkata, dan Berkarya.
         </p>
         <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          Teman Belajarmu untuk murid — Teman Guru untuk pengajar. Tanya arti
-          kata, pahami tata bahasa, dan berlatih soal Bahasa Indonesia.
+          Hai! Aku Nara, teman ngobrolmu di BahasaCerdas. Mau bertanya, mencari
+          ide, atau membuat sesuatu hari ini? Yuk, kita kerjakan bareng!
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
@@ -78,7 +83,7 @@ export default async function AiBcPage() {
             href="/login"
             className={`${styles.sendButton} flex min-h-11 w-full items-center justify-center rounded-xl px-8 py-3.5 text-sm font-semibold sm:w-auto`}
           >
-            Masuk dan Coba AI BC
+            Masuk dan Ngobrol dengan Nara
           </Link>
           <Link
             href="/"
@@ -88,8 +93,9 @@ export default async function AiBcPage() {
           </Link>
         </div>
         <p className="mt-4 text-xs text-muted-foreground">
-          Gratis untuk murid BahasaCerdas. AI BC adalah teman belajar, bukan
-          pengganti guru.
+          Gratis untuk murid BahasaCerdas. Nara adalah teman belajar, bukan
+          pengganti guru — Nara bisa keliru, jadi periksa kembali informasi
+          penting.
         </p>
       </section>
 

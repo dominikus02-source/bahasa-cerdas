@@ -12,6 +12,7 @@ import type { BcClientMessage, BcHint } from "./ai-bc-types";
 
 /**
  * AI BC 2.1 — ARENA AI FULLSCREEN CONVERSATION WORKSPACE (student).
+ * Identitas tampilan: NARA (Narasumber Andalan, Rekan Anda).
  *
  * Permukaan murid (/arena/ai) yang professional: workspace percakapan
  * layar-penuh DI DALAM Unified App Shell (sidebar global + header global
@@ -36,13 +37,14 @@ export const ARENA_AI_SUGGESTED_PROMPTS: string[] = [
   "Aku ingin latihan Bahasa Indonesia",
 ];
 
-const AI_LABEL = "AI BC";
-const THINKING_LABEL = "Sebentar, aku pikirkan…";
+const AI_LABEL = "NARA";
+const THINKING_LABEL = "Nara sedang berpikir…";
 const ERROR_COPY =
-  "Maaf, aku belum bisa menjawab sekarang. Coba kirim pertanyaanmu lagi.";
-const WELCOME_HEADLINE = "Ada yang ingin kamu pelajari?";
-const WELCOME_LINE = "Tanya apa saja tentang pelajaranmu.";
-const PLACEHOLDER = "Tulis pertanyaanmu…";
+  "Maaf, Nara belum bisa menjawab sekarang. Coba kirim pesanmu lagi ya.";
+const WELCOME_HEADLINE = "Hai! Aku Nara, teman ngobrolmu di BahasaCerdas.";
+const WELCOME_LINE =
+  "Mau bertanya, mencari ide, atau membuat sesuatu hari ini? Yuk, kita kerjakan bareng!";
+const PLACEHOLDER = "Tulis pesan untuk Nara…";
 const SCROLL_NEAR_BOTTOM_PX = 140;
 const COMPOSER_MAX_HEIGHT_PX = 128;
 
@@ -125,7 +127,7 @@ export default function AiBcArenaWorkspace({
           role: "assistant",
           content:
             result.text ||
-            "Maaf, aku belum bisa menjawab kali ini. Coba lagi ya.",
+            "Maaf, Nara belum bisa menjawab kali ini. Coba lagi ya.",
         },
       ]);
     } catch (e) {
@@ -232,13 +234,11 @@ export default function AiBcArenaWorkspace({
           <div className="flex min-w-0 items-center gap-2.5">
             <AICompanionCharacter state="idle" size="sm" />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground">
+              <p className={`text-sm font-bold ${styles.naraWordmark}`}>
                 {AI_LABEL}
               </p>
               <p className="truncate text-xs text-muted-foreground">
-                {personaTitle === "Teman Belajarmu"
-                  ? "Teman Belajar"
-                  : personaTitle}
+                {personaTitle}
               </p>
             </div>
           </div>
@@ -413,7 +413,7 @@ export default function AiBcArenaWorkspace({
               onKeyDown={handleKeyDown}
               rows={1}
               placeholder={PLACEHOLDER}
-              aria-label="Pertanyaan untuk AI BC"
+              aria-label="Tulis pesan untuk Nara"
               className="max-h-32 min-w-0 flex-1 resize-none bg-transparent py-2 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
             />
             <button
@@ -434,8 +434,11 @@ export default function AiBcArenaWorkspace({
               )}
             </button>
           </div>
-          <p className="mt-2 hidden text-center text-xs text-muted-foreground sm:block">
-            Enter untuk kirim · Shift+Enter untuk baris baru
+          <p className="mt-1.5 text-center text-[11px] leading-snug text-muted-foreground sm:mt-2 sm:text-xs">
+            Nara bisa keliru. Periksa kembali informasi penting.
+            <span className="hidden sm:inline">
+              {" "}· Enter untuk kirim · Shift+Enter untuk baris baru
+            </span>
           </p>
         </div>
       </div>
