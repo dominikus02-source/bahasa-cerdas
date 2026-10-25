@@ -1,5 +1,46 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+# Default mode is a read-only production diagnostic; use --configure for changes.
+if [[ ${1:---check} != --configure ]]; then
+  [[ ${1:---check} == --check ]] || { echo 'Usage: bcfix [--check|--configure]'; exit 2; }
+  echo '[bcfix] Audit email BahasaCerdas (read-only; rahasia disembunyikan)'
+  [[ $EUID -eq 0 ]] || { echo 'STOP: jalankan dari shell root VPS'; exit 1; }
+  prod=/opt/bahasacerdas/supabase/prod
+  envfile=$prod/.env
+  [[ -r $envfile ]] || { echo 'STOP: konfigurasi produksi tidak dapat dibaca'; exit 1; }
+  getvalue() { sed -n "s/^$1=//p" "$envfile" | tail -n 1; }
+  host=$(getvalue SMTP_HOST)
+  port=$(getvalue SMTP_PORT)
+  user=$(getvalue SMTP_USER)
+  pass=$(getvalue SMTP_PASS)
+  sender=$(getvalue SMTP_ADMIN_EMAIL)
+  [[ -n $sender ]] || sender=$(getvalue SMTP_SENDER_EMAIL)
+  case "$host" in
+    smtp.resend.com) echo 'SMTP provider: Resend' ;;
+    smtp.gmail.com) echo 'SMTP provider: Gmail' ;;
+    supabase-mail|'') echo 'SMTP provider: DUMMY / BELUM AKTIF' ;;
+    *) echo 'SMTP provider: lain (host disembunyikan)' ;;
+  esac
+  echo "SMTP port: ${port:-belum diatur}"
+  if [[ -z $user || $user == fake_mail_user ]]; then echo 'SMTP username: belum valid'; else echo 'SMTP username: terisi'; fi
+  if [[ -z $pass || $pass == fake* || $pass == *dummy* ]]; then echo 'SMTP password: belum valid'; else echo 'SMTP password: terisi (tidak diverifikasi)'; fi
+  if [[ -z $sender || $sender == admin@example.com ]]; then echo 'Sender email: belum valid/terkonfirmasi'; else echo 'Sender email: terisi (domain belum diverifikasi)'; fi
+  if command -v docker >/dev/null; then
+    if docker inspect supabase-auth >/dev/null 2>&1; then
+      livehost=$(docker inspect supabase-auth --format '{{range .Config.Env}}{{println .}}{{end}}' | sed -n 's/^GOTRUE_SMTP_HOST=//p' | tail -n 1)
+      if [[ $livehost == "$host" ]]; then echo 'Auth container: SMTP host cocok dengan .env'; else echo 'Auth container: SMTP host BERBEDA dengan .env (perlu penerapan)'; fi
+      docker inspect supabase-auth --format 'Auth status: {{.State.Status}}'
+    else echo 'Auth container: tidak ditemukan'; fi
+  fi
+  if [[ $host == smtp.resend.com && $user == resend && -n $pass && $pass != fake* ]]; then
+    echo 'Kesimpulan: Resend SMTP tampak dikonfigurasi; pengiriman dan DNS belum diuji.'
+  else
+    echo 'Kesimpulan: Resend belum terkonfirmasi aktif. Tidak ada konfigurasi yang diubah.'
+  fi
+  echo 'Untuk mengonfigurasi SMTP secara interaktif: bcfix --configure'
+  exit 0
+fi
+shift
 APP=/opt/bahasacerdas/apps/bahasa-cerdas
 PROD=/opt/bahasacerdas/supabase/prod
 ENVFILE=$PROD/.env
