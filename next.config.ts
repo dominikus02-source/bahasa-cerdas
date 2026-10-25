@@ -75,6 +75,11 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Aset MediaPipe berversi di path → aman di-cache lama.
+        source: "/jumpa/mediapipe/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
         source: "/:path*",
         has: [{ type: "header", key: "x-vercel-id" }],
         headers: [

@@ -17,6 +17,9 @@ function buildCsp(nonce: string): string {
     "script-src": [
       "'self'",
       `'nonce-${nonce}'`,
+      // JUMPA efek latar: MediaPipe (WASM, di-host sendiri di /jumpa/mediapipe).
+      // 'wasm-unsafe-eval' hanya mengizinkan kompilasi WebAssembly, bukan eval() JS.
+      "'wasm-unsafe-eval'",
       "https://*.supabase.co",
       "https://app.midtrans.com",
       "https://app.sandbox.midtrans.com",

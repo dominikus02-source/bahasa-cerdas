@@ -96,3 +96,4 @@ data/alat-ajar-import/scan-log.txt
 .freebuff/
 
 !.env.example
+public/jumpa/mediapipe/*/wasm/
