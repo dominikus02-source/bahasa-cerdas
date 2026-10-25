@@ -183,8 +183,12 @@ assert(
   "Password login path unchanged (metadata role still flows)"
 );
 assert(
-  registerAction.includes("db.user.create") && registerAction.includes("parsed.data"),
-  "Password register action unchanged (explicit validated role)"
+  registerAction.includes("parsed.data") &&
+    registerAction.includes("auth.getUser()") &&
+    !registerAction.includes("db.user.create") &&
+    !registerAction.includes('formData.get("supabaseId")') &&
+    !registerAction.includes('formData.get("email")'),
+  "Password register action: explicit validated role, identity from server session (no client supabaseId/email, no account creation)"
 );
 
 // ─── Summary ─────────────────────────────────────────────────────
