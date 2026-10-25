@@ -109,9 +109,9 @@ export function PremiumValueCard() {
               {/* Strength Recognition */}
               {strongestSkill && (
                 <div className="flex items-start gap-2">
-                  <TrendingUp size={12} className="mt-0.5 shrink-0 text-emerald-500" />
+                  <TrendingUp size={12} className="mt-0.5 shrink-0 text-bc-success" />
                   <p className="text-xs text-[var(--px-text-dim)]">
-                    <span className="font-semibold text-emerald-600">Kekuatan:</span>{" "}
+                    <span className="font-semibold text-bc-success">Kekuatan:</span>{" "}
                     {SKILL_LABELS[strongestSkill.skill] || strongestSkill.skill} (
                     {Math.round((strongestSkill.accuracy ?? 0) * 100)}%)
                   </p>
@@ -171,18 +171,18 @@ export function PremiumValueCard() {
 
               {/* Mentor Error */}
               {mentorError && (
-                <p className="mt-2 text-[11px] text-red-500">{mentorError}</p>
+                <p className="mt-2 text-[11px] text-bc-danger">{mentorError}</p>
               )}
 
               {/* Mentor Result */}
               {mentorResult && (
-                <div className="mt-3 p-3 rounded-lg bg-gradient-to-br from-violet-50/80 to-purple-50/60 border border-violet-200/60">
+                <div className="mt-3 p-3 rounded-lg bg-bc-violet-soft border border-bc-violet/30">
                   <p className="text-xs font-bold text-[var(--px-royal-2)] mb-2">✨ Mentor Bahasa Cerdas</p>
                   <p className="text-sm font-semibold text-[var(--px-text)] mb-1">{mentorResult.headline}</p>
                   <p className="text-xs text-[var(--px-text-dim)] mb-2">{mentorResult.diagnosis}</p>
                   <div className="space-y-1">
                     <p className="text-[11px]"><span className="font-semibold text-[var(--px-gold)]">💡 Mengapa?</span> {mentorResult.reason}</p>
-                    <p className="text-[11px]"><span className="font-semibold text-emerald-600">🎯 Coba lakukan ini:</span> {mentorResult.action}</p>
+                    <p className="text-[11px]"><span className="font-semibold text-bc-success">🎯 Coba lakukan ini:</span> {mentorResult.action}</p>
                     <p className="text-[11px] italic text-[var(--px-text-faint)]">{mentorResult.encouragement}</p>
                   </div>
                   <button

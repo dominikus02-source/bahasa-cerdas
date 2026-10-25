@@ -12,7 +12,7 @@ const ITEMS = [
     icon: Ear,
     // Bahasa warna fungsional (keluarga asesmen yang sama, bukan rainbow):
     // cyan/royal/teal/slate — aksen ikon muted pada chip transparan.
-    accent: "text-cyan-600 dark:text-cyan-300 bg-cyan-500/10",
+    accent: "text-bc-info bg-bc-info-soft",
   },
   {
     href: "/murid/simulasi/tka",
@@ -28,7 +28,7 @@ const ITEMS = [
     desc: "Latihan bahasa Indonesia tingkat internasional",
     cta: "Mulai",
     icon: Globe2,
-    accent: "text-teal-600 dark:text-teal-300 bg-teal-500/10",
+    accent: "text-bc-success bg-bc-success-soft",
   },
   {
     href: "/murid/dokumen-latihan",
@@ -36,7 +36,7 @@ const ITEMS = [
     desc: "Lihat hasil dan riwayat latihanmu",
     cta: "Lihat Hasil",
     icon: FileText,
-    accent: "text-slate-500 dark:text-slate-300 bg-slate-400/10",
+    accent: "text-bc-text-2 bg-bc-surface-2",
   },
 ];
 
@@ -59,7 +59,7 @@ export function SimulasiUjianSection() {
           return (
             <div
               key={item.label}
-              className="group section-rule border-b px-2 py-4 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors flex flex-col gap-2"
+              className="group section-rule border-b px-2 py-4 hover:bg-[var(--px-glass)] transition-colors flex flex-col gap-2"
             >
               <span
                 className={`w-8 h-8 flex items-center justify-center rounded-lg ${item.accent}`}

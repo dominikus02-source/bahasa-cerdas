@@ -7,7 +7,6 @@ import { StudentHomeHero } from "@/components/student-home/StudentHomeHero";
 import { MentorHomeCard } from "@/components/student-home/MentorHomeCard";
 import { DailyMissionCard } from "@/components/student-home/DailyMissionCard";
 import { DailyActionCard } from "@/components/student-home/DailyActionCard";
-import { DiagnosticJourneyCard } from "@/components/student-home/DiagnosticJourneyCard";
 import { JalurCerdasHomeCard } from "@/components/student-home/JalurCerdasHomeCard";
 import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
@@ -17,7 +16,8 @@ import { StudentDailyInspiration } from "@/components/student-home/StudentDailyI
 import JumpaLaunchBanner from "@/components/jumpa/JumpaLaunchBanner";
 import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
 
-// Beranda ringkas: mulai belajar → Arena/AI → kelas dan tugas → ujian → karya.
+// Beranda ringkas: hero (satu aksi utama) → belajar hari ini → teman belajar
+// (NARA + Mentor) → kelas dan tugas → ujian → inspirasi → karya.
 export default function HomeFeedPage() {
   useEffect(() => {
     const detak = () => {
@@ -55,16 +55,27 @@ function HomeContent() {
       <StudentHomeHero />
       <JumpaBerandaCard role="MURID" show="idle" />
       <JumpaLaunchBanner />
-      <MentorHomeCard />
-      <JalurCerdasHomeCard />
-      <StudentDailyInspiration />
-      <DailyActionCard />
 
-      <AIBCHomeCard />
+      {/* Belajar hari ini: jalur utama + tantangan di kiri, misi harian di kanan. */}
+      <section aria-label="Belajar hari ini" className="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:items-stretch">
+        <div className="flex min-w-0 flex-col gap-5">
+          <JalurCerdasHomeCard />
+          <DailyActionCard />
+        </div>
+        <div className="min-w-0">
+          <DailyMissionCard />
+        </div>
+      </section>
+
+      {/* Teman belajar: NARA dan Mentor berdampingan, CTA sekunder. */}
+      <section aria-label="Teman belajar" className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <AIBCHomeCard />
+        <MentorHomeCard />
+      </section>
 
       <RuangBelajarSection />
-      <DailyMissionCard />
       <SimulasiUjianSection />
+      <StudentDailyInspiration />
       <RecentWorksSection />
     </>
   );

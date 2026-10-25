@@ -225,8 +225,8 @@ export function StudentHomeHero() {
       className="relative overflow-hidden rounded-bc-hero bg-bc-surface shadow-bc-2 ring-1 ring-bc-line"
     >
       {/* ── Artwork: banner herocard Arena.png ──────────────────────────────── */}
-      {/* Mobile: pita artwork di atas, konten di bawah (karakter tetap utuh). */}
-      <div className="relative h-44 w-full sm:h-48 md:hidden" aria-hidden="true">
+      {/* Mobile–laptop kecil: pita artwork di atas, konten di bawah (teks tidak tertimpa gambar). */}
+      <div className="relative h-44 w-full sm:h-52 xl:hidden" aria-hidden="true">
         <Image
           src={HERO_ART}
           alt=""
@@ -239,7 +239,7 @@ export function StudentHomeHero() {
       </div>
       {/* Desktop: panel artwork penuh di sisi kanan — menyatu dengan panel teks putih. */}
       <div
-        className="absolute inset-y-0 right-0 hidden w-[42%] md:block"
+        className="absolute inset-y-0 right-0 hidden w-[42%] xl:block"
         aria-hidden="true"
       >
         <Image
@@ -254,7 +254,7 @@ export function StudentHomeHero() {
       </div>
 
       {/* ── Konten hero (di atas artwork, area putih aman) ── */}
-      <div className="relative flex flex-col gap-5 px-5 py-5 sm:px-6 md:min-h-[360px] md:justify-between md:gap-4 md:py-7 md:pl-8 lg:px-10 motion-safe:animate-fade-in motion-reduce:animate-none">
+      <div className="relative flex flex-col gap-5 px-5 py-5 sm:px-6 xl:min-h-[360px] xl:justify-between md:gap-4 md:py-7 md:px-8 xl:pl-10 xl:pr-[calc(42%+1.5rem)] motion-safe:animate-fade-in motion-reduce:animate-none">
         {/* Identity — bagian dari hero, bukan blok terpisah */}
         <div className="flex items-start gap-3 pr-4 sm:gap-4">
           <div className="relative shrink-0">

@@ -16,12 +16,12 @@ interface KaryaItem {
 }
 
 const TYPE_META: Record<string, { label: string; badge: string }> = {
-  PUISI: { label: "Puisi", badge: "bg-rose-500/15 text-rose-600 dark:text-rose-300" },
-  CERPEN: { label: "Cerpen", badge: "bg-blue-500/15 text-blue-600 dark:text-blue-300" },
-  ARTIKEL: { label: "Artikel", badge: "bg-amber-500/15 text-amber-600 dark:text-amber-300" },
-  ANEKDOT: { label: "Anekdot", badge: "bg-orange-500/15 text-orange-600 dark:text-orange-300" },
-  PANTUN: { label: "Pantun", badge: "bg-teal-500/15 text-teal-600 dark:text-teal-300" },
-  OPINI: { label: "Opini", badge: "bg-violet-500/15 text-violet-600 dark:text-violet-300" },
+  PUISI: { label: "Puisi", badge: "bg-bc-danger-soft text-bc-danger" },
+  CERPEN: { label: "Cerpen", badge: "bg-bc-info-soft text-bc-info" },
+  ARTIKEL: { label: "Artikel", badge: "bg-bc-warning-soft text-bc-warning-strong" },
+  ANEKDOT: { label: "Anekdot", badge: "bg-bc-accent-soft text-bc-accent-strong" },
+  PANTUN: { label: "Pantun", badge: "bg-bc-success-soft text-bc-success" },
+  OPINI: { label: "Opini", badge: "bg-bc-violet-soft text-bc-violet" },
 };
 
 function waktuLalu(iso: string): string {
@@ -54,7 +54,7 @@ export function RecentWorksSection() {
       <div className="flex items-end justify-between mb-4">
         <div>
           <h2 className="text-xl font-semibold tracking-tight text-[var(--px-text)] flex items-center gap-2">
-            <Sparkles size={17} className="text-violet-600 dark:text-violet-300" strokeWidth={1.8} />
+            <Sparkles size={17} className="text-bc-violet" strokeWidth={1.8} />
             Karya Siswa Terbaru
           </h2>
           <p className="text-xs text-[var(--px-text-faint)]">Puisi, cerpen, artikel, dan lainnya</p>
@@ -79,12 +79,12 @@ export function RecentWorksSection() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 border-t section-rule">
           {karya.map((k) => {
-            const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-slate-900/10 dark:bg-white/10 text-[var(--px-text-dim)]" };
+            const meta = TYPE_META[k.type] || { label: k.type, badge: "bg-bc-surface-2 text-[var(--px-text-dim)]" };
             return (
               <Link
                 key={k.id}
                 href={`/murid/karya/${k.id}`}
-                className="group section-rule border-b px-2 py-4 flex flex-col gap-2 hover:bg-slate-900/[0.025] dark:hover:bg-white/[0.05] transition-colors"
+                className="group section-rule border-b px-2 py-4 flex flex-col gap-2 hover:bg-[var(--px-glass)] transition-colors"
               >
                 <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full self-start ${meta.badge}`}>
                   {meta.label}
@@ -97,7 +97,7 @@ export function RecentWorksSection() {
                 </p>
                 <div className="flex items-center gap-3 mt-auto text-[11px] text-[var(--px-text-faint)]">
                   <span className="flex items-center gap-1">
-                    <Heart size={12} className="text-rose-500 dark:text-rose-400" />
+                    <Heart size={12} className="text-bc-danger" />
                     {k.likesCount}
                   </span>
                   <span className="flex items-center gap-1">

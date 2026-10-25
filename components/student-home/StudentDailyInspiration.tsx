@@ -1,6 +1,6 @@
 "use client";
 
-import { Lightbulb, Quote, Sparkles } from "lucide-react";
+import { Lightbulb, Quote } from "lucide-react";
 
 const DAILY_NOTES = [
   {
@@ -86,58 +86,41 @@ function getDayIndex() {
 export function StudentDailyInspiration() {
   const note = DAILY_NOTES[getDayIndex()];
 
+  // Satu kartu: tips sebagai isi utama, kutipan sebagai pelengkap. Sebelumnya
+  // dua kartu besar bersaing (biru tua + putih) dan memakan satu layar penuh.
   return (
-    <section aria-label="Inspirasi dan tips belajar hari ini" className="grid gap-5 lg:grid-cols-2">
-      <article className="relative overflow-hidden rounded-[1.75rem] border border-sky-300/70 bg-[#0d2d5b] px-6 py-7 text-white shadow-[0_22px_60px_-38px_rgba(15,77,130,0.75)] sm:px-8 sm:py-8">
-        <div className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-sky-400/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-24 left-1/3 h-48 w-48 rounded-full bg-indigo-400/15 blur-3xl" />
-
-        <div className="relative">
-          <div className="flex items-center gap-3">
-            <Quote className="h-9 w-9 rotate-180 text-sky-200" strokeWidth={1.8} />
-            <h2 className="text-xl font-extrabold tracking-tight sm:text-2xl">Kutipan Hari Ini</h2>
+    <section aria-label="Inspirasi dan tips belajar hari ini" className="px-card p-5 sm:p-6">
+      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8">
+        <div className="flex min-w-0 items-start gap-4">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-bc-icon bg-bc-info-soft text-bc-info">
+            <Lightbulb className="h-5 w-5" strokeWidth={2} />
           </div>
+          <div className="min-w-0">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-bc-info">
+              Tips Belajar · Hari ini
+            </p>
+            <h2 className="mt-1 text-lg font-extrabold tracking-tight text-[var(--px-text)]">
+              {note.tipTitle}
+            </h2>
+            <p className="mt-1.5 text-sm leading-relaxed text-[var(--px-text-dim)]">
+              {note.tip}
+            </p>
+          </div>
+        </div>
 
-          <blockquote className="mt-7 max-w-2xl text-[22px] font-semibold leading-[1.55] tracking-tight sm:text-[25px]">
+        <figure className="min-w-0 border-t border-[var(--px-border)] pt-4 md:border-l md:border-t-0 md:pl-8 md:pt-0">
+          <p className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-[var(--px-text-faint)]">
+            <Quote className="h-3.5 w-3.5 rotate-180" strokeWidth={2} />
+            Kutipan Hari Ini
+          </p>
+          <blockquote className="mt-2 text-base font-semibold leading-relaxed text-[var(--px-text)]">
             “{note.quote}”
           </blockquote>
-
-          <p className="mt-7 text-sm font-medium text-sky-100/80">
+          <figcaption className="mt-2 text-xs font-medium text-[var(--px-text-faint)]">
             — Catatan BahasaCerdas
-          </p>
-        </div>
-      </article>
-
-      <article className="relative overflow-hidden rounded-[1.75rem] border border-sky-300/70 bg-white px-6 py-7 shadow-[0_22px_60px_-38px_rgba(15,77,130,0.3)] dark:bg-[#111a32] sm:px-8 sm:py-8">
-        <div className="pointer-events-none absolute -right-20 -top-20 h-52 w-52 rounded-full bg-sky-100 blur-3xl dark:bg-sky-400/10" />
-
-        <div className="relative">
-          <div className="flex items-start gap-4">
-            <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 dark:bg-sky-900/30 dark:text-sky-300">
-              <Lightbulb className="h-7 w-7" strokeWidth={2} />
-            </div>
-
-            <div className="min-w-0">
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-extrabold tracking-tight text-slate-950 dark:text-white sm:text-2xl">
-                  Tips Belajar
-                </h2>
-                <Sparkles className="h-4 w-4 text-sky-500" />
-              </div>
-              <p className="mt-1 text-[11px] font-black uppercase tracking-[0.2em] text-sky-600 dark:text-sky-300">
-                HARI INI
-              </p>
-            </div>
-          </div>
-
-          <h3 className="mt-7 text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            {note.tipTitle}
-          </h3>
-          <p className="mt-3 text-base leading-7 text-slate-600 dark:text-slate-300">
-            {note.tip}
-          </p>
-        </div>
-      </article>
+          </figcaption>
+        </figure>
+      </div>
     </section>
   );
 }
