@@ -157,9 +157,33 @@ page.on("requestfailed", request => {
   if (request.url().includes("/api/ai/bc/chat")) failedRequests.push(request.failure()?.errorText);
 });
 
+// Wait until the layout signature is identical for several consecutive frames (bounded).
+// useAiBcViewport measures in rAF after a resize; measuring or focusing before that frame
+// raced with the hook and made the short-viewport check flaky.
+async function settleLayout() {
+  await page.evaluate(() => new Promise(resolve => {
+    const signature = () => {
+      const root = document.documentElement;
+      const workspace = document.querySelector(".ai-bc-workspace, .ai-bc-guru-workspace");
+      return [innerWidth, innerHeight, scrollY, root.scrollWidth, root.scrollHeight, workspace?.getBoundingClientRect().height ?? -1].join("/");
+    };
+    let last = "";
+    let stable = 0;
+    let frames = 0;
+    const tick = () => {
+      const current = signature();
+      stable = current === last ? stable + 1 : 0;
+      last = current;
+      frames += 1;
+      if (stable >= 4 || frames >= 120) resolve();
+      else requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }));
+}
+
 async function checkBounds(label) {
-  // Resize schedules the viewport hook in rAF; measure the settled layout.
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await settleLayout();
   const geometry = await page.evaluate(() => {
     const rect = document.querySelector('[aria-label="Kirim pertanyaan"]')?.getBoundingClientRect();
     const nav = document.querySelector(".bc-mobile-nav, .arena-bottom-nav")?.getBoundingClientRect();
@@ -251,6 +275,8 @@ try {
     assert.equal(await page.locator(".ai-bc-messages").count(), 0, "stale response after reset");
     mode = "ok";
     await page.setViewportSize({ width: 390, height: 380 });
+    // Let the viewport hook re-measure before focusing the composer (mirrors resize → tap order).
+    await settleLayout();
     await input.fill("Viewport pendek");
     await checkBounds(`${role} short viewport`);
     results.push(`${role}: hints, Enter/Shift+Enter, error/retry, copy, reset during SSE, short viewport`);
