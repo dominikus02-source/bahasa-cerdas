@@ -32,7 +32,7 @@ import type {
 } from './ports';
 import {
   evaluatePackageCompatibility,
-  useSupportedQuestions,
+  selectSupportedQuestions,
   type UnusedQuestionsInfo,
 } from '../../adapters/bank-soal/compatibility';
 import { resolveGameConfig } from './session-defaults';
@@ -146,7 +146,7 @@ export async function createMainSession(
       },
     };
   }
-  const subset = useSupportedQuestions(compat);
+  const subset = selectSupportedQuestions(compat);
   if (!subset.ok) {
     // Semua soal unsupported — subset kosong, tetap ditolak meski
     // caller meminta useSupportedQuestions.
