@@ -216,7 +216,8 @@ test("D6. route SSE /api/ai/bc/chat tidak berubah (engine reuse)", () =>
 console.log("\nE. Floating AI button hidden on AI BC workspaces");
 const fab = read("components/shared/AIFloatingButton.tsx");
 const arenaLayout = read("app/arena/layout.tsx");
-const muridLayout = read("app/(dashboard)/murid/layout.tsx");
+// Kerangka murid (termasuk FAB) dipindah ke components/shell/MuridShellFrame.tsx.
+const muridLayout = read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx");
 const guruLayout = read("app/(dashboard)/guru/layout.tsx");
 test("E1. FAB route-aware (usePathname)", () => fab.includes("usePathname"));
 test("E2. /arena/ai dikecualikan", () => fab.includes('"/arena/ai"'));

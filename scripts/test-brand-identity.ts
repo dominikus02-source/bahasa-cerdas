@@ -102,10 +102,16 @@ test("16. register memakai brand baru via registry", () => {
   const p = read("app/(auth)/register/page.tsx");
   return p.includes('from "@/lib/brand"') && p.includes("BRAND_ICON_DARK") && p.includes(">BahasaCerdas<");
 });
-test("17. arena-login memakai brand baru", () =>
-  read("app/auth/arena-login/page.tsx").includes("/brand/bc2026-icon.png"));
+// /auth/arena-login kini hanya redirect ke /arena/login, yang me-re-export
+// halaman login kanonis (brand-nya diuji di #15). Tidak ada login kedua.
+test("17. arena-login memakai brand baru (via login kanonis)", () =>
+  read("app/auth/arena-login/page.tsx").includes("redirect(`/arena/login?") &&
+  read("app/arena/login/page.tsx").includes('export { default } from "@/app/(auth)/login/page"') &&
+  read("app/(auth)/login/page.tsx").includes('from "@/lib/brand"'));
+// Kerangka sidebar murid dipindah ke components/shell/MuridShellFrame.tsx.
+const muridShell = () => read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx");
 test("18. sidebar murid memakai brand baru", () =>
-  read("app/(dashboard)/murid/layout.tsx").includes("/brand/bc2026-icon.png"));
+  muridShell().includes("/brand/bc2026-icon.png"));
 test("19. sidebar guru memakai brand baru", () =>
   read("app/(dashboard)/guru/layout.tsx").includes("/brand/bc2026-icon.png"));
 test("20. sidebar arena memakai brand baru", () =>
@@ -118,7 +124,7 @@ test("21. shared public components memakai brand baru (varian dark)", () =>
 /* ── 5. Protected zones ── */
 console.log("\n── Protected zones ──");
 test("21b. sidebar gradient memakai varian light (latar gelap)", () =>
-  read("app/(dashboard)/murid/layout.tsx").includes("/brand/bc2026-icon.png") &&
+  muridShell().includes("/brand/bc2026-icon.png") &&
   read("app/(dashboard)/guru/layout.tsx").includes("/brand/bc2026-icon.png") &&
   read("app/arena/layout.tsx").includes("/brand/bc2026-icon.png"));
 test("21c. semua path brand yang direferensikan ADA (tidak ada broken path)", () => {
@@ -126,7 +132,7 @@ test("21c. semua path brand yang direferensikan ADA (tidak ada broken path)", ()
     "app/(dashboard)/guru/profile/page.tsx", "components/landing/HeroEcosystemVisual.tsx",
     "components/public/PageFooter.tsx", "components/public/PublicNavbar.tsx",
     "components/public/PageNavbar.tsx", "components/kompetensi/TestResultPanel.tsx",
-    "app/(dashboard)/murid/layout.tsx", "app/(dashboard)/guru/layout.tsx",
+    "app/(dashboard)/murid/layout.tsx", "components/shell/MuridShellFrame.tsx", "app/(dashboard)/guru/layout.tsx",
     "app/arena/layout.tsx", "app/auth/arena-login/page.tsx", "app/layout.tsx",
     "app/opengraph-image.tsx"];
   const refs = new Set<string>();

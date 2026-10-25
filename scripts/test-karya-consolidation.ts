@@ -27,7 +27,7 @@ function main() {
   console.log("\n📋 KARYA CONSOLIDATION TEST (STEP 4C — Canonical /murid/karya)");
   console.log("=".repeat(60));
 
-  const layout = read("app/(dashboard)/murid/layout.tsx");
+  const layout = (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx"));
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   const navConfig = read("components/shell/nav-config.ts");
   const works = read("components/student-home/RecentWorksSection.tsx");

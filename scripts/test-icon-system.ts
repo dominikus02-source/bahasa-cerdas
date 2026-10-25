@@ -77,7 +77,7 @@ function main() {
 
   // ── 4. MURID — konsolidasi (tidak ada sistem ikon kedua) ──
   console.log("\n── 4. Murid layout: satu sistem ikon ──");
-  const muridLayout = read("app/(dashboard)/murid/layout.tsx");
+  const muridLayout = (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx"));
   test("murid layout memakai <ShellNavList /> (bukan MenuIcon inline SVG)",
     () => muridLayout.includes("<ShellNavList />") && !muridLayout.includes("<MenuIcon "));
   test("murid layout memakai <RoleSections /> (role blocks tidak inline)",

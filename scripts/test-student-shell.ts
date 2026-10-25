@@ -29,7 +29,7 @@ function main() {
 
   // ── 1. SIDEBAR (desktop layout) ──
   console.log("\n── 1. Sidebar (app/(dashboard)/murid/layout.tsx) ──");
-  const layout = read("app/(dashboard)/murid/layout.tsx");
+  const layout = (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx"));
   const navConfig = read("components/shell/nav-config.ts");
   const PRIMARY = ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"];
   test("sidebar memakai <ShellNavList /> canonical (fase 5.1 — bukan render inline MenuIcon lagi)",

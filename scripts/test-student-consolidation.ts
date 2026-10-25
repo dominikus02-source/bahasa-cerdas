@@ -22,7 +22,7 @@ function main() {
   console.log("\n📋 STUDENT CONSOLIDATION TEST (STEP 4 — Sidebar 6 Item, Sim Menu di Home)");
   console.log("=".repeat(60));
 
-  const layout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8");
+  const layout = (fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8") + fs.readFileSync("components/shell/MuridShellFrame.tsx", "utf-8"));
   const mobileNav = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf-8");
   const playerProfile = fs.readFileSync("app/arena/player/profile/page.tsx", "utf-8");
   const muridAi = fs.readFileSync("app/(dashboard)/murid/ai/page.tsx", "utf-8");
