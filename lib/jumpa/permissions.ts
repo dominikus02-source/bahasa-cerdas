@@ -16,7 +16,10 @@
  */
 import { isPastDuration, JUMPA_EARLY_JOIN_MIN, type JumpaKind } from "./caps";
 
-export type BcRole = "GURU" | "MURID" | "ADMIN";
+// UMUM (pengguna umum non-sekolah) ikut di tipe agar cocok dengan Prisma
+// Role, tetapi TIDAK punya peran efektif JUMPA: effectiveRole() → null →
+// semua keputusan JUMPA ditolak (default-deny).
+export type BcRole = "GURU" | "MURID" | "ADMIN" | "UMUM";
 export type JumpaEffectiveRole = "GURU" | "MURID";
 export type JumpaRoomRole = "HOST" | "COHOST" | "MEMBER";
 export type JumpaStatus = "SCHEDULED" | "LIVE" | "ENDED";

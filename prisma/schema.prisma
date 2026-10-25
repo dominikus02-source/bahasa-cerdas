@@ -386,6 +386,9 @@ model Profile {
   bank       String?
   bankHolder String?
   bankNumber String?
+  // Sub-kategori pengguna UMUM (nullable, tanpa default/backfill — data lama
+  // tetap NULL). Migrasi: 20261025000100_profile_kategori_umum.
+  kategoriUmum KategoriUmum?
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   schoolRef  School?  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
 
@@ -1820,6 +1823,19 @@ enum Role {
   GURU
   MURID
   ADMIN
+  // Pengguna umum (mahasiswa/umum/investor/tamu). Akses dibatasi allowlist
+  // eksplisit di lib/auth/roles.ts — BUKAN "selain murid = guru".
+  // Migrasi: 20261025000000_role_umum (ADD VALUE, aditif).
+  UMUM
+}
+
+/// Sub-kategori opsional untuk Role UMUM (Profile.kategoriUmum). NULL = belum
+/// diisi. Tidak pernah dipakai untuk otorisasi — hanya identitas/analitik.
+enum KategoriUmum {
+  MAHASISWA
+  UMUM
+  INVESTOR
+  TAMU
 }
 
 enum PremiumPlan {
