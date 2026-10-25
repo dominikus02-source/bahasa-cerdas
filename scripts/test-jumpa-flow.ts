@@ -23,6 +23,7 @@ import {
 import { buildNotice, noticeAudience, noticeKey, pushAllowedNow, type NoticeRoom } from "../lib/jumpa/notify"
 import { evaluateJoin, type JoinInput, type JumpaActor } from "../lib/jumpa/permissions"
 import { sweepActionFor } from "../lib/jumpa/lifecycle"
+import { linkInviteExpiry } from "../lib/jumpa/caps"
 
 let passed = 0
 let failed = 0
@@ -254,6 +255,20 @@ check("Beranda guru: banner + kartu", /JumpaLaunchBanner[\s\S]*JumpaBerandaCard 
 check("Beranda murid: Gabung di atas hero, kartu + banner di bawah", /JumpaBerandaCard role="MURID" show="live"[\s\S]*StudentHomeHero[\s\S]*JumpaBerandaCard role="MURID" show="idle"[\s\S]*JumpaLaunchBanner/.test(read("app/(dashboard)/murid/beranda/page.tsx")))
 const share = read("components/jumpa/ShareSheet.tsx")
 for (const t of ["wa.me", "Salin tautan", "navigator.share", "qrcode"]) check(`Bagikan: ${t}`, share.includes(t))
+// Ruang guru: semua opsi bagikan memakai tautan undangan ?u= (uji CEO 25 Okt:
+// "Salin tautan"/WhatsApp memberi tautan polos → penerima harus diundang manual).
+check("Bagikan (ruang guru): tautan undangan dibuat otomatis saat dibuka", /useEffect\(\(\) => \{\s*if \(target\.canLink\) void makeLink\(\)/.test(share))
+check("Bagikan: url = tautan undangan bila ada", share.includes("const url = link24 ?? "))
+check("Bagikan: opsi menunggu tautan undangan", /pending = Boolean\(target\.canLink\) && !link24/.test(share) && (share.match(/disabled=\{pending\}/g) ?? []).length >= 2 && share.includes("href={pending ? undefined"))
+check("Bagikan: tanpa tombol tautan terpisah", !share.includes("Tautan undangan 24 jam"))
+check("Undangan LINK memakai linkInviteExpiry", read("lib/jumpa/room-actions.ts").includes("linkInviteExpiry(now, room.scheduledAt)"))
+{
+  const now = new Date("2026-10-25T14:00:00Z")
+  const H = 3_600_000
+  check("Kedaluwarsa tautan: tanpa jadwal = +24 jam", linkInviteExpiry(now).getTime() === now.getTime() + 24 * H)
+  check("Kedaluwarsa tautan: jadwal lampau = +24 jam dari sekarang", linkInviteExpiry(now, new Date(now.getTime() - 5 * H)).getTime() === now.getTime() + 24 * H)
+  check("Kedaluwarsa tautan: jadwal 3 hari lagi = jam mulai +24 jam", linkInviteExpiry(now, new Date(now.getTime() + 72 * H)).getTime() === now.getTime() + 96 * H)
+}
 
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal\n`)
 if (failed > 0) process.exit(1)

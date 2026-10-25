@@ -4,11 +4,14 @@
  * Lembar "Bagikan JUMPA": bagikan (Web Share API di HP), WhatsApp dengan
  * teks Indonesia, salin tautan, salin kode, tautan undangan 24 jam (ruang
  * guru, pemandu), dan kode QR di laptop (dimuat saat dibuka saja).
- * Tautan selalu mensyaratkan login BC + izin ruang — bukan kunci masuk.
+ * Tautan selalu mensyaratkan login BC + izin ruang. Ruang guru (pemandu):
+ * SEMUA opsi membagikan tautan undangan (?u=), dibuat otomatis saat lembar
+ * dibuka — dulu "Salin tautan"/WhatsApp memberi tautan polos sehingga guru
+ * penerima harus diundang manual (uji CEO 25 Okt).
  */
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { Check, Copy, Hash, Link2, Loader2, MessageCircle, Share2, X } from "lucide-react";
+import { Check, Hash, Link2, Loader2, MessageCircle, Share2, X } from "lucide-react";
 import { formatWib } from "@/lib/jumpa/schedule";
 import "./jumpa-entry.css";
 
@@ -31,6 +34,20 @@ export function whatsappHref(text: string): string {
   return `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
 
+const LINK_KEY = (code: string) => `jumpa-link:${code}`;
+/** Pakai ulang tautan undangan di tab yang sama selama masih > 1 jam (tanpa baris undangan baru tiap buka). */
+function readCachedLink(code: string): string | null {
+  try {
+    const v = JSON.parse(sessionStorage.getItem(LINK_KEY(code)) ?? "null") as { url?: string; at?: number } | null;
+    return v?.url && typeof v.at === "number" && Date.now() - v.at < 23 * 3_600_000 ? v.url : null;
+  } catch {
+    return null;
+  }
+}
+function writeCachedLink(code: string, url: string) {
+  try { sessionStorage.setItem(LINK_KEY(code), JSON.stringify({ url, at: Date.now() })); } catch { /* mode privat */ }
+}
+
 export default function ShareSheet({ target, onClose }: { target: ShareTarget; onClose: () => void }) {
   const [origin, setOrigin] = useState("");
   const [done, setDone] = useState<string | null>(null);
@@ -48,18 +65,19 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  const pending = Boolean(target.canLink) && !link24 && !err;
   const url = link24 ?? `${origin}/jumpa/${target.code}`;
   const text = shareText(target, url);
 
   // QR hanya di laptop (CSS menyembunyikannya di HP); pustaka dimuat saat perlu.
   useEffect(() => {
-    if (!origin || !qrRef.current || !window.matchMedia("(min-width: 768px)").matches || !window.matchMedia("(pointer: fine)").matches) return;
+    if (!origin || pending || !qrRef.current || !window.matchMedia("(min-width: 768px)").matches || !window.matchMedia("(pointer: fine)").matches) return;
     let alive = true;
     void import("qrcode").then((QR) => {
       if (alive && qrRef.current) void QR.toCanvas(qrRef.current, url, { width: 224, margin: 1 });
     });
     return () => { alive = false; };
-  }, [origin, url]);
+  }, [origin, url, pending]);
 
   const copy = async (value: string, key: string) => {
     try {
@@ -83,6 +101,8 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
     setBusy(true);
     setErr(null);
     try {
+      const cached = readCachedLink(target.code);
+      if (cached) { setLink24(cached); return; }
       const res = await fetch(`/api/jumpa/rooms/${encodeURIComponent(target.code)}/invites`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -91,14 +111,20 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
       const body = (await res.json().catch(() => null)) as { path?: string; error?: string } | null;
       if (!res.ok || !body?.path) throw new Error(body?.error ?? "Tautan gagal dibuat.");
       const full = `${window.location.origin}${body.path}`;
+      writeCachedLink(target.code, full);
       setLink24(full);
-      await copy(full, "link24");
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Tautan gagal dibuat.");
+    } catch {
+      setErr("Tautan undangan gagal dibuat. Undang guru dari panel Orang.");
     } finally {
       setBusy(false);
     }
   };
+
+  // Ruang guru: buat tautan undangan sekali saat lembar dibuka.
+  useEffect(() => {
+    if (target.canLink) void makeLink();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [target.canLink, target.code]);
 
   // Portal ke <body>: induk ber-transform/overflow (kartu jadwal, panel) tidak
   // boleh menjebak lembar `position: fixed` (uji 360px 25 Okt).
@@ -117,10 +143,10 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
 
         <div className="jps-grid mt-4">
           {canNative && (
-            <button type="button" className="jps-opt jps-wide" onClick={() => void native()}><Share2 size={20} /> Bagikan</button>
+            <button type="button" className="jps-opt jps-wide" disabled={pending} onClick={() => void native()}><Share2 size={20} /> Bagikan</button>
           )}
-          <a className="jps-opt" href={whatsappHref(text)} target="_blank" rel="noopener noreferrer"><MessageCircle size={20} /> WhatsApp</a>
-          <button type="button" className="jps-opt" onClick={() => void copy(url, "url")}>
+          <a className="jps-opt" href={pending ? undefined : whatsappHref(text)} aria-disabled={pending || undefined} target="_blank" rel="noopener noreferrer"><MessageCircle size={20} /> WhatsApp</a>
+          <button type="button" className="jps-opt" disabled={pending} onClick={() => void copy(url, "url")}>
             {done === "url" ? <Check size={20} /> : <Link2 size={20} />} {done === "url" ? "Tersalin" : "Salin tautan"}
           </button>
           <button type="button" className="jps-opt jps-wide" onClick={() => void copy(target.code, "code")} aria-label={`Salin kode ${target.code}`}>
@@ -130,13 +156,10 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
         </div>
 
         {target.canLink && (
-          <button type="button" className="jps-opt mt-2 w-full" disabled={busy} onClick={() => void makeLink()}>
-            {busy ? <Loader2 size={20} className="animate-spin" /> : done === "link24" ? <Check size={20} /> : <Copy size={20} />}
-            <span className="min-w-0">
-              <span className="block">{link24 ? (done === "link24" ? "Tautan 24 jam tersalin" : "Salin lagi tautan 24 jam") : "Tautan undangan 24 jam"}</span>
-              <span className="block text-xs font-medium text-[var(--clr-text-3)]">Untuk guru di luar komunitas.</span>
-            </span>
-          </button>
+          <p className="jpe-cap mt-2 flex items-center gap-1.5" aria-live="polite">
+            {busy && <Loader2 size={14} className="animate-spin" />}
+            {link24 ? "Guru yang membuka tautan ini langsung bisa masuk." : busy ? "Menyiapkan tautan undangan…" : null}
+          </p>
         )}
 
         <div className="jps-qr mt-3">
@@ -144,7 +167,7 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
           <p className="jpe-cap">Pindai dengan kamera HP untuk membuka ruang ini.</p>
         </div>
 
-        <p className="jpe-cap mt-3">Hanya akun BahasaCerdas yang terdaftar di ruang ini yang bisa masuk.</p>
+        {!target.canLink && <p className="jpe-cap mt-3">Hanya akun BahasaCerdas yang terdaftar di ruang ini yang bisa masuk.</p>}
         {err && <p role="alert" className="mt-2 text-sm text-[var(--clr-danger)]">{err}</p>}
       </div>
     </div>,

@@ -7,7 +7,7 @@
  */
 import type { JumpaRoom, JumpaRoomRole } from "@prisma/client";
 import { db } from "@/lib/db";
-import { JUMPA_LINK_INVITE_TTL_HOURS } from "./caps";
+import { linkInviteExpiry } from "./caps";
 import { sanitizeChatContent, toChatView, type ChatView } from "./chat";
 import { generateInviteToken, hashInviteToken } from "./code";
 import { attendanceOnLeave, isAttending } from "./lifecycle";
@@ -519,7 +519,7 @@ export async function createInvite(
     const d = canInvite({ actor, roomKind: room.kind, invite: { kind: "LINK" } });
     if (!d.ok) return fail(403, d.code, d.message);
     const token = generateInviteToken();
-    data = { kind: "LINK", tokenHash: hashInviteToken(token), expiresAt: new Date(now.getTime() + JUMPA_LINK_INVITE_TTL_HOURS * 3_600_000) };
+    data = { kind: "LINK", tokenHash: hashInviteToken(token), expiresAt: linkInviteExpiry(now, room.scheduledAt) };
     path = `/jumpa/${room.code}?u=${token}`;
   } else {
     return fail(400, "BAD_TARGET", "Jenis undangan tidak dikenal.");
