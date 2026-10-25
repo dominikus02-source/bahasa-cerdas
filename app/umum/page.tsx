@@ -15,6 +15,7 @@ import {
   Video,
 } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { buttonClass } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
 const products = [
@@ -102,7 +103,7 @@ export default function UmumDashboardPage() {
             <ThemeToggle />
             <Link
               href="/login"
-              className="ui-btn ui-btn--secondary ui-btn--sm"
+              className={buttonClass({ variant: "secondary", size: "sm" })}
             >
               Masuk
             </Link>
@@ -127,7 +128,7 @@ export default function UmumDashboardPage() {
               <p className="mt-4 max-w-xl text-sm leading-7 text-bc-text-2 sm:text-base">
                 Temukan ide, perluas wawasan, bertemu dengan orang lain, dan kembangkan karyamu dalam satu dunia bahasa yang terbuka untuk semua.
               </p>
-              <Link href="#jelajahi" className="ui-btn ui-btn--primary ui-btn--lg mt-6">
+              <Link href="#jelajahi" className={buttonClass({ variant: "primary", size: "lg", className: "mt-6" })}>
                 Jelajahi produk
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
@@ -136,7 +137,7 @@ export default function UmumDashboardPage() {
             <div className="relative hidden min-h-56 items-center justify-center md:flex">
               <div className="absolute h-52 w-52 rounded-full border border-bc-line" />
               <div className="absolute h-40 w-40 rounded-full border border-bc-line" />
-              <div className="relative grid h-28 w-28 place-items-center rounded-[30px] bg-bc-brand text-bc-on-brand shadow-bc-2">
+              <div className="relative grid h-28 w-28 place-items-center rounded-bc-hero bg-bc-brand text-bc-on-brand shadow-bc-2">
                 <BookOpenText className="h-12 w-12" strokeWidth={1.5} aria-hidden="true" />
               </div>
               <span className="absolute right-8 top-5 rounded-bc-card border border-bc-line bg-bc-surface px-4 py-3 text-xs font-bold shadow-bc-1">Baca & tulis</span>
