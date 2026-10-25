@@ -973,7 +973,7 @@ export default function AdminAnalyticsPage() {
           <SectionCard
             id="ai"
             title="AI Guru"
-            subtitle="Pemakaian Alat AI oleh guru dalam rentang ini."
+            subtitle="Pemakaian Alat NARA oleh guru dalam rentang ini."
             icon={<Brain size={18} />}
           >
             <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4">

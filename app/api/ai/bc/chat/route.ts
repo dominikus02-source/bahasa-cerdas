@@ -42,7 +42,7 @@ import { buildContextText, gatherBcContext } from "@/lib/ai-bc/context";
 
 export const maxDuration = 60;
 
-const AI_BC_ERROR = "Maaf, layanan AI sedang sibuk. Coba lagi sebentar ya.";
+const AI_BC_ERROR = "Maaf, Nara sedang sibuk. Coba lagi sebentar ya.";
 
 function sse(data: Record<string, unknown>): string {
   return `data: ${JSON.stringify(data)}\n\n`;
