@@ -69,7 +69,7 @@ test("guru/ai-bc: memakai AiBcModule", () => guruAiBc.includes("AiBcModule"));
 test("guru/ai-bc: tanpa header sendiri", () => !guruAiBc.includes("<header"));
 test("GuruNav: item AI BC terdaftar", () =>
   guruNav.includes('id: "ai-bc"') && guruNav.includes('href: "/guru/ai-bc"') && guruNav.includes("Sparkles"));
-test("GuruNav: Alat AI tetap ada", () => guruNav.includes('href: "/guru/ai-tools"'));
+test("GuruNav: Alat NARA tetap ada", () => guruNav.includes('href: "/guru/ai-tools"') && guruNav.includes("Alat NARA"));
 
 // 4. Modul tidak menduplikasi navigasi global
 test("AiBcModule: tanpa BackHome", () => !moduleC.includes("BackHome"));

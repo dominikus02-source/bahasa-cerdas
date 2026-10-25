@@ -9,7 +9,7 @@ export const XP_SOURCE_LABELS: Record<string, string> = {
   UKBI: "UKBI",
   TKA: "TKA",
   PENUGASAN: "Penugasan",
-  AI: "Alat AI",
+  AI: "Alat NARA",
   GAME: "Game",
   KATASTRA: "Katastra",
   MENARA: "Menara",
