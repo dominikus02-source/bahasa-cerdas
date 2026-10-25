@@ -1,5 +1,6 @@
 {
   "extends": "next/core-web-vitals",
+  "ignorePatterns": ["public/jumpa/mediapipe/**"],
   "rules": {
     "react/no-unescaped-entities": "off"
   }
