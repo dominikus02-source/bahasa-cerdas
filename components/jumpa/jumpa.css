@@ -122,7 +122,7 @@
   height: 100%;
   object-fit: cover;
 }
-.jumpa-tile[data-local="true"] video { transform: scaleX(-1); }
+.jumpa-tile[data-local="true"]:not([data-no-mirror]) video { transform: scaleX(-1); }
 .jumpa-tile::after {
   content: "";
   position: absolute;
@@ -1461,7 +1461,8 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 .jumpa-bg-option:active { transform: scale(0.97); }
 .jumpa-bg-preview {
   width: 100%;
-  aspect-ratio: 16/10;
+  aspect-ratio: 16/9;
+  overflow: hidden;
   border-radius: 8px;
   border: 1px solid var(--jp-border);
 }

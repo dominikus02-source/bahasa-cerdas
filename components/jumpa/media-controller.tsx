@@ -89,6 +89,11 @@ export function useMedia(): MediaCtl {
   return v;
 }
 
+/** Seperti useMedia, tetapi null di luar MediaProvider (mis. tile pratinjau). */
+export function useMediaOptional(): MediaCtl | null {
+  return useContext(MediaCtx);
+}
+
 const REMOTE_Q = { low: VideoQuality.LOW, medium: VideoQuality.MEDIUM } as const;
 
 function applyRemote(pub: RemoteTrackPublication, audioOnly: boolean, q: ReceivePolicy["remoteQuality"]) {
