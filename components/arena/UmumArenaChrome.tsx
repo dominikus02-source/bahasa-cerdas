@@ -5,7 +5,7 @@
  *
  * UMUM (pengguna umum non-sekolah) memakai shell Arena yang sama, tetapi
  * hanya melihat tujuan di allowlist (lib/auth/roles.ts → isUmumArenaPath):
- * NARA, Gim solo, Jalur Cerdas, dan info BIGT. Navigasi Murid (Beranda/
+ * NARA, Gim solo, dan Jalur Cerdas (BIGT = tautan eksternal). Navigasi Murid (Beranda/
  * Belajar/Karya/Profil murid) TIDAK ditampilkan.
  *
  * UmumRouteGate melengkapi guard server di app/arena/layout.tsx: layout
@@ -18,7 +18,7 @@ import { useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Sparkles, Gamepad2, Route, GraduationCap } from "lucide-react";
+import { Sparkles, Gamepad2, Route } from "lucide-react";
 import { isUmumArenaPath, UMUM_HOME } from "@/lib/auth/roles";
 import {
   NAV_ICON_CLASS,
@@ -42,7 +42,6 @@ export const UMUM_NAV: UmumNavItem[] = [
   { label: "NARA", href: "/arena/ai", icon: Sparkles, prefixes: ["/arena/ai"] },
   { label: "Gim", href: "/arena/game", icon: Gamepad2, prefixes: ["/arena/game"] },
   { label: "Jalur Cerdas", href: "/arena/jalur-cerdas", icon: Route, prefixes: ["/arena/jalur-cerdas"] },
-  { label: "BIGT", href: "/arena/simulasi/bigt", icon: GraduationCap, prefixes: ["/arena/simulasi/bigt"] },
 ];
 
 function isActive(item: UmumNavItem, pathname: string): boolean {
@@ -88,7 +87,7 @@ export function UmumMobileNav() {
       className="bc-mobile-nav md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-bc-line bg-bc-surface/[.97] shadow-[0_-10px_28px_-18px_var(--clr-line-strong)] safe-area-bottom"
       aria-label="Navigasi utama pengguna umum"
     >
-      <div className="grid grid-cols-4 items-end px-1.5 pt-1.5 pb-2">
+      <div className="grid grid-cols-3 items-end px-1.5 pt-1.5 pb-2">
         {UMUM_NAV.map((item) => {
           const active = isActive(item, pathname);
           const Icon = item.icon;

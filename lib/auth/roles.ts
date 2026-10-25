@@ -14,7 +14,7 @@
  *
  * UMUM = pengguna umum non-sekolah (mahasiswa, masyarakat umum, investor,
  * tamu — subkategori opsional di Profile.kategoriUmum). UMUM hanya punya
- * akses NARA (persona netral), gim solo Arena, Jalur Cerdas, dan info BIGT.
+ * akses NARA (persona netral), gim solo Arena, dan Jalur Cerdas.
  * UMUM TIDAK punya akses data kelas/guru/murid, JUMPA, gim multipemain,
  * Premium, maupun alat AI guru.
  */
@@ -68,7 +68,8 @@ export function dashboardForRole(role: string): string {
 }
 
 /**
- * Rute Arena yang terbuka untuk UMUM (gim solo, Jalur Cerdas, NARA, BIGT).
+ * Rute Arena yang terbuka untuk UMUM (gim solo, Jalur Cerdas, NARA).
+ * BIGT TIDAK di sini: untuk UMUM, BIGT adalah tautan ke situs eksternal.
  * Dicocokkan exact atau sebagai prefix segmen (`p` atau `p/...`).
  * `/arena/game` sendiri dicocokkan EXACT (hub, difilter) — sub-rutenya hanya
  * yang terdaftar di UMUM_GAME_IDS.
@@ -88,7 +89,6 @@ export const UMUM_GAME_IDS = [
 const UMUM_ARENA_PREFIXES: readonly string[] = [
   "/arena/ai",
   "/arena/jalur-cerdas",
-  "/arena/simulasi/bigt",
   // Alias lama /arena/game/kata-play → redirect ke bermain-kata.
   "/arena/game/kata-play",
   ...UMUM_GAME_IDS.map((id) => `/arena/game/${id}`),
