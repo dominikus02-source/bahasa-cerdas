@@ -11,7 +11,7 @@ export interface JumpaDevicePrefs {
   audiooutput?: string;
 }
 
-export type JumpaBackgroundId = "none" | "blur" | "kelas" | "pojok-baca" | "ruang-belajar" | "terang" | "gradien" | "pola-bc" | "custom";
+export type JumpaBackgroundId = "none" | "blur" | "kelas-bc" | "ruang-baca-bc" | "gradasi-bc" | "ruang-belajar" | "terang" | "gradien" | "custom";
 
 export interface JumpaMediaPrefs {
   camera: boolean;
@@ -42,7 +42,7 @@ export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
 };
 
 const QUALITIES: readonly JumpaQuality[] = ["auto", "hemat", "hd"];
-const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "blur", "kelas", "pojok-baca", "ruang-belajar", "terang", "gradien", "pola-bc", "custom"];
+const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "blur", "kelas-bc", "ruang-baca-bc", "gradasi-bc", "ruang-belajar", "terang", "gradien", "custom"];
 const DEVICE_ID_RE = /^[A-Za-z0-9+/=_-]{1,200}$/;
 
 function cleanDevices(v: unknown): JumpaDevicePrefs {
@@ -66,7 +66,8 @@ export function parseMediaPrefs(raw: string | null | undefined): JumpaMediaPrefs
       quality: QUALITIES.includes(v.quality as JumpaQuality) ? (v.quality as JumpaQuality) : d.quality,
       audioOnly: typeof v.audioOnly === "boolean" ? v.audioOnly : d.audioOnly,
       noiseSuppression: typeof v.noiseSuppression === "boolean" ? v.noiseSuppression : d.noiseSuppression,
-      background: BACKGROUNDS.includes(v.background as JumpaBackgroundId) ? (v.background as JumpaBackgroundId) : d.background,
+      // "kelas" lama → latar resmi "Kelas BC".
+      background: v.background === "kelas" ? "kelas-bc" : BACKGROUNDS.includes(v.background as JumpaBackgroundId) ? (v.background as JumpaBackgroundId) : d.background,
       customBackgroundUrl: typeof v.customBackgroundUrl === "string" && v.customBackgroundUrl.startsWith("data:image/") ? v.customBackgroundUrl : undefined,
       devices: cleanDevices(v.devices),
     };

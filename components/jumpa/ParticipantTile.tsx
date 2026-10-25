@@ -5,6 +5,8 @@ import { VideoTrack, isTrackReference, useConnectionQualityIndicator, useIsMuted
 import { ConnectionQuality, Track, TrackEvent, type TrackPublication } from "livekit-client";
 import { AudioLines, MicOff, MonitorUp, WifiLow } from "lucide-react";
 import { avatarTone, initials, parseParticipantMeta, shortName } from "./format";
+import { isImageBackground } from "./backgrounds";
+import { useMediaOptional } from "./media-controller";
 
 interface Props {
   trackRef: TrackReferenceOrPlaceholder;
@@ -50,6 +52,8 @@ function usePublicationTrack(pub: TrackPublication | undefined): Track | undefin
 function Tile({ trackRef, compact = false, screen = false }: Props) {
   const participant = trackRef.participant;
   const speaking = useIsSpeaking(participant);
+  const media = useMediaOptional();
+  const noMirror = participant.isLocal && isImageBackground(media?.prefs.background);
   const cameraMuted = useIsMuted(trackRef);
   const micMuted = useIsMuted({ participant, source: Track.Source.Microphone });
   const meta = parseParticipantMeta(participant.metadata);
@@ -75,7 +79,7 @@ function Tile({ trackRef, compact = false, screen = false }: Props) {
   const label = participant.isLocal ? `${name} (Kamu)` : name;
 
   return (
-    <div className="jumpa-tile h-full w-full" data-speaking={talking} data-local={participant.isLocal} data-compact={compact} title={label}>
+    <div className="jumpa-tile h-full w-full" data-speaking={talking} data-local={participant.isLocal} data-no-mirror={noMirror || undefined} data-compact={compact} title={label}>
       {showVideo ? (
         <VideoTrack trackRef={trackRef} />
       ) : (

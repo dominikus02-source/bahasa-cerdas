@@ -5,12 +5,12 @@
  */
 export type JumpaBackgroundId =
   | "none"
-  | "kelas"
-  | "pojok-baca"
+  | "kelas-bc"
+  | "ruang-baca-bc"
+  | "gradasi-bc"
   | "ruang-belajar"
   | "terang"
   | "gradien"
-  | "pola-bc"
   | "custom";
 
 export interface JumpaBackground {
@@ -35,12 +35,13 @@ const set = (id: JumpaBackgroundId, label: string, file: string): JumpaBackgroun
 
 export const JUMPA_BACKGROUNDS: readonly JumpaBackground[] = [
   { id: "none", label: "Tanpa latar" },
-  set("kelas", "Kelas", "kelas-modern"),
-  set("pojok-baca", "Pojok baca", "pojok-baca"),
+  // Latar resmi BahasaCerdas (dari CEO) — selalu paling depan.
+  set("kelas-bc", "Kelas BC", "kelas-bc"),
+  set("ruang-baca-bc", "Ruang Baca", "ruang-baca-bc"),
+  set("gradasi-bc", "Gradasi BC", "gradasi-bc"),
   set("ruang-belajar", "Ruang belajar", "ruang-belajar"),
   set("terang", "Terang", "terang"),
   set("gradien", "Gradien", "gradien"),
-  set("pola-bc", "Pola BC", "pola-bc"),
   { id: "custom", label: "Buat sendiri" },
 ] as const;
 
@@ -51,4 +52,12 @@ export function backgroundById(id: string | null | undefined): JumpaBackground {
 /** Gambar yang dipakai untuk video: versi kecil di layar sempit. */
 export function backgroundImageFor(bg: JumpaBackground, viewportWidth: number): string | undefined {
   return viewportWidth < 768 && bg.imageSmall ? bg.imageSmall : bg.image;
+}
+
+/**
+ * Latar bergambar (bisa berisi logo/teks). Saat aktif, video diri sendiri
+ * tidak dicerminkan agar tulisan terbaca benar, sama seperti yang dilihat peserta lain.
+ */
+export function isImageBackground(id: string | null | undefined): boolean {
+  return id === "custom" || !!backgroundById(id).image;
 }
