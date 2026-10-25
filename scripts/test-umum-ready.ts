@@ -228,7 +228,7 @@ async function main() {
     const umumStyle = c.slice(c.indexOf("UMUM: {"), c.indexOf("},", c.indexOf("UMUM: {")));
     assert(/bg-bc-brand/.test(umumStyle) && /border-bc-info/.test(umumStyle) && !/sky-\d/.test(umumStyle), `${p}: opsi Umum memakai token merek (tanpa sky-*)`);
   }
-  assert(/roleReady = !!role;/.test(code("app/(auth)/register/page.tsx")) && /canContinue = !!role;/.test(code("app/auth/pilih-peran/page.tsx")), "Lanjut aktif cukup dengan memilih peran");
+  assert(/disabled=\{!role\}/.test(code("app/(auth)/register/page.tsx")) && /canContinue = !!role;/.test(code("app/auth/pilih-peran/page.tsx")), "Lanjut aktif cukup dengan memilih peran");
   assert(/kategoriUmum \?\? KATEGORI_UMUM_DEFAULT/.test(code("lib/auth/google-provision.ts")), "provisioning Google: kategori kosong → UMUM");
 
   // ═══ 9. AI guru tools ═══

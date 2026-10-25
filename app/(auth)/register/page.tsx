@@ -453,7 +453,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={goToStep2}
-                      disabled={!roleReady}
+                      disabled={!role}
                       className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
                     >
                       Lanjut
