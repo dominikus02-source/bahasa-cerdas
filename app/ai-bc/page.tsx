@@ -32,6 +32,8 @@ const FEATURES = [
 const EXAMPLES = [
   "Apa arti kata 'apresiasi'?",
   "Perbaiki kalimat ini agar efektif.",
+  "Rapikan paragraf pembuka esaiku.",
+  "Apa beda \"di\" sebagai awalan dan kata depan?",
   "Buatkan 3 soal kata baku.",
   "Jelaskan perbedaan puisi dan pantun.",
 ];
@@ -56,12 +58,11 @@ export default async function AiBcPage() {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Hero */}
       <section className="relative z-10 mx-auto w-full max-w-3xl px-4 pb-12 pt-14 text-center sm:pt-20">
-        <AICompanionCharacter
-          state="idle"
-          size="lg"
-          priority
-          className="mx-auto mb-4"
-        />
+        {/* Wrapper flex agar maskot benar-benar di tengah (div block + mx-auto
+            pada lebar penuh tidak memusatkan gambar). */}
+        <div className="mb-4 flex justify-center">
+          <AICompanionCharacter state="idle" size="lg" priority />
+        </div>
         <h1 className="text-5xl font-black sm:text-6xl">
           <span className={styles.naraWordmark}>NARA</span>
         </h1>
@@ -80,7 +81,7 @@ export default async function AiBcPage() {
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Link
-            href="/login"
+            href="/login?next=/ai-bc"
             className={`${styles.sendButton} flex min-h-11 w-full items-center justify-center rounded-xl px-8 py-3.5 text-sm font-semibold sm:w-auto`}
           >
             Masuk dan Ngobrol dengan Nara
@@ -92,9 +93,19 @@ export default async function AiBcPage() {
             Pelajari BahasaCerdas
           </Link>
         </div>
-        <p className="mt-4 text-xs text-muted-foreground">
-          Gratis untuk murid BahasaCerdas. Nara adalah teman belajar, bukan
-          pengganti guru — Nara bisa keliru, jadi periksa kembali informasi
+        <p className="mt-4 text-sm text-muted-foreground">
+          Belum punya akun?{" "}
+          <Link
+            href="/register?next=/ai-bc"
+            className="font-semibold text-primary underline-offset-4 hover:underline"
+          >
+            Daftar gratis
+          </Link>
+        </p>
+        <p className="mx-auto mt-3 max-w-xl text-xs leading-relaxed text-muted-foreground">
+          Untuk pelajar, mahasiswa, guru, dan siapa saja yang ingin berbahasa
+          Indonesia lebih baik. Nara adalah teman berpikir, bukan pengganti
+          guru atau dosen — Nara bisa keliru, jadi periksa kembali informasi
           penting.
         </p>
       </section>
