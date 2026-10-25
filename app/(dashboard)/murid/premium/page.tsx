@@ -21,7 +21,7 @@ const PLANS: Record<MuridPlan, { name: string; label: string; price: number; not
 
 const COMPARE: Array<[string, string, string]> = [
   ["Latihan personal", "", "Ya"],
-  ["Mentor AI: kenapa salah?", "", "Ya"],
+  ["NARA Mentor: kenapa salah?", "", "Ya"],
   ["Ringkasan perkembangan", "", "Mingguan"],
   ["Simulasi UKBI/TKA", "3/bulan", "10/bulan"],
   ["Peta kemampuan", "Dasar", "Rinci"],
@@ -138,8 +138,8 @@ export default function MuridPremiumPage() {
             <h1 className="bp-h1">{active ? "Premium aktif" : "Premium"}</h1>
             <p className="bp-text">
               {active
-                ? "Latihan personal, Mentor AI, dan ringkasan perkembangan sudah terbuka."
-                : "Latihan yang menyesuaikan kemampuanmu, dengan Mentor AI yang menjelaskan kesalahan."}
+                ? "Latihan personal, NARA Mentor, dan ringkasan perkembangan sudah terbuka."
+                : "Latihan yang menyesuaikan kemampuanmu, dengan NARA Mentor yang menjelaskan kesalahan."}
             </p>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function MuridPremiumPage() {
             )}
             <div className="bp-actions" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(9.5rem, 1fr))" }}>
               <Link href="/murid/belajar" className="bp-ghost"><Target size={18} aria-hidden="true" /> Latihan</Link>
-              <Link href="/murid/mentor" className="bp-ghost"><Brain size={18} aria-hidden="true" /> Mentor AI</Link>
+              <Link href="/murid/mentor" className="bp-ghost"><Brain size={18} aria-hidden="true" /> NARA Mentor</Link>
               <Link href="/murid/progresku" className="bp-ghost"><BarChart3 size={18} aria-hidden="true" /> Perkembangan</Link>
             </div>
           </>

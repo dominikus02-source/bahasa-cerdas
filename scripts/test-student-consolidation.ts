@@ -22,7 +22,7 @@ function main() {
   console.log("\n📋 STUDENT CONSOLIDATION TEST (STEP 4 — Sidebar 6 Item, Sim Menu di Home)");
   console.log("=".repeat(60));
 
-  const layout = fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8");
+  const layout = (fs.readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8") + fs.readFileSync("components/shell/MuridShellFrame.tsx", "utf-8"));
   const mobileNav = fs.readFileSync("components/dashboard/MuridMobileNav.tsx", "utf-8");
   const playerProfile = fs.readFileSync("app/arena/player/profile/page.tsx", "utf-8");
   const muridAi = fs.readFileSync("app/(dashboard)/murid/ai/page.tsx", "utf-8");
@@ -41,8 +41,8 @@ function main() {
 
   // 2. Sidebar Menu Utama (6 item) di layout murid
   console.log("\n── 2. Sidebar Menu Utama ──");
-  test("nav canonical 6 item via <ShellNavList /> (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
-    () => layout.includes("<ShellNavList />") && ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"].every(h => navConfig.includes(`href: "${h}"`)));
+  test("nav canonical 5 item via <ShellNavList /> (Beranda/Belajar/Arena/Karya/Profil)",
+    () => layout.includes("<ShellNavList />") && ["/murid/beranda", "/murid/belajar", "/arena", "/murid/karya", "/murid/profile"].every(h => navConfig.includes(`href: "${h}"`)));
   test("'Dasbor Murid' header dipertahankan", () => layout.includes("Dasbor Murid"));
   test("Toko Koin TIDAK lagi di nav murid (dipindah keluar sidebar)",
     () => !layout.includes('/arena/toko-koin"') && !layout.includes('href="/murid/toko-koin"') &&
@@ -85,7 +85,9 @@ function main() {
   // 7. Fix NotificationBell (bug hardcoded guru)
   console.log("\n── 7. NotificationBell ──");
   test("'Lihat Semua' bell murid menuju /arena/notifikasi (bukan /guru/notifikasi)",
-    () => bell.includes('href="/arena/notifikasi"') && !bell.includes('href="/guru/notifikasi"'));
+    // Bell kini menerima prop allHref (default /arena/notifikasi); hanya layout guru yang mengoper /guru/notifikasi.
+    () => bell.includes('allHref = "/arena/notifikasi"') && bell.includes("href={allHref}") && !bell.includes('href="/guru/notifikasi"') &&
+      !fs.readFileSync("components/shell/MuridShellFrame.tsx", "utf-8").includes("/guru/notifikasi"));
 
   // 8. Ekonomi TIDAK dimigrasi (STOP — koin & streak tetap dua jalur)
   console.log("\n── 8. Ekonomi Tidak Disentuh ──");

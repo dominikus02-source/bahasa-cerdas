@@ -106,8 +106,10 @@ check("16. My Day adaptive preview hanya di home-data", (allStudentHome.match(/a
 check("16. /api/player/profile hanya di home-data", (allStudentHome.match(/api\/player\/profile/g) || []).length === 0 && homeData.includes('"/api/player/profile"'));
 
 // 16 — Mobile first
-check("16. Grid mobile grid-cols-1", page.includes("grid-cols-1"));
-check("16. Container tidak overflow (max-w + truncate)", page.includes("max-w-[1200px]") && allStudentHome.includes("truncate"));
+// Beranda murid kini tumpukan satu kolom (space-y) di container max-w-[1180px];
+// kolom tunggal di mobile tetap dijamin tanpa grid-cols-1 eksplisit.
+check("16. Mobile satu kolom (grid-cols-1 atau tumpukan space-y)", page.includes("grid-cols-1") || /<main className="[^"]*\bspace-y-\d/.test(page));
+check("16. Container tidak overflow (max-w + truncate)", /max-w-\[(1180|1200)px\]/.test(page) && page.includes("overflow-hidden") && allStudentHome.includes("truncate"));
 
 // 21 — AI reliability
 check("21. My Day tanpa dependensi LLM (tanpa fetch AI di beranda)", !allStudentHome.includes("/api/ai/"));

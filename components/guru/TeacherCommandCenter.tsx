@@ -2,7 +2,7 @@
 
 // ─── Teacher Command Center (Hero `/guru/beranda`) ───────────
 // Tiga zona: TOP (greeting + role/access), MIDDLE (3 metric),
-// BOTTOM (action bar 4 aksi: Buat Materi, AI BC, Main Bersama,
+// BOTTOM (action bar 4 aksi: Buat Materi, NARA, Main Bersama,
 // Dasbor Murid). Dasbor Murid tidak lagi berdiri sendiri di kanan
 // atas (children dihapus). Main Bersama = featured: accent surface +
 // label "Live" — noticeable tanpa membuat aksi lain terasa mati.
@@ -197,7 +197,7 @@ export default function TeacherCommandCenter({
               <span className="w-8 h-8 shrink-0 rounded-lg bg-violet-100 text-violet-700 flex items-center justify-center">
                 <Sparkles size={16} aria-hidden />
               </span>
-              <span className="min-w-0 flex-1 leading-tight">AI BC</span>
+              <span className="min-w-0 flex-1 leading-tight">NARA</span>
             </Link>
 
             <Link

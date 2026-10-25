@@ -60,7 +60,7 @@ export function addPageNumber(doc: typeof PDFDocument.prototype): void {
 export function addFooter(doc: typeof PDFDocument.prototype): void {
   doc.fontSize(8).fillColor(COLORS.GRAY);
   doc.text(
-    "Dibuat dengan BahasaCerdas AI",
+    "Dibuat dengan NARA · BahasaCerdas",
     MARGIN,
     PAGE_HEIGHT - 20,
     { align: "center", width: CONTENT_WIDTH }

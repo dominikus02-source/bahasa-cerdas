@@ -362,9 +362,9 @@ export default function BankSoalPage() {
         {/* Subtle geometric pattern */}
         <div
           aria-hidden
-          className="absolute inset-0"
+          className="absolute inset-0 text-white/[0.04]"
           style={{
-            backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)",
             backgroundSize: "18px 18px",
           }}
         />

@@ -54,20 +54,20 @@ function MentorRoom() {
 
       if (!response.ok) {
         setError({
-          message: payload.message || payload.error || "Mentor belum bisa merespons. Coba lagi.",
+          message: payload.message || payload.error || "NARA Mentor belum bisa merespons. Coba lagi sebentar ya.",
           code: payload.code,
         });
         return;
       }
 
       if (!payload.data) {
-        setError({ message: "Respons Mentor belum lengkap. Coba lagi." });
+        setError({ message: "Jawaban NARA Mentor belum lengkap. Coba lagi ya." });
         return;
       }
 
       setResult(payload.data);
     } catch {
-      setError({ message: "Koneksi ke Mentor terputus. Coba lagi beberapa saat." });
+      setError({ message: "Koneksi ke NARA Mentor terputus. Periksa internetmu, lalu coba lagi." });
     } finally {
       setLoading(false);
     }
@@ -102,7 +102,7 @@ function MentorRoom() {
             <h1 className="mt-5 text-4xl font-black tracking-tight sm:text-5xl">
               Kenalan dengan
               <span className="block bg-gradient-to-r from-cyan-200 via-white to-fuchsia-200 bg-clip-text text-transparent">
-                AI Mentor.
+                NARA Mentor.
               </span>
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-blue-100/75 sm:text-base">
@@ -171,7 +171,7 @@ function MentorRoom() {
               className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
-              {loading ? "Mentor sedang membaca..." : result ? "Perbarui analisis" : "Tanya Mentor"}
+              {loading ? "NARA Mentor sedang membaca…" : result ? "Perbarui analisis" : "Tanya NARA Mentor"}
             </button>
           </div>
 
@@ -200,7 +200,7 @@ function MentorRoom() {
             <div>
               <p className="font-bold">{error.message}</p>
               {error.code === "QUOTA_EXCEEDED" && (
-                <p className="mt-1 text-xs opacity-75">Kuota Mentor akan tersedia lagi setelah reset harian.</p>
+                <p className="mt-1 text-xs opacity-75">Kuota NARA Mentor akan tersedia lagi setelah reset harian.</p>
               )}
             </div>
             {error.code !== "QUOTA_EXCEEDED" && (
@@ -219,7 +219,7 @@ function MentorRoom() {
             <div className="relative">
               <div className="inline-flex items-center gap-2 rounded-full bg-violet-50 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.16em] text-violet-700 dark:bg-violet-400/10 dark:text-violet-200">
                 <Sparkles className="h-3.5 w-3.5" />
-                Analisis Mentor
+                Analisis NARA Mentor
               </div>
               <h2 className="mt-5 text-2xl font-black tracking-tight text-slate-950 dark:text-white sm:text-3xl">
                 {result.headline}
@@ -294,7 +294,7 @@ function MentorRoom() {
           </div>
           <h2 className="mt-4 text-xl font-black text-slate-950 dark:text-white">Siap membaca progresmu.</h2>
           <p className="mx-auto mt-2 max-w-lg text-sm leading-6 text-slate-500 dark:text-slate-300/65">
-            Tekan Tanya Mentor. Tidak perlu menulis prompt—Mentor akan memulai dari bukti belajar yang sudah tersedia.
+            Tekan Tanya NARA Mentor. Tidak perlu menulis prompt—NARA Mentor akan memulai dari bukti belajar yang sudah tersedia.
           </p>
         </section>
       ) : null}

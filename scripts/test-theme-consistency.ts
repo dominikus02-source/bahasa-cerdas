@@ -263,7 +263,8 @@ test("murid shell root latar token (ui-app-bg)", () => read("components/shell/Mu
 test("murid header pakai token surface", () => read("components/shell/MuridShellFrame.tsx").includes("bg-bc-surface/95"));
 test("MuridMobileNav dark", () => themeAware(read("components/dashboard/MuridMobileNav.tsx")));
 test("arena layout root dark", () => themeAware(read("app/arena/layout.tsx")));
-test("guru layout root dark", () => read("app/(dashboard)/guru/layout.tsx").includes("dark:from-slate-950"));
+// Root guru kini bergradasi biru (identitas guru) dengan varian gelap sendiri.
+test("guru layout root dark", () => /rootClassName="bc-guru-shell[^"]*dark:from-/.test(read("app/(dashboard)/guru/layout.tsx")));
 
 /* ------------------------------------------------------------------ */
 /* 8. AI BC theme                                                      */
@@ -284,8 +285,9 @@ test("AI BC karakter object-contain (tanpa white box)", () =>
 /* ------------------------------------------------------------------ */
 
 console.log("\n9. Arena & gamification theme handling");
+// app/arena/page.tsx kini server component tipis; UI-nya di ArenaHomepage.
 const arenaFiles = [
-  "app/arena/page.tsx",
+  "components/arena/ArenaHomepage.tsx",
   "app/arena/league/league-tabs.tsx",
 ];
 for (const f of arenaFiles) {
@@ -364,8 +366,10 @@ for (const n of profileCards) {
   test(`profile ${n} punya dark variant`, () => read(`components/profile/${n}.tsx`).includes("dark:"));
 }
 
+// /admin kini hanya redirect ke Control Tower (/admin/executive).
+test("admin root hanya redirect ke /admin/executive", () => read("app/(dashboard)/admin/page.tsx").includes('redirect("/admin/executive")'));
 const adminPages = [
-  "app/(dashboard)/admin/page.tsx",
+  "app/(dashboard)/admin/executive/page.tsx",
   "app/(dashboard)/admin/payments/page.tsx",
   "app/(dashboard)/admin/ai-quota/page.tsx",
   "app/(dashboard)/admin/data-center/page.tsx",

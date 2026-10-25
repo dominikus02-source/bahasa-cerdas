@@ -367,7 +367,7 @@ export default function MuridProfilePage() {
           <div className="min-w-0">
             <p className="text-[10px] font-extrabold uppercase tracking-[0.18em] text-cyan-200">{user.isPremium ? "Premium aktif" : "Naik ke Premium"}</p>
             <h2 className="mt-0.5 text-base font-extrabold">{user.isPremium ? "Kelola Premium kamu" : "Buka pengalaman belajar Premium"}</h2>
-            <p className="mt-1 text-xs text-blue-100/75">{user.isPremium ? "Lihat status dan masa aktif Premium." : "Latihan personal, AI Mentor, dan insight perkembangan."}</p>
+            <p className="mt-1 text-xs text-blue-100/75">{user.isPremium ? "Lihat status dan masa aktif Premium." : "Latihan personal, NARA Mentor, dan insight perkembangan."}</p>
           </div>
         </div>
         <ChevronRight className="h-5 w-5 shrink-0 text-white/70 transition-transform group-hover:translate-x-1" />

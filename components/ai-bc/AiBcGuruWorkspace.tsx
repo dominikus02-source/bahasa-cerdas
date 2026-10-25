@@ -7,11 +7,12 @@ import AiBcWelcome from "./AiBcWelcome";
 import useAiBcViewport from "./useAiBcViewport";
 import styles from "./ai-bc-workspace.module.css";
 import AICompanionCharacter from "./AICompanionCharacter";
-import { streamBcChat } from "./ai-bc-stream";
+import { BcStreamError, streamBcChat } from "./ai-bc-stream";
 import type { BcClientMessage, BcHint } from "./ai-bc-types";
 
 /**
- * AI BC 2.2 — GURU FULLSCREEN CONVERSATION WORKSPACE (Teman Guru).
+ * AI BC 2.2 — GURU FULLSCREEN CONVERSATION WORKSPACE.
+ * Identitas tampilan: NARA (Narasumber Andalan, Rekan Anda).
  *
  * Permukaan guru (/guru/ai-bc) yang setara kualitasnya dengan workspace murid
  * 2.1 (AiBcArenaWorkspace) DI DALAM Unified App Shell (sidebar global + header
@@ -37,12 +38,14 @@ export const GURU_AI_BC_SUGGESTED_PROMPTS: string[] = [
   "Bantu saya membuat aktivitas untuk melatih literasi siswa.",
 ];
 
-const AI_LABEL = "AI BC";
-const THINKING_LABEL = "Sebentar, aku pikirkan…";
-const ERROR_COPY = "Maaf, aku belum bisa menjawab sekarang.";
-const WELCOME_HEADLINE = "Apa yang ingin Anda siapkan?";
-const WELCOME_LINE = "Diskusikan materi, soal, dan aktivitas pembelajaran.";
-const PLACEHOLDER = "Tulis pertanyaan Anda…";
+const AI_LABEL = "NARA";
+const THINKING_LABEL = "Nara sedang berpikir…";
+const ERROR_COPY =
+  "Maaf, Nara belum bisa menjawab sekarang. Silakan kirim ulang pesan Anda.";
+const WELCOME_HEADLINE = "Halo! Saya Nara, rekan Anda di BahasaCerdas.";
+const WELCOME_LINE =
+  "Mau bertanya, mencari ide, atau menyiapkan sesuatu hari ini? Mari kita kerjakan bersama!";
+const PLACEHOLDER = "Tulis pesan untuk Nara…";
 const SCROLL_NEAR_BOTTOM_PX = 140;
 const COMPOSER_MAX_HEIGHT_PX = 128;
 
@@ -125,7 +128,7 @@ export default function AiBcGuruWorkspace({
           role: "assistant",
           content:
             result.text ||
-            "Maaf, aku belum bisa menjawab kali ini. Coba lagi ya.",
+            "Maaf, Nara belum bisa menjawab kali ini. Coba lagi ya.",
         },
       ]);
     } catch (e) {
@@ -134,7 +137,12 @@ export default function AiBcGuruWorkspace({
         setDraftText("");
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: ERROR_COPY, isError: true },
+          {
+            role: "assistant",
+            // Pesan BcStreamError sudah ramah (mis. sesi berakhir); selain itu pakai salinan umum.
+            content: e instanceof BcStreamError && e.message ? e.message : ERROR_COPY,
+            isError: true,
+          },
         ]);
       }
     } finally {
@@ -218,7 +226,12 @@ export default function AiBcGuruWorkspace({
   };
 
   const handleCopy = async (text: string, id: number) => {
-    await navigator.clipboard.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Clipboard bisa ditolak (izin/HTTP/iframe) — jangan tampilkan "Tersalin".
+      return;
+    }
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -237,7 +250,7 @@ export default function AiBcGuruWorkspace({
           <div className="flex min-w-0 items-center gap-2.5">
             <AICompanionCharacter state="idle" size="sm" />
             <div className="min-w-0">
-              <p className="text-sm font-semibold text-foreground">
+              <p className={`text-base ${styles.naraWordmark}`}>
                 {AI_LABEL}
               </p>
               <p className="truncate text-xs text-muted-foreground">
@@ -402,7 +415,7 @@ export default function AiBcGuruWorkspace({
       )}
 
       {/* Komposer — SELALU tampil (tanpa gerbang), melekat di dasar workspace */}
-      <div className="ai-bc-guru-composer shrink-0 border-t border-slate-200/70 bg-white/80 px-3 pb-2 pt-3 backdrop-blur dark:border-slate-800 dark:bg-slate-900/70 safe-area-bottom">
+      <div className="ai-bc-guru-composer shrink-0 border-t border-border bg-background/80 px-3 pb-2 pt-3 backdrop-blur safe-area-bottom">
         <div className="mx-auto w-full max-w-[900px]">
           <div
             className={`${styles.composerField} flex min-w-0 items-end gap-2 rounded-2xl border border-input bg-card px-3 py-2`}
@@ -414,7 +427,7 @@ export default function AiBcGuruWorkspace({
               onKeyDown={handleKeyDown}
               rows={1}
               placeholder={PLACEHOLDER}
-              aria-label="Pertanyaan untuk AI BC"
+              aria-label="Tulis pesan untuk Nara"
               className="max-h-32 min-w-0 flex-1 resize-none bg-transparent py-2 text-base text-foreground placeholder:text-muted-foreground focus-visible:outline-none"
             />
             <button
@@ -435,8 +448,11 @@ export default function AiBcGuruWorkspace({
               )}
             </button>
           </div>
-          <p className="mt-2 hidden text-center text-xs text-muted-foreground sm:block">
-            Enter untuk kirim · Shift+Enter untuk baris baru
+          <p className="mt-1.5 text-center text-[11px] leading-snug text-muted-foreground sm:mt-2 sm:text-xs">
+            Nara bisa keliru. Periksa kembali informasi penting.
+            <span className="hidden sm:inline">
+              {" "}· Enter untuk kirim · Shift+Enter untuk baris baru
+            </span>
           </p>
         </div>
       </div>

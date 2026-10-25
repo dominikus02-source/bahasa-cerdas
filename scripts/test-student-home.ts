@@ -32,7 +32,8 @@ const page = read("app/(dashboard)/murid/beranda/page.tsx");
 check("Beranda = client component", page.includes('"use client"'));
 check("Import player-theme.css di halaman (bukan layout)", page.includes('import "@/app/arena/player-theme.css"'));
 check("Wrapper .px-theme di root", page.includes('className="px-theme'));
-check("Container max-w-[1200px]", page.includes("max-w-[1200px]"));
+// Container dipersempit ke 1180px pada redesain beranda murid.
+check("Container max-w-[1180px]", /max-w-\[(1180|1200)px\]/.test(page));
 
 // 2 — Hierarki Personal Learning Home: HERO → SKILL (kemampuan) → MOTIVASI → PREMIUM
 // → PINTAS (AI BC + JOURNEY) → RUANG → SIMULASI → KARYA → KABAR
@@ -124,9 +125,9 @@ check(
   goldFiles.length === 0 && heroGold.includes("buttonClass({ variant: \"primary\"")
 );
 const aiCard = read("components/student-home/AIBCHomeCard.tsx");
-check("AI BC → /arena/ai", aiCard.includes('href="/arena/ai"'));
-check("AI BC copy companion ('Tanya BC. Kita belajar bareng.')", aiCard.includes("Kita belajar bareng"));
-check("AI BC CTA 'Tanya AI BC →'", aiCard.includes("Tanya AI BC"));
+check("NARA → /arena/ai", aiCard.includes('href="/arena/ai"'));
+check("NARA copy companion ('Tanya Nara. Yuk, kita kerjakan bareng!')", aiCard.includes("Tanya Nara. Yuk, kita kerjakan bareng!"));
+check("NARA CTA 'Tanya Nara →'", aiCard.includes("Tanya Nara") && !aiCard.includes("Tanya AI BC"));
 
 // 7 — Hero ringkas: identitas + XP singkat, tanpa dashboard statistik
 const homeData = read("components/student-home/home-data.tsx");

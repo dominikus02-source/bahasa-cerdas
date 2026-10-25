@@ -98,7 +98,7 @@ export default function BantuanPembayaranPage() {
           Kembali ke Berlangganan
         </Link>
         <Link href="/guru/ai-tools" className="flex-1 text-center py-3 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50">
-          <ChevronRight className="w-4 h-4 inline mr-1" /> Alat AI
+          <ChevronRight className="w-4 h-4 inline mr-1" /> Alat NARA
         </Link>
       </div>
     </div>

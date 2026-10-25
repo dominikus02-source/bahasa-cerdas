@@ -4,8 +4,12 @@ import { getBcHints } from "@/lib/ai-bc/context";
 import { TEACHER_PERSONA } from "@/src/ai/bc/personas";
 import AiBcGuruWorkspace from "@/components/ai-bc/AiBcGuruWorkspace";
 
+export const metadata = {
+  title: "NARA — Teman Berpikir, Berkata, dan Berkarya",
+};
+
 /**
- * AI BC 2.2 — Teman Guru (Guru Shell).
+ * NARA (dahulu AI BC 2.2) — permukaan guru (Guru Shell).
  *
  * Permukaan guru kini FULLSCREEN CONVERSATION WORKSPACE (AiBcGuruWorkspace)
  * DI DALAM Unified App Shell — setara kualitas dengan workspace murid 2.1:

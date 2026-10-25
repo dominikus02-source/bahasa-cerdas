@@ -154,7 +154,7 @@ export default function LoginPage() {
   ];
 
   const ecosystem = [
-    { title: "AI BC", copy: "AI cerdas untuk pembelajaran adaptif" },
+    { title: "NARA", copy: "Teman Berpikir, Berkata, dan Berkarya" },
     { title: "Materi & Latihan", copy: "Ribuan materi dan latihan sesuai kebutuhan" },
     { title: "Arena & Prestasi", copy: "Tantangan seru dan sistem poin yang memotivasi" },
     { title: "Aman & Terpercaya", copy: "Sistem keamanan berstandar tinggi untuk data Anda" },

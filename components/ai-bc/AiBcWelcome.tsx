@@ -2,6 +2,7 @@
 
 import { BookOpen, MessageSquareText, PenLine } from "lucide-react";
 import AICompanionCharacter from "./AICompanionCharacter";
+import { NARA_IDENTITY_LINE, NARA_NAME } from "./ai-bc-types";
 import type { BcHint, BcRole } from "./ai-bc-types";
 import styles from "./ai-bc-workspace.module.css";
 
@@ -41,16 +42,21 @@ export default function AiBcWelcome({
       <AICompanionCharacter state="idle" size="md" priority />
       <div className="space-y-2">
         <p className="flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-foreground">
-          AI BC{" "}
-          <span className="bc-badge-violet rounded-full px-2.5 py-1 text-xs">
-            {role === "student" ? "Teman Belajar" : personaTitle}
+          <span className={`text-xl ${styles.naraWordmark}`}>
+            {NARA_NAME}
+          </span>
+          <span className={`${styles.naraBadge} rounded-full px-2.5 py-1 text-xs`}>
+            {NARA_IDENTITY_LINE}
           </span>
         </p>
         <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
           {headline}
         </h1>
-        <p className="text-sm leading-relaxed text-muted-foreground">
+        <p className="mx-auto max-w-[560px] text-sm leading-relaxed text-muted-foreground">
           {description}
+        </p>
+        <p className="text-xs font-medium text-muted-foreground">
+          {personaTitle}
         </p>
       </div>
 

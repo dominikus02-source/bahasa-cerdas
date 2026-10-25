@@ -82,7 +82,7 @@ export const AGENT_LABELS: Record<CanonicalAgentId, string> = {
   grading: "Penilaian Otomatis",
   "text-analysis": "Analisis Teks",
   eyd: "Korektor EYD",
-  "bc-assistant": "AI BC Assistant",
+  "bc-assistant": "NARA",
 };
 
 /**

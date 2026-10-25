@@ -62,7 +62,7 @@ export function TrialStatusCard() {
                 href="/guru/ai-tools"
                 className="inline-flex items-center gap-1.5 text-xs px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition-all font-medium"
               >
-                <Sparkles size={12} /> Lihat Alat AI
+                <Sparkles size={12} /> Lihat Alat NARA
               </Link>
             </div>
           </div>

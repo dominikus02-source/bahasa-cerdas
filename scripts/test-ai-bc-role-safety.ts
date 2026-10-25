@@ -81,10 +81,10 @@ const TEACHER_KEYWORDS = [
 
 console.log("A. STUDENT persona");
 ok(/STUDENT_PERSONA/.test(personas), "A1 STUDENT_PERSONA didefinisikan");
-ok(/title:\s*"Teman Belajarmu"/.test(personas), "A2 title = Teman Belajarmu");
-ok(/TEACHER_PERSONA/.test(personas) && /title:\s*"Teman Guru"/.test(personas), "A3 TEACHER_PERSONA title = Teman Guru");
+ok(/STUDENT_PERSONA[\s\S]*?label:\s*"NARA"[\s\S]*?title:\s*BC_TAGLINE/.test(personas), "A2 STUDENT_PERSONA = NARA + tagline");
+ok(/TEACHER_PERSONA[\s\S]*?label:\s*"NARA"[\s\S]*?title:\s*BC_TAGLINE/.test(personas), "A3 TEACHER_PERSONA = NARA + tagline");
 ok(
-  personas.includes("Teman cerdas untuk belajar dan mengajar Bahasa Indonesia."),
+  personas.includes('export const BC_TAGLINE = "Teman Berpikir, Berkata, dan Berkarya."'),
   "A4 tagline identitas tunggal ada"
 );
 ok(/getPersonaForUser/.test(personas), "A5 getPersonaForUser ada");
@@ -166,7 +166,7 @@ for (const kw of TEACHER_KEYWORDS) {
 /* ------------------------------------------------------------------ */
 
 console.log("D. Arena student surface");
-ok(/STUDENT_PERSONA/.test(arena), "D1 /arena/ai selalu persona murid (Teman Belajarmu)");
+ok(/STUDENT_PERSONA/.test(arena), "D1 /arena/ai selalu persona murid (NARA murid)");
 excludes(arena, "teacher", "D2 /arena/ai tidak memilih persona teacher");
 includes(arena, 'getBcHints(user, "student")', "D3 hints murid dipaksa (roleOverride)");
 excludes(arena, "isTeacher", "D4 tidak ada CTA guru di arena");
@@ -184,11 +184,11 @@ includes(types, '"Latihan"', "D13 quick action murid: Latihan");
 includes(types, '"Jelaskan"', "D14 quick action murid: Jelaskan");
 includes(types, '"Tantang Aku"', "D15 quick action murid: Tantang Aku");
 includes(types, "Mau tanya apa?", "D16 gelembung idle murid");
-includes(types, "Sebentar, aku pikirkan…", "D17 gelembung thinking murid");
+includes(types, "Nara sedang berpikir…", "D17 gelembung thinking murid");
 includes(types, "Ada lagi yang mau kamu tanyakan?", "D18 penutup respons murid");
 excludes(types, "Mau aku bantu buat soal?", "D19 murid tidak ditawari buat soal");
-includes(types, "Tanya apa saja tentang Bahasa Indonesia", "D20 placeholder murid");
-includes(homeCard, "Teman Belajarmu", "D21 kartu beranda murid = Teman Belajarmu");
+includes(types, 'student: "Tulis pesan untuk Nara…"', "D20 placeholder murid");
+includes(homeCard, "Tanya Nara", "D21 kartu beranda murid = NARA");
 excludes(homeCard, "RPP", "D22 kartu beranda murid tanpa RPP");
 
 // Chat view: peran klien hanya memilih TONES, bukan kapabilitas.
@@ -228,8 +228,8 @@ excludes(publik, "Rancang satu pertemuan materi puisi", "F6 contoh guru dihapus 
 includes(publik, "Menulis & berkarya", "F7 fitur netral/murid pengganti");
 includes(publik, "Jelaskan perbedaan puisi dan pantun.", "F8 contoh netral pengganti");
 excludes(layout, "RPP", "F9 metadata publik tanpa RPP");
-includes(layout, "Teman cerdas untuk belajar dan mengajar Bahasa Indonesia", "F10 metadata tagline tetap");
-includes(types, "Teman cerdas untuk belajar dan mengajar Bahasa Indonesia.", "F11 AI_BC_TAGLINE tetap");
+includes(layout, "Teman Berpikir, Berkata, dan Berkarya", "F10 metadata tagline NARA");
+includes(types, 'AI_BC_TAGLINE = "Teman Berpikir, Berkata, dan Berkarya."', "F11 AI_BC_TAGLINE = tagline NARA");
 
 /* ------------------------------------------------------------------ */
 /* SUMMARY                                                             */

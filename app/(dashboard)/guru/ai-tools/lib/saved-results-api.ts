@@ -110,3 +110,12 @@ export async function deleteSavedResult(id: string): Promise<void> {
   const res = await fetch(`/api/ai/agents/saved/${id}`, { method: "DELETE" });
   await handleResponse(res);
 }
+
+/**
+ * Judul tampilan untuk riwayat. Percakapan lama tersimpan dengan judul
+ * "Percakapan AI BC — …" (sebelum rebrand NARA). Kita hanya memetakan saat
+ * render — data di database TIDAK diubah, id/isi percakapan tetap sama.
+ */
+export function displaySavedTitle(title: string): string {
+  return title.replace(/^Percakapan AI BC(?=$|\s)/, "Percakapan NARA");
+}

@@ -78,31 +78,36 @@ export const TEACHER_QUICK_ACTIONS: BcQuickAction[] = [
 ];
 
 export const PLACEHOLDERS: Record<BcRole, string> = {
-  student: "Tanya apa saja tentang Bahasa Indonesia…",
-  teacher: "Tulis pertanyaan atau tempel teks untuk dikoreksi…",
+  student: "Tulis pesan untuk Nara…",
+  teacher: "Tulis pesan untuk Nara atau tempel teks untuk dikoreksi…",
 };
 
 /**
- * Gelembung karakter AI BC (Zelby) — alur resmi:
+ * Gelembung karakter NARA (avatar Zelby) — alur resmi:
  * idle (entry) → thinking (diproses) → done (setelah respons).
  */
 export const COMPANION_BUBBLES: Record<BcRole, { idle: string; thinking: string; done: string }> = {
   student: {
     idle: "Mau tanya apa?",
-    thinking: "Sebentar, aku pikirkan…",
+    thinking: "Nara sedang berpikir…",
     done: "Ada lagi yang mau kamu tanyakan?",
   },
   teacher: {
     idle: "Mau aku bantu kembangkan materi ini?",
-    thinking: "Sebentar, aku pikirkan…",
+    thinking: "Nara sedang berpikir…",
     done: "Ada lagi yang bisa aku bantu?",
   },
 };
 
 /** aria-label resmi entry point karakter (a11y). */
 export const COMPANION_LABELS: Record<BcRole, string> = {
-  student: "Buka Teman Belajar BahasaCerdas",
-  teacher: "Buka Teman Guru BahasaCerdas",
+  student: "Buka NARA, teman ngobrolmu di BahasaCerdas",
+  teacher: "Buka NARA, rekan Anda di BahasaCerdas",
 };
 
-export const AI_BC_TAGLINE = "Teman cerdas untuk belajar dan mengajar Bahasa Indonesia.";
+/** Tagline NARA (nama konstanta dipertahankan untuk kompatibilitas). */
+export const AI_BC_TAGLINE = "Teman Berpikir, Berkata, dan Berkarya.";
+
+/** Nama tampilan AI + kepanjangannya. */
+export const NARA_NAME = "NARA";
+export const NARA_IDENTITY_LINE = "Narasumber Andalan, Rekan Anda";

@@ -48,11 +48,15 @@ test("persona murid ada", () => STUDENT_PERSONA.key === "student");
 test("persona guru ada", () => TEACHER_PERSONA.key === "teacher");
 test("tagline resmi ada di kedua persona", () =>
   STUDENT_PERSONA.tagline === TEACHER_PERSONA.tagline &&
-  STUDENT_PERSONA.tagline.includes("Teman cerdas untuk belajar dan mengajar Bahasa Indonesia"));
-test("persona murid = Teman Belajarmu", () => STUDENT_PERSONA.title === "Teman Belajarmu");
-test("persona guru = Teman Guru", () => TEACHER_PERSONA.title === "Teman Guru");
-test("prompt menyebut identitas AI BC", () =>
-  allPrompts.includes("AI BC") && allPrompts.includes("Teman Belajarmu") && allPrompts.includes("Teman Guru"));
+  STUDENT_PERSONA.tagline === "Teman Berpikir, Berkata, dan Berkarya.");
+test("persona murid = NARA + tagline", () => STUDENT_PERSONA.label === "NARA" && STUDENT_PERSONA.title === "Teman Berpikir, Berkata, dan Berkarya.");
+test("persona guru = NARA + tagline", () => TEACHER_PERSONA.label === "NARA" && TEACHER_PERSONA.title === "Teman Berpikir, Berkata, dan Berkarya.");
+test("prompt menyebut identitas Nara (NARA — Narasumber Andalan, Rekan Anda)", () =>
+  allPrompts.includes("Nara") && allPrompts.includes("Narasumber Andalan, Rekan Anda") &&
+  allPrompts.includes("Teman Berpikir, Berkata, dan Berkarya."));
+test("sapaan murid & guru = teks sambutan resmi NARA", () =>
+  STUDENT_PERSONA.greeting === "Hai! Aku Nara, teman ngobrolmu di BahasaCerdas. Mau bertanya, mencari ide, atau membuat sesuatu hari ini? Yuk, kita kerjakan bareng!" &&
+  TEACHER_PERSONA.greeting === "Halo! Saya Nara, rekan Anda di BahasaCerdas. Mau bertanya, mencari ide, atau menyiapkan sesuatu hari ini? Mari kita kerjakan bersama!");
 
 // 2. Kualitas prompt
 test("tidak ada klise pembuka 'Sebagai AI,'", () => !allPrompts.toLowerCase().includes("sebagai ai,"));
@@ -115,7 +119,7 @@ test("total karakter dibatasi", () => {
 });
 
 // 6. buildSystemPrompt
-test("prompt memuat persona", () => buildSystemPrompt({ persona: STUDENT_PERSONA }).includes("AI BC"));
+test("prompt memuat persona", () => buildSystemPrompt({ persona: STUDENT_PERSONA }).includes("Kamu adalah **Nara**"));
 test("konteks disertakan", () =>
   buildSystemPrompt({ persona: STUDENT_PERSONA, contextText: "- Kelas: 7" }).includes("Kelas: 7"));
 test("konteks kosong tidak ditambahkan", () =>

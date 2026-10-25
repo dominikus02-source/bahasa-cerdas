@@ -7,7 +7,7 @@ const AGENT_LABELS: Record<string, string> = {
   soal: "Soal",
   ppt: "PPT",
   review: "Review",
-  "bc-assistant": "BC Asst",
+  "bc-assistant": "NARA",
   eyd: "EYD",
   feedback: "Feedback",
   grading: "Nilai",

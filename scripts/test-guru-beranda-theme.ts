@@ -204,12 +204,13 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
     tc.includes("tugasMenunggu: number") &&
     tc.includes("greeting: string") &&
     tc.includes("fullName: string"));
-  check("F4. Page meneruskan data dari fetch existing (bukan mock)",
-    page.includes("totalSiswa={stats.totalSiswa}") &&
-    page.includes("kelasAktif={nilaiStats.length}") &&
-    page.includes("tugasMenunggu={nilaiStats.reduce") &&
-    page.includes("fullName={user.fullName ?? \"Guru\"}") &&
-    page.includes("greeting={greeting}"));
+  // Beranda guru kini memakai komposisi TeacherHomeV3 (lihat test-guru-engagement2-phase1);
+  // page.tsx = server wrapper -> GuruBerandaClient. TeacherCommandCenter tidak lagi dipasang.
+  const berandaClient = fs.readFileSync(path.join(ROOT, "components/guru/GuruBerandaClient.tsx"), "utf8");
+  check("F4. Page meneruskan data nyata (user + fetch /api/guru/misi), bukan mock",
+    page.includes("displayName={resolveGreetingName(user)}") &&
+    page.includes("userKey={user?.id ?? null}") &&
+    berandaClient.includes('fetch("/api/guru/misi"'));
   check("F5. Route CTA benar & existing",
     tc.includes('href="/guru/materi-ajar"') &&
     tc.includes('href="/guru/ai-bc"') &&
@@ -221,7 +222,7 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
     tc.includes("Tugas Menunggu") &&
     tc.includes("Kelas Aktif") &&
     tc.includes("Buat Materi") &&
-    tc.includes("AI BC") &&
+    tc.includes(">NARA<") &&
     tc.includes("perlu dinilai") &&
     tc.includes("sedang dikelola") &&
     tc.includes("di ekosistemmu"));
@@ -233,10 +234,8 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
     tc.includes("text-emerald-700") &&
     tc.includes("text-violet-700"));
   check("F9. Loading skeleton via prop loading (placeholder —)", tc.includes("loading") && tc.includes("—"));
-  check("F10. Children slot dipakai page untuk CreateMenu (flow existing utuh)",
-    tc.includes("children?: ReactNode") &&
-    page.includes("<TeacherCommandCenter") &&
-    page.includes("<CreateMenu />"));
+  check("F10. Page merender GuruBerandaClient -> TeacherHomeV3 (komposisi utama)",
+    page.includes("<GuruBerandaClient") && berandaClient.includes("<TeacherHomeV3"));
   check("F11. Page masih memakai TrialStatusCard (tidak terhapus)",
     page.includes("<TrialStatusCard />") &&
     page.includes('import { TrialStatusCard }'));

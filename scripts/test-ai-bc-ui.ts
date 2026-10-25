@@ -45,12 +45,12 @@ test("label guru: Buat Materi/Buat Soal/Rancang Pembelajaran/Cari Ide", () =>
 test("aksi guru punya prompt siap kirim", () => TEACHER_QUICK_ACTIONS.every((a) => a.prompt.trim().length > 10));
 
 // 3. Placeholder & sapaan
-test("placeholder murid", () => PLACEHOLDERS.student.includes("Tanya apa saja tentang Bahasa Indonesia"));
+test("placeholder murid", () => PLACEHOLDERS.student === "Tulis pesan untuk Nara…");
 test("placeholder guru", () => PLACEHOLDERS.teacher.includes("tempel teks"));
 test("sapaan murid menyapa dan menawarkan bantuan", () =>
-  read("src/ai/bc/personas.ts").includes("Halo! Aku AI BC, Teman Belajarmu"));
+  read("src/ai/bc/personas.ts").includes("Hai! Aku Nara, teman ngobrolmu di BahasaCerdas. Mau bertanya, mencari ide, atau membuat sesuatu hari ini? Yuk, kita kerjakan bareng!"));
 test("sapaan guru menyapa dan menawarkan bantuan", () =>
-  read("src/ai/bc/personas.ts").includes("Halo! Aku AI BC, Teman Guru"));
+  read("src/ai/bc/personas.ts").includes("Halo! Saya Nara, rekan Anda di BahasaCerdas. Mau bertanya, mencari ide, atau menyiapkan sesuatu hari ini? Mari kita kerjakan bersama!"));
 
 // 4. Alur landing → chat
 const moduleC = read("components/ai-bc/AiBcModule.tsx");
@@ -93,8 +93,9 @@ test("ikon salin + umpan balik Tersalin", () => chat.includes("Tersalin") && cha
 
 // 7. Laman publik
 const publicPage = read("app/ai-bc/page.tsx");
-test("publik: tagline di h1/hero", () => publicPage.includes("Teman cerdas untuk belajar dan mengajar Bahasa Indonesia."));
-test("publik: CTA Masuk dan Coba AI BC", () => publicPage.includes("Masuk dan Coba AI BC"));
+test("publik: NARA + identitas + tagline di hero", () =>
+  publicPage.includes(">NARA<") && publicPage.includes("Narasumber Andalan, Rekan Anda") && publicPage.includes("Teman Berpikir, Berkata, dan Berkarya."));
+test("publik: CTA Masuk dan Ngobrol dengan Nara", () => publicPage.includes("Masuk dan Ngobrol dengan Nara") && !publicPage.includes("Coba AI BC"));
 test("publik: tanpa kata Generate", () => !publicPage.includes("Generate"));
 test("publik: ada 4 kartu fitur", () => (publicPage.match(/title: "([^"]+)"/g) || []).length === 4);
 test("layout publik tanpa kata Generate", () => !read("app/ai-bc/layout.tsx").includes("Generate"));
@@ -127,13 +128,13 @@ test("gelembung idle murid: Mau tanya apa?", () =>
   typesLib.includes('idle: "Mau tanya apa?"'));
 test("gelembung idle guru: Mau aku bantu kembangkan materi ini?", () =>
   typesLib.includes('idle: "Mau aku bantu kembangkan materi ini?"'));
-test("gelembung thinking: Sebentar, aku pikirkan…", () =>
-  typesLib.includes('thinking: "Sebentar, aku pikirkan…"'));
+test("gelembung thinking: Nara sedang berpikir…", () =>
+  typesLib.includes('thinking: "Nara sedang berpikir…"'));
 test("gelembung done: Ada lagi yang mau kamu tanyakan?", () =>
   typesLib.includes('done: "Ada lagi yang mau kamu tanyakan?"'));
-test("aria-label karakter: Buka Teman Belajar/Guru BahasaCerdas", () =>
-  typesLib.includes('"Buka Teman Belajar BahasaCerdas"') &&
-  typesLib.includes('"Buka Teman Guru BahasaCerdas"'));
+test("aria-label karakter: Buka NARA (murid/guru)", () =>
+  typesLib.includes('"Buka NARA, teman ngobrolmu di BahasaCerdas"') &&
+  typesLib.includes('"Buka NARA, rekan Anda di BahasaCerdas"'));
 test("strip karakter interaktif fokus ke input", () =>
   chat.includes("inputRef.current?.focus()") && chat.includes("interactive"));
 test("alur karakter: thinking saat streaming (role=status)", () =>
@@ -143,7 +144,7 @@ test("FAB guru memakai karakter zelby_reading", () =>
   read("components/shared/AIFloatingButton.tsx").includes('gambarKarakter("zelby", "reading")'));
 test("FAB tidak memakai kata Chat", () =>
   !read("components/shared/AIFloatingButton.tsx").includes("Chat dengan AI") &&
-  read("components/shared/AIFloatingButton.tsx").includes("Tanya AI BC"));
+  read("components/shared/AIFloatingButton.tsx").includes("Ngobrol dengan Nara"));
 test("kartu beranda murid memakai karakter zelby_reading", () =>
   read("components/student-home/AIBCHomeCard.tsx").includes('gambarKarakter("zelby", "reading")'));
 test("halaman publik hero memakai karakter zelby_reading", () =>

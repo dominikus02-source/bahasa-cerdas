@@ -9,6 +9,7 @@
  */
 
 import { readFileSync, existsSync } from "node:fs";
+import { displaySavedTitle } from "../app/(dashboard)/guru/ai-tools/lib/saved-results-api";
 
 let passed = 0;
 let failed = 0;
@@ -46,10 +47,12 @@ test("ai-bc: GURU/founder → /guru/ai-bc", () =>
   publicPage.includes('user.role === "GURU" || user.role === "ADMIN" || user.isFounder') &&
   publicPage.includes('redirect(isTeacher ? "/guru/ai-bc" : "/arena/ai")'));
 test("ai-bc: anonim melihat laman perkenalan", () =>
-  publicPage.includes("Teman cerdas untuk belajar dan mengajar Bahasa Indonesia.") && publicPage.includes('href="/login"'));
+  publicPage.includes("Teman Berpikir, Berkata, dan Berkarya.") && publicPage.includes("Narasumber Andalan, Rekan Anda") &&
+  publicPage.includes('href="/login"'));
 test("ai-bc: tidak ada mode switch manual", () => !publicPage.includes("setMode"));
-test("ai-bc/layout metadata baru (teman belajar & mengajar)", () =>
-  publicLayout.includes("Teman cerdas untuk belajar dan mengajar Bahasa Indonesia"));
+test("ai-bc/layout metadata NARA (tanpa nama platform dobel di title)", () =>
+  publicLayout.includes('title: "NARA — Teman Berpikir, Berkata, dan Berkarya"') &&
+  !/title:\s*"[^"]*BahasaCerdas"/.test(publicLayout.split("openGraph")[0]));
 
 // 2. /arena/ai memakai shell Arena (tanpa header/nav sendiri)
 test("arena/ai: server component (getUser)", () => arenaAi.includes("getUser"));
@@ -67,7 +70,17 @@ test("guru/ai-bc: memakai AiBcModule", () => guruAiBc.includes("AiBcModule"));
 test("guru/ai-bc: tanpa header sendiri", () => !guruAiBc.includes("<header"));
 test("GuruNav: item AI BC terdaftar", () =>
   guruNav.includes('id: "ai-bc"') && guruNav.includes('href: "/guru/ai-bc"') && guruNav.includes("Sparkles"));
-test("GuruNav: Alat AI tetap ada", () => guruNav.includes('href: "/guru/ai-tools"'));
+test("Riwayat: judul lama 'Percakapan AI BC — …' tampil sebagai 'Percakapan NARA — …' (hanya render)", () =>
+  displaySavedTitle("Percakapan AI BC — Buat soal teks") === "Percakapan NARA — Buat soal teks" &&
+  displaySavedTitle("Percakapan AI BC") === "Percakapan NARA" &&
+  displaySavedTitle("RPP Teks Eksposisi") === "RPP Teks Eksposisi" &&
+  displaySavedTitle("Catatan Percakapan AI BC") === "Catatan Percakapan AI BC");
+test("Riwayat: pemetaan judul tidak menyentuh API/DB (render, cari, edit saja)", () => {
+  const panel = readFileSync("app/(dashboard)/guru/ai-tools/_components/history-panel.tsx", "utf8");
+  const api = readFileSync("app/api/ai/agents/saved/[id]/route.ts", "utf8");
+  return panel.includes("{displaySavedTitle(item.title)}") && !api.includes("Percakapan NARA") && !api.includes("displaySavedTitle");
+});
+test("GuruNav: Alat NARA tetap ada", () => guruNav.includes('href: "/guru/ai-tools"') && guruNav.includes("Alat NARA"));
 
 // 4. Modul tidak menduplikasi navigasi global
 test("AiBcModule: tanpa BackHome", () => !moduleC.includes("BackHome"));
