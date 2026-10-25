@@ -14,7 +14,10 @@ export function ThemeToggle() {
       title="Tema terang/gelap"
       className="inline-flex h-10 w-10 items-center justify-center rounded-bc-sm border border-bc-line bg-bc-surface text-bc-text-2 hover:bg-bc-surface-2 hover:text-bc-text transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
     >
-      {resolvedTheme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      {/* Ikon dipilih lewat CSS (kelas .dark dari next-themes), bukan resolvedTheme:
+          resolvedTheme belum diketahui saat SSR sehingga memicu hydration mismatch. */}
+      <span className="hidden dark:inline-flex" aria-hidden="true"><Sun className="h-5 w-5" /></span>
+      <span className="inline-flex dark:hidden" aria-hidden="true"><Moon className="h-5 w-5" /></span>
     </button>
   );
 }
