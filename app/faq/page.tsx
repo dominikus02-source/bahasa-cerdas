@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun khusus untuk guru Bahasa Indonesia di SMP, SMA, SMK, dan MA.",
+    a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan generator Rencana Pembelajaran NARA, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun khusus untuk guru Bahasa Indonesia di SMP, SMA, SMK, dan MA.",
   },
   {
     q: "Apakah BahasaCerdas gratis?",

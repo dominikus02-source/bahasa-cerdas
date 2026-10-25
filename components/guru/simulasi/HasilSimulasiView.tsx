@@ -166,7 +166,7 @@ export function HasilSimulasiView({ guruName, hub = false }: { guruName: string;
             </div>
             <div>
               <h1 className="text-xl font-bold">Pusat Evaluasi Pembelajaran</h1>
-              <p className="text-sm text-emerald-100">Asisten AI membantu guru mengetahui siapa yang belum mengerjakan, siapa perlu remedial, materi tersulit, dan kelas paling berkembang. {guruName ? `Halo, ${guruName}!` : ""}</p>
+              <p className="text-sm text-emerald-100">NARA membantu guru mengetahui siapa yang belum mengerjakan, siapa perlu remedial, materi tersulit, dan kelas paling berkembang. {guruName ? `Halo, ${guruName}!` : ""}</p>
             </div>
           </div>
         </div>

@@ -26,7 +26,7 @@ const steps = [
   },
   {
     icon: GraduationCap,
-    title: "UKBI & TKA Simulation",
+    title: "Simulasi UKBI & TKA",
     desc: "Latihan soal UKBI dan TKA dengan simulasi mirip ujian sesungguhnya.",
     color: "from-rose-500 to-pink-600",
   },

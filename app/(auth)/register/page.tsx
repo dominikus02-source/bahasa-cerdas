@@ -67,7 +67,7 @@ const ROLE_CONFIG: Record<Role, {
 };
 
 const ROLE_CARDS = [
-  { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "AI Rencana Pembelajaran, Bank Soal, Kuis Game" },
+  { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "Alat NARA, Bank Soal, Kuis Game" },
   { key: "MURID" as const, icon: BookOpen, label: "Murid", sub: "Belajar, Kuis, UKBI" },
 ];
 
