@@ -239,6 +239,7 @@
     "seed:guru-badges:dry-run": "npx tsx scripts/seed-guru-badges.ts",
     "seed:guru-badges": "npx tsx scripts/seed-guru-badges.ts --execute",
     "test:guru-phase": "npx tsx scripts/test-guru-phase.ts",
+    "test:guru-materi-session": "npx tsx scripts/test-guru-materi-session.ts",
     "test:social-hardening": "npx tsx scripts/test-social-hardening.ts",
     "test:profile-social-stats": "npx tsx scripts/test-profile-social-stats.ts",
     "test:global-works-discovery": "npx tsx scripts/test-global-works-discovery.ts",
