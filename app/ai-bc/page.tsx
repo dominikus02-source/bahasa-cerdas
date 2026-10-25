@@ -62,7 +62,7 @@ export default async function AiBcPage() {
           priority
           className="mx-auto mb-4"
         />
-        <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+        <h1 className="text-5xl font-black sm:text-6xl">
           <span className={styles.naraWordmark}>NARA</span>
         </h1>
         <p

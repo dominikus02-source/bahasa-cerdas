@@ -248,7 +248,7 @@ export default function AiBcArenaWorkspace({
           <div className="flex min-w-0 items-center gap-2.5">
             <AICompanionCharacter state="idle" size="sm" />
             <div className="min-w-0">
-              <p className={`text-sm font-bold ${styles.naraWordmark}`}>
+              <p className={`text-base ${styles.naraWordmark}`}>
                 {AI_LABEL}
               </p>
               <p className="truncate text-xs text-muted-foreground">

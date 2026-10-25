@@ -144,12 +144,21 @@
 }
 
 /* Identitas NARA (wordmark + kepanjangan) */
+/* Wordmark NARA: tebal (900), sedikit renggang, teks bergradasi audiens
+   (ungu/brand di murid, biru di guru). Gradasi token sudah punya varian
+   terang & gelap sehingga tetap terbaca di dua mode. */
 .naraWordmark {
+  display: inline-block;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  /* Imbangi letter-spacing huruf terakhir agar tetap rata tengah. */
+  margin-right: -0.12em;
+  line-height: 1.1;
   background: var(--bc-grad-aud, var(--clr-aud));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  letter-spacing: 0.08em;
+  -webkit-text-fill-color: transparent;
 }
 .naraBadge {
   color: var(--clr-aud);
@@ -159,6 +168,7 @@
 @media (forced-colors: active) {
   .naraWordmark {
     color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
     background: none;
   }
 }

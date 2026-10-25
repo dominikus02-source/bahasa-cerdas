@@ -42,7 +42,7 @@ export default function AiBcWelcome({
       <AICompanionCharacter state="idle" size="md" priority />
       <div className="space-y-2">
         <p className="flex flex-wrap items-center justify-center gap-2 text-sm font-semibold text-foreground">
-          <span className={`text-base font-bold ${styles.naraWordmark}`}>
+          <span className={`text-xl ${styles.naraWordmark}`}>
             {NARA_NAME}
           </span>
           <span className={`${styles.naraBadge} rounded-full px-2.5 py-1 text-xs`}>
