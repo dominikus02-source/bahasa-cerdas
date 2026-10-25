@@ -76,7 +76,7 @@ export default async function AkuSastrawanPage() {
 
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground">
-      <div className="pointer-events-none fixed inset-x-0 top-0 -z-0 h-[520px] bg-[radial-gradient(ellipse_at_top,rgba(139,92,246,0.13),transparent_65%)]" />
+      <div className="pointer-events-none fixed inset-x-0 top-0 -z-0 h-[520px] bg-primary/5 blur-3xl" />
       <header className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-5 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-violet-600 text-white shadow-lg shadow-violet-600/20">
