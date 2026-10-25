@@ -1508,7 +1508,7 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 /* ── Tema terang ──
    Token terang datang dari :root (app/theme/tokens.css). Di sini hanya
    penyesuaian kontras WCAG AA untuk teks kecil di atas aksen/latar lembut:
-   #059669 di atas putih/#ecfdf5 < 4.5:1, jadi aksen JUMPA memakai versi kuat. */
+   aksen terang biasa di atas putih/latar lembut < 4.5:1, jadi aksen JUMPA memakai versi kuat. */
 html:not(.dark) .jumpa-scope {
   --clr-accent: var(--clr-accent-strong);
   --clr-warning: var(--clr-warning-strong);
