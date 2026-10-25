@@ -330,8 +330,25 @@ export async function DELETE(req: NextRequest) {
 }
 
 // Increment penghitung unduhan (fire-and-forget dari kartu modul).
+// SECURITY: wajib sesi (L2) — tanpa ini statistik unduhan bisa dimanipulasi
+// anonim. Identitas hanya dari sesi server.
 export async function PATCH(req: NextRequest) {
   try {
+    let dbUser: { id: string; email: string } | null = null;
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        dbUser = await db.user.findUnique({
+          where: { supabaseId: user.id },
+          select: { id: true, email: true },
+        });
+      }
+    } catch {}
+    if (!dbUser || dbUser.email.endsWith("@account.invalid")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await req.json();
     if (!id) return NextResponse.json({ error: "id wajib" }, { status: 400 });
     await db.materi.update({ where: { id }, data: { downloads: { increment: 1 } } });
