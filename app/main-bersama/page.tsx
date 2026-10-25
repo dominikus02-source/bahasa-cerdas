@@ -27,7 +27,7 @@ export default async function OldMainBersamaRootPage() {
         icon={Users}
         description="Mode main bersama untuk pengguna umum sedang kami siapkan."
         backHref={UMUM_HOME}
-        backLabel="Kembali ke NARA"
+        backLabel="Kembali ke dasbor"
       />
     );
   }

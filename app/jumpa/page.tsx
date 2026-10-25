@@ -25,7 +25,7 @@ export default async function JumpaIndex() {
         icon={Video}
         description="Ruang video JUMPA untuk pengguna umum sedang kami siapkan."
         backHref={UMUM_HOME}
-        backLabel="Kembali ke NARA"
+        backLabel="Kembali ke dasbor"
       />
     );
   }

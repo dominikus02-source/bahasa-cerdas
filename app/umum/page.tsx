@@ -1,192 +1,274 @@
-"use client";
-
 import Link from "next/link";
+import type { Metadata } from "next";
+import type { LucideIcon } from "lucide-react";
 import {
-  ArrowRight,
-  ArrowUpRight,
-  BookOpenText,
-  ClipboardCheck,
-  Feather,
-  Gamepad2,
-  MessageCircle,
-  Route,
-  ShoppingBag,
-  Sparkles,
-  Video,
+  ArrowUpRight, BookOpenText, ChevronRight, Feather, Gamepad2, Hourglass, Inbox, Route,
+  ShoppingBag, Sparkles, Star, Store, Target, Users, Video, Zap,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
-import { buttonClass } from "@/components/ui/button";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { db } from "@/lib/db";
+import { requireUmumPage } from "@/lib/auth/umum-page";
+import { kategoriUmumLabel } from "@/lib/auth/kategori-umum";
+import { isUmumGameId } from "@/lib/auth/roles";
+import { GAME_REGISTRY } from "@/lib/arena/game-registry";
+import { UMUM_PRODUCTS, type UmumProductKey } from "@/lib/umum/products";
+import { UmumShell } from "@/components/umum/UmumShell";
 
-const products = [
-  {
-    name: "NARA",
-    label: "Teman berpikir",
-    description: "Teman berpikir, berkata, dan berkarya bersama AI.",
-    href: "/ai-bc",
-    icon: MessageCircle,
-    tone: "bg-bc-accent-soft text-bc-accent-strong",
-  },
-  {
-    name: "JUMPA",
-    label: "Ruang temu",
-    description: "Bertemu, berdiskusi, dan berbagi gagasan secara daring.",
-    href: "/jumpa",
-    icon: Video,
-    tone: "bg-bc-info-soft text-bc-info",
-  },
-  {
-    name: "MAIN BERSAMA",
-    label: "Belajar sambil bermain",
-    description: "Asah pengetahuan bahasa lewat permainan interaktif.",
-    href: "/main-bersama",
-    icon: Gamepad2,
-    tone: "bg-bc-violet-soft text-bc-violet",
-  },
-  {
-    name: "JALUR CERDAS",
-    label: "Tumbuh bertahap",
-    description: "Jelajahi perjalanan untuk mengembangkan kompetensi.",
-    href: "/arena/jalur-cerdas",
-    icon: Route,
-    tone: "bg-bc-accent-soft text-bc-accent-strong",
-  },
-  {
-    name: "BIGT",
-    label: "Ukur kompetensi",
-    description: "Kenali kemampuan berbahasa melalui tes kompetensi.",
-    href: "/murid/bigt",
-    icon: ClipboardCheck,
-    tone: "bg-bc-info-soft text-bc-info",
-  },
-  {
-    name: "AKSARA",
-    label: "Ruang baca dan karya",
-    description: "Baca, tulis, dan bagikan gagasan dalam Bahasa Indonesia.",
-    href: "/artikel",
-    icon: BookOpenText,
-    tone: "bg-bc-violet-soft text-bc-violet",
-  },
-  {
-    name: "TOKO KARYA",
-    label: "Temukan karya",
-    description: "Jelajahi karya dan produk dari komunitas BahasaCerdas.",
-    href: "/marketplace",
-    icon: ShoppingBag,
-    tone: "bg-bc-accent-soft text-bc-accent-strong",
-  },
-  {
-    name: "AKU SASTRAWAN",
-    label: "Ruang kreatif",
-    description: "Kembangkan ide dan temukan suara kreatifmu lewat tulisan.",
-    href: "/murid/katastra",
-    icon: Feather,
-    tone: "bg-bc-violet-soft text-bc-violet",
-  },
-] as const;
+export const dynamic = "force-dynamic";
 
-export default function UmumDashboardPage() {
+export const metadata: Metadata = {
+  title: "Dasbor Umum — BahasaCerdas",
+  robots: { index: false, follow: false },
+};
+
+const PRODUCT_ICON: Record<UmumProductKey, LucideIcon> = {
+  NARA: Sparkles,
+  JUMPA: Video,
+  MAIN_BERSAMA: Users,
+  JALUR_CERDAS: Route,
+  BIGT: Target,
+  AKSARA: BookOpenText,
+  TOKO_KARYA: Store,
+  AKU_SASTRAWAN: Feather,
+};
+
+const XP_SOURCE_LABEL: Record<string, string> = {
+  GAME: "Bermain gim",
+  KATASTRA: "Berkarya",
+  MENARA: "Menara Cerdas",
+  TANTANG: "Tantangan",
+  JALUR_CERDAS: "Jalur Cerdas",
+  KOMPETENSI: "Uji kompetensi",
+  PENUGASAN: "Penugasan",
+  KOTAK_HARIAN: "Kotak harian",
+};
+
+type Aktivitas = {
+  id: string;
+  kind: "xp" | "beli";
+  title: string;
+  detail: string;
+  at: Date;
+  href?: string;
+};
+
+const fmtWaktu = new Intl.DateTimeFormat("id-ID", {
+  day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta",
+});
+const fmtRupiah = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
+
+async function loadAktivitas(userId: string): Promise<Aktivitas[]> {
+  // Data NYATA saja: XP yang tercatat + pembelian karya yang lunas.
+  const [xp, beli] = await Promise.all([
+    db.xpLedger
+      .findMany({ where: { userId, amount: { gt: 0 } }, orderBy: { createdAt: "desc" }, take: 6, select: { id: true, amount: true, source: true, createdAt: true } })
+      .catch(() => []),
+    db.pembelian
+      .findMany({ where: { buyerId: userId, status: "PAID" }, orderBy: { createdAt: "desc" }, take: 6, select: { id: true, amount: true, createdAt: true, karyaId: true, karya: { select: { title: true } } } })
+      .catch(() => []),
+  ]);
+  const items: Aktivitas[] = [
+    ...xp.map((x) => ({
+      id: `xp-${x.id}`,
+      kind: "xp" as const,
+      title: `+${x.amount} XP`,
+      detail: XP_SOURCE_LABEL[x.source] ?? "Aktivitas belajar",
+      at: x.createdAt,
+    })),
+    ...beli.map((p) => ({
+      id: `beli-${p.id}`,
+      kind: "beli" as const,
+      title: p.karya?.title || "Karya",
+      detail: `Dibeli · ${fmtRupiah.format(p.amount)}`,
+      at: p.createdAt,
+      href: `/marketplace/${p.karyaId}`,
+    })),
+  ];
+  return items.sort((a, b) => b.at.getTime() - a.at.getTime()).slice(0, 6);
+}
+
+export default async function UmumDashboardPage() {
+  const user = await requireUmumPage("/umum");
+  const [aktivitas, profile] = await Promise.all([
+    loadAktivitas(user.id),
+    db.profile.findUnique({ where: { userId: user.id }, select: { kategoriUmum: true } }).catch(() => null),
+  ]);
+  // INVESTOR/TAMU (internal) → null → tidak ditampilkan.
+  const kategori = kategoriUmumLabel(profile?.kategoriUmum ?? null);
+  const name = user.nickname || user.fullName;
+  const games = GAME_REGISTRY.filter((g) => isUmumGameId(g.id) && !g.unpublished && !g.premiumOnly);
+
   return (
-    <main className="min-h-screen bg-bc-bg text-bc-text">
-      <header className="sticky top-0 z-30 border-b border-bc-line bg-bc-bg/95">
-        <div className="mx-auto flex h-[68px] max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-          <Link href="/umum" className="flex min-w-0 items-center gap-3 rounded-bc-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bc-focus">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-bc-icon bg-bc-brand text-bc-on-brand">
-              <span className="text-sm font-black tracking-tight">BC</span>
-            </span>
-            <span className="min-w-0">
-              <span className="block truncate text-sm font-extrabold tracking-tight">BahasaCerdas</span>
-              <span className="block truncate text-xs text-bc-text-3">Dunia Bahasa Indonesia</span>
-            </span>
-          </Link>
-          <div className="flex shrink-0 items-center gap-2">
-            <ThemeToggle />
-            <Link
-              href="/login"
-              className={buttonClass({ variant: "secondary", size: "sm" })}
-            >
-              Masuk
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-7xl px-4 pb-16 pt-6 sm:px-6 sm:pt-10 lg:px-8 lg:pt-12">
-        <section className="relative isolate overflow-hidden rounded-bc-hero border border-bc-line bg-bc-surface shadow-bc-depth">
-          <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 hidden w-[48%] bg-bc-tint md:block" />
-          <div aria-hidden="true" className="pointer-events-none absolute -right-12 -top-16 h-56 w-56 rounded-full border border-bc-line md:right-20 md:top-10 md:h-72 md:w-72" />
-          <div className="relative grid gap-8 px-5 py-8 sm:px-8 sm:py-10 md:grid-cols-[1.2fr_0.8fr] md:items-center md:px-10 lg:gap-12 lg:px-14 lg:py-14">
-            <div className="max-w-2xl">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5 text-xs font-bold text-bc-text-2">
-                <Sparkles className="h-3.5 w-3.5 text-bc-accent" aria-hidden="true" />
-                EKOSISTEM BAHASA INDONESIA
-              </span>
-              <h1 className="max-w-xl text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-                Bahasa Indonesia.
-                <span className="mt-1 block bg-bc-brand bg-clip-text text-transparent">Potensi tanpa batas.</span>
-              </h1>
-              <p className="mt-4 max-w-xl text-sm leading-7 text-bc-text-2 sm:text-base">
-                Temukan ide, perluas wawasan, bertemu dengan orang lain, dan kembangkan karyamu dalam satu dunia bahasa yang terbuka untuk semua.
-              </p>
-              <Link href="#jelajahi" className={buttonClass({ variant: "primary", size: "lg", className: "mt-6" })}>
-                Jelajahi produk
-                <ArrowRight className="h-4 w-4" aria-hidden="true" />
-              </Link>
-            </div>
-
-            <div className="relative hidden min-h-56 items-center justify-center md:flex">
-              <div className="absolute h-52 w-52 rounded-full border border-bc-line" />
-              <div className="absolute h-40 w-40 rounded-full border border-bc-line" />
-              <div className="relative grid h-28 w-28 place-items-center rounded-bc-hero bg-bc-brand text-bc-on-brand shadow-bc-2">
-                <BookOpenText className="h-12 w-12" strokeWidth={1.5} aria-hidden="true" />
+    <UmumShell user={user}>
+      <div className="mx-auto w-full max-w-6xl space-y-10">
+        {/* Sapaan */}
+        <section aria-labelledby="sapaan" className="rounded-bc-hero border border-bc-line bg-bc-surface p-5 shadow-bc-1 sm:p-7">
+          <p className="text-bc-eyebrow uppercase text-bc-violet">Untuk Mahasiswa, Dosen &amp; Umum</p>
+          <h1 id="sapaan" className="mt-2 text-bc-h1 text-bc-text">
+            Halo, <span className="break-words">{name}</span>
+          </h1>
+          <p className="mt-2 max-w-2xl text-bc-body text-bc-text-2">
+            Belajar, bermain, membaca, dan berkarya dalam bahasa Indonesia — semuanya dari satu tempat.
+          </p>
+          <dl className="mt-5 flex flex-wrap gap-2 text-sm">
+            {kategori && (
+              <div className="rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
+                <dt className="sr-only">Kategori</dt>
+                <dd className="font-semibold text-bc-text">{kategori}</dd>
               </div>
-              <span className="absolute right-8 top-5 rounded-bc-card border border-bc-line bg-bc-surface px-4 py-3 text-xs font-bold shadow-bc-1">Baca & tulis</span>
-              <span className="absolute bottom-5 left-0 rounded-bc-card border border-bc-line bg-bc-surface px-4 py-3 text-xs font-bold shadow-bc-1">Ide & diskusi</span>
-              <span className="absolute bottom-1 right-7 rounded-bc-card border border-bc-line bg-bc-surface px-4 py-3 text-xs font-bold shadow-bc-1">Karya & tumbuh</span>
+            )}
+            <div className="flex items-center gap-1.5 rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
+              <Zap size={14} aria-hidden className="text-bc-warning" />
+              <dt className="text-bc-text-3">XP</dt>
+              <dd className="font-semibold tabular-nums text-bc-text">{user.xp.toLocaleString("id-ID")}</dd>
             </div>
-          </div>
+            <div className="flex items-center gap-1.5 rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
+              <Star size={14} aria-hidden className="text-bc-violet" />
+              <dt className="text-bc-text-3">Level</dt>
+              <dd className="font-semibold tabular-nums text-bc-text">{user.level}</dd>
+            </div>
+          </dl>
         </section>
 
-        <section id="jelajahi" className="scroll-mt-24 pt-10 sm:pt-14" aria-labelledby="products-heading">
-          <div className="mb-6 flex flex-col gap-2 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        {/* Produk */}
+        <section id="produk" aria-labelledby="judul-produk" className="scroll-mt-24">
+          <div className="mb-4 flex items-end justify-between gap-3">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-bc-accent-strong">Ruang eksplorasi</p>
-              <h2 id="products-heading" className="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl">Mau mulai dari mana?</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-bc-text-2">Pilih ruang yang sesuai dengan rasa ingin tahu dan tujuanmu hari ini.</p>
+              <h2 id="judul-produk" className="text-bc-h2 text-bc-text">Semua Produk</h2>
+              <p className="text-bc-small text-bc-text-3">Pilih ruang yang ingin kamu buka.</p>
             </div>
-            <span className="text-xs font-medium text-bc-text-3">8 ruang untuk dijelajahi</span>
           </div>
-
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            {products.map((product) => {
-              const Icon = product.icon;
+          <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4">
+            {UMUM_PRODUCTS.map((p) => {
+              const Icon = PRODUCT_ICON[p.key];
+              const dev = p.status === "dev";
+              const body = (
+                <>
+                  <div className="flex items-start justify-between gap-3">
+                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon ${dev ? "bg-bc-surface-2 text-bc-text-3" : "bg-bc-violet-soft text-bc-violet"}`}>
+                      <Icon size={22} aria-hidden />
+                    </span>
+                    {p.external ? (
+                      <ArrowUpRight size={18} aria-hidden className="text-bc-text-3 transition-colors group-hover:text-bc-text" />
+                    ) : (
+                      <ChevronRight size={18} aria-hidden className="text-bc-text-3 transition-colors group-hover:text-bc-text" />
+                    )}
+                  </div>
+                  <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-bc-text-3">{p.label}</p>
+                  <h3 className="mt-0.5 text-base font-extrabold tracking-tight text-bc-text">{p.name}</h3>
+                  <p className="mt-1.5 text-bc-small text-bc-text-2">{p.description}</p>
+                  {dev && (
+                    <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full bg-bc-warning-soft px-2.5 py-1 text-xs font-semibold text-bc-warning-strong">
+                      <Hourglass size={12} aria-hidden /> Sedang dalam pengembangan
+                    </span>
+                  )}
+                  {p.external && <span className="sr-only">(membuka situs eksternal di tab baru)</span>}
+                </>
+              );
+              const cls = "group flex h-full flex-col rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-bc-line-strong hover:shadow-bc-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus motion-reduce:transition-none motion-reduce:hover:translate-y-0";
               return (
-                <Link
-                  key={product.name}
-                  href={product.href}
-                  className="group block h-full rounded-bc-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bc-focus"
-                >
-                  <Card variant="surface" interactive pad className="flex h-full min-h-[204px] flex-col">
-                    <div className="flex items-start justify-between gap-3">
-                      <span className={`grid h-12 w-12 shrink-0 place-items-center rounded-bc-icon ${product.tone}`}>
-                        <Icon className="h-5 w-5" strokeWidth={1.8} aria-hidden="true" />
-                      </span>
-                      <ArrowUpRight className="h-4 w-4 text-bc-text-3 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
-                    </div>
-                    <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.12em] text-bc-text-3">{product.label}</p>
-                    <h3 className="mt-1 text-lg font-extrabold tracking-tight">{product.name}</h3>
-                    <p className="mt-2 text-sm leading-6 text-bc-text-2">{product.description}</p>
-                  </Card>
-                </Link>
+                <li key={p.key} className="min-w-0">
+                  {p.external ? (
+                    <a href={p.href} target="_blank" rel="noopener noreferrer" data-product={p.key} className={cls}>{body}</a>
+                  ) : (
+                    <Link href={p.href} data-product={p.key} className={cls}>{body}</Link>
+                  )}
+                </li>
               );
             })}
-          </div>
+          </ul>
         </section>
 
-        <footer className="mt-12 border-t border-bc-line pt-5 text-xs leading-5 text-bc-text-3 sm:mt-16">
-          BahasaCerdas — Ekosistem Belajar Bahasa Indonesia.
-        </footer>
+        {/* Gim */}
+        <section id="gim" aria-labelledby="judul-gim" className="scroll-mt-24">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 id="judul-gim" className="text-bc-h2 text-bc-text">Jelajahi Gim</h2>
+              <p className="text-bc-small text-bc-text-3">Main gim kata dan kumpulkan XP.</p>
+            </div>
+            <Link href="/arena/game" className="inline-flex items-center gap-1 rounded-bc-sm text-sm font-semibold text-bc-violet hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
+              Semua gim <ChevronRight size={16} aria-hidden />
+            </Link>
+          </div>
+          {games.length === 0 ? (
+            <p className="rounded-bc-card border border-dashed border-bc-line p-6 text-center text-bc-small text-bc-text-3">Belum ada gim yang tersedia.</p>
+          ) : (
+            <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3">
+              {games.map((g) => {
+                const Icon = g.icon ?? Gamepad2;
+                return (
+                  <li key={g.id} className="min-w-0">
+                    <Link
+                      href={g.href}
+                      data-game={g.id}
+                      className="group flex h-full items-start gap-3 rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-colors hover:border-bc-line-strong hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
+                    >
+                      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon bg-gradient-to-br text-white ${g.gradient}`}>
+                        <Icon size={22} aria-hidden />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate font-bold text-bc-text">{g.title}</span>
+                        <span className="mt-0.5 line-clamp-2 block text-bc-small text-bc-text-2">{g.description}</span>
+                        <span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs font-semibold text-bc-text-3">
+                          <span>{g.xp}</span>
+                          <span>{g.time}</span>
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
+
+        {/* Aktivitas */}
+        <section aria-labelledby="judul-aktivitas">
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <h2 id="judul-aktivitas" className="text-bc-h2 text-bc-text">Aktivitas Terbaru</h2>
+            <Link href="/umum/koleksi" className="inline-flex items-center gap-1 rounded-bc-sm text-sm font-semibold text-bc-violet hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
+              Koleksi Saya <ChevronRight size={16} aria-hidden />
+            </Link>
+          </div>
+          {aktivitas.length === 0 ? (
+            <div data-testid="aktivitas-kosong" className="flex flex-col items-center rounded-bc-card border border-dashed border-bc-line bg-bc-surface p-8 text-center">
+              <Inbox size={28} aria-hidden className="text-bc-text-3" />
+              <p className="mt-3 font-semibold text-bc-text">Belum ada aktivitas</p>
+              <p className="mt-1 max-w-sm text-bc-small text-bc-text-3">Mainkan gim atau beli karya pertamamu — aktivitasmu akan muncul di sini.</p>
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                <Link href="#gim" className="rounded-bc-ctl bg-bc-violet px-4 py-2 text-sm font-semibold text-bc-on-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus">Main gim</Link>
+                <Link href="/marketplace" className="rounded-bc-ctl border border-bc-line px-4 py-2 text-sm font-semibold text-bc-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus">Toko Karya</Link>
+              </div>
+            </div>
+          ) : (
+            <ol data-testid="aktivitas-list" className="divide-y divide-bc-line overflow-hidden rounded-bc-card border border-bc-line bg-bc-surface">
+              {aktivitas.map((a) => {
+                const Icon = a.kind === "xp" ? Zap : ShoppingBag;
+                const inner = (
+                  <>
+                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${a.kind === "xp" ? "bg-bc-warning-soft text-bc-warning-strong" : "bg-bc-success-soft text-bc-success"}`}>
+                      <Icon size={16} aria-hidden />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-semibold text-bc-text">{a.title}</span>
+                      <span className="block truncate text-xs text-bc-text-3">{a.detail}</span>
+                    </span>
+                    <time dateTime={a.at.toISOString()} className="shrink-0 text-xs tabular-nums text-bc-text-3">{fmtWaktu.format(a.at)}</time>
+                  </>
+                );
+                return (
+                  <li key={a.id}>
+                    {a.href ? (
+                      <Link href={a.href} className="flex items-center gap-3 px-4 py-3 hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-bc-focus">{inner}</Link>
+                    ) : (
+                      <div className="flex items-center gap-3 px-4 py-3">{inner}</div>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+        </section>
       </div>
-    </main>
+    </UmumShell>
   );
 }
