@@ -12,9 +12,10 @@
  * - Peran tak dikenal → default-deny (ROLE_DENIED_PATH), bukan guru/murid.
  * - Perilaku GURU / MURID / ADMIN / founder TIDAK berubah.
  *
- * UMUM = pengguna umum non-sekolah (mahasiswa, masyarakat umum, investor,
- * tamu — subkategori opsional di Profile.kategoriUmum). UMUM hanya punya
- * akses NARA (persona netral), gim solo Arena, dan Jalur Cerdas.
+ * UMUM = pengguna umum non-sekolah. Subkategori yang bisa dipilih pengguna:
+ * Mahasiswa, Dosen, Umum (Profile.kategoriUmum; nilai lain hanya internal —
+ * lihat lib/auth/kategori-umum.ts). UMUM hanya punya akses dasbor /umum,
+ * NARA (persona netral), gim solo Arena, dan Jalur Cerdas.
  * UMUM TIDAK punya akses data kelas/guru/murid, JUMPA, gim multipemain,
  * Premium, maupun alat AI guru.
  */
@@ -45,12 +46,9 @@ export function isAdmin(role: RoleInput): boolean {
 }
 
 /**
- * Beranda UMUM. Sementara memakai rute NARA publik /ai-bc yang sudah ada
- * (untuk user yang masuk dan bukan guru/admin, /ai-bc meneruskan ke
- * /arena/ai — yang ada di allowlist UMUM, jadi tidak ada loop).
- * TODO(PR2): ganti ke /umum setelah dasbor UMUM tersedia.
+ * Beranda UMUM: dasbor /umum (server-guarded, lihat lib/auth/umum-page.ts).
  */
-export const UMUM_HOME = "/ai-bc";
+export const UMUM_HOME = "/umum";
 
 /**
  * Halaman terminal untuk peran tak dikenal. Statis — tidak memanggil

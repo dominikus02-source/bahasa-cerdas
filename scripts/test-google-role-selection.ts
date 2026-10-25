@@ -169,7 +169,13 @@ assert(
 );
 assert(pilihPeranExists, "Role-selection page app/auth/pilih-peran exists");
 assert(
-  completeRole.includes("existing") && completeRole.includes("isAllowedGoogleRole"),
+  completeRole.includes("existing") &&
+    (completeRole.includes("isAllowedGoogleRole") ||
+      // Phase 2 (UMUM): allowlist dipusatkan di parseRoleSelection, yang tetap
+      // memakai isAllowedGoogleRole untuk GURU/MURID dan menolak (null → 400) sisanya.
+      (/parseRoleSelection\(/.test(completeRole) &&
+        /if \(!selection\)[\s\S]{0,120}status: 400/.test(completeRole) &&
+        /export function parseRoleSelection[\s\S]{0,200}isAllowedGoogleRole\(role\)/.test(src("../lib/auth/role-intent.ts")))),
   "complete-role preserves existing users + validates role allowlist"
 );
 

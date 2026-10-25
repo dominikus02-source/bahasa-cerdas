@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { BookOpen, Check, GraduationCap, Loader2 } from "lucide-react";
+import { BookOpen, Check, Compass, GraduationCap, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
+import { KategoriUmumPicker, useRoleUmumAvailable } from "@/components/auth/KategoriUmumPicker";
+import type { KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
 
 /**
  * PILIH PERAN — role selection for NEW Google users.
@@ -18,8 +20,9 @@ import BatikAccent from "@/components/decorations/BatikAccent";
  * - Idempotent: refresh or retry re-checks provisioning status first, so no
  *   duplicate User can be created.
  */
-type Role = "GURU" | "MURID";
+type Role = "GURU" | "MURID" | "UMUM";
 
+// Kartu "Umum" hanya tampil bila server mengaktifkan ENABLE_ROLE_UMUM.
 const ROLE_CARDS: { key: Role; title: string; copy: string }[] = [
   {
     key: "GURU",
@@ -31,7 +34,30 @@ const ROLE_CARDS: { key: Role; title: string; copy: string }[] = [
     title: "Murid",
     copy: "Belajar, berlatih, dan mengembangkan kemampuanmu.",
   },
+  {
+    key: "UMUM",
+    title: "Umum",
+    copy: "Mahasiswa, dosen, atau siapa pun yang ingin belajar dan bermain kata.",
+  },
 ];
+
+const ROLE_ACCENT: Record<Role, { border: string; bg: string; text: string }> = {
+  GURU: {
+    border: "border-emerald-500 bg-emerald-50 shadow-lg dark:border-emerald-400 dark:bg-emerald-500/10",
+    bg: "bg-emerald-100 dark:bg-emerald-500/20",
+    text: "text-emerald-600 dark:text-emerald-300",
+  },
+  MURID: {
+    border: "border-violet-500 bg-violet-50 shadow-lg dark:border-violet-400 dark:bg-violet-500/10",
+    bg: "bg-violet-100 dark:bg-violet-500/20",
+    text: "text-violet-600 dark:text-violet-300",
+  },
+  UMUM: {
+    border: "border-sky-500 bg-sky-50 shadow-lg dark:border-sky-400 dark:bg-sky-500/10",
+    bg: "bg-sky-100 dark:bg-sky-500/20",
+    text: "text-sky-600 dark:text-sky-300",
+  },
+};
 
 export default function PilihPeranPage() {
   const [checking, setChecking] = useState(true);
@@ -39,6 +65,10 @@ export default function PilihPeranPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [next, setNext] = useState("");
+  const [kategoriUmum, setKategoriUmum] = useState<KategoriUmumPilihan | null>(null);
+  const umumAvailable = useRoleUmumAvailable();
+  const cards = ROLE_CARDS.filter((r) => r.key !== "UMUM" || umumAvailable);
+  const canContinue = !!role && (role !== "UMUM" || !!kategoriUmum);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -71,14 +101,18 @@ export default function PilihPeranPage() {
   }, []);
 
   const handleContinue = async () => {
-    if (!role || saving) return;
+    if (!canContinue || saving) return;
     setSaving(true);
     setError("");
     try {
       const res = await fetch("/api/auth/complete-role", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role, next: next || undefined }),
+        body: JSON.stringify({
+          role,
+          kategoriUmum: role === "UMUM" ? kategoriUmum : undefined,
+          next: next || undefined,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -86,7 +120,9 @@ export default function PilihPeranPage() {
         setSaving(false);
         return;
       }
-      window.location.href = data.redirect || (role === "MURID" ? "/murid/beranda" : "/guru/beranda");
+      window.location.href =
+        data.redirect ||
+        (role === "MURID" ? "/murid/beranda" : role === "UMUM" ? "/umum" : "/guru/beranda");
     } catch {
       setError("Koneksi terputus. Periksa koneksi internet kamu.");
       setSaving(false);
@@ -131,38 +167,41 @@ export default function PilihPeranPage() {
           </div>
         )}
 
-        <div className="mt-6 grid w-full grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4" role="radiogroup" aria-label="Pilih peran">
-          {ROLE_CARDS.map((r) => {
+        <div
+          className={`mt-6 grid w-full grid-cols-1 gap-3 sm:gap-4 ${cards.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
+          role="radiogroup"
+          aria-label="Pilih peran"
+        >
+          {cards.map((r) => {
             const active = role === r.key;
-            const isGuru = r.key === "GURU";
-            const Icon = isGuru ? GraduationCap : BookOpen;
+            const accent = ROLE_ACCENT[r.key];
+            const Icon = r.key === "GURU" ? GraduationCap : r.key === "UMUM" ? Compass : BookOpen;
             return (
               <button
                 key={r.key}
                 type="button"
                 role="radio"
                 aria-checked={active}
+                data-role={r.key}
                 onClick={() => setRole(r.key)}
                 className={`relative flex w-full items-start gap-4 rounded-2xl border-2 p-5 text-left transition-all active:scale-[0.99] ${
                   active
-                    ? isGuru
-                      ? "border-emerald-500 bg-emerald-50 shadow-lg dark:border-emerald-400 dark:bg-emerald-500/10"
-                      : "border-violet-500 bg-violet-50 shadow-lg dark:border-violet-400 dark:bg-violet-500/10"
+                    ? accent.border
                     : "border-slate-200 bg-white hover:border-slate-300 dark:border-slate-700 dark:bg-slate-900 dark:hover:border-slate-600"
                 }`}
               >
                 {active && (
                   <div className="absolute right-3 top-3">
-                    <div className={`flex h-6 w-6 items-center justify-center rounded-full ${isGuru ? "bg-emerald-100 dark:bg-emerald-500/20" : "bg-violet-100 dark:bg-violet-500/20"}`}>
-                      <Check className={`h-4 w-4 ${isGuru ? "text-emerald-600 dark:text-emerald-300" : "text-violet-600 dark:text-violet-300"}`} />
+                    <div className={`flex h-6 w-6 items-center justify-center rounded-full ${accent.bg}`}>
+                      <Check className={`h-4 w-4 ${accent.text}`} />
                     </div>
                   </div>
                 )}
-                <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${active ? (isGuru ? "bg-emerald-100 dark:bg-emerald-500/20" : "bg-violet-100 dark:bg-violet-500/20") : "bg-slate-100 dark:bg-slate-700/50"}`}>
-                  <Icon className={`h-7 w-7 ${active ? (isGuru ? "text-emerald-600 dark:text-emerald-300" : "text-violet-600 dark:text-violet-300") : "text-slate-400 dark:text-slate-500"}`} />
+                <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${active ? accent.bg : "bg-slate-100 dark:bg-slate-700/50"}`}>
+                  <Icon className={`h-7 w-7 ${active ? accent.text : "text-slate-400 dark:text-slate-500"}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className={`text-lg font-bold ${active ? (isGuru ? "text-emerald-700 dark:text-emerald-300" : "text-violet-700 dark:text-violet-300") : "text-slate-700 dark:text-slate-200"}`}>
+                  <p className={`text-lg font-bold ${active ? accent.text : "text-slate-700 dark:text-slate-200"}`}>
                     {r.title}
                   </p>
                   <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{r.copy}</p>
@@ -172,10 +211,16 @@ export default function PilihPeranPage() {
           })}
         </div>
 
+        {role === "UMUM" && umumAvailable && (
+          <div className="mt-4 w-full">
+            <KategoriUmumPicker value={kategoriUmum} onChange={setKategoriUmum} idPrefix="pilih-peran-kategori" />
+          </div>
+        )}
+
         <button
           type="button"
           onClick={handleContinue}
-          disabled={!role || saving}
+          disabled={!role || !canContinue || saving}
           className="mt-6 flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
         >
           {saving ? (

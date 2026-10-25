@@ -120,7 +120,7 @@ async function main() {
   assert(roles.dashboardForRole("MURID") === "/murid/beranda", "dashboard MURID tidak berubah");
   assert(roles.dashboardForRole("GURU") === "/guru/beranda", "dashboard GURU tidak berubah");
   assert(roles.dashboardForRole("ADMIN") === "/admin", "dashboard ADMIN = /admin");
-  assert(roles.dashboardForRole("UMUM") === roles.UMUM_HOME && roles.UMUM_HOME === "/ai-bc", "dashboard UMUM = /ai-bc");
+  assert(roles.dashboardForRole("UMUM") === roles.UMUM_HOME && roles.UMUM_HOME === "/umum", "dashboard UMUM = /umum");
   assert(roles.dashboardForRole("HACKER") === roles.ROLE_DENIED_PATH, "peran tak dikenal → halaman akses ditolak (default-deny)");
   assert(redirectLib.dashboardForUser("UMUM", true) === "/guru/beranda", "founder tetap ke dasbor guru");
   assert(redirectLib.dashboardForUser("MURID", false) === "/murid/beranda", "dashboardForUser MURID tidak berubah");
@@ -166,6 +166,11 @@ async function main() {
       if (u.role === "UMUM") return roles.isUmumArenaPath(path) ? null : roles.UMUM_HOME;
       return dfu(u);
     }
+    if (path === "/umum" || path.startsWith("/umum/")) {
+      // requireUmumPage(): UMUM tinggal; peran lain ke dasbornya sendiri.
+      if (u.role === "UMUM" && !priv) return null;
+      return dfu(u);
+    }
     if (path === roles.ROLE_DENIED_PATH) return null;
     return null;
   }
@@ -177,7 +182,7 @@ async function main() {
     ["tak dikenal", { role: "INVESTOR", isFounder: false }],
     ["founder", { role: "GURU", isFounder: true }],
   ];
-  const entries = ["/guru/beranda", "/murid/beranda", "/admin", "/arena", "/arena/chat", "/arena/ai", "/arena/game/kuis-tempur", "/ai-bc", "/login"];
+  const entries = ["/guru/beranda", "/murid/beranda", "/admin", "/arena", "/arena/chat", "/arena/ai", "/arena/game/kuis-tempur", "/ai-bc", "/login", "/umum", "/umum/koleksi"];
   for (const [name, u] of users) {
     for (const e of entries) {
       let p = e;

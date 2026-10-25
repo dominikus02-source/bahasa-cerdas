@@ -1,14 +1,17 @@
 import { NextResponse } from "next/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import {
-  isAllowedGoogleRole,
   isRoleIntentConfigured,
-  signRoleIntent,
+  parseRoleSelection,
+  signRoleSelectionIntent,
   intentSetCookie,
 } from "@/lib/auth/role-intent";
 
 /**
- * POST /api/auth/role-intent { role: "GURU" | "MURID" }
+ * POST /api/auth/role-intent { role: "GURU" | "MURID" | "UMUM", kategoriUmum? }
+ *
+ * UMUM hanya diterima bila flag server ENABLE_ROLE_UMUM aktif dan kategoriUmum
+ * termasuk pilihan (MAHASISWA/DOSEN/UMUM); selain itu ditolak 400.
  *
  * Seals an explicit role choice (made in a controlled UI) into a short-lived,
  * HMAC-signed httpOnly cookie that the OAuth callback consumes exactly once.
@@ -19,17 +22,21 @@ export async function POST(req: Request) {
   if (rl) return rl;
 
   let role: unknown;
+  let kategoriUmum: unknown;
   try {
-    role = (await req.json()).role;
+    const body = await req.json();
+    role = body?.role;
+    kategoriUmum = body?.kategoriUmum;
   } catch {
     return NextResponse.json({ error: "Data tidak valid" }, { status: 400 });
   }
 
-  if (!isAllowedGoogleRole(role)) {
+  const selection = parseRoleSelection(role, kategoriUmum);
+  if (!selection) {
     return NextResponse.json({ error: "Peran tidak valid" }, { status: 400 });
   }
 
-  const sealed = signRoleIntent(role);
+  const sealed = signRoleSelectionIntent(selection);
   if (!sealed) {
     return NextResponse.json(
       { error: "Layanan peran belum dikonfigurasi. Coba lagi nanti." },

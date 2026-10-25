@@ -8,7 +8,7 @@ import {
   resolveGoogleProvisioning,
   resolvePostAuthDestinationForUser,
   dashboardForUser,
-  verifyRoleIntent,
+  verifyRoleSelectionIntent,
 } from "@/lib/auth/role-intent";
 import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-provision";
 
@@ -64,9 +64,12 @@ export async function GET(request: Request) {
             .map((c) => c.trim())
             .find((c) => c.startsWith(`${ROLE_INTENT_COOKIE}=`))
             ?.slice(ROLE_INTENT_COOKIE.length + 1);
+          // v1 (GURU/MURID) atau v2 (UMUM+kategori, hanya bila ENABLE_ROLE_UMUM aktif).
+          const intent = verifyRoleSelectionIntent(intentValue ? decodeURIComponent(intentValue) : null);
           const decision = resolveGoogleProvisioning({
             existingRole: existing?.role ?? null,
-            intentRole: verifyRoleIntent(intentValue ? decodeURIComponent(intentValue) : null),
+            intentRole: intent?.role ?? null,
+            intentKategoriUmum: intent?.kategoriUmum ?? null,
           });
 
           if (decision.action === "create") {
@@ -78,6 +81,7 @@ export async function GET(request: Request) {
                 user.email.split("@")[0] ||
                 "User",
               role: decision.role,
+              kategoriUmum: decision.kategoriUmum ?? null,
             });
             return clearOn(
               NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(decision.role)}`)

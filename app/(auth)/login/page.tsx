@@ -98,9 +98,11 @@ export default function LoginPage() {
         return;
       }
 
-      // Pertahankan aturan Arena: halaman ini hanya menerima akun murid (Founder
-      // tetap diizinkan untuk QA). Halaman web umum mengikuti peran akun.
-      if (isArenaEntry && result.user.role !== "MURID" && !result.user.isFounder) {
+      // Pertahankan aturan Arena: halaman ini menerima akun murid dan akun
+      // umum (UMUM → dasbor /umum; Founder tetap diizinkan untuk QA). Halaman
+      // web umum mengikuti peran akun.
+      const isUmumAccount = result.user.role === "UMUM";
+      if (isArenaEntry && result.user.role !== "MURID" && !isUmumAccount && !result.user.isFounder) {
         setError("Halaman ini khusus untuk akun murid. Akun guru dapat masuk melalui halaman utama.");
         setLoading(false);
         return;
@@ -111,7 +113,7 @@ export default function LoginPage() {
       const target = resolvePostAuthDestinationForUser(
         result.user.role,
         result.user.isFounder,
-        next || (isArenaEntry ? "/arena" : "")
+        next || (isArenaEntry && !isUmumAccount ? "/arena" : "")
       );
       window.location.href = target;
     } catch (err: any) {

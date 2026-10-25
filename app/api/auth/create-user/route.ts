@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { z } from "zod";
 import { sanitize } from "@/lib/validations";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { parseRoleSelection } from "@/lib/auth/role-intent";
 
 const createUserSchema = z.object({
   email: z.string().email("Email tidak valid").max(255),
@@ -12,7 +13,10 @@ const createUserSchema = z.object({
     .min(8, "Kata sandi minimal 8 karakter")
     .max(128, "Kata sandi maksimal 128 karakter"),
   fullName: z.string().min(1, "Nama harus diisi").max(100).trim(),
-  role: z.enum(["GURU", "MURID"]),
+  // UMUM hanya lolos bila flag server ENABLE_ROLE_UMUM aktif DAN kategoriUmum
+  // termasuk pilihan (lihat parseRoleSelection di bawah). GURU/MURID tak berubah.
+  role: z.enum(["GURU", "MURID", "UMUM"]),
+  kategoriUmum: z.string().max(20).optional(),
 });
 
 // One message for every "already exists" case (DB row or Auth-only identity),
@@ -43,7 +47,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const { email, password, fullName, role } = parsed.data;
+    const selection = parseRoleSelection(parsed.data.role, parsed.data.kategoriUmum);
+    if (!selection) {
+      return NextResponse.json({ error: "Peran tidak valid" }, { status: 400 });
+    }
+
+    const { email, password, fullName } = parsed.data;
+    const { role, kategoriUmum } = selection;
     const normalizedEmail = email.toLowerCase();
     const sanitizedName = sanitize(fullName);
 
@@ -165,7 +175,12 @@ export async function POST(req: Request) {
       });
 
       try {
-        await db.profile.create({ data: { userId: newUser.id } });
+        await db.profile.create({
+          data: {
+            userId: newUser.id,
+            ...(role === "UMUM" && kategoriUmum ? { kategoriUmum } : {}),
+          },
+        });
       } catch {
         // Profile is supplementary; the account itself remains valid.
       }

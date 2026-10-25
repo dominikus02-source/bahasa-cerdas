@@ -1831,11 +1831,16 @@ enum Role {
 
 /// Sub-kategori opsional untuk Role UMUM (Profile.kategoriUmum). NULL = belum
 /// diisi. Tidak pernah dipakai untuk otorisasi — hanya identitas/analitik.
+// Sub-kategori opsional untuk Role UMUM (identitas/analitik, BUKAN otorisasi).
+// Yang bisa DIPILIH pengguna hanya MAHASISWA, DOSEN, UMUM
+// (lib/auth/kategori-umum.ts). INVESTOR & TAMU = nilai internal/teknis:
+// tidak pernah ditampilkan atau bisa dipilih.
 enum KategoriUmum {
   MAHASISWA
   UMUM
   INVESTOR
   TAMU
+  DOSEN
 }
 
 enum PremiumPlan {

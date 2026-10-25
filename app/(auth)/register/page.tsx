@@ -3,23 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { GraduationCap, BookOpen, ArrowRight, ArrowLeft, Check, Eye, EyeOff, ShieldCheck, AlertTriangle } from "lucide-react";
+import { GraduationCap, BookOpen, Compass, ArrowRight, ArrowLeft, Check, Eye, EyeOff, ShieldCheck, AlertTriangle } from "lucide-react";
 import { registerUser } from "@/app/actions/register";
 import { createClient } from "@/lib/supabase/client";
 import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
 import { isSafeNext } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
+import { KategoriUmumPicker, useRoleUmumAvailable } from "@/components/auth/KategoriUmumPicker";
+import { KATEGORI_UMUM_LABEL, type KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
 
 /**
  * REGISTER 4.0 — Role Gate 1.0
  *
  * 4-step wizard: Pilih Peran → Formulir → Konfirmasi Peran → Konfirmasi Data
- * No default role — user MUST explicitly choose GURU or MURID.
+ * No default role — user MUST explicitly choose GURU, MURID, or (when the
+ * server flag ENABLE_ROLE_UMUM is on) UMUM + kategori (Mahasiswa/Dosen/Umum).
  * Account creation ONLY after final confirmation.
  */
 
-type Role = "GURU" | "MURID";
+type Role = "GURU" | "MURID" | "UMUM";
 
 const STEPS = ["Pilih Peran", "Formulir", "Konfirmasi Peran", "Konfirmasi Data"];
 const TOTAL_STEPS = 4;
@@ -64,12 +67,35 @@ const ROLE_CONFIG: Record<Role, {
       "Tulis karya dan bangun portofolio",
     ],
   },
+  UMUM: {
+    borderActive: "border-sky-500 dark:border-sky-400",
+    bgLight: "bg-sky-50 dark:bg-sky-500/10",
+    textActive: "text-sky-700 dark:text-sky-300",
+    bgIcon: "bg-sky-100 dark:bg-sky-500/20",
+    iconColor: "text-sky-600 dark:text-sky-300",
+    label: "Umum",
+    formTitle: "Pendaftaran Umum",
+    features: [
+      "Ngobrol dan belajar bersama NARA",
+      "Main gim kata dan kumpulkan XP",
+      "Belajar bertahap lewat Jalur Cerdas",
+      "Baca artikel dan beli karya di Toko Karya",
+    ],
+  },
 };
 
 const ROLE_CARDS = [
   { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "AI Rencana Pembelajaran, Bank Soal, Kuis Game" },
   { key: "MURID" as const, icon: BookOpen, label: "Murid", sub: "Belajar, Kuis, UKBI" },
+  // Hanya tampil bila server mengaktifkan ENABLE_ROLE_UMUM.
+  { key: "UMUM" as const, icon: Compass, label: "Umum", sub: "Mahasiswa, Dosen, Umum" },
 ];
+
+function RoleIcon({ role, className }: { role: Role; className?: string }) {
+  if (role === "GURU") return <GraduationCap className={className} />;
+  if (role === "UMUM") return <Compass className={className} />;
+  return <BookOpen className={className} />;
+}
 
 function StepBadge({ current }: { current: number }) {
   return (
@@ -116,6 +142,11 @@ export default function RegisterPage() {
   const [province, setProvince] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
+  const [kategoriUmum, setKategoriUmum] = useState<KategoriUmumPilihan | null>(null);
+  const umumAvailable = useRoleUmumAvailable();
+  const roleCards = ROLE_CARDS.filter((r) => r.key !== "UMUM" || umumAvailable);
+  const isUmumRole = role === "UMUM";
+  const roleReady = !!role && (!isUmumRole || !!kategoriUmum);
   // Tujuan setelah daftar (mis. tautan undangan JUMPA). Divalidasi isSafeNext.
   const [next, setNext] = useState("");
   useEffect(() => {
@@ -135,12 +166,12 @@ export default function RegisterPage() {
   };
 
   const goToStep2 = () => {
-    if (!role) return;
+    if (!roleReady) return;
     setStep(2);
   };
 
   const goToStep3 = () => {
-    if (!role) return;
+    if (!roleReady) return;
     setStep(3);
   };
 
@@ -150,7 +181,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!role) return;
+    if (!role || !roleReady) return;
 
     const passwordValid = password.length >= 8 && password.length <= 128;
 
@@ -174,6 +205,7 @@ export default function RegisterPage() {
           password,
           fullName,
           role,
+          ...(role === "UMUM" ? { kategoriUmum } : {}),
         }),
       });
 
@@ -197,20 +229,24 @@ export default function RegisterPage() {
         return;
       }
 
-      const formData = new FormData();
-      formData.set("role", role);
-      if (school) formData.set("school", school);
-      if (city) formData.set("city", city);
-      if (province) formData.set("province", province);
+      // Akun Umum tidak punya data sekolah — langkah profil sekolah dilewati.
+      if (role !== "UMUM") {
+        const formData = new FormData();
+        formData.set("role", role);
+        if (school) formData.set("school", school);
+        if (city) formData.set("city", city);
+        if (province) formData.set("province", province);
 
-      const result = await registerUser(formData);
-      if (result?.error) {
-        // The account and session already exist; profile fields are
-        // supplementary and can be completed later in Pengaturan.
-        console.warn("[register] profil sekolah belum tersimpan:", result.error);
+        const result = await registerUser(formData);
+        if (result?.error) {
+          // The account and session already exist; profile fields are
+          // supplementary and can be completed later in Pengaturan.
+          console.warn("[register] profil sekolah belum tersimpan:", result.error);
+        }
       }
 
-      const redirectUrl = next || (role === "MURID" ? "/arena" : "/guru/beranda");
+      const redirectUrl =
+        next || (role === "MURID" ? "/arena" : role === "UMUM" ? "/umum" : "/guru/beranda");
       window.location.href = redirectUrl;
     } catch (err: any) {
       setError(err?.message || "Terjadi kesalahan");
@@ -226,14 +262,14 @@ export default function RegisterPage() {
   // cookie, then start Google OAuth — the callback consumes the intent exactly
   // once to provision the matching role. Existing accounts ignore the intent.
   const handleGoogleRegister = async () => {
-    if (!role || googleLoading) return;
+    if (!role || !roleReady || googleLoading) return;
     setGoogleLoading(true);
     setError("");
     try {
       const intentRes = await fetch("/api/auth/role-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role }),
+        body: JSON.stringify({ role, ...(role === "UMUM" ? { kategoriUmum } : {}) }),
       });
       if (!intentRes.ok) {
         const data = await intentRes.json().catch(() => ({}));
@@ -332,7 +368,11 @@ export default function RegisterPage() {
                   Akun <strong>{email}</strong> berhasil dibuat.
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-400">
-                  {role === "MURID" ? "Kamu bisa langsung masuk ke Arena sekarang." : "Kamu bisa langsung masuk ke dasbor guru."}
+                  {role === "MURID"
+                    ? "Kamu bisa langsung masuk ke Arena sekarang."
+                    : role === "UMUM"
+                      ? "Kamu bisa langsung masuk ke dasbor Umum."
+                      : "Kamu bisa langsung masuk ke dasbor guru."}
                 </p>
                 <div className="pt-4">
                   <Link
@@ -370,14 +410,21 @@ export default function RegisterPage() {
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 md:gap-4">
-                      {ROLE_CARDS.map((r) => {
+                    <div
+                      className={`grid gap-3 md:gap-4 ${roleCards.length === 3 ? "grid-cols-1 sm:grid-cols-3" : "grid-cols-2"}`}
+                      role="radiogroup"
+                      aria-label="Pilih jenis akun"
+                    >
+                      {roleCards.map((r) => {
                         const c = ROLE_CONFIG[r.key];
                         const active = role === r.key;
                         return (
                           <button
                             key={r.key}
                             type="button"
+                            role="radio"
+                            aria-checked={active}
+                            data-role={r.key}
                             onClick={() => handleRoleSelect(r.key)}
                             className={`relative flex flex-col items-center gap-3 rounded-2xl border-2 p-4 transition-all active:scale-[0.98] md:p-6 ${
                               active
@@ -404,10 +451,14 @@ export default function RegisterPage() {
                       })}
                     </div>
 
+                    {isUmumRole && umumAvailable && (
+                      <KategoriUmumPicker value={kategoriUmum} onChange={setKategoriUmum} idPrefix="register-kategori" />
+                    )}
+
                     <button
                       type="button"
                       onClick={goToStep2}
-                      disabled={!role}
+                      disabled={!roleReady}
                       className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
                     >
                       Lanjut
@@ -424,7 +475,7 @@ export default function RegisterPage() {
                         <ArrowLeft className="h-5 w-5" />
                       </button>
                       <span className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-medium ${config.bgLight} ${config.textActive}`}>
-                        {role === "GURU" ? <GraduationCap className="h-4 w-4" /> : <BookOpen className="h-4 w-4" />}
+                        {role && <RoleIcon role={role} className="h-4 w-4" />}
                         {config.formTitle}
                       </span>
                     </div>
@@ -455,7 +506,7 @@ export default function RegisterPage() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className={inputCls}
-                        placeholder="siti@sekolah.sch.id"
+                        placeholder={isUmumRole ? "nama@email.com" : "siti@sekolah.sch.id"}
                         autoComplete="email"
                         required
                       />
@@ -493,6 +544,9 @@ export default function RegisterPage() {
                       </p>
                     </div>
 
+                    {/* Akun Umum tidak terkait sekolah: kolom sekolah disembunyikan. */}
+                    {!isUmumRole && (
+                    <>
                     <div className="h-px bg-slate-100 dark:bg-slate-800" />
 
                     <div>
@@ -537,6 +591,8 @@ export default function RegisterPage() {
                         />
                       </div>
                     </div>
+                    </>
+                    )}
 
                     <div className="flex gap-3 pt-2">
                       <button
@@ -571,14 +627,13 @@ export default function RegisterPage() {
                     <div className={`rounded-2xl border-2 p-5 ${config.borderActive} ${config.bgLight}`}>
                       <div className="flex items-center gap-3">
                         <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${config.bgIcon}`}>
-                          {role === "GURU" ? (
-                            <GraduationCap className={`h-6 w-6 ${config.iconColor}`} />
-                          ) : (
-                            <BookOpen className={`h-6 w-6 ${config.iconColor}`} />
-                          )}
+                          <RoleIcon role={role} className={`h-6 w-6 ${config.iconColor}`} />
                         </div>
                         <div>
-                          <p className="text-lg font-bold text-slate-900 dark:text-white">Akun {config.label}</p>
+                          <p className="text-lg font-bold text-slate-900 dark:text-white">
+                            Akun {config.label}
+                            {isUmumRole && kategoriUmum ? ` · ${KATEGORI_UMUM_LABEL[kategoriUmum]}` : ""}
+                          </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">Peran ini menentukan pengalaman kamu di BahasaCerdas</p>
                         </div>
                       </div>
@@ -641,10 +696,19 @@ export default function RegisterPage() {
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Peran</span>
                         <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${config.bgLight} ${config.textActive}`}>
-                          {role === "GURU" ? <GraduationCap className="h-3 w-3" /> : <BookOpen className="h-3 w-3" />}
+                          <RoleIcon role={role} className="h-3 w-3" />
                           {config.label}
                         </span>
                       </div>
+                      {isUmumRole && kategoriUmum && (
+                        <>
+                          <div className="h-px bg-slate-200 dark:bg-slate-700" />
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Kategori</span>
+                            <span className="text-sm font-semibold text-slate-900 dark:text-white">{KATEGORI_UMUM_LABEL[kategoriUmum]}</span>
+                          </div>
+                        </>
+                      )}
                       <div className="h-px bg-slate-200 dark:bg-slate-700" />
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Nama</span>
@@ -655,7 +719,7 @@ export default function RegisterPage() {
                         <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Email</span>
                         <span className="text-sm font-semibold text-slate-900 dark:text-white">{email || "-"}</span>
                       </div>
-                      {school && (
+                      {!isUmumRole && school && (
                         <>
                           <div className="h-px bg-slate-200 dark:bg-slate-700" />
                           <div className="flex items-center justify-between">
@@ -664,7 +728,7 @@ export default function RegisterPage() {
                           </div>
                         </>
                       )}
-                      {(city || province) && (
+                      {!isUmumRole && (city || province) && (
                         <>
                           <div className="h-px bg-slate-200 dark:bg-slate-700" />
                           <div className="flex items-center justify-between">
