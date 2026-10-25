@@ -112,8 +112,8 @@ export function PantauOverview({ rooms, reports, backHref }: { rooms: PantauRoom
               <li key={r.code}>
                 <Link href={`/jumpa/pantau?ruang=${r.code}`} className="jumpa-glass jumpa-room-row flex items-center gap-3 rounded-2xl px-4 py-3">
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate font-semibold">{r.title}</span>
-                    <span className="block truncate text-xs text-[var(--jp-text-3)]">
+                    <span className="block break-words font-semibold">{r.title}</span>
+                    <span className="block break-words text-xs text-[var(--jp-text-3)]">
                       {KIND[r.kind]} · {r.creatorName}{r.groupName ? ` · ${r.groupName}` : ""} · {fmt(r.createdAt)}
                     </span>
                   </span>
