@@ -256,13 +256,13 @@ export default function TestResultPanel({ result, paketId, backHref = "/kompetis
               <p className="text-xs sm:text-sm text-violet-800 font-medium">
                 Fokus tingkatkan bagian {lowestSection.name}. Buka Jalur Cerdas untuk latihan bertahap.
               </p>
-              <a
+              <Link
                 href="/arena/jalur-cerdas"
                 className="inline-flex items-center gap-1.5 mt-2 px-4 py-2 bg-violet-600 text-white text-xs sm:text-sm font-bold rounded-lg hover:bg-violet-700 transition-colors"
               >
                 <BarChart3 className="w-3.5 h-3.5" />
                 Latihan di Jalur Cerdas
-              </a>
+              </Link>
             </div>
           )}
         </div>
