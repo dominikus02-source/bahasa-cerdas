@@ -226,7 +226,12 @@ export default function AiBcArenaWorkspace({
   };
 
   const handleCopy = async (text: string, id: number) => {
-    await navigator.clipboard.writeText(text);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // Clipboard bisa ditolak (izin/HTTP/iframe) — jangan tampilkan "Tersalin".
+      return;
+    }
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
