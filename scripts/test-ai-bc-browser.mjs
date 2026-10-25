@@ -311,6 +311,22 @@ try {
     results.push(`${role}: hints, Enter/Shift+Enter, error/retry, copy, Tanya ulang on latest only, stop (partial + empty), reset during SSE, short viewport`);
   }
 
+  // ?q= prefill (home-card chips): fills the composer, never auto-sends, strips the query.
+  {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const before = requests.length;
+    await page.goto(`${base}/?role=student&q=${encodeURIComponent("Apa arti kata ")}`);
+    await page.getByRole("heading", { level: 1 }).waitFor();
+    const input = page.getByRole("textbox", { name: "Tulis pesan untuk Nara" });
+    await page.waitForFunction(() => document.querySelector('[aria-label="Tulis pesan untuk Nara"]')?.value === "Apa arti kata ");
+    assert.equal(await input.inputValue(), "Apa arti kata ");
+    assert.ok(!new URL(page.url()).searchParams.has("q"), "prefill strips ?q=");
+    assert.equal(new URL(page.url()).searchParams.get("role"), "student", "prefill keeps other params");
+    await page.waitForTimeout(400);
+    assert.equal(requests.length, before, "prefill does not auto-send");
+    results.push("student: ?q= prefill without auto-send");
+  }
+
   for (const role of ["public", "tool"]) {
     for (const theme of ["light", "dark"]) {
       for (const width of [360, 390, 768, 1440]) {

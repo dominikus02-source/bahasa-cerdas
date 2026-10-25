@@ -39,6 +39,7 @@ export const ARENA_AI_SUGGESTED_PROMPTS: string[] = [
 
 const AI_LABEL = "NARA";
 const THINKING_LABEL = "Nara sedang berpikir…";
+const PREFILL_MAX_CHARS = 500;
 const WRITING_LABEL = "Nara sedang menulis…";
 const STOPPED_NOTE = "_(Jawaban dihentikan.)_";
 const STOPPED_EMPTY_COPY = "Jawaban dihentikan sebelum Nara sempat menulis.";
@@ -80,6 +81,28 @@ export default function AiBcArenaWorkspace({
   const lastUserTextRef = useRef("");
 
   useEffect(() => () => abortRef.current?.abort(), []);
+
+  // Prefill dari ?q= (mis. chip topik di beranda murid): isi komposer saja,
+  // TIDAK dikirim otomatis. Query lalu dibuang agar refresh tidak mengisi ulang.
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const q = url.searchParams.get("q");
+    if (!q) return;
+    const text = q.slice(0, PREFILL_MAX_CHARS);
+    url.searchParams.delete("q");
+    window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
+    if (!text.trim()) return;
+    setInput(text);
+    const el = inputRef.current;
+    if (el) {
+      el.focus();
+      requestAnimationFrame(() => {
+        el.setSelectionRange(text.length, text.length);
+        el.style.height = "auto";
+        el.style.height = `${Math.min(el.scrollHeight, COMPOSER_MAX_HEIGHT_PX)}px`;
+      });
+    }
+  }, []);
 
   const hasConversation = messages.length > 0;
 
