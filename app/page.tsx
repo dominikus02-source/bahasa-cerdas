@@ -111,7 +111,7 @@ export default async function HomePage() {
     { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru dapat mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket Guru Pro mulai Rp 49.000/bulan." },
     { q: "Apa yang bisa dilakukan murid di BahasaCerdas?", a: "Murid bisa belajar di Jalur Cerdas, berlatih soal, bermain gim edukasi, menulis dan mempublikasikan karya, mengumpulkan XP dan lencana, naik peringkat di liga mingguan, serta mengikuti simulasi UKBI/TKA." },
     { q: "Apa yang bisa dilakukan guru?", a: "Guru bisa mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas." },
-    { q: "Bagaimana cara NARA, AI BahasaCerdas, bekerja?", a: "NARA — AI BahasaCerdas — membantu pekerjaan berulang — menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan — agar guru memiliki lebih banyak waktu untuk membimbing murid. NARA membantu, guru yang memutuskan." },
+    { q: "Apa itu NARA?", a: "NARA (Narasumber Andalan, Rekan Anda) adalah teman ngobrol berbasis AI di BahasaCerdas. Pelajar, mahasiswa, dan siapa saja bisa bertanya soal kosakata, tata bahasa, PUEBI, menulis, atau persiapan UKBI. Bagi guru, NARA juga membantu menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan. NARA membantu, keputusan tetap di tanganmu." },
     { q: "Apakah tersedia untuk siswa?", a: "Ya. Siswa bisa bergabung melalui kode kelas dari guru, atau langsung belajar melalui Arena: Jalur Cerdas, gim, karya, simulasi, dan liga tersedia untuk semua murid." },
   ];
 

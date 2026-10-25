@@ -24,8 +24,8 @@ const faqs = [
     a: "Guru dapat mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas.",
   },
   {
-    q: "Apa itu NARA, AI di BahasaCerdas?",
-    a: "NARA adalah AI BahasaCerdas — Narasumber Andalan, Rekan Anda. NARA membantu pekerjaan berulang seperti menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan — agar guru memiliki lebih banyak waktu untuk membimbing murid. NARA membantu, guru yang memutuskan.",
+    q: "Apa itu NARA?",
+    a: "NARA (Narasumber Andalan, Rekan Anda) adalah teman ngobrol berbasis AI di BahasaCerdas. Pelajar, mahasiswa, dan siapa saja bisa bertanya soal kosakata, tata bahasa, PUEBI, menulis, atau persiapan UKBI. Bagi guru, NARA juga membantu menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan. NARA membantu, keputusan tetap di tanganmu.",
   },
   {
     q: "Apakah tersedia untuk siswa?",
