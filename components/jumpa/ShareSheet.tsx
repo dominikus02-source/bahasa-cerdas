@@ -7,6 +7,7 @@
  * Tautan selalu mensyaratkan login BC + izin ruang — bukan kunci masuk.
  */
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Check, Copy, Hash, Link2, Loader2, MessageCircle, Share2, X } from "lucide-react";
 import { formatWib } from "@/lib/jumpa/schedule";
 import "./jumpa-entry.css";
@@ -99,7 +100,9 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
     }
   };
 
-  return (
+  // Portal ke <body>: induk ber-transform/overflow (kartu jadwal, panel) tidak
+  // boleh menjebak lembar `position: fixed` (uji 360px 25 Okt).
+  return createPortal(
     <div className="jpe">
       <button type="button" className="jps-backdrop" aria-label="Tutup bagikan" onClick={onClose} />
       <div className="jps" role="dialog" aria-modal="true" aria-labelledby="jps-title">
@@ -107,7 +110,7 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
         <div className="flex items-start gap-3">
           <div className="min-w-0 flex-1">
             <p id="jps-title" className="jpe-title">Bagikan JUMPA</p>
-            <p className="jpe-cap jpe-trunc">{target.title}{target.scheduledAt ? ` · ${formatWib(new Date(target.scheduledAt), new Date())}` : ""}</p>
+            <p className="jpe-cap break-words">{target.title}{target.scheduledAt ? ` · ${formatWib(new Date(target.scheduledAt), new Date())}` : ""}</p>
           </div>
           <button type="button" className="jpe-icon-btn" onClick={onClose} aria-label="Tutup bagikan"><X size={18} /></button>
         </div>
@@ -144,6 +147,7 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
         <p className="jpe-cap mt-3">Hanya akun BahasaCerdas yang terdaftar di ruang ini yang bisa masuk.</p>
         {err && <p role="alert" className="mt-2 text-sm text-[var(--clr-danger)]">{err}</p>}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
