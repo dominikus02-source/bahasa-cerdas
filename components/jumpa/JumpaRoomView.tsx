@@ -9,7 +9,7 @@
  * berhalaman (HP 4, desktop 16) dan strip dibatasi sehingga jumlah <video>
  * yang dirender tetap kecil; adaptiveStream menjeda video yang tak terlihat.
  */
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from "react";
 import {
   LiveKitRoom,
   RoomAudioRenderer,
@@ -232,6 +232,20 @@ function useParticipantCount(): number {
   return useParticipants({ updateOnlyOn: COUNT_EVENTS }).length;
 }
 
+// Status jaringan perangkat: Wi-Fi/data putus langsung terlihat, tanpa menunggu
+// LiveKit sadar (ping bisa butuh >20 detik).
+function subscribeOnline(cb: () => void) {
+  window.addEventListener("online", cb);
+  window.addEventListener("offline", cb);
+  return () => {
+    window.removeEventListener("online", cb);
+    window.removeEventListener("offline", cb);
+  };
+}
+function useOnline(): boolean {
+  return useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
+}
+
 function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNote: () => void }) {
   const wide = useIsWide();
   const [layoutChoice, setLayoutChoice] = useState<Layout | null>(null);
@@ -240,7 +254,8 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
   const state = useConnectionState();
   // Putus singkat biasanya hanya memicu SignalReconnecting (resume), bukan
   // Reconnecting penuh — keduanya harus menampilkan banner (uji go-live 18 Okt).
-  const reconnecting = state === ConnectionState.Reconnecting || state === ConnectionState.SignalReconnecting;
+  const online = useOnline();
+  const reconnecting = !online || state === ConnectionState.Reconnecting || state === ConnectionState.SignalReconnecting;
   const { info, unread, hands, setChatVisible, self } = useJumpa();
   const { recv, tier } = useMedia();
   const [panel, setPanel] = useState<PanelName | null>(null);
