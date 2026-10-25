@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { isRoleUmumEnabled } from "@/lib/auth/umum-flag";
-import { KATEGORI_UMUM_LABEL, KATEGORI_UMUM_PILIHAN } from "@/lib/auth/kategori-umum";
 
 export const dynamic = "force-dynamic";
 
@@ -10,18 +9,13 @@ export const dynamic = "force-dynamic";
  *
  * Satu-satunya cara klien mengetahui flag server ENABLE_ROLE_UMUM (tidak ada
  * NEXT_PUBLIC_*). Ini hanya untuk tampilan: server tetap memvalidasi ulang di
- * role-intent / complete-role / create-user. Kategori internal (INVESTOR,
- * TAMU) tidak pernah dikirim.
+ * role-intent / complete-role / create-user. Kategori Umum tidak lagi
+ * ditanyakan di UI (server menyimpan UMUM), jadi tidak dikirim di sini.
  */
 export async function GET() {
   const umum = isRoleUmumEnabled();
   return NextResponse.json(
-    {
-      roles: umum ? ["GURU", "MURID", "UMUM"] : ["GURU", "MURID"],
-      kategoriUmum: umum
-        ? KATEGORI_UMUM_PILIHAN.map((value) => ({ value, label: KATEGORI_UMUM_LABEL[value] }))
-        : [],
-    },
+    { roles: umum ? ["GURU", "MURID", "UMUM"] : ["GURU", "MURID"] },
     { headers: { "Cache-Control": "no-store" } }
   );
 }

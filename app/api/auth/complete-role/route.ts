@@ -11,7 +11,8 @@ import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-prov
 
 /**
  * POST /api/auth/complete-role { role: "GURU" | "MURID" | "UMUM", kategoriUmum?, next? }
- * (UMUM hanya bila ENABLE_ROLE_UMUM aktif + kategori MAHASISWA/DOSEN/UMUM.)
+ * (UMUM hanya bila ENABLE_ROLE_UMUM aktif; kategori opsional → bawaan UMUM,
+ * bila dikirim wajib MAHASISWA/DOSEN/UMUM.)
  *
  * Completes application provisioning for a Google-authenticated session that
  * has no application User yet (the role-selection step). The role comes from

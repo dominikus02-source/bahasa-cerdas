@@ -10,8 +10,9 @@ import {
 /**
  * POST /api/auth/role-intent { role: "GURU" | "MURID" | "UMUM", kategoriUmum? }
  *
- * UMUM hanya diterima bila flag server ENABLE_ROLE_UMUM aktif dan kategoriUmum
- * termasuk pilihan (MAHASISWA/DOSEN/UMUM); selain itu ditolak 400.
+ * UMUM hanya diterima bila flag server ENABLE_ROLE_UMUM aktif. kategoriUmum
+ * opsional: tidak dikirim → UMUM; dikirim → wajib MAHASISWA/DOSEN/UMUM
+ * (nilai lain ditolak 400).
  *
  * Seals an explicit role choice (made in a controlled UI) into a short-lived,
  * HMAC-signed httpOnly cookie that the OAuth callback consumes exactly once.

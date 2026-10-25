@@ -1,5 +1,9 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
-import { isKategoriUmumPilihan, type KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
+import {
+  isKategoriUmumPilihan,
+  resolveKategoriUmumInput,
+  type KategoriUmumPilihan,
+} from "@/lib/auth/kategori-umum";
 import { isRoleUmumEnabled } from "@/lib/auth/umum-flag";
 
 export {
@@ -95,37 +99,38 @@ export function verifyRoleIntent(value: string | null | undefined): GoogleRoleIn
 
 /**
  * Peran yang boleh di-provision lewat pilihan eksplisit pengguna.
- * GURU/MURID selalu; UMUM HANYA bila flag server ENABLE_ROLE_UMUM aktif DAN
- * disertai kategori yang bisa dipilih (MAHASISWA/DOSEN/UMUM). isAllowedGoogleRole
+ * GURU/MURID selalu; UMUM HANYA bila flag server ENABLE_ROLE_UMUM aktif.
+ * Kategori UMUM opsional: tidak dikirim → UMUM; dikirim → wajib
+ * MAHASISWA/DOSEN/UMUM (nilai lain ditolak). isAllowedGoogleRole
  * tetap murni GURU/MURID (tidak diubah).
  */
 export type ProvisionRole = GoogleRoleIntent | "UMUM";
 
 export interface RoleSelection {
   role: ProvisionRole;
-  /** Hanya terisi untuk UMUM; GURU/MURID selalu null. */
+  /** Selalu terisi untuk UMUM (bawaan UMUM); GURU/MURID selalu null. */
   kategoriUmum: KategoriUmumPilihan | null;
 }
 
 /** Validasi server untuk pilihan peran dari UI. null = tolak (400). */
 export function parseRoleSelection(role: unknown, kategoriUmum: unknown): RoleSelection | null {
   if (isAllowedGoogleRole(role)) return { role, kategoriUmum: null };
-  if (role === "UMUM" && isRoleUmumEnabled() && isKategoriUmumPilihan(kategoriUmum)) {
-    return { role: "UMUM", kategoriUmum };
-  }
-  return null;
+  if (role !== "UMUM" || !isRoleUmumEnabled()) return null;
+  const kategori = resolveKategoriUmumInput(kategoriUmum);
+  return kategori ? { role: "UMUM", kategoriUmum: kategori } : null;
 }
 
 /** Segel pilihan peran (v1 untuk GURU/MURID — format lama tak berubah; v2 untuk
  * UMUM: `v2.exp.nonce.UMUM.KATEGORI.sig`). */
 export function signRoleSelectionIntent(selection: RoleSelection): string | null {
   if (selection.role !== "UMUM") return signRoleIntent(selection.role);
-  if (!isRoleUmumEnabled() || !isKategoriUmumPilihan(selection.kategoriUmum)) return null;
+  const kategori = resolveKategoriUmumInput(selection.kategoriUmum);
+  if (!isRoleUmumEnabled() || !kategori) return null;
   const secret = getIntentSecret();
   if (!secret) return null;
   const exp = Math.floor(Date.now() / 1000) + ROLE_INTENT_TTL_SECONDS;
   const nonce = randomBytes(8).toString("hex");
-  const payload = `v2.${exp}.${nonce}.UMUM.${selection.kategoriUmum}`;
+  const payload = `v2.${exp}.${nonce}.UMUM.${kategori}`;
   return `${payload}.${signPayload(payload, secret)}`;
 }
 
@@ -196,9 +201,10 @@ export function resolveGoogleProvisioning(opts: {
 }): ProvisionDecision {
   if (opts.existingRole) return { action: "preserve" };
   if (opts.intentRole === "UMUM") {
-    // UMUM wajib membawa kategori yang sah; tanpa itu → pilih peran ulang.
-    if (!isKategoriUmumPilihan(opts.intentKategoriUmum)) return { action: "needs-selection" };
-    return { action: "create", role: "UMUM", kategoriUmum: opts.intentKategoriUmum };
+    // Kategori tidak lagi ditanyakan: kosong → UMUM; nilai tak sah → pilih ulang.
+    const kategori = resolveKategoriUmumInput(opts.intentKategoriUmum);
+    if (!kategori) return { action: "needs-selection" };
+    return { action: "create", role: "UMUM", kategoriUmum: kategori };
   }
   if (opts.intentRole) return { action: "create", role: opts.intentRole };
   return { action: "needs-selection" };

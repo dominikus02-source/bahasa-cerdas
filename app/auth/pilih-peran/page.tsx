@@ -6,8 +6,7 @@ import { BookOpen, Check, Compass, GraduationCap, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
-import { KategoriUmumPicker, useRoleUmumAvailable } from "@/components/auth/KategoriUmumPicker";
-import type { KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
+import { useRoleUmumAvailable } from "@/components/auth/useRoleUmumAvailable";
 
 /**
  * PILIH PERAN — role selection for NEW Google users.
@@ -37,11 +36,11 @@ const ROLE_CARDS: { key: Role; title: string; copy: string }[] = [
   {
     key: "UMUM",
     title: "Umum",
-    copy: "Mahasiswa, dosen, atau siapa pun yang ingin belajar dan bermain kata.",
+    copy: "Siapa pun yang ingin belajar, ngobrol dengan NARA, dan bermain kata.",
   },
 ];
 
-const ROLE_ACCENT: Record<Role, { border: string; bg: string; text: string }> = {
+const ROLE_ACCENT: Record<Role, { border: string; bg: string; text: string; title?: string }> = {
   GURU: {
     border: "border-emerald-500 bg-emerald-50 shadow-lg dark:border-emerald-400 dark:bg-emerald-500/10",
     bg: "bg-emerald-100 dark:bg-emerald-500/20",
@@ -53,9 +52,11 @@ const ROLE_ACCENT: Record<Role, { border: string; bg: string; text: string }> = 
     text: "text-violet-600 dark:text-violet-300",
   },
   UMUM: {
-    border: "border-sky-500 bg-sky-50 shadow-lg dark:border-sky-400 dark:bg-sky-500/10",
-    bg: "bg-sky-100 dark:bg-sky-500/20",
-    text: "text-sky-600 dark:text-sky-300",
+    // Sentuhan warna merek BahasaCerdas (token tema, aman terang & gelap).
+    border: "border-bc-info bg-bc-info-soft shadow-bc-glow",
+    bg: "bg-bc-brand",
+    text: "text-bc-on-brand",
+    title: "text-bc-info",
   },
 };
 
@@ -65,10 +66,9 @@ export default function PilihPeranPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [next, setNext] = useState("");
-  const [kategoriUmum, setKategoriUmum] = useState<KategoriUmumPilihan | null>(null);
   const umumAvailable = useRoleUmumAvailable();
   const cards = ROLE_CARDS.filter((r) => r.key !== "UMUM" || umumAvailable);
-  const canContinue = !!role && (role !== "UMUM" || !!kategoriUmum);
+  const canContinue = !!role;
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -110,7 +110,6 @@ export default function PilihPeranPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           role,
-          kategoriUmum: role === "UMUM" ? kategoriUmum : undefined,
           next: next || undefined,
         }),
       });
@@ -201,7 +200,7 @@ export default function PilihPeranPage() {
                   <Icon className={`h-7 w-7 ${active ? accent.text : "text-slate-400 dark:text-slate-500"}`} />
                 </div>
                 <div className="min-w-0">
-                  <p className={`text-lg font-bold ${active ? accent.text : "text-slate-700 dark:text-slate-200"}`}>
+                  <p className={`text-lg font-bold ${active ? (accent.title ?? accent.text) : "text-slate-700 dark:text-slate-200"}`}>
                     {r.title}
                   </p>
                   <p className="mt-0.5 text-sm text-slate-500 dark:text-slate-400">{r.copy}</p>
@@ -210,12 +209,6 @@ export default function PilihPeranPage() {
             );
           })}
         </div>
-
-        {role === "UMUM" && umumAvailable && (
-          <div className="mt-4 w-full">
-            <KategoriUmumPicker value={kategoriUmum} onChange={setKategoriUmum} idPrefix="pilih-peran-kategori" />
-          </div>
-        )}
 
         <button
           type="button"

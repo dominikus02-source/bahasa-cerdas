@@ -13,8 +13,9 @@ const createUserSchema = z.object({
     .min(8, "Kata sandi minimal 8 karakter")
     .max(128, "Kata sandi maksimal 128 karakter"),
   fullName: z.string().min(1, "Nama harus diisi").max(100).trim(),
-  // UMUM hanya lolos bila flag server ENABLE_ROLE_UMUM aktif DAN kategoriUmum
-  // termasuk pilihan (lihat parseRoleSelection di bawah). GURU/MURID tak berubah.
+  // UMUM hanya lolos bila flag server ENABLE_ROLE_UMUM aktif. kategoriUmum
+  // opsional (kosong → UMUM; dikirim → wajib pilihan sah) — lihat
+  // parseRoleSelection di bawah. GURU/MURID tak berubah.
   role: z.enum(["GURU", "MURID", "UMUM"]),
   kategoriUmum: z.string().max(20).optional(),
 });
@@ -178,7 +179,7 @@ export async function POST(req: Request) {
         await db.profile.create({
           data: {
             userId: newUser.id,
-            ...(role === "UMUM" && kategoriUmum ? { kategoriUmum } : {}),
+            ...(role === "UMUM" && kategoriUmum ? { kategoriUmum } : {}), // UMUM: selalu terisi (bawaan UMUM)
           },
         });
       } catch {

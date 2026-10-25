@@ -1,8 +1,9 @@
 /**
  * KATEGORI UMUM — sub-kategori yang boleh DIPILIH pengguna peran UMUM.
  *
- * CLIENT-SAFE (tanpa import Node/DB): dipakai UI register/pilih-peran dan
- * validasi server.
+ * CLIENT-SAFE (tanpa import Node/DB): dipakai validasi server dan label
+ * tampilan. UI register/pilih-peran TIDAK lagi menampilkan pemilih kategori;
+ * kategori kosong disimpan sebagai UMUM (lihat resolveKategoriUmumInput).
  *
  * ATURAN PRODUK:
  * - Opsi yang TERLIHAT & bisa dipilih hanya: Mahasiswa, Dosen, Umum.
@@ -26,6 +27,23 @@ export const KATEGORI_UMUM_DESKRIPSI: Record<KategoriUmumPilihan, string> = {
   DOSEN: "Mengajar di perguruan tinggi dan ingin menjelajah.",
   UMUM: "Siapa pun yang ingin belajar dan bermain kata.",
 };
+
+/**
+ * Kategori bawaan. UI tidak lagi menanyakan kategori (keputusan pendiri
+ * 2026-10-26): pengguna cukup memilih peran Umum, server menyimpan UMUM.
+ */
+export const KATEGORI_UMUM_DEFAULT: KategoriUmumPilihan = "UMUM";
+
+/**
+ * Kategori dari input API. Tidak dikirim (undefined/null) → UMUM (bawaan).
+ * Dikirim → wajib salah satu pilihan sah; nilai lain (INVESTOR, TAMU, "",
+ * huruf kecil, …) → null = tolak. Jadi kategori TIDAK wajib, tetapi validasi
+ * nilai yang dikirim tidak dilonggarkan.
+ */
+export function resolveKategoriUmumInput(value: unknown): KategoriUmumPilihan | null {
+  if (value === undefined || value === null) return KATEGORI_UMUM_DEFAULT;
+  return isKategoriUmumPilihan(value) ? value : null;
+}
 
 export function isKategoriUmumPilihan(value: unknown): value is KategoriUmumPilihan {
   return typeof value === "string" && (KATEGORI_UMUM_PILIHAN as readonly string[]).includes(value);

@@ -10,15 +10,15 @@ import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
 import { isSafeNext } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
-import { KategoriUmumPicker, useRoleUmumAvailable } from "@/components/auth/KategoriUmumPicker";
-import { KATEGORI_UMUM_LABEL, type KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
+import { useRoleUmumAvailable } from "@/components/auth/useRoleUmumAvailable";
 
 /**
  * REGISTER 4.0 — Role Gate 1.0
  *
  * 4-step wizard: Pilih Peran → Formulir → Konfirmasi Peran → Konfirmasi Data
  * No default role — user MUST explicitly choose GURU, MURID, or (when the
- * server flag ENABLE_ROLE_UMUM is on) UMUM + kategori (Mahasiswa/Dosen/Umum).
+ * server flag ENABLE_ROLE_UMUM is on) UMUM. No kategori question: the server
+ * stores kategoriUmum = UMUM by default.
  * Account creation ONLY after final confirmation.
  */
 
@@ -68,11 +68,12 @@ const ROLE_CONFIG: Record<Role, {
     ],
   },
   UMUM: {
-    borderActive: "border-sky-500 dark:border-sky-400",
-    bgLight: "bg-sky-50 dark:bg-sky-500/10",
-    textActive: "text-sky-700 dark:text-sky-300",
-    bgIcon: "bg-sky-100 dark:bg-sky-500/20",
-    iconColor: "text-sky-600 dark:text-sky-300",
+    // Sentuhan warna merek BahasaCerdas (token tema, aman terang & gelap).
+    borderActive: "border-bc-info",
+    bgLight: "bg-bc-info-soft",
+    textActive: "text-bc-info",
+    bgIcon: "bg-bc-brand shadow-bc-glow",
+    iconColor: "text-bc-on-brand",
     label: "Umum",
     formTitle: "Pendaftaran Umum",
     features: [
@@ -88,7 +89,7 @@ const ROLE_CARDS = [
   { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "AI Rencana Pembelajaran, Bank Soal, Kuis Game" },
   { key: "MURID" as const, icon: BookOpen, label: "Murid", sub: "Belajar, Kuis, UKBI" },
   // Hanya tampil bila server mengaktifkan ENABLE_ROLE_UMUM.
-  { key: "UMUM" as const, icon: Compass, label: "Umum", sub: "Mahasiswa, Dosen, Umum" },
+  { key: "UMUM" as const, icon: Compass, label: "Umum", sub: "NARA, JUMPA, gim kata & Toko Karya" },
 ];
 
 function RoleIcon({ role, className }: { role: Role; className?: string }) {
@@ -142,11 +143,10 @@ export default function RegisterPage() {
   const [province, setProvince] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
-  const [kategoriUmum, setKategoriUmum] = useState<KategoriUmumPilihan | null>(null);
   const umumAvailable = useRoleUmumAvailable();
   const roleCards = ROLE_CARDS.filter((r) => r.key !== "UMUM" || umumAvailable);
   const isUmumRole = role === "UMUM";
-  const roleReady = !!role && (!isUmumRole || !!kategoriUmum);
+  const roleReady = !!role;
   // Tujuan setelah daftar (mis. tautan undangan JUMPA). Divalidasi isSafeNext.
   const [next, setNext] = useState("");
   useEffect(() => {
@@ -205,7 +205,6 @@ export default function RegisterPage() {
           password,
           fullName,
           role,
-          ...(role === "UMUM" ? { kategoriUmum } : {}),
         }),
       });
 
@@ -269,7 +268,7 @@ export default function RegisterPage() {
       const intentRes = await fetch("/api/auth/role-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role, ...(role === "UMUM" ? { kategoriUmum } : {}) }),
+        body: JSON.stringify({ role }),
       });
       if (!intentRes.ok) {
         const data = await intentRes.json().catch(() => ({}));
@@ -451,10 +450,6 @@ export default function RegisterPage() {
                       })}
                     </div>
 
-                    {isUmumRole && umumAvailable && (
-                      <KategoriUmumPicker value={kategoriUmum} onChange={setKategoriUmum} idPrefix="register-kategori" />
-                    )}
-
                     <button
                       type="button"
                       onClick={goToStep2}
@@ -632,7 +627,6 @@ export default function RegisterPage() {
                         <div>
                           <p className="text-lg font-bold text-slate-900 dark:text-white">
                             Akun {config.label}
-                            {isUmumRole && kategoriUmum ? ` · ${KATEGORI_UMUM_LABEL[kategoriUmum]}` : ""}
                           </p>
                           <p className="text-xs text-slate-500 dark:text-slate-400">Peran ini menentukan pengalaman kamu di BahasaCerdas</p>
                         </div>
@@ -700,15 +694,6 @@ export default function RegisterPage() {
                           {config.label}
                         </span>
                       </div>
-                      {isUmumRole && kategoriUmum && (
-                        <>
-                          <div className="h-px bg-slate-200 dark:bg-slate-700" />
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Kategori</span>
-                            <span className="text-sm font-semibold text-slate-900 dark:text-white">{KATEGORI_UMUM_LABEL[kategoriUmum]}</span>
-                          </div>
-                        </>
-                      )}
                       <div className="h-px bg-slate-200 dark:bg-slate-700" />
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Nama</span>

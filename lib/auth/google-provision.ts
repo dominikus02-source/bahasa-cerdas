@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 import type { ProvisionRole } from "@/lib/auth/role-intent";
-import type { KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
+import { KATEGORI_UMUM_DEFAULT, type KategoriUmumPilihan } from "@/lib/auth/kategori-umum";
 
 /**
  * Shared Google-provisioning primitive.
@@ -18,7 +18,7 @@ export async function provisionGoogleUser(opts: {
   email: string;
   fullName: string;
   role: ProvisionRole;
-  /** Hanya dipakai bila role UMUM (sudah divalidasi pemanggil). */
+  /** Hanya dipakai bila role UMUM (sudah divalidasi pemanggil). Kosong → UMUM. */
   kategoriUmum?: KategoriUmumPilihan | null;
 }) {
   const { supabaseId, role } = opts;
@@ -49,7 +49,7 @@ export async function provisionGoogleUser(opts: {
     await db.profile.create({
       data: {
         userId: created.id,
-        ...(role === "UMUM" && opts.kategoriUmum ? { kategoriUmum: opts.kategoriUmum } : {}),
+        ...(role === "UMUM" ? { kategoriUmum: opts.kategoriUmum ?? KATEGORI_UMUM_DEFAULT } : {}),
       },
     });
   } catch {}

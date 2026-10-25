@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { ChevronRight, Library, LogOut, UserRound } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUmumPage } from "@/lib/auth/umum-page";
-import { kategoriUmumLabel } from "@/lib/auth/kategori-umum";
 import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { ThemeSettingsCard } from "@/components/murid/ThemeSettingsCard";
@@ -47,10 +46,6 @@ function Row({ label, value, href }: { label: string; value?: string; href?: str
 
 export default async function UmumPengaturanPage() {
   const user = await requireUmumPage("/umum/pengaturan");
-  const profile = await db.profile
-    .findUnique({ where: { userId: user.id }, select: { kategoriUmum: true } })
-    .catch(() => null);
-  const kategori = kategoriUmumLabel(profile?.kategoriUmum ?? null);
   const name = user.nickname || user.fullName;
 
   return (
@@ -66,7 +61,7 @@ export default async function UmumPengaturanPage() {
 
         <Section icon={<UserRound size={18} aria-hidden />} title="Akun & Profil" desc="Identitas akunmu">
           <Row label="Nama" value={user.fullName || "—"} />
-          <Row label="Peran" value={kategori ? `Umum · ${kategori}` : "Umum"} />
+          <Row label="Peran" value="Umum" />
         </Section>
 
         <Section icon={<Library size={18} aria-hidden />} title="Aktivitas" desc="Pembelian dan notifikasi">
