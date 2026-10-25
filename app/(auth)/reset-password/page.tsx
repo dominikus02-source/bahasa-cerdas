@@ -58,6 +58,7 @@ export default function ResetPasswordPage() {
     }
     const supabase = createClient();
     let cancelled = false;
+    let verifiedRecovery = false;
     if (hasRecoveryTokens) {
       void supabase.auth.setSession({ access_token: accessToken!, refresh_token: refreshToken! }).then(({ error }) => {
         if (cancelled) return;
@@ -65,7 +66,7 @@ export default function ResetPasswordPage() {
         else void supabase.auth.getUser().then(({ data, error: verifyError }) => {
           if (cancelled) return;
           if (verifyError || !data.user) setRecoveryFailed(true);
-          else setRecoveryReady(true);
+          else { verifiedRecovery = true; setRecoveryReady(true); }
         }).catch(() => { if (!cancelled) setRecoveryFailed(true); });
       }).catch(() => { if (!cancelled) setRecoveryFailed(true); });
     }
@@ -75,7 +76,11 @@ export default function ResetPasswordPage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "PASSWORD_RECOVERY" && session) {
-          setRecoveryReady(true);
+          void supabase.auth.getUser().then(({ data, error: authError }) => {
+            if (cancelled) return;
+            if (authError || !data.user) setRecoveryFailed(true);
+            else { verifiedRecovery = true; setRecoveryReady(true); }
+          }).catch(() => { if (!cancelled) setRecoveryFailed(true); });
         }
       }
     );
