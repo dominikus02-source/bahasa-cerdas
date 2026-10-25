@@ -22,6 +22,7 @@ import * as React from "react"
 import { renderToString } from "react-dom/server"
 import { AppRouterContext } from "next/dist/shared/lib/app-router-context.shared-runtime"
 import JumpaHome from "../components/jumpa/JumpaHome"
+import { pickReturnFocus } from "../components/jumpa/ConfirmDialog"
 import type { JumpaHomeData } from "../lib/jumpa/service"
 
 let passed = 0
@@ -91,6 +92,20 @@ console.log("\n3. Safari iOS: input ≥16px di layar sentuh")
 const css = read(`${dir}/jumpa.css`)
 check(".jumpa-input 16px untuk pointer: coarse", /@media \(pointer: coarse\) \{ \.jumpa-input \{ font-size: 16px; \} \}/.test(css))
 check(".jumpa-join-input 16px", /\.jumpa-join-input \{[^}]*font-size: 16px/.test(css))
+
+console.log("\n4. Dialog Akhiri: fokus kembali ke pemicu / Lainnya")
+{
+  const body = { isConnected: true, n: "body" }
+  const more = { isConnected: true, n: "Lainnya" }
+  const btn = { isConnected: true, n: "Akhiri (dock)" }
+  const gone = { isConnected: false, n: "item menu" }
+  check("pemicu masih ada → kembali ke pemicu", pickReturnFocus(btn, body, () => more) === btn)
+  check("dibuka dari menu (activeElement = body) → Lainnya", pickReturnFocus(body, body, () => more) === more)
+  check("pemicu sudah di-unmount → Lainnya", pickReturnFocus(gone, body, () => more) === more)
+  check("tanpa pemicu → Lainnya", pickReturnFocus(null, body, () => more) === more)
+  const room = read(`${dir}/JumpaRoomView.tsx`)
+  check("JumpaRoomView: returnFocus ke tombol Lainnya", room.includes("returnFocus={endFocus}") && room.includes("ref={moreRef}"))
+}
 
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal\n`)
 if (failed > 0) process.exit(1)
