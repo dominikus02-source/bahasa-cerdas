@@ -111,12 +111,8 @@ export default function LatihanPage() {
   }).length
   const total = soalList.length
 
-  if (loading) return (
-    <div className="px-4 py-6 arena-page space-y-3 animate-pulse">
-      {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-gray-100 dark:bg-slate-800/80 rounded-2xl" />)}
-    </div>
-  )
-
+  // Hook harus dipanggil sebelum early return `loading`; sebelumnya jumlah hook
+  // berubah saat loading selesai (React: "Rendered more hooks than during the previous render").
   const [progressSaved, setProgressSaved] = useState(false)
 
   useEffect(() => {
@@ -129,6 +125,13 @@ export default function LatihanPage() {
       body: JSON.stringify({ score: pct }),
     }).catch(() => {})
   }, [selesai, progressSaved, benar, total, unitId])
+
+  if (loading) return (
+    <div className="px-4 py-6 arena-page space-y-3 animate-pulse">
+      {[1,2,3,4,5].map(i => <div key={i} className="h-20 bg-gray-100 dark:bg-slate-800/80 rounded-2xl" />)}
+    </div>
+  )
+
 
   if (selesai) return (
     <div className="px-4 py-6 arena-page text-center pt-16">

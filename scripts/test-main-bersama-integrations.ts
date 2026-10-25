@@ -41,7 +41,7 @@ import { adaptQuestion, OPTION_ID_ALPHABET } from '../src/main-bersama/adapters/
 import {
   evaluatePackageCompatibility,
   summarizeCompatibility,
-  useSupportedQuestions,
+  selectSupportedQuestions,
   type PackageCompatibilityResult,
   type UnusedQuestionsInfo,
 } from '../src/main-bersama/adapters/bank-soal/compatibility';
@@ -330,9 +330,9 @@ check('34. summary reasonByCode mengelompokkan benar', summ.reasonByCode['UNSUPP
 
 // ─── Fix review Tahap 5 §1: jalur useSupportedQuestions eksplisit ──
 
-section('useSupportedQuestions — subset eksplisit, tanpa silent drop');
+section('selectSupportedQuestions — subset eksplisit, tanpa silent drop');
 
-const subset = useSupportedQuestions(mixed);
+const subset = selectSupportedQuestions(mixed);
 check('34a. subset diterima untuk paket campuran', subset.ok === true);
 check('34b. snapshots hanya berisi supported (3 soal, urutan terjaga)',
   subset.ok && subset.questions.length === 3 && subset.questions.every((q) => q.sourceQuestionId !== 'P2' && q.sourceQuestionId !== 'P4'));
@@ -344,11 +344,11 @@ check('34d. unused details memuat id + kode + reason per soal',
   subset.unused.details[0]!.code === 'UNSUPPORTED_QUESTION_TYPE' &&
   typeof subset.unused.details[0]!.reason === 'string');
 
-const allBad = useSupportedQuestions(pkgAllBad);
+const allBad = selectSupportedQuestions(pkgAllBad);
 check('34e. semua unsupported → subset ditolak NO_SUPPORTED_QUESTIONS',
   !allBad.ok && allBad.code === 'NO_SUPPORTED_QUESTIONS');
 
-const fullSubset = useSupportedQuestions(pkgAllOk);
+const fullSubset = selectSupportedQuestions(pkgAllOk);
 check('34f. paket full compatible → unused.count 0, questions utuh',
   fullSubset.ok && fullSubset.unused.count === 0 && fullSubset.unused.sourceQuestionIds.length === 0);
 

@@ -12,7 +12,11 @@ type Phase = "idle" | "searching" | "found" | "countdown" | "playing" | "result"
 
 export default function AduCepatPage() {
   if (!MULTIPLAYER_ENABLED) return <ComingSoon title="Adu Cepat — Segera Hadir" />
+  return <AduCepatGame />
+}
 
+// Hook dipisah ke komponen sendiri agar tidak dipanggil setelah early return (rules-of-hooks).
+function AduCepatGame() {
   const [phase, setPhase] = useState<Phase>("idle")
   const [countdown, setCountdown] = useState(3)
   const [roomCode, setRoomCode] = useState("")

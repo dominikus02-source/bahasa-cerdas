@@ -91,9 +91,14 @@ interface GameLobbyProps {
   role?: "GURU" | "MURID";
 }
 
-export default function GameLobby({ isHost = false, roomCode: initialCode, onStart, role = "MURID" }: GameLobbyProps) {
+export default function GameLobby(props: GameLobbyProps) {
+  const role = props.role ?? "MURID";
   if (!MULTIPLAYER_ENABLED) return <ComingSoon title="Kuis Tempur — Segera Hadir" backHref={role === "GURU" ? "/guru/game" : "/murid/game"} />;
+  return <GameLobbyInner {...props} />;
+}
 
+// Hook dipisah ke komponen sendiri agar tidak dipanggil setelah early return (rules-of-hooks).
+function GameLobbyInner({ isHost = false, roomCode: initialCode, onStart, role = "MURID" }: GameLobbyProps) {
   const router = useRouter();
   const [room, setRoom] = useState<any>(null);
   const [code, setCode] = useState(initialCode || "");

@@ -97,7 +97,7 @@ export function summarizeCompatibility(result: PackageCompatibilityResult): {
  * memanggil fungsi ini setelah compatibility result diketahui —
  * keputusan menggunakan subset ada di caller, bukan otomatis.
  */
-export function useSupportedQuestions(
+export function selectSupportedQuestions(
   result: PackageCompatibilityResult,
 ): { ok: true; questions: MainQuestionSnapshot[]; unused: UnusedQuestionsInfo } | { ok: false; code: 'NO_SUPPORTED_QUESTIONS' } {
   if (result.supported === 0) {
