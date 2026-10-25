@@ -9,6 +9,14 @@ import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Loader2 } from "lucide-react";
 
+/**
+ * Pemicu yang valid = elemen nyata yang masih ada. <body> berarti pemicu sudah
+ * hilang (mis. menu Lainnya ditutup sebelum dialog dibuka) → pakai cadangan.
+ */
+export function pickReturnFocus<T extends { isConnected: boolean }>(prev: T | null, body: T | null, fallback?: () => T | null): T | null {
+  return prev && prev !== body && prev.isConnected ? prev : fallback?.() ?? null;
+}
+
 export default function ConfirmDialog({
   title,
   body,
@@ -48,8 +56,7 @@ export default function ConfirmDialog({
     window.addEventListener("keydown", onKey);
     return () => {
       window.removeEventListener("keydown", onKey);
-      const back = prev?.isConnected ? prev : returnFocus?.();
-      back?.focus?.();
+      pickReturnFocus(prev, document.body, returnFocus)?.focus?.();
     };
   }, [onCancel, returnFocus]);
 
