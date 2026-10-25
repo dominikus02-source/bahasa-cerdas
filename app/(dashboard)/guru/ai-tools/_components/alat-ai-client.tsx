@@ -18,7 +18,7 @@ import { FeedbackForm } from "./forms/feedback-form";
 import { GradingForm } from "./forms/grading-form";
 import { TextAnalysisForm } from "./forms/text-analysis-form";
 import { runAgent, runAgentStream, QuotaExceededError, AgentErrorWithCodeClass, type StreamCallbacks, type QuotaErrorInfo } from "../lib/agent-api";
-import { saveAiResult, listSavedResults, deleteSavedResult, updateSavedResult } from "../lib/saved-results-api";
+import { saveAiResult, listSavedResults, deleteSavedResult, updateSavedResult, displaySavedTitle } from "../lib/saved-results-api";
 import { downloadDocxExport, downloadPdfExport } from "../lib/export-api";
 import type { AgentId } from "../lib/agent-api";
 import type { SavedAiResult } from "../lib/saved-results-api";
@@ -502,7 +502,7 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
   const filteredHistory = historyItems.filter((item) => {
     if (historyFilter && item.agentId !== historyFilter) return false;
     if (query) {
-      const inTitle = item.title.toLowerCase().includes(query);
+      const inTitle = item.title.toLowerCase().includes(query) || displaySavedTitle(item.title).toLowerCase().includes(query);
       const inAgent = item.agentId.toLowerCase().includes(query);
       return inTitle || inAgent;
     }
