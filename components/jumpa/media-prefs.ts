@@ -1,7 +1,7 @@
 /**
  * Pilihan media terakhir, disimpan di localStorage (kunci tetap v1; field
  * baru Fase 3 dibaca dengan default sehingga data lama tetap sah).
- * Default seperti Zoom/Meet: kamera NYALA, mikrofon NYALA, kualitas Otomatis.
+ * Default: kamera NYALA, mikrofon NYALA, kualitas Otomatis.
  */
 export type JumpaQuality = "auto" | "hemat" | "hd";
 
@@ -11,7 +11,7 @@ export interface JumpaDevicePrefs {
   audiooutput?: string;
 }
 
-export type JumpaBackgroundId = "none" | "blur" | "kelas" | "kelas-bc" | "kelas-biru" | "kantor" | "logo-wall" | "ekosistem" | "custom";
+export type JumpaBackgroundId = "none" | "blur" | "kelas" | "pojok-baca" | "ruang-belajar" | "terang" | "gradien" | "pola-bc" | "custom";
 
 export interface JumpaMediaPrefs {
   camera: boolean;
@@ -42,7 +42,7 @@ export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
 };
 
 const QUALITIES: readonly JumpaQuality[] = ["auto", "hemat", "hd"];
-const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "blur", "kelas", "kelas-bc", "kelas-biru", "kantor", "logo-wall", "ekosistem", "custom"];
+const BACKGROUNDS: readonly JumpaBackgroundId[] = ["none", "blur", "kelas", "pojok-baca", "ruang-belajar", "terang", "gradien", "pola-bc", "custom"];
 const DEVICE_ID_RE = /^[A-Za-z0-9+/=_-]{1,200}$/;
 
 function cleanDevices(v: unknown): JumpaDevicePrefs {

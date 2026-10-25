@@ -62,7 +62,7 @@ import ParticipantTile from "./ParticipantTile";
 import { fitGrid, gridColumns, parseParticipantMeta } from "./format";
 import { detectDevice, publishPolicy, type DeviceClass } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
-import { backgroundById } from "./backgrounds";
+import { backgroundById, backgroundImageFor } from "./backgrounds";
 import { BackgroundProcessor } from "@livekit/track-processors";
 import { BACKGROUND_ASSET_PATHS } from "./media-assets";
 import { buildRoomOptions, MediaProvider, useMedia } from "./media-controller";
@@ -641,7 +641,7 @@ function ControlBar({
         const track = localParticipant.getTrackPublication("camera" as any)?.track;
         if (!track || track.kind !== "video") return;
         const bg = backgroundById(prefs.background);
-        const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : bg.image;
+        const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : backgroundImageFor(bg, window.innerWidth);
         if (prefs.background === "blur") {
           processor = BackgroundProcessor({ mode: "background-blur", blurRadius: 15, assetPaths: BACKGROUND_ASSET_PATHS });
         } else if (imageUrl) {

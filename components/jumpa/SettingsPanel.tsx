@@ -176,7 +176,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
               aria-pressed={prefs.background === bg.id}
             >
               <span className="jumpa-bg-preview" aria-hidden>
-                {bg.image ? <img src={bg.image} alt="" className="h-full w-full object-cover" /> : <span className="block h-full w-full bg-[var(--jp-surface-2)]" />}
+                {bg.thumb ? <img src={bg.thumb} alt="" loading="lazy" decoding="async" width={320} height={180} className="h-full w-full object-cover" /> : <span className="block h-full w-full bg-[var(--jp-surface-2)]" />}
               </span>
               <span className="jumpa-bg-label">{bg.label}</span>
             </button>
