@@ -124,9 +124,9 @@ check(
   goldFiles.length === 0 && heroGold.includes("buttonClass({ variant: \"primary\"")
 );
 const aiCard = read("components/student-home/AIBCHomeCard.tsx");
-check("AI BC → /arena/ai", aiCard.includes('href="/arena/ai"'));
-check("AI BC copy companion ('Tanya BC. Kita belajar bareng.')", aiCard.includes("Kita belajar bareng"));
-check("AI BC CTA 'Tanya AI BC →'", aiCard.includes("Tanya AI BC"));
+check("NARA → /arena/ai", aiCard.includes('href="/arena/ai"'));
+check("NARA copy companion ('Tanya Nara. Yuk, kita kerjakan bareng!')", aiCard.includes("Tanya Nara. Yuk, kita kerjakan bareng!"));
+check("NARA CTA 'Tanya Nara →'", aiCard.includes("Tanya Nara") && !aiCard.includes("Tanya AI BC"));
 
 // 7 — Hero ringkas: identitas + XP singkat, tanpa dashboard statistik
 const homeData = read("components/student-home/home-data.tsx");

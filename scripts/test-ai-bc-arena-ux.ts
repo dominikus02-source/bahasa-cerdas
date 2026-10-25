@@ -101,23 +101,24 @@ test("workspace: container konten 900px", () => workspace.includes("max-w-[900px
 test("workspace: TANPA gerbang 'mulai percakapan' (komposer selalu terlihat)", () =>
   !workspace.includes('"landing"') && !workspace.includes('"chat"'));
 test("workspace: placeholder komposer murid", () =>
-  workspace.includes('placeholder={PLACEHOLDER}') && workspace.includes("Tulis pertanyaanmu…"));
+  workspace.includes('placeholder={PLACEHOLDER}') && workspace.includes("Tulis pesan untuk Nara…"));
 test("workspace: Enter kirim / Shift+Enter baris baru", () =>
   workspace.includes('e.key === "Enter"') && workspace.includes("Shift"));
 test("workspace: kirim nonaktif saat streaming", () =>
   workspace.includes("!input.trim() || streaming"));
 test("workspace: indikator streaming role=status + aria-live", () =>
   workspace.includes('role="status"') && workspace.includes('aria-live="polite"'));
-test("workspace: label thinking 'Sebentar, aku pikirkan…'", () =>
-  workspace.includes("Sebentar, aku pikirkan…"));
+test("workspace: label thinking 'Nara sedang berpikir…'", () =>
+  workspace.includes("Nara sedang berpikir…") && !workspace.includes("Sebentar, aku pikirkan…"));
 test("workspace: teks error persis", () =>
-  workspace.includes("Maaf, aku belum bisa menjawab sekarang. Coba kirim pertanyaanmu lagi."));
+  workspace.includes("Maaf, Nara belum bisa menjawab sekarang. Coba kirim pesanmu lagi ya."));
 test("workspace: retry 'Coba Lagi' + 'Tanya ulang'", () =>
   workspace.includes("Coba Lagi") && workspace.includes("Tanya ulang"));
 test("workspace: salin 'Salin'/'Tersalin'", () =>
   workspace.includes("Salin") && workspace.includes("Tersalin"));
-test("workspace: label AI 'AI BC' (bukan Asisten/Assistant)", () =>
-  workspace.includes("const AI_LABEL = \"AI BC\"") &&
+test("workspace: label AI 'NARA' (bukan Asisten/Assistant/AI BC)", () =>
+  workspace.includes("const AI_LABEL = \"NARA\"") &&
+  !workspace.includes("\"AI BC\"") &&
   !workspace.includes("Asisten") &&
   !workspace.includes("Assistant"));
 test("workspace: reset 'Mulai baru' + aria-label", () =>
@@ -144,11 +145,13 @@ test("workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
   !workspace.includes("LogOut"));
 test("workspace: tanpa emoji", () => !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/u.test(workspace));
 test("workspace: dark mode tersedia", () => workspace.includes("bg-background") && workspace.includes("text-foreground") && sharedStyles.includes("hsl(var(--background))"));
-test("workspace: tema murid violet", () => sharedStyles.includes("var(--clr-violet)") && workspace.includes("styles.sendButton"));
+test("workspace: aksen murid dari token audiens (violet/gradien merek di :root)", () =>
+  sharedStyles.includes("var(--clr-aud)") && sharedStyles.includes("var(--bc-grad-aud") &&
+  !sharedStyles.includes("var(--clr-violet") && workspace.includes("styles.sendButton"));
 test("workspace: karakter thinking saat streaming", () =>
   /<AICompanionCharacter\s+state="thinking"/.test(workspace));
 test("workspace: a11y komposer ber-aria-label", () =>
-  workspace.includes('aria-label="Pertanyaan untuk AI BC"'));
+  workspace.includes('aria-label="Tulis pesan untuk Nara"'));
 test("workspace: tidak mengimpor modul lama", () => !workspace.includes("AiBcModule"));
 
 /* ------------------------------------------------------------------ */

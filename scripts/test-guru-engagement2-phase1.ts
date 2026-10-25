@@ -119,7 +119,7 @@ ok("Beranda fetch /api/guru/misi satu kali", (beranda.match(/fetch\("\/api\/guru
 
 ok("Home V3 punya hero fokus", /<TeacherHero/.test(homeV3));
 ok("Home V3 punya Misi Hari Ini ringkas", /<DailyMissionCard/.test(homeV3) && /Misi Hari Ini/.test(homeV3));
-ok("Home V3 punya empat quick action utama", /Main Bersama/.test(homeV3) && /Buat Karya/.test(homeV3) && /AI BC/.test(homeV3) && /Dasbor Murid/.test(homeV3));
+ok("Home V3 punya empat quick action utama", /Main Bersama/.test(homeV3) && /Buat Karya/.test(homeV3) && /label: "NARA"/.test(homeV3) && /Dasbor Murid/.test(homeV3));
 ok("Home V3 punya pengumuman Main Bersama", /<MainBersamaAnnouncement/.test(homeV3) && /Kenalkan Main Bersama/.test(homeV3));
 ok("Home V3 punya Kompetisi Guru ringkas", /<CompetitionCard/.test(homeV3) && /Kompetisi Guru/.test(homeV3));
 ok("Home V3 memasang Guru Berkarya compact", /<GuruBerkarya misiStatus=\{misiStatus\} compact \/>/.test(homeV3));

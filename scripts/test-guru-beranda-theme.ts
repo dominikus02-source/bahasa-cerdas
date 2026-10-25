@@ -221,7 +221,7 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
     tc.includes("Tugas Menunggu") &&
     tc.includes("Kelas Aktif") &&
     tc.includes("Buat Materi") &&
-    tc.includes("AI BC") &&
+    tc.includes(">NARA<") &&
     tc.includes("perlu dinilai") &&
     tc.includes("sedang dikelola") &&
     tc.includes("di ekosistemmu"));

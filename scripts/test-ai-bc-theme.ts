@@ -98,7 +98,10 @@ test("tombol Salin/Tersalin", () =>
 test("tombol Tanya ulang / Coba lagi", () =>
   read("components/ai-bc/AiBcChatView.tsx").includes("Tanya ulang") && read("components/ai-bc/AiBcChatView.tsx").includes("Coba lagi"));
 test("Mulai baru", () => read("components/ai-bc/AiBcModule.tsx").includes("Mulai baru"));
-test("placeholder per peran", () => read("components/ai-bc/ai-bc-types.ts").includes("Tanya apa saja tentang Bahasa Indonesia"));
+test("placeholder per peran", () => {
+  const t = read("components/ai-bc/ai-bc-types.ts");
+  return t.includes('student: "Tulis pesan untuk Nara…"') && t.includes('teacher: "Tulis pesan untuk Nara atau tempel teks untuk dikoreksi…"');
+});
 
 console.log(`\nHASIL: ${passed} passed, ${failed} failed (${passed + failed} total)`);
 if (failed > 0) process.exit(1);
