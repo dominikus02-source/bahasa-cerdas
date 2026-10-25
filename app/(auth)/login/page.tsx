@@ -9,7 +9,7 @@ import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen, Smartphone } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
-import { resolvePostAuthDestinationForUser } from "@/lib/auth/redirect";
+import { isSafeNext, resolvePostAuthDestinationForUser } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 import { SwRegister } from "@/components/SwRegister";
@@ -370,7 +370,7 @@ export default function LoginPage() {
             <div className="mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Belum punya akun?{" "}
-                <Link href={registerHref} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
+                <Link href={!isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
                   Daftar sekarang
                 </Link>
               </p>
