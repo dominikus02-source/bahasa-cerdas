@@ -110,7 +110,9 @@ ok("GuruBerkarya memakai waktu relatif (waktuRelatif)", /waktuRelatif/.test(berk
 ok("GuruBerkarya memakai publishedAt || createdAt", /waktuRelatif\(a\.publishedAt \|\| a\.createdAt\)/.test(berkaryaUi));
 
 // ── 5. Hierarki Beranda Guru V3: sederhana + aksi utama ─────────────────────
-const beranda = read("app/(dashboard)/guru/beranda/page.tsx");
+// page.tsx kini server component tipis (nama sapaan) yang merender GuruBerandaClient;
+// komposisi + fetch misi pindah ke client tersebut.
+const beranda = read("app/(dashboard)/guru/beranda/page.tsx") + "\n" + read("components/guru/GuruBerandaClient.tsx");
 const homeV3 = read("components/guru/TeacherHomeV3.tsx");
 
 ok("Beranda memakai TeacherHomeV3 sebagai satu komposisi utama", /<TeacherHomeV3/.test(beranda));
