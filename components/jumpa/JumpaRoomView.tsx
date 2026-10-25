@@ -778,7 +778,8 @@ function ControlBar({
         </div>
         {wide && <span className="jumpa-dock-sep" aria-hidden />}
         <div className="jumpa-ctl jumpa-ctl-leave">
-          {canEnd && (
+          {/* Di ponsel, "Akhiri untuk semua" ada di menu Lainnya agar dock muat 360px. */}
+          {canEnd && wide && (
             <button
               type="button"
               className="jumpa-key"
@@ -798,7 +799,7 @@ function ControlBar({
             <PhoneOff size={22} />
             {wide && <span className="jumpa-leave-text">Keluar</span>}
           </button>
-          <span className="jumpa-ctl-label">{canEnd ? "Akhiri / Keluar" : "Keluar"}</span>
+          <span className="jumpa-ctl-label">Keluar</span>
         </div>
       </nav>
     </div>
