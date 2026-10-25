@@ -1,3 +1,5 @@
+/* Aksen NARA mengikuti token audiens (--clr-aud / --bc-grad-aud):
+   murid = gradien merek (violet), guru = biru (.bc-guru-shell). */
 .workspace {
   height: var(--ai-bc-available-height, calc(100dvh - 3.5rem));
   min-height: 0;
@@ -32,11 +34,11 @@
     border-color 150ms;
 }
 .suggestion:hover {
-  border-color: var(--clr-violet);
-  background: var(--clr-violet-soft);
+  border-color: var(--clr-aud);
+  background: var(--clr-aud-soft);
 }
 .suggestion svg {
-  color: var(--clr-violet);
+  color: var(--clr-aud);
 }
 .secondaryAction:hover {
   background: hsl(var(--muted));
@@ -46,12 +48,12 @@
 .secondaryAction:focus-visible,
 .sendButton:focus-visible,
 .tableScroll:focus-visible {
-  outline: 2px solid var(--clr-violet);
+  outline: 2px solid var(--clr-aud);
   outline-offset: 3px;
 }
 .sendButton.sendButton {
-  background: var(--clr-violet);
-  color: hsl(var(--background));
+  background: var(--bc-grad-aud, var(--clr-aud));
+  color: var(--clr-on-aud, hsl(var(--background)));
 }
 .sendButton:hover:not(:disabled) {
   filter: brightness(0.95);
@@ -62,14 +64,14 @@
   opacity: 0.45;
 }
 .composerField:focus-within {
-  border-color: var(--clr-violet);
-  outline: 2px solid var(--clr-violet-soft);
+  border-color: var(--clr-aud);
+  outline: 2px solid var(--clr-aud-soft);
 }
 .composer {
   padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
 }
 .userBubble {
-  background: var(--clr-violet-soft);
+  background: var(--clr-aud-soft);
   color: hsl(var(--foreground));
   overflow-wrap: anywhere;
 }
@@ -81,7 +83,7 @@
 .markdown {
   --tw-prose-body: hsl(var(--foreground));
   --tw-prose-headings: hsl(var(--foreground));
-  --tw-prose-links: var(--clr-violet);
+  --tw-prose-links: var(--clr-aud);
   --tw-prose-bold: hsl(var(--foreground));
   --tw-prose-counters: hsl(var(--muted-foreground));
   --tw-prose-bullets: hsl(var(--muted-foreground));
@@ -138,5 +140,35 @@
   .secondaryAction,
   .sendButton {
     transition: none;
+  }
+}
+
+/* Identitas NARA (wordmark + kepanjangan) */
+/* Wordmark NARA: tebal (900), sedikit renggang, teks bergradasi audiens
+   (ungu/brand di murid, biru di guru). Gradasi token sudah punya varian
+   terang & gelap sehingga tetap terbaca di dua mode. */
+.naraWordmark {
+  display: inline-block;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  /* Imbangi letter-spacing huruf terakhir agar tetap rata tengah. */
+  margin-right: -0.12em;
+  line-height: 1.1;
+  background: var(--bc-grad-aud, var(--clr-aud));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+.naraBadge {
+  color: var(--clr-aud);
+  background: var(--clr-aud-soft);
+  border: 1px solid color-mix(in srgb, var(--clr-aud) 35%, transparent);
+}
+@media (forced-colors: active) {
+  .naraWordmark {
+    color: CanvasText;
+    -webkit-text-fill-color: CanvasText;
+    background: none;
   }
 }

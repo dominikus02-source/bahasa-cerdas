@@ -31,8 +31,10 @@ export function BCAssistantForm({ onSubmit, loading }: BCAssistantFormProps) {
         <div className="flex items-center gap-2 mb-1">
           <AICompanionCharacter state="idle" size="sm" />
           <div>
-            <p className="text-sm font-semibold text-foreground">AI BC</p>
-            <p className="text-xs text-muted-foreground">Teman Guru</p>
+            <p className="text-sm font-semibold text-foreground">NARA</p>
+            <p className="text-xs text-muted-foreground">
+              Narasumber Andalan, Rekan Anda
+            </p>
           </div>
         </div>
         <p className="text-sm leading-relaxed text-muted-foreground">
@@ -85,11 +87,11 @@ export function BCAssistantForm({ onSubmit, loading }: BCAssistantFormProps) {
               className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none"
               aria-hidden="true"
             />{" "}
-            AI BC sedang menjawab...
+            Nara sedang menjawab…
           </>
         ) : (
           <>
-            <Send className="mr-2 h-4 w-4" aria-hidden="true" /> Tanya AI BC
+            <Send className="mr-2 h-4 w-4" aria-hidden="true" /> Tanya Nara
           </>
         )}
       </Button>

@@ -27,7 +27,7 @@ function main() {
   console.log("\n📋 KARYA CONSOLIDATION TEST (STEP 4C — Canonical /murid/karya)");
   console.log("=".repeat(60));
 
-  const layout = read("app/(dashboard)/murid/layout.tsx");
+  const layout = (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx"));
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   const navConfig = read("components/shell/nav-config.ts");
   const works = read("components/student-home/RecentWorksSection.tsx");
@@ -50,8 +50,9 @@ function main() {
   console.log("\n── 2. Mobile Nav Karya → /murid/karya ──");
   test("bottom bar Karya menunjuk /murid/karya",
     () => mobileNav.includes('href: "/murid/karya", label: "Karya"'));
-  test("drawer Karya menunjuk /murid/karya (2 baris nav)",
-    () => (mobileNav.match(/href: "\/murid\/karya", label: "Karya"/g) || []).length === 2);
+  // Drawer mobile dihapus: kini satu baris nav (bottom bar).
+  test("bottom bar Karya menunjuk /murid/karya (1 baris nav)",
+    () => (mobileNav.match(/href: "\/murid\/karya", label: "Karya"/g) || []).length === 1);
   test("mobile nav TIDAK lagi menunjuk /arena/feed",
     () => !mobileNav.includes('href: "/arena/feed"'));
 

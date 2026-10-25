@@ -25,15 +25,15 @@ const PLATFORM_MAP: Record<BcPersonaKey, string[]> = {
     "Jika murid bertanya istilah dunia guru (misalnya dokumen rencana pembelajaran), jelaskan artinya sebagai pengetahuan saja — jangan menawarkan bantuan menyusun dokumen guru.",
   ],
   teacher: [
-    "BahasaCerdas untuk guru: Kelasku (kelas, murid, pengumuman, penugasan, buku nilai, data siswa), Bank Soal latihan, Panggung Literasi (karya murid, umpan balik AI), Alat AI (RPP, soal, EYD, koreksi, penilaian), Simulasi UKBI/TKA + evaluasi hasil, Toko Karya, dan Komunitas.",
+    "BahasaCerdas untuk guru: Kelasku (kelas, murid, pengumuman, penugasan, buku nilai, data siswa), Bank Soal latihan, Panggung Literasi (karya murid, umpan balik AI), Alat NARA (RPP, soal, EYD, koreksi, penilaian), Simulasi UKBI/TKA + evaluasi hasil, Toko Karya, dan Komunitas.",
     "Gamifikasi guru terpisah dari murid: XP guru, lencana guru, dan peringkat guru (Teacher XP Engine).",
   ],
   founder: [
-    "BahasaCerdas: platform belajar Bahasa Indonesia untuk murid dan guru — Arena, Kelasku, Panggung Literasi, Alat AI, Simulasi UKBI/TKA, BIGT, Toko Karya, Komunitas, dan gamifikasi.",
+    "BahasaCerdas: platform belajar Bahasa Indonesia untuk murid dan guru — Arena, Kelasku, Panggung Literasi, Alat NARA, Simulasi UKBI/TKA, BIGT, Toko Karya, Komunitas, dan gamifikasi.",
     "Sebagai staf platform, bantu tim dengan fakta resmi saja (lihat identitas di atas); jangan menebak angka, pendanaan, atau mitra.",
   ],
   admin: [
-    "BahasaCerdas: platform belajar Bahasa Indonesia untuk murid dan guru — Arena, Kelasku, Panggung Literasi, Alat AI, Simulasi UKBI/TKA, BIGT, Toko Karya, Komunitas, dan gamifikasi.",
+    "BahasaCerdas: platform belajar Bahasa Indonesia untuk murid dan guru — Arena, Kelasku, Panggung Literasi, Alat NARA, Simulasi UKBI/TKA, BIGT, Toko Karya, Komunitas, dan gamifikasi.",
     "Sebagai staf platform, bantu operasional dengan fakta resmi saja (lihat identitas di atas).",
   ],
   neutral: [

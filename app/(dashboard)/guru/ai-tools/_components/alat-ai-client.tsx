@@ -18,7 +18,7 @@ import { FeedbackForm } from "./forms/feedback-form";
 import { GradingForm } from "./forms/grading-form";
 import { TextAnalysisForm } from "./forms/text-analysis-form";
 import { runAgent, runAgentStream, QuotaExceededError, AgentErrorWithCodeClass, type StreamCallbacks, type QuotaErrorInfo } from "../lib/agent-api";
-import { saveAiResult, listSavedResults, deleteSavedResult, updateSavedResult } from "../lib/saved-results-api";
+import { saveAiResult, listSavedResults, deleteSavedResult, updateSavedResult, displaySavedTitle } from "../lib/saved-results-api";
 import { downloadDocxExport, downloadPdfExport } from "../lib/export-api";
 import type { AgentId } from "../lib/agent-api";
 import type { SavedAiResult } from "../lib/saved-results-api";
@@ -45,7 +45,7 @@ const AGENTS: AgentConfig[] = [
   { id: "text-analysis", name: "Analisis Teks", description: "Analisis teks dari struktur, gagasan, diksi, dan gaya bahasa.", useCase: "Guru yang ingin analisis mendalam teks", icon: <BookOpen className="w-5 h-5" />, category: "evaluasi" },
   // Bahasa & Asisten
   { id: "eyd", name: "Korektor EYD", description: "Perbaiki ejaan, tanda baca, dan tata bahasa sesuai EYD/PUEBI.", useCase: "Guru yang butuh koreksi ejaan cepat", icon: <SpellCheck className="w-5 h-5" />, category: "bahasa" },
-  { id: "bc-assistant", name: "AI BC", description: "Diskusikan materi, soal, dan aktivitas pembelajaran Bahasa Indonesia.", useCase: "Butuh bantuan cepat atau bingung mulai dari mana", icon: <Bot className="w-5 h-5" />, category: "bahasa" },
+  { id: "bc-assistant", name: "NARA", description: "Diskusikan materi, soal, dan aktivitas pembelajaran Bahasa Indonesia.", useCase: "Butuh bantuan cepat atau bingung mulai dari mana", icon: <Bot className="w-5 h-5" />, category: "bahasa" },
 ];
 
 const CATEGORY_LABELS: Record<AgentCategory, string> = {
@@ -79,7 +79,7 @@ function generateTitle(agentId: string, input: Record<string, unknown>, resultTe
     case "eyd":
       return text ? `Koreksi EYD — ${text.slice(0, 40)}${text.length > 40 ? "..." : ""}` : "Koreksi EYD";
     case "bc-assistant":
-      return message ? `Percakapan AI BC — ${message.slice(0, 40)}${message.length > 40 ? "..." : ""}` : "Percakapan AI BC";
+      return message ? `Percakapan NARA — ${message.slice(0, 40)}${message.length > 40 ? "..." : ""}` : "Percakapan NARA";
     default:
       return "Hasil AI";
   }
@@ -502,7 +502,7 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
   const filteredHistory = historyItems.filter((item) => {
     if (historyFilter && item.agentId !== historyFilter) return false;
     if (query) {
-      const inTitle = item.title.toLowerCase().includes(query);
+      const inTitle = item.title.toLowerCase().includes(query) || displaySavedTitle(item.title).toLowerCase().includes(query);
       const inAgent = item.agentId.toLowerCase().includes(query);
       return inTitle || inAgent;
     }
@@ -655,7 +655,7 @@ export function AlatAiClient({ agentParam }: { agentParam?: string }) {
               {currentResult
                 ? resultSource === "history"
                   ? "Hasil dimuat dari riwayat tersimpan"
-                  : "Output dari agent AI"
+                  : "Hasil dari Alat NARA"
                 : "Hasil akan muncul di sini"}
             </CardDescription>
           </CardHeader>

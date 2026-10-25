@@ -98,7 +98,23 @@ test("tombol Salin/Tersalin", () =>
 test("tombol Tanya ulang / Coba lagi", () =>
   read("components/ai-bc/AiBcChatView.tsx").includes("Tanya ulang") && read("components/ai-bc/AiBcChatView.tsx").includes("Coba lagi"));
 test("Mulai baru", () => read("components/ai-bc/AiBcModule.tsx").includes("Mulai baru"));
-test("placeholder per peran", () => read("components/ai-bc/ai-bc-types.ts").includes("Tanya apa saja tentang Bahasa Indonesia"));
+test("wordmark NARA tebal (900) + gradasi audiens, dipakai di header/lobby/landing/Alat NARA", () => {
+  const css = read("components/ai-bc/ai-bc-workspace.module.css");
+  const block = css.slice(css.indexOf(".naraWordmark {"), css.indexOf("}", css.indexOf(".naraWordmark {")));
+  const users = ["components/ai-bc/AiBcArenaWorkspace.tsx", "components/ai-bc/AiBcGuruWorkspace.tsx",
+    "components/ai-bc/AiBcWelcome.tsx", "app/ai-bc/page.tsx", "app/(dashboard)/guru/ai-tools/page.tsx"];
+  return block.includes("font-weight: 900") && block.includes("var(--bc-grad-aud") &&
+    users.every((f) => read(f).includes("styles.naraWordmark"));
+});
+test("composer guru memakai token desain (tanpa slate/white hardcode)", () => {
+  const src = read("components/ai-bc/AiBcGuruWorkspace.tsx");
+  const line = src.split("\n").find((l) => l.includes("ai-bc-guru-composer")) ?? "";
+  return line.includes("border-border") && line.includes("bg-background/80") && !/slate-|bg-white/.test(line);
+});
+test("placeholder per peran", () => {
+  const t = read("components/ai-bc/ai-bc-types.ts");
+  return t.includes('student: "Tulis pesan untuk Nara…"') && t.includes('teacher: "Tulis pesan untuk Nara atau tempel teks untuk dikoreksi…"');
+});
 
 console.log(`\nHASIL: ${passed} passed, ${failed} failed (${passed + failed} total)`);
 if (failed > 0) process.exit(1);

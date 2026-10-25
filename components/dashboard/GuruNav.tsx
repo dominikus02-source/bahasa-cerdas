@@ -51,7 +51,7 @@ interface NavGroup {
 /**
  * Guru Navigation V2 — Teacher Center.
  * IA target: Beranda → Pusat Literasi → Alat Ajar → Kelasku → Gim → Toko Karya
- * → Simulasi & Tes → Alat AI → Komunitas → Kalender → Profil.
+ * → Simulasi & Tes → Alat NARA → NARA → Komunitas → Kalender → Profil.
  * Akses Panel Admin untuk founder via RoleSections ("Akses Founder"), bukan
  * entry nav terpisah di sidebar guru.
  * Semua route lama yang dihapus dari sidebar TETAP hidup dan bisa diakses
@@ -138,13 +138,13 @@ export const GURU_NAV: NavGroup[] = [
   },
   {
     id: "ai",
-    label: "Alat AI",
+    label: "Alat NARA",
     icon: Bot,
     href: "/guru/ai-tools",
   },
   {
     id: "ai-bc",
-    label: "AI BC",
+    label: "NARA",
     icon: Sparkles,
     href: "/guru/ai-bc",
   },
@@ -356,7 +356,7 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
                 href="/guru/ai-tools"
                 className="text-[10px] text-blue-600 dark:text-blue-300 font-semibold"
               >
-                Buka Alat AI
+                Buka Alat NARA
               </Link>
             </div>
           </div>

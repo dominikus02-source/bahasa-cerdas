@@ -85,7 +85,7 @@ const FEATURE_LABELS: Record<string, string> = {
   bukuPanduan: "Buku Panduan (Belajar)",
   penugasan: "Penugasan Materi",
   ukbiTka: "Simulasi UKBI/TKA",
-  aiTools: "Alat AI Guru",
+  aiTools: "Alat NARA (Guru)",
 };
 
 interface DayRow {

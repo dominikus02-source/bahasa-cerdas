@@ -43,9 +43,10 @@ async function main() {
 
   // 2. Sidebar Murid — no English labels
   console.log("\n── Sidebar Murid ──")
-  const muridLayout = "app/(dashboard)/murid/layout.tsx"
+  // Kerangka sidebar murid kini di components/shell/MuridShellFrame.tsx.
+  const muridLayout = "components/shell/MuridShellFrame.tsx"
   test("Tidak ada 'Dashboard' selain CTA peran 'Dashboard Guru'", () => {
-    const content = readFileSync(muridLayout, "utf-8")
+    const content = readFileSync("app/(dashboard)/murid/layout.tsx", "utf-8") + readFileSync(muridLayout, "utf-8")
     return !content.replace(/Dashboard Guru/g, "").includes("Dashboard")
   })
   test("Ada 'Dasbor Murid'", () => fileContains(muridLayout, "Dasbor Murid"))
@@ -152,9 +153,16 @@ async function main() {
 
   // 11. Arena login — placeholders in Indonesian
   console.log("\n── Arena Login ──")
-  const arenaLogin = "app/auth/arena-login/page.tsx"
-  test("Placeholder 'Surel' bukan 'Email'", () => fileContains(arenaLogin, "Surel"))
-  test("Placeholder 'Kata Sandi' bukan 'Password'", () => fileContains(arenaLogin, "Kata Sandi"))
+  // /auth/arena-login kini redirect ke /arena/login yang me-re-export login
+  // kanonis, jadi placeholder diuji di halaman login kanonis.
+  const arenaLogin = "app/(auth)/login/page.tsx"
+  const placeholders = () => [...readFileSync(arenaLogin, "utf-8").matchAll(/placeholder="([^"]*)"/g)].map((m) => m[1])
+  test("Placeholder email bukan 'Email' polos (berbahasa Indonesia)", () =>
+    fileContains("app/arena/login/page.tsx", "@/app/(auth)/login/page") &&
+    placeholders().length > 0 && placeholders().every((p) => !/^(Email|Enter your email)$/i.test(p)) &&
+    placeholders().some((p) => p.includes("atau")))
+  test("Placeholder/label 'Kata Sandi' bukan 'Password'", () =>
+    fileContains(arenaLogin, "Kata Sandi") && placeholders().every((p) => !/password/i.test(p)))
 
   // 12. Admin pages — status labels in Indonesian
   console.log("\n── Admin Status Labels ──")

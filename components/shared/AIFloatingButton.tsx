@@ -7,7 +7,7 @@ import { usePathname } from "next/navigation";
 import { gambarKarakter } from "@/lib/arena-junior/karakter";
 
 /**
- * AI BC — floating secondary entry point.
+ * NARA (dahulu AI BC) — floating secondary entry point.
  *
  * UX rule: AI BC workspace adalah destination utama; floating button adalah
  * secondary entry point → disembunyikan ketika user sudah berada di
@@ -46,8 +46,8 @@ export default function AIFloatingButton() {
       )}
       <Link
         href="/ai-bc"
-        aria-label="Tanya AI BC"
-        title="Tanya AI BC"
+        aria-label="Ngobrol dengan Nara"
+        title="Ngobrol dengan Nara"
         className="w-14 h-14 rounded-full flex items-center justify-center overflow-hidden shadow-xl hover:shadow-2xl hover:scale-110 transition-all border-2 border-violet-300/60 dark:border-violet-500/50 bg-white dark:bg-slate-900"
       >
         <Image

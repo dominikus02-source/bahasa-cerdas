@@ -49,15 +49,15 @@ export default function KamusPage() {
 
           <p className="text-xs text-gray-400 mt-4">Akan dibuka di tab baru</p>
 
-          {/* AI BC Suggestion */}
+          {/* Saran NARA */}
           <div className="mt-10 bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
             <div className="flex items-center gap-2 mb-3 justify-center">
               <Sparkles size={18} className="text-red-500" />
               <span className="text-sm font-semibold text-gray-900">Butuh bantuan?</span>
             </div>
-            <p className="text-xs text-gray-500 mb-4">Tanya AI BC tentang arti kata, sinonim, atau contoh kalimat</p>
+            <p className="text-xs text-gray-500 mb-4">Tanya Nara tentang arti kata, sinonim, atau contoh kalimat</p>
             <Link href="/ai-bc" className="inline-flex items-center gap-2 text-sm text-red-600 font-semibold hover:text-red-700 transition-colors">
-              Chat AI BC <ArrowRight size={14} />
+              Ngobrol dengan Nara <ArrowRight size={14} />
             </Link>
           </div>
         </div>

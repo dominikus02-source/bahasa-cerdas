@@ -58,7 +58,7 @@ test("7. value card Murid ada", () =>
 test("8. value card Aman & Terpercaya ada", () =>
   page.includes("Aman & Terpercaya") && page.includes("standar keamanan"));
 test("9. ecosystem strip (4 item)", () =>
-  page.includes("AI BC") && page.includes("Materi & Latihan") &&
+  page.includes('title: "NARA"') && page.includes("Materi & Latihan") &&
   page.includes("Arena & Prestasi") && page.includes("Sistem keamanan berstandar tinggi"));
 
 console.log("\n── Form & CTA ──");

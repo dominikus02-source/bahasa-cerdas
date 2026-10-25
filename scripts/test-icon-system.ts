@@ -40,10 +40,12 @@ function main() {
     () => tokens.includes("w-[22px] h-[22px]"));
   test("token strokeWidth seragam = 2 (NAV_ICON_STROKE)",
     () => tokens.includes("NAV_ICON_STROKE = 2"));
-  test("token inactive pakai slate-500 (#64748B) — bukan gray-400",
-    () => tokens.includes("slate-500"));
-  test("token active pakai violet (violet-600 / violet-50 bg)",
-    () => tokens.includes("violet-600") && tokens.includes("violet-50"));
+  // Token kini memakai token desain global (app/theme/tokens.css) yang sudah
+  // punya varian terang/gelap, bukan utility slate/violet mentah.
+  test("token inactive pakai token muted (--clr-text-3 / bc-text-3) — bukan gray-400",
+    () => tokens.includes("text-bc-text-3") && !tokens.includes("gray-400"));
+  test("token active pakai violet token (text-bc-violet / bg-bc-violet-soft)",
+    () => tokens.includes("text-bc-violet") && tokens.includes("bg-bc-violet-soft"));
   test("token header/action 18-20px (ACTION_ICON_CLASS + DISCLOSURE_ICON_CLASS)",
     () => tokens.includes("ACTION_ICON_CLASS = \"w-5 h-5") && tokens.includes("DISCLOSURE_ICON_CLASS = \"w-[18px] h-[18px]"));
 
@@ -51,16 +53,17 @@ function main() {
   console.log("\n── 2. STUDENT_NAV mapping canonical ──");
   const navConfig = read("components/shell/nav-config.ts");
   test("Beranda → Home (bukan House)", () => navConfig.includes("icon: Home"));
-  test("Profil → User (bukan UserRound)", () => navConfig.includes("icon: User,"));
+  test("Profil → UserCircle (bukan UserRound)", () => navConfig.includes("icon: UserCircle") && !navConfig.includes("UserRound"));
   test("Arena → Zap", () => navConfig.includes("icon: Zap"));
   test("Karya → PenLine", () => navConfig.includes("icon: PenLine"));
-  test("Obrolan → MessageCircle", () => navConfig.includes("icon: MessageCircle"));
-  test("Pengaturan → Settings", () => navConfig.includes("icon: Settings"));
-  test("STUDENT_NAV tetap 6 item & urutan Beranda/Profil/Arena/Karya/Obrolan/Pengaturan",
+  // IA murid canonical kini 5 tujuan (Obrolan & Pengaturan keluar dari nav utama;
+  // Pengaturan + Keluar ada di Profil). Lihat components/shell/nav-config.ts.
+  test("Belajar → BookOpen", () => navConfig.includes("icon: BookOpen"));
+  test("STUDENT_NAV 5 item & urutan Beranda/Belajar/Arena/Karya/Profil",
     () => {
-      const labels = ["Beranda", "Profil", "Arena", "Karya", "Obrolan", "Pengaturan"];
+      const labels = ["Beranda", "Belajar", "Arena", "Karya", "Profil"];
       const idx = labels.map((l) => navConfig.indexOf(`label: "${l}"`));
-      return idx.length === 6 && idx.every((i) => i >= 0) && idx.every((v, i) => i === 0 || v > idx[i - 1]);
+      return (navConfig.match(/label: "/g) || []).length === 5 && idx.every((i) => i >= 0) && idx.every((v, i) => i === 0 || v > idx[i - 1]);
     });
 
   // ── 3. SHELL NAV LIST — render memakai tokens ──
@@ -77,7 +80,7 @@ function main() {
 
   // ── 4. MURID — konsolidasi (tidak ada sistem ikon kedua) ──
   console.log("\n── 4. Murid layout: satu sistem ikon ──");
-  const muridLayout = read("app/(dashboard)/murid/layout.tsx");
+  const muridLayout = (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx"));
   test("murid layout memakai <ShellNavList /> (bukan MenuIcon inline SVG)",
     () => muridLayout.includes("<ShellNavList />") && !muridLayout.includes("<MenuIcon "));
   test("murid layout memakai <RoleSections /> (role blocks tidak inline)",
@@ -87,16 +90,18 @@ function main() {
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   test("MuridMobileNav: icon Arena konsisten = Zap (bukan GraduationCap)",
     () => mobileNav.includes('label: "Arena", icon: Zap') && !/label: "Arena", icon: GraduationCap/.test(mobileNav));
-  test("MuridMobileNav drawer memakai NAV tokens (22px)",
-    () => mobileNav.includes("NAV_ICON_CLASS"));
+  // Drawer dihapus; bottom bar 5 tab memakai ikon lucide 20px (ukuran ACTION).
+  test("MuridMobileNav bottom bar memakai ikon lucide 20px yang sama dengan STUDENT_NAV",
+    () => mobileNav.includes("<Icon size={20}") && ["Home", "BookOpen", "Zap", "PenLine", "UserCircle"].every((i) => mobileNav.includes(`icon: ${i}`)));
 
   // ── 5. GURU — tokens + violet aktif ──
   console.log("\n── 5. GuruNav memakai sistem yang sama ──");
   const guruNav = read("components/dashboard/GuruNav.tsx");
   test("GuruNav import icon-tokens",
     () => guruNav.includes("icon-tokens"));
-  test("GuruNav active pakai violet (bukan emerald)",
-    () => guruNav.includes("NAV_LINK_ACTIVE") && !/emerald-50 text-emerald-700/.test(guruNav));
+  // Guru kini beraksen biru (identitas audiens guru), tetap bukan emerald lama.
+  test("GuruNav active pakai aksen biru guru (bukan emerald), light & dark",
+    () => /GURU_LINK_ACTIVE = "bg-blue-50 text-blue-700[^"]*dark:/.test(guruNav) && !/emerald-50 text-emerald-700/.test(guruNav));
   test("GuruNav ikon group memakai NAV_ICON_CLASS (22px)",
     () => guruNav.includes("NAV_ICON_CLASS"));
   test("GuruNav chevron pakai DISCLOSURE_ICON_CLASS (18px)",
@@ -138,8 +143,8 @@ function main() {
   test("LogoutButton dashboard memakai lucide LogOut (bukan svg inline 1.5)",
     () => logoutDashboard.includes("LogOut") && !logoutDashboard.includes('strokeWidth="1.5"'));
   const notificationBell = read("components/dashboard/NotificationBell.tsx");
-  test("NotificationBell kanonik memakai Bell w-5 h-5 (20px, token header)",
-    () => notificationBell.includes("w-5 h-5 text-slate-600 dark:text-slate-400"));
+  test("NotificationBell kanonik memakai Bell 20px (h-5 w-5, token header)",
+    () => notificationBell.includes('<Bell className="h-5 w-5" />'));
   test("HeaderActions arena DIHAPUS — search arena-specific bukan global header",
     () => !exists("components/arena/HeaderActions.tsx"));
   const logoutArena = read("components/arena/LogoutButton.tsx");
@@ -152,8 +157,9 @@ function main() {
     () => backHome.includes('aria-label="Kembali ke Beranda"'));
   test("nav icons punya kelas shrink-0 di token NAV_ICON_CLASS (collapsed konsisten)",
     () => tokens.includes("w-[22px] h-[22px] shrink-0") && navList.includes("NAV_ICON_CLASS"));
-  test("dark: variant ada di ShellNavList (light & dark konsisten)",
-    () => navList.includes("dark:"));
+  // ShellNavList memakai token bc-* (otomatis terang/gelap), jadi tidak perlu dark:.
+  test("ShellNavList light & dark konsisten (token bc-* bertema, tanpa warna mentah)",
+    () => tokens.includes("text-bc-text-2") && !/(slate|gray|violet)-\d00/.test(navList));
   test("dark: variant ada di GuruNav & AdminSidebar",
     () => guruNav.includes("dark:") && adminSidebar.includes("dark:"));
 

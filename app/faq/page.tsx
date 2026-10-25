@@ -32,12 +32,12 @@ const faqs = [
     a: "Paket Guru Pro tersedia mulai dari Rp 49.000 per bulan. Pembayaran dilakukan satu kali (tidak berlangganan otomatis). Setelah masa aktif habis, pengguna dapat memperpanjang secara manual.",
   },
   {
-    q: "Fitur AI apa saja yang tersedia?",
-    a: "BahasaCerdas memiliki enam alat AI: AI Generator Rencana Pembelajaran (buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik), Generator Soal HOTS (soal level kognitif C4-C6), Koreksi EYD Otomatis, Analisis Teks Kebahasaan, Feedback Karangan Otomatis, dan Asisten BC untuk membantu persiapan mengajar.",
+    q: "Apa itu NARA dan alat AI apa saja yang tersedia?",
+    a: "NARA adalah AI BahasaCerdas — Narasumber Andalan, Rekan Anda. Di bawah payung Alat NARA tersedia enam alat: Generator Rencana Pembelajaran (buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik), Generator Soal HOTS (soal level kognitif C4-C6), Koreksi EYD Otomatis, Analisis Teks Kebahasaan, Feedback Karangan Otomatis, dan chat NARA untuk membantu persiapan mengajar.",
   },
   {
-    q: "Bagaimana cara AI Generator Rencana Pembelajaran bekerja?",
-    a: "Cukup masukkan topik pembelajaran, kelas, dan durasi. AI akan menghasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Nasional terbaru. Proses hanya membutuhkan waktu sekitar 30 detik.",
+    q: "Bagaimana cara Generator Rencana Pembelajaran NARA bekerja?",
+    a: "Cukup masukkan topik pembelajaran, kelas, dan durasi. NARA akan menghasilkan Rencana Pembelajaran lengkap dengan tujuan pembelajaran, kegiatan inti, asesmen, dan lampiran — semuanya sesuai Kurikulum Nasional terbaru. Proses hanya membutuhkan waktu sekitar 30 detik.",
   },
   {
     q: "Siapa saja yang bisa menggunakan BahasaCerdas?",

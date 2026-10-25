@@ -807,7 +807,7 @@ function buildInsights(ctx: InsightCtx) {
   }
 
   if (ctx.aiGuru.activeGurus > 0) {
-    out.push({ tone: "neutral", text: `${ctx.aiGuru.activeGurus} guru memakai Alat AI (${ctx.aiGuru.totalPrompts} prompt). RPP ${ctx.aiGuru.rpp}, unduhan ${ctx.aiGuru.download}.` });
+    out.push({ tone: "neutral", text: `${ctx.aiGuru.activeGurus} guru memakai Alat NARA (${ctx.aiGuru.totalPrompts} prompt). RPP ${ctx.aiGuru.rpp}, unduhan ${ctx.aiGuru.download}.` });
   }
 
   if (ctx.engagement.rankUps > 0) {

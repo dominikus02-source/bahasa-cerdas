@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Clock, FileText, PenTool, ClipboardCheck, Bot, Trash2, ExternalLink, Loader2, Search, Check, X, Edit3 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import type { SavedAiResult, AgentId } from "../lib/saved-results-api";
+import { displaySavedTitle, type SavedAiResult, type AgentId } from "../lib/saved-results-api";
 
 interface HistoryPanelProps {
   items: SavedAiResult[];
@@ -42,7 +42,7 @@ const AGENT_LABELS: Record<string, string> = {
   rpp: "Rencana Pembelajaran",
   soal: "Soal",
   review: "Review",
-  "bc-assistant": "AI BC",
+  "bc-assistant": "NARA",
   eyd: "EYD",
   feedback: "Feedback",
   grading: "Nilai",
@@ -74,16 +74,22 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
     { value: "grading", label: "Nilai" },
     { value: "text-analysis", label: "Analisis" },
     { value: "review", label: "Review" },
-    { value: "bc-assistant", label: "AI BC" },
+    { value: "bc-assistant", label: "NARA" },
   ];
 
   const handleStartEdit = (item: SavedAiResult) => {
-    setEditValue(item.title);
+    setEditValue(displaySavedTitle(item.title));
     onEditingTitleChange?.(item.id);
   };
 
   const handleSaveEdit = (id: string) => {
     const trimmed = editValue.trim();
+    const original = items.find((it) => it.id === id)?.title;
+    // Judul tidak diubah pengguna (hanya tampilan NARA) → jangan tulis ulang data.
+    if (original !== undefined && trimmed === displaySavedTitle(original)) {
+      handleCancelEdit();
+      return;
+    }
     if (trimmed && trimmed.length <= 200) {
       onUpdateTitle?.(id, trimmed);
     }
@@ -183,7 +189,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
                       <button onClick={handleCancelEdit} className="p-0.5 text-gray-400 hover:text-gray-600"><X className="w-3 h-3" /></button>
                     </div>
                   ) : (
-                    <p className="text-xs font-medium text-gray-800 truncate">{item.title}</p>
+                    <p className="text-xs font-medium text-gray-800 truncate">{displaySavedTitle(item.title)}</p>
                   )}
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 text-gray-500">
