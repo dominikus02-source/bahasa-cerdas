@@ -31,6 +31,8 @@ export interface JumpaRoomInfo {
 export interface JumpaSelf {
   userId: string;
   bcRole: "GURU" | "MURID";
+  /** Peran dari respons token; dipakai sampai metadata LiveKit tiba. */
+  roomRole?: "HOST" | "COHOST" | "MEMBER";
 }
 
 export type EndedReason = "HOST" | "TIME_LIMIT" | "EMPTY" | "STALE";
@@ -104,7 +106,7 @@ export function JumpaRoomProvider({ initial, self, children }: { initial: JumpaR
   const room = useRoomContext();
   const { localParticipant } = useLocalParticipant();
   const [info, setInfo] = useState(initial);
-  const [roomRole, setRoomRole] = useState<"HOST" | "COHOST" | "MEMBER">(() => parseParticipantMeta(localParticipant.metadata).roomRole ?? "MEMBER");
+  const [roomRole, setRoomRole] = useState<"HOST" | "COHOST" | "MEMBER">(() => parseParticipantMeta(localParticipant.metadata).roomRole ?? self.roomRole ?? "MEMBER");
   const [messages, setMessages] = useState<ChatView[]>([]);
   const [chatLoaded, setChatLoaded] = useState(false);
   const [unread, setUnread] = useState(0);

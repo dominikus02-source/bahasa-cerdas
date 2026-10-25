@@ -96,6 +96,7 @@ export default function JumpaApp(props: JumpaAppProps) {
           serverUrl?: string;
           error?: string;
           self?: JumpaSelf;
+          roomRole?: "HOST" | "COHOST" | "MEMBER";
           room?: JumpaRoomInfo;
           tier?: JumpaTierView;
         } | null;
@@ -104,7 +105,7 @@ export default function JumpaApp(props: JumpaAppProps) {
           return;
         }
         phaseRef.current = "room";
-        setPhase({ name: "room", token: body.token, serverUrl: body.serverUrl, prefs, info: body.room, self: body.self, tier: body.tier ?? props.tier });
+        setPhase({ name: "room", token: body.token, serverUrl: body.serverUrl, prefs, info: body.room, self: { ...body.self, roomRole: body.roomRole }, tier: body.tier ?? props.tier });
       } catch {
         setJoinError("Koneksi bermasalah. Periksa internet lalu coba lagi.");
       } finally {
