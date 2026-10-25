@@ -169,7 +169,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
               chrome penuh + BottomNav-nya sendiri (kompatibilitas TWA tidak
               berubah). Halaman fullscreen game/kerjakan tetap menutup nav via
               CSS :has(.game-fullscreen)/:has(.owns-bottom-bar). */}
-          {umum ? <UmumMobileNav /> : apk ? <BottomNav /> : <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />}
+          {umum ? <UmumMobileNav /> : <>{apk ? <BottomNav /> : <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />}</>}
         </>
       }
     >
