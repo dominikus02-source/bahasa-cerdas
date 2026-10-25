@@ -19,6 +19,7 @@ const DAILY_EXPORT_LIMITS: Record<AiPlan, number> = {
   GURU_PRO: 10,
   GURU_PRO_TRIAL: 10,
   GURU_FREE: 1,
+  UMUM_FREE: 0,
   SCHOOL: 10,
 };
 
