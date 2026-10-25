@@ -31,12 +31,13 @@ function main() {
   console.log("\n── 1. Sidebar (app/(dashboard)/murid/layout.tsx) ──");
   const layout = (read("app/(dashboard)/murid/layout.tsx") + read("components/shell/MuridShellFrame.tsx"));
   const navConfig = read("components/shell/nav-config.ts");
-  const PRIMARY = ["/murid/beranda", "/murid/profile", "/arena", "/murid/karya", "/arena/chat", "/murid/pengaturan"];
+  // IA murid canonical kini 5 tujuan (lihat components/shell/nav-config.ts).
+  const PRIMARY = ["/murid/beranda", "/murid/belajar", "/arena", "/murid/karya", "/murid/profile"];
   test("sidebar memakai <ShellNavList /> canonical (fase 5.1 — bukan render inline MenuIcon lagi)",
     () => layout.includes("<ShellNavList />") && !layout.includes("<MenuIcon "));
-  test("6 item STUDENT_NAV canonical di nav-config (Beranda/Profil/Arena/Karya/Obrolan/Pengaturan)",
-    () => (navConfig.match(/label: "/g) || []).length === 6);
-  test("6 href utama hadir di STUDENT_NAV",
+  test("5 item STUDENT_NAV canonical di nav-config (Beranda/Belajar/Arena/Karya/Profil)",
+    () => (navConfig.match(/label: "/g) || []).length === 5);
+  test("5 href utama hadir di STUDENT_NAV",
     () => PRIMARY.every(h => navConfig.includes(`href: "${h}"`)));
   const ABSENT_LABELS = ["Simulasi UKBI", "Simulasi TKA", "Dokumen Hasil Latihan", "BIGT", "Gabung Kelas", "Toko Koin", "Papan Pengumuman"];
   const ABSENT_HREFS = ["/murid/simulasi/ukbi", "/murid/simulasi/tka", "/murid/dokumen-latihan", "/murid/bigt", "/murid/gabung-kelas", "/arena/toko-koin"];
@@ -52,14 +53,15 @@ function main() {
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   test("bottom bar: Beranda/Arena/Karya/Profil",
     () => ["/murid/beranda", "/arena", "/murid/karya", "/murid/profile"].every(h => mobileNav.includes(`href: "${h}"`)));
-  test("drawer berisi 6 item utama",
+  test("bottom bar berisi 5 item utama (drawer dihapus)",
     () => PRIMARY.every(h => mobileNav.includes(`href: "${h}"`)));
   test("label lama TIDAK ada di mobile nav",
     () => ABSENT_LABELS.every(l => !mobileNav.includes(l)));
   test("href lama TIDAK ada di mobile nav",
     () => ABSENT_HREFS.every(h => !mobileNav.includes(h)));
-  test("mobile nav punya LogoutButton di drawer",
-    () => mobileNav.includes("LogoutButton"));
+  // Drawer mobile dihapus; Keluar tetap terjangkau di mobile lewat Profil & Pengaturan.
+  test("Keluar terjangkau di mobile (Profil punya LogoutButton)",
+    () => /LogoutButton|signOut/.test(read("app/(dashboard)/murid/profile/page.tsx")) && mobileNav.includes('href: "/murid/profile"'));
 
   // ── 3. HOME (beranda + section) ──
   console.log("\n── 3. Home (beranda + RuangBelajar/SimulasiUjian) ──");
@@ -75,8 +77,9 @@ function main() {
   const ruang = read("components/student-home/RuangBelajarSection.tsx");
   test("RuangBelajar: /murid/gabung-kelas",
     () => ruang.includes('href="/murid/gabung-kelas"'));
-  test("RuangBelajar: /murid/tugasku",
-    () => ruang.includes('href="/murid/tugasku"'));
+  // Tugas kini lewat /arena/tugas (/murid/tugasku tetap hidup, dipetakan ke tab Belajar).
+  test("RuangBelajar: tugas (/arena/tugas)",
+    () => ruang.includes('href="/arena/tugas"'));
   test("RuangBelajar: /arena/materi",
     () => ruang.includes('href="/arena/materi"'));
   const simulasi = read("components/student-home/SimulasiUjianSection.tsx");
@@ -112,7 +115,7 @@ function main() {
   console.log("\n── 6. Theme ──");
   const providers = read("app/providers.tsx");
   test("providers.tsx memakai ThemeProvider dari components/theme/theme-provider",
-    () => providers.includes('import { ThemeProvider } from "@/components/theme/theme-provider"') && providers.includes("<ThemeProvider>"));
+    () => providers.includes('import { ThemeProvider } from "@/components/theme/theme-provider"') && /<ThemeProvider[\s>]/.test(providers));
   test("theme-provider.tsx ada dengan attribute=\"class\"",
     () => fs.existsSync("components/theme/theme-provider.tsx") && read("components/theme/theme-provider.tsx").includes('attribute="class"'));
   test("ThemeSettingsCard punya opsi Terang/Gelap/Sistem",
