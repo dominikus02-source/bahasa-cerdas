@@ -1303,7 +1303,7 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   background: var(--jp-grad);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--clr-text) 35%, transparent);
 }
-.jumpa-icon-chip[data-kind="GURU"] { background: linear-gradient(140deg, var(--clr-violet), var(--clr-info)); }
+.jumpa-icon-chip[data-kind="GURU"] { background: linear-gradient(140deg, var(--clr-info), color-mix(in srgb, var(--clr-info) 70%, var(--clr-text))); }
 .jumpa-icon-chip[data-kind="MURID"] { background: linear-gradient(140deg, var(--clr-warning), var(--clr-accent)); }
 
 /* Kartu aksi (Ruang guru / Ruang kelas) dengan aksen gradien di tepi atas. */
