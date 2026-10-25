@@ -4,6 +4,8 @@
  * Semua tujuan ada di satu tempat supaya mudah diubah tanpa menyentuh UI.
  */
 
+import { JUMPA_ENABLED } from "@/lib/features";
+
 /**
  * AKU SASTRAWAN — sengaja menunjuk ke halaman status "Sedang dalam
  * pengembangan" milik dasbor UMUM. Halaman penuh sedang dibangun terpisah
@@ -55,8 +57,11 @@ export const UMUM_PRODUCTS: readonly UmumProduct[] = [
     name: "JUMPA",
     label: "Ruang temu",
     description: "Ruang video untuk bertemu dan berdiskusi secara daring.",
+    // Siap (keputusan pendiri 2026-10-26): tanpa label pengembangan.
+    // Pengaman: bila flag build NEXT_PUBLIC_JUMPA_ENABLED mati, /jumpa = 404,
+    // jadi kartu kembali ke status pengembangan alih-alih menautkan ke 404.
     href: "/jumpa",
-    status: "dev",
+    ...(JUMPA_ENABLED ? {} : { status: "dev" as const }),
   },
   {
     key: "MAIN_BERSAMA",

@@ -7,11 +7,11 @@ import {
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUmumPage } from "@/lib/auth/umum-page";
-import { kategoriUmumLabel } from "@/lib/auth/kategori-umum";
 import { isUmumGameId } from "@/lib/auth/roles";
 import { GAME_REGISTRY } from "@/lib/arena/game-registry";
 import { UMUM_PRODUCTS, type UmumProductKey } from "@/lib/umum/products";
 import { UmumShell } from "@/components/umum/UmumShell";
+import { buttonClass } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +30,17 @@ const PRODUCT_ICON: Record<UmumProductKey, LucideIcon> = {
   TOKO_KARYA: Store,
   AKU_SASTRAWAN: Feather,
 };
+
+/**
+ * Sentuhan warna merek BahasaCerdas pada kartu produk: chip ikon bergiliran
+ * teal → biru → violet (tiga warna gradien merek). Semua dari token tema
+ * (app/theme/tokens.css), kontras ikon ≥ 3:1 di mode terang & gelap.
+ */
+const BRAND_CHIP = [
+  "bg-bc-accent-soft text-bc-accent-strong",
+  "bg-bc-info-soft text-bc-info",
+  "bg-bc-violet-soft text-bc-violet",
+] as const;
 
 const XP_SOURCE_LABEL: Record<string, string> = {
   GAME: "Bermain gim",
@@ -88,12 +99,8 @@ async function loadAktivitas(userId: string): Promise<Aktivitas[]> {
 
 export default async function UmumDashboardPage() {
   const user = await requireUmumPage("/umum");
-  const [aktivitas, profile] = await Promise.all([
-    loadAktivitas(user.id),
-    db.profile.findUnique({ where: { userId: user.id }, select: { kategoriUmum: true } }).catch(() => null),
-  ]);
-  // INVESTOR/TAMU (internal) → null → tidak ditampilkan.
-  const kategori = kategoriUmumLabel(profile?.kategoriUmum ?? null);
+  // Kategori Umum tidak lagi ditampilkan (cukup "Umum"); kolom DB tetap ada.
+  const aktivitas = await loadAktivitas(user.id);
   const name = user.nickname || user.fullName;
   const games = GAME_REGISTRY.filter((g) => isUmumGameId(g.id) && !g.unpublished && !g.premiumOnly);
 
@@ -102,7 +109,7 @@ export default async function UmumDashboardPage() {
       <div className="mx-auto w-full max-w-6xl space-y-10">
         {/* Sapaan */}
         <section aria-labelledby="sapaan" className="rounded-bc-hero border border-bc-line bg-bc-surface p-5 shadow-bc-1 sm:p-7">
-          <p className="text-bc-eyebrow uppercase text-bc-violet">Untuk Mahasiswa, Dosen &amp; Umum</p>
+          <p className="text-bc-eyebrow uppercase text-bc-violet">Ruang belajar untuk semua</p>
           <h1 id="sapaan" className="mt-2 text-bc-h1 text-bc-text">
             Halo, <span className="break-words">{name}</span>
           </h1>
@@ -110,12 +117,6 @@ export default async function UmumDashboardPage() {
             Belajar, bermain, membaca, dan berkarya dalam bahasa Indonesia — semuanya dari satu tempat.
           </p>
           <dl className="mt-5 flex flex-wrap gap-2 text-sm">
-            {kategori && (
-              <div className="rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
-                <dt className="sr-only">Kategori</dt>
-                <dd className="font-semibold text-bc-text">{kategori}</dd>
-              </div>
-            )}
             <div className="flex items-center gap-1.5 rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
               <Zap size={14} aria-hidden className="text-bc-warning" />
               <dt className="text-bc-text-3">XP</dt>
@@ -138,13 +139,16 @@ export default async function UmumDashboardPage() {
             </div>
           </div>
           <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4">
-            {UMUM_PRODUCTS.map((p) => {
+            {UMUM_PRODUCTS.map((p, i) => {
               const Icon = PRODUCT_ICON[p.key];
               const dev = p.status === "dev";
               const body = (
                 <>
+                  {!dev && (
+                    <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-bc-brand opacity-60 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none" />
+                  )}
                   <div className="flex items-start justify-between gap-3">
-                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon ${dev ? "bg-bc-surface-2 text-bc-text-3" : "bg-bc-violet-soft text-bc-violet"}`}>
+                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon ${dev ? "bg-bc-surface-2 text-bc-text-3" : BRAND_CHIP[i % BRAND_CHIP.length]}`}>
                       <Icon size={22} aria-hidden />
                     </span>
                     {p.external ? (
@@ -164,7 +168,7 @@ export default async function UmumDashboardPage() {
                   {p.external && <span className="sr-only">(membuka situs eksternal di tab baru)</span>}
                 </>
               );
-              const cls = "group flex h-full flex-col rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-bc-line-strong hover:shadow-bc-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus motion-reduce:transition-none motion-reduce:hover:translate-y-0";
+              const cls = `group relative flex h-full flex-col overflow-hidden rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 ${dev ? "hover:border-bc-line-strong" : "hover:border-bc-info"} hover:shadow-bc-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus motion-reduce:transition-none motion-reduce:hover:translate-y-0`;
               return (
                 <li key={p.key} className="min-w-0">
                   {p.external ? (
@@ -185,7 +189,7 @@ export default async function UmumDashboardPage() {
               <h2 id="judul-gim" className="text-bc-h2 text-bc-text">Jelajahi Gim</h2>
               <p className="text-bc-small text-bc-text-3">Main gim kata dan kumpulkan XP.</p>
             </div>
-            <Link href="/arena/game" className="inline-flex items-center gap-1 rounded-bc-sm text-sm font-semibold text-bc-violet hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
+            <Link href="/arena/game" className={buttonClass({ variant: "soft", size: "sm" })}>
               Semua gim <ChevronRight size={16} aria-hidden />
             </Link>
           </div>
@@ -225,7 +229,7 @@ export default async function UmumDashboardPage() {
         <section aria-labelledby="judul-aktivitas">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <h2 id="judul-aktivitas" className="text-bc-h2 text-bc-text">Aktivitas Terbaru</h2>
-            <Link href="/umum/koleksi" className="inline-flex items-center gap-1 rounded-bc-sm text-sm font-semibold text-bc-violet hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
+            <Link href="/umum/koleksi" className={buttonClass({ variant: "soft", size: "sm" })}>
               Koleksi Saya <ChevronRight size={16} aria-hidden />
             </Link>
           </div>
@@ -235,8 +239,8 @@ export default async function UmumDashboardPage() {
               <p className="mt-3 font-semibold text-bc-text">Belum ada aktivitas</p>
               <p className="mt-1 max-w-sm text-bc-small text-bc-text-3">Mainkan gim atau beli karya pertamamu — aktivitasmu akan muncul di sini.</p>
               <div className="mt-4 flex flex-wrap justify-center gap-2">
-                <Link href="#gim" className="rounded-bc-ctl bg-bc-violet px-4 py-2 text-sm font-semibold text-bc-on-brand focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus">Main gim</Link>
-                <Link href="/marketplace" className="rounded-bc-ctl border border-bc-line px-4 py-2 text-sm font-semibold text-bc-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus">Toko Karya</Link>
+                <Link href="#gim" className={buttonClass({ variant: "primary", size: "sm" })}>Main gim</Link>
+                <Link href="/marketplace" className={buttonClass({ variant: "secondary", size: "sm" })}>Toko Karya</Link>
               </div>
             </div>
           ) : (
