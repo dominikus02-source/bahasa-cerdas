@@ -49,7 +49,9 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
         : "Maaf, Nara sedang sibuk. Coba lagi sebentar ya.";
     try {
       const data = (await res.json()) as { error?: string };
-      if (data.error) detail = data.error;
+      // Hanya pesan server untuk galat 5xx (salinan ramah dari route); galat 4xx
+      // bisa berisi teks teknis berbahasa Inggris, jadi pakai pesan bawaan.
+      if (data.error && res.status >= 500) detail = data.error;
     } catch {
       // abaikan — pakai pesan default
     }

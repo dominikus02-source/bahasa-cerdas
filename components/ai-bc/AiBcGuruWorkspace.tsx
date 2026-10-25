@@ -7,7 +7,7 @@ import AiBcWelcome from "./AiBcWelcome";
 import useAiBcViewport from "./useAiBcViewport";
 import styles from "./ai-bc-workspace.module.css";
 import AICompanionCharacter from "./AICompanionCharacter";
-import { streamBcChat } from "./ai-bc-stream";
+import { BcStreamError, streamBcChat } from "./ai-bc-stream";
 import type { BcClientMessage, BcHint } from "./ai-bc-types";
 
 /**
@@ -137,7 +137,12 @@ export default function AiBcGuruWorkspace({
         setDraftText("");
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: ERROR_COPY, isError: true },
+          {
+            role: "assistant",
+            // Pesan BcStreamError sudah ramah (mis. sesi berakhir); selain itu pakai salinan umum.
+            content: e instanceof BcStreamError && e.message ? e.message : ERROR_COPY,
+            isError: true,
+          },
         ]);
       }
     } finally {
