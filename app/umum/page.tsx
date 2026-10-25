@@ -46,7 +46,7 @@ const products = [
     name: "JALUR CERDAS",
     label: "Tumbuh bertahap",
     description: "Jelajahi perjalanan untuk mengembangkan kompetensi.",
-    href: "/arena",
+    href: "/arena/jalur-cerdas",
     icon: Route,
     tone: "bg-bc-accent-soft text-bc-accent-strong",
   },
