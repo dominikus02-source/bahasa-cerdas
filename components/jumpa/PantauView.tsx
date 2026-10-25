@@ -13,7 +13,7 @@ const END = { HOST: "diakhiri pemandu", TIME_LIMIT: "waktu habis", EMPTY: "koson
 
 function fmt(iso: string | null): string {
   if (!iso) return "—";
-  return new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleString("id-ID", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta" });
 }
 function dur(sec: number): string {
   const m = Math.round(sec / 60);
@@ -98,7 +98,7 @@ export function PantauOverview({ rooms, reports, backHref }: { rooms: PantauRoom
         {reports.length === 0 ? (
           <p className="jumpa-glass rounded-2xl px-4 py-6 text-center text-sm text-[var(--jp-text-2)]">Tidak ada laporan terbuka.</p>
         ) : (
-          <ul className="grid gap-2">{reports.map((r) => <ReportCard key={r.id} r={r} />)}</ul>
+          <ul className="grid grid-cols-1 gap-2">{reports.map((r) => <ReportCard key={r.id} r={r} />)}</ul>
         )}
       </section>
 
@@ -107,7 +107,7 @@ export function PantauOverview({ rooms, reports, backHref }: { rooms: PantauRoom
         {rooms.length === 0 ? (
           <p className="jumpa-glass rounded-2xl px-4 py-6 text-center text-sm text-[var(--jp-text-2)]">Belum ada ruang.</p>
         ) : (
-          <ul className="grid gap-2">
+          <ul className="grid grid-cols-1 gap-2">
             {rooms.map((r) => (
               <li key={r.code}>
                 <Link href={`/jumpa/pantau?ruang=${r.code}`} className="jumpa-glass jumpa-room-row flex items-center gap-3 rounded-2xl px-4 py-3">
@@ -150,7 +150,7 @@ export function PantauRoom({ d }: { d: PantauDetail }) {
       {d.reports.length > 0 && (
         <section>
           <h2 className="jumpa-section-label">Laporan · {d.reports.length}</h2>
-          <ul className="grid gap-2">{d.reports.map((x) => <ReportCard key={x.id} r={x} />)}</ul>
+          <ul className="grid grid-cols-1 gap-2">{d.reports.map((x) => <ReportCard key={x.id} r={x} />)}</ul>
         </section>
       )}
 
