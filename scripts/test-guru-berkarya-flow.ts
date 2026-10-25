@@ -42,8 +42,12 @@ const artikelEditor = read("app/(dashboard)/guru/artikel/page.tsx");
 const artikelDetail = read("app/artikel/[slug]/page.tsx");
 
 // ── A. Guru Beranda merender Guru Berkarya ─────────────────────────────────
-ok("A: Beranda memasang komponen GuruBerkarya", /<GuruBerkarya/.test(beranda));
-ok("A: Section tetap preview yang menampilkan karya", /fetch\("\/api\/guru\/berkarya\?limit=6"/.test(berkaryaUi));
+// Rantai beranda kini: page.tsx → GuruBerandaClient → TeacherHomeV3 (yang memasang GuruBerkarya);
+// URL feed dipilih lewat variabel feedUrl (compact=3, penuh=6).
+const berandaClient = read("components/guru/GuruBerandaClient.tsx");
+const homeV3Flow = read("components/guru/TeacherHomeV3.tsx");
+ok("A: Beranda memasang komponen GuruBerkarya", /<GuruBerandaClient/.test(beranda) && /<TeacherHomeV3/.test(berandaClient) && /<GuruBerkarya/.test(homeV3Flow));
+ok("A: Section tetap preview yang menampilkan karya", /"\/api\/guru\/berkarya\?limit=6"/.test(berkaryaUi) && /fetch\(feedUrl/.test(berkaryaUi));
 
 // ── B. Lihat Semua Karya ≠ editor ──────────────────────────────────────────
 // Setiap <Link href="/guru/artikel" ...>...</Link> harus NORMAL (Tulis Karya /

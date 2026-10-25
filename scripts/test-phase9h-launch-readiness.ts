@@ -73,7 +73,8 @@ console.log("\n📋 Test 4: Payment terms mention one-time/manual renewal");
 {
   const berlangganan = readFile("app/(dashboard)/guru/berlangganan/page.tsx");
   assert(berlangganan.includes("sekali bayar") || berlangganan.includes("diperpanjang otomatis"), "One-time payment mentioned");
-  assert(berlangganan.includes("Ketentuan Pembayaran"), "Payment terms section exists");
+  // Bagian ketentuan kini berjudul "Ketentuan dan bantuan" (accordion) — isi sekali bayar & durasi tetap diuji.
+  assert(berlangganan.includes("Ketentuan dan bantuan"), "Payment terms section exists");
 }
 
 // ─── Test 5: Payment support page exists ─────────────────────────────
@@ -146,7 +147,7 @@ console.log("\n📋 Test 10: Admin health card on payments page");
 console.log("\n📋 Test 11: Berlangganan has Ketentuan Pembayaran section");
 {
   const page = readFile("app/(dashboard)/guru/berlangganan/page.tsx");
-  assert(page.includes("Ketentuan Pembayaran"), "Payment terms section");
+  assert(page.includes("Ketentuan dan bantuan"), "Payment terms section");
   assert(page.includes("30 hari") && page.includes("365 hari"), "Duration values present");
 }
 

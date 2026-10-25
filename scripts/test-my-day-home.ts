@@ -35,8 +35,10 @@ const allStudentHome = ["StudentHomeHero", "AIBCHomeCard", "LearningJourneySecti
 
 // 1 — My Day renders
 check("1. Beranda dibungkus HomeDataProvider", page.includes("<HomeDataProvider>"));
-check("1. SkillRadar terintegrasi dari canonical My Day state", page.includes("<SkillRadar") && page.includes("myDay?.learnerState"));
-check("1. PremiumValueCard terintegrasi", page.includes("<PremiumValueCard />"));
+// SkillRadar & PremiumValueCard sudah tidak dirender di beranda (penyederhanaan);
+// state My Day tetap dikonsumsi hero & tantangan harian lewat HomeDataProvider.
+check("1. Beranda sederhana: SkillRadar & PremiumValueCard tidak dihidupkan lagi", !page.includes("<SkillRadar") && !page.includes("<PremiumValueCard"));
+check("1. Hero & tantangan harian tetap dirender", page.includes("<StudentHomeHero />") && page.includes("<DailyActionCard />"));
 
 // 2 — Personalized next action dari Learning Loop
 check("2. Rekomendasi dari adaptive preview canonical", homeData.includes("/api/player/adaptive-practice?mode=preview") && adaptiveApi.includes("selectAdaptivePractice"));

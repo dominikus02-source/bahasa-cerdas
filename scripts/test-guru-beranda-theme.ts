@@ -24,11 +24,14 @@ const ROOT = path.resolve(__dirname, "..");
 const GLOBALS_CSS = path.join(ROOT, "app/globals.css");
 const SCOPE_FILES = [
   "app/(dashboard)/guru/beranda/page.tsx",
-  "components/guru/TeacherCommandCenter.tsx",
+  // Komposisi beranda yang benar-benar dirender (page -> GuruBerandaClient -> TeacherHomeV3).
+  // TeacherCommandCenter & TrialStatusCard tidak lagi dipasang di beranda, jadi keluar dari
+  // scope warna; TeacherCommandCenter tetap diverifikasi oleh blok F di bawah.
+  "components/guru/GuruBerandaClient.tsx",
+  "components/guru/TeacherHomeV3.tsx",
   "components/guru/GuruLeaderboardCard.tsx",
   "components/guru/GuruBerkarya.tsx",
   "components/guru/GuruBerkaryaComments.tsx",
-  "components/guru/TrialStatusCard.tsx",
   "components/guru/AiCreditBalance.tsx",
   "components/guru/AktivitasAnalytics.tsx",
   "components/guru/GuruBadgeGrid.tsx",
@@ -80,7 +83,8 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
   const used = new Set<string>();
   for (const f of SCOPE_FILES) {
     const src = fs.readFileSync(path.join(ROOT, f), "utf8");
-    for (const m of src.matchAll(COLOR_CLASS_RE)) used.add(m[0]);
+    // Token desain `*-bc-*` (mis. shadow-bc-1) bukan palet mentah — dark-aware dari tokens.css.
+    for (const m of src.matchAll(COLOR_CLASS_RE)) if (!/-bc-/.test(m[0])) used.add(m[0]);
   }
   const unmapped: string[] = [];
   for (const cls of used) {
@@ -236,9 +240,13 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
   check("F9. Loading skeleton via prop loading (placeholder —)", tc.includes("loading") && tc.includes("—"));
   check("F10. Page merender GuruBerandaClient -> TeacherHomeV3 (komposisi utama)",
     page.includes("<GuruBerandaClient") && berandaClient.includes("<TeacherHomeV3"));
-  check("F11. Page masih memakai TrialStatusCard (tidak terhapus)",
-    page.includes("<TrialStatusCard />") &&
-    page.includes('import { TrialStatusCard }'));
+  // F11 diperbarui: TrialStatusCard sudah lama dilepas dari beranda (status kuota kini lewat
+  // quota-status-client). Yang dijaga sekarang: kartu itu TIDAK dipasang ulang di beranda.
+  const teacherHome = fs.readFileSync(path.join(ROOT, "components/guru/TeacherHomeV3.tsx"), "utf8");
+  check("F11. Beranda tidak memasang ulang TrialStatusCard",
+    !page.includes("<TrialStatusCard") &&
+    !berandaClient.includes("<TrialStatusCard") &&
+    !teacherHome.includes("<TrialStatusCard"));
   check("F12. Dead icons Crown/LayoutDashboard dihapus dari page",
     !page.includes("Crown") && !page.includes("LayoutDashboard"));
   check("F13. Component tidak memakai Library ikon kedua / emoji label",

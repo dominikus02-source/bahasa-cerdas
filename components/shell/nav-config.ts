@@ -4,7 +4,7 @@ import { Home, BookOpen, Zap, PenLine, UserCircle } from "lucide-react";
 export interface ShellNavItem { label: string; href: string; icon: LucideIcon; match?: (pathname: string) => boolean; }
 export interface ShellNavGroup { title: string; items: ShellNavItem[]; }
 
-/** IA Murid canonical: tepat 4 tujuan utama. Detail fitur hidup di hub masing-masing. */
+/** IA Murid canonical: tepat 5 tujuan utama (Beranda, Belajar, Arena, Karya, Profil). Detail fitur hidup di hub masing-masing. */
 export const STUDENT_NAV: ShellNavItem[] = [
   { label: "Beranda", href: "/murid/beranda", icon: Home, match: (p) => p === "/murid/beranda" },
   { label: "Belajar", href: "/murid/belajar", icon: BookOpen, match: (p) =>

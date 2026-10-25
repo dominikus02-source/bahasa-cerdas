@@ -122,7 +122,10 @@ ok("Beranda fetch /api/guru/misi satu kali", (beranda.match(/fetch\("\/api\/guru
 ok("Home V3 punya hero fokus", /<TeacherHero/.test(homeV3));
 ok("Home V3 punya Misi Hari Ini ringkas", /<DailyMissionCard/.test(homeV3) && /Misi Hari Ini/.test(homeV3));
 ok("Home V3 punya empat quick action utama", /Main Bersama/.test(homeV3) && /Buat Karya/.test(homeV3) && /label: "NARA"/.test(homeV3) && /Dasbor Murid/.test(homeV3));
-ok("Home V3 punya pengumuman Main Bersama", /<MainBersamaAnnouncement/.test(homeV3) && /Kenalkan Main Bersama/.test(homeV3));
+// Pengumuman "Kenalkan Main Bersama" dihapus saat penyederhanaan beranda (duplikat quick action
+// yang menuju tujuan sama). Yang dijaga: Main Bersama tetap satu klik dari beranda, tanpa kartu ganda.
+ok("Home V3: Main Bersama tetap satu klik (quick action ke /guru/game/main-bersama)", /href: "\/guru\/game\/main-bersama"/.test(homeV3));
+ok("Home V3: tanpa kartu pengumuman Main Bersama duplikat", !/<MainBersamaAnnouncement/.test(homeV3));
 ok("Home V3 punya Kompetisi Guru ringkas", /<CompetitionCard/.test(homeV3) && /Kompetisi Guru/.test(homeV3));
 ok("Home V3 memasang Guru Berkarya compact", /<GuruBerkarya misiStatus=\{misiStatus\} compact \/>/.test(homeV3));
 ok("Home V3 memasang Lencana Guru compact", /<GuruBadgeGrid compact \/>/.test(homeV3));
@@ -130,12 +133,10 @@ ok("Home V3 punya quote mingguan + tips harian", /Quote Minggu Ini/.test(homeV3)
 
 const posHero = homeV3.indexOf("<TeacherHero");
 const posQuick = homeV3.indexOf("<QuickActions");
-const posAnnouncement = homeV3.indexOf("<MainBersamaAnnouncement");
 const posBerkarya = homeV3.indexOf("<GuruBerkarya");
 const posBadge = homeV3.indexOf("<GuruBadgeGrid");
 ok("Urutan DOM: Hero sebelum quick action", posHero > -1 && posQuick > posHero);
-ok("Urutan DOM: Quick action sebelum pengumuman", posAnnouncement > posQuick);
-ok("Urutan DOM: Pengumuman sebelum Guru Berkarya", posBerkarya > posAnnouncement);
+ok("Urutan DOM: Quick action sebelum Guru Berkarya", posBerkarya > posQuick);
 ok("Urutan DOM: Guru Berkarya sebelum Lencana", posBadge > posBerkarya);
 
 // ── 6. Additive-only: tanpa route/API/model baru ────────────────────────────

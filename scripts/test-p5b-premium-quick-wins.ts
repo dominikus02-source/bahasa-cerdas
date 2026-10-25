@@ -66,7 +66,7 @@ test("F1.4. Beranda: hero = single learning entry (ContinueLearningCard dihapus)
   return (
     homePage.includes("DailyActionCard") &&
     homePage.includes("StudentHomeHero") &&
-    homePage.includes("SkillRadar") &&
+    !homePage.includes("<SkillRadar") && // beranda disederhanakan: radar skill tidak dihidupkan lagi
     !homePage.includes("ContinueLearningCard")
   );
 });
@@ -126,12 +126,15 @@ test("F4.1. PremiumValueCard reads plan from server API", () => {
   return premiumValueCard.includes("premium: data") && premiumValueCard.includes("data.plan");
 });
 
+// Status premium di beranda kini dibaca kartu Mentor dari HomeDataProvider (server-derived),
+// bukan dari halaman yang meneruskan prop ke SkillRadar (radar tidak lagi di beranda).
+const mentorHome = read("components/student-home/MentorHomeCard.tsx");
 test("F4.2. Home page reads premium status from HomeDataProvider", () => {
-  return homePage.includes("premium") && homePage.includes("useHomeData");
+  return homePage.includes("<HomeDataProvider>") && homePage.includes("<MentorHomeCard />") && mentorHome.includes("useHomeData") && mentorHome.includes("premium");
 });
 
-test("F4.3. SkillRadar receives isPremium from parent (server-derived)", () => {
-  return homePage.includes("isPremium={isPremium}") && homePage.includes("premium?.plan");
+test("F4.3. Premium gate derived from server data (premium?.plan / me.isPremium), not client state", () => {
+  return mentorHome.includes("premium?.plan") && mentorHome.includes("me?.isPremium") && !mentorHome.includes("localStorage");
 });
 
 test("F4.4. Progresku fetches from server API (not client state)", () => {
@@ -168,12 +171,12 @@ test("F6.2. Home page no longer includes ContinueLearningCard (hero mengambil al
   return !homePage.includes("ContinueLearningCard") && homePage.includes("StudentHomeHero");
 });
 
-test("F6.3. Home page hierarchy preserved (hero → daily action → skills, tanpa kartu aksi duplikat)", () => {
-  // Key components present in the JSX; ContinueLearningCard removed by design.
+test("F6.3. Home page hierarchy preserved (hero → daily action, tanpa kartu aksi duplikat)", () => {
+  // Key components present in the JSX; ContinueLearningCard & SkillRadar removed by design.
   return (
     homePage.includes("StudentHomeHero") &&
     homePage.includes("DailyActionCard") &&
-    homePage.includes("SkillRadar") &&
+    homePage.indexOf("<StudentHomeHero />") < homePage.indexOf("<DailyActionCard />") &&
     !homePage.includes("ContinueLearningCard")
   );
 });
