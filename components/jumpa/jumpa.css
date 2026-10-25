@@ -1,8 +1,8 @@
 /* ════════════════════════════════════════════════════════════════════
    JUMPA — dark glass, aksen hijau BC.
    THEME RULE (AGENTS.md): tidak ada hex di sini. Semua warna dari token
-   global --clr-* / hsl(var(--…)). Root JUMPA memakai class `dark`, jadi
-   token yang terbaca selalu versi gelap dari :root/.dark (app/globals.css).
+   global --clr-* / hsl(var(--…)). JUMPA mengikuti tema global: :root =
+   terang, html.dark = gelap (app/theme/tokens.css).
    Scope: hanya di dalam .jumpa-scope.
    ════════════════════════════════════════════════════════════════════ */
 
@@ -1505,85 +1505,11 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
   transform: scale(.96);
 }
 
-
-
-/* Light mode — complete */
-.jumpa-root[data-theme="light"] {
-  --jp-bg: var(--jp-light-bg);
-  --jp-text: var(--jp-light-text);
-  --jp-text-2: var(--jp-light-text-2);
-  --jp-text-3: var(--jp-light-text-3);
-  --jp-line: color-mix(in srgb, var(--jp-light-text) 12%, transparent);
-  --jp-line-strong: color-mix(in srgb, var(--jp-light-text) 20%, transparent);
-  --jp-glass: color-mix(in srgb, var(--jp-light-surface) 90%, transparent);
-  --jp-glass-strong: color-mix(in srgb, var(--jp-light-surface) 98%, transparent);
-  background: var(--jp-bg);
-  color: var(--jp-text);
-}
-.jumpa-root[data-theme="light"] * {
-  color: inherit;
-}
-.jumpa-root[data-theme="light"] .jumpa-card,
-.jumpa-root[data-theme="light"] .jumpa-hero,
-.jumpa-root[data-theme="light"] .jumpa-plan,
-.jumpa-root[data-theme="light"] .jumpa-room-card {
-  background: var(--jp-light-surface);
-  border-color: var(--jp-line);
-  color: var(--jp-text);
-}
-.jumpa-root[data-theme="light"] .jumpa-hero-title,
-.jumpa-root[data-theme="light"] .jumpa-hero-sub,
-.jumpa-root[data-theme="light"] .jumpa-room-title,
-.jumpa-root[data-theme="light"] .jumpa-room-sub,
-.jumpa-root[data-theme="light"] h1,
-.jumpa-root[data-theme="light"] h2,
-.jumpa-root[data-theme="light"] h3,
-.jumpa-root[data-theme="light"] p,
-.jumpa-root[data-theme="light"] span,
-.jumpa-root[data-theme="light"] label {
-  color: var(--jp-text);
-}
-.jumpa-root[data-theme="light"] .jumpa-hero-sub,
-.jumpa-root[data-theme="light"] .jumpa-room-sub,
-.jumpa-root[data-theme="light"] .text-xs,
-.jumpa-root[data-theme="light"] .text-sm {
-  color: var(--jp-text-2);
-}
-.jumpa-root[data-theme="light"] .jumpa-join {
-  background: var(--jp-light-bg);
-  border-color: var(--jp-line);
-}
-.jumpa-root[data-theme="light"] .jumpa-join-input {
-  color: var(--jp-text);
-  background: transparent;
-}
-.jumpa-root[data-theme="light"] .jumpa-join-input::placeholder {
-  color: var(--jp-text-3);
-}
-.jumpa-root[data-theme="light"] .jumpa-ghost {
-  color: var(--jp-text);
-  border-color: var(--jp-line);
-  background: var(--jp-light-surface);
-}
-.jumpa-root[data-theme="light"] .jumpa-icon-btn {
-  color: var(--jp-text);
-  background: var(--jp-light-surface);
-  border-color: var(--jp-line);
-}
-.jumpa-root[data-theme="light"] .jumpa-brand {
-  color: var(--jp-text);
-}
-.jumpa-root[data-theme="light"] input,
-.jumpa-root[data-theme="light"] textarea {
-  color: var(--jp-text);
-  background: var(--jp-light-bg);
-  border-color: var(--jp-line);
-}
-.jumpa-root[data-theme="light"] input::placeholder,
-.jumpa-root[data-theme="light"] textarea::placeholder {
-  color: var(--jp-text-3);
-}
-.jumpa-root[data-theme="light"] .jumpa-tier {
-  background: var(--jp-light-bg);
-  color: var(--jp-text);
+/* ── Tema terang ──
+   Token terang datang dari :root (app/theme/tokens.css). Di sini hanya
+   penyesuaian kontras WCAG AA untuk teks kecil di atas aksen/latar lembut:
+   #059669 di atas putih/#ecfdf5 < 4.5:1, jadi aksen JUMPA memakai versi kuat. */
+html:not(.dark) .jumpa-scope {
+  --clr-accent: var(--clr-accent-strong);
+  --clr-warning: var(--clr-warning-strong);
 }
