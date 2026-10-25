@@ -114,7 +114,9 @@ const server = http.createServer(async (req, res) => {
     if (gate) await gate;
     const responseMode = mode;
     await new Promise(resolve => setTimeout(resolve, responseMode === "slow" ? 900 : 180));
-    for (const text of ["## Memahami ide pokok\n\n", richText.slice("## Memahami ide pokok\n\n".length)]) {
+    for (const [index, text] of ["## Memahami ide pokok\n\n", richText.slice("## Memahami ide pokok\n\n".length)].entries()) {
+      // "stall": the first delta arrives, then the stream pauses so the user can press Stop.
+      if (index > 0 && responseMode === "stall") await new Promise(resolve => setTimeout(resolve, 5000));
       if (res.destroyed) return;
       const frame = `data: ${JSON.stringify({ type: "delta", text })}\n\n`;
       res.write(frame.slice(0, 15));
@@ -263,6 +265,33 @@ try {
     }
     await page.getByRole("button", { name: "Salin", exact: true }).last().click();
     await page.getByRole("button", { name: "Tersalin", exact: true }).waitFor();
+    assert.equal(await page.getByRole("button", { name: "Tanya ulang", exact: true }).count(), 1, `${role}: Tanya ulang only on the latest reply`);
+    // Stop after the first delta keeps the partial answer.
+    mode = "stall";
+    await input.fill("Pertanyaan yang dihentikan");
+    await input.press("Enter");
+    await page.getByText("Nara sedang menulis…", { exact: true }).waitFor();
+    assert.equal(await page.getByRole("button", { name: "Tanya ulang", exact: true }).count(), 0, `${role}: Tanya ulang hidden while streaming`);
+    await page.screenshot({ path: path.join(outputDir, `${role}-390-streaming-stop.png`) });
+    await page.getByRole("button", { name: "Hentikan jawaban", exact: true }).click();
+    await page.locator('[role="status"]').waitFor({ state: "detached" });
+    const stoppedText = await page.locator(".prose").last().textContent();
+    assert.ok(stoppedText.includes("Memahami ide pokok") && stoppedText.includes("(Jawaban dihentikan.)"), `${role}: stop keeps partial answer`);
+    assert.ok(!stoppedText.includes("Selesai memahami materi."), `${role}: stop ends the stream`);
+    assert.equal(await page.getByRole("button", { name: "Tanya ulang", exact: true }).count(), 1, `${role}: Tanya ulang after stop`);
+    // Stop before any delta shows a retryable notice.
+    mode = "ok";
+    const releaseStop = holdNextStream();
+    await input.fill("Pertanyaan dihentikan lebih awal");
+    await input.press("Enter");
+    await page.getByText("Nara sedang berpikir…", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "Hentikan jawaban", exact: true }).click();
+    await page.getByText("Jawaban dihentikan sebelum Nara sempat menulis.", { exact: true }).waitFor();
+    releaseStop();
+    await page.getByRole("button", { name: "Coba Lagi", exact: true }).click();
+    await page.getByText("Selesai memahami materi.", { exact: true }).last().waitFor();
+    await page.locator('[role="status"]').waitFor({ state: "detached" });
+    assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Pertanyaan dihentikan lebih awal").length, 1, `${role}: retry after stop sends one copy`);
     await page.getByRole("button", { name: "Mulai percakapan baru" }).click();
     mode = "slow";
     const releaseReset = holdNextStream();
@@ -279,7 +308,7 @@ try {
     await settleLayout();
     await input.fill("Viewport pendek");
     await checkBounds(`${role} short viewport`);
-    results.push(`${role}: hints, Enter/Shift+Enter, error/retry, copy, reset during SSE, short viewport`);
+    results.push(`${role}: hints, Enter/Shift+Enter, error/retry, copy, Tanya ulang on latest only, stop (partial + empty), reset during SSE, short viewport`);
   }
 
   for (const role of ["public", "tool"]) {
