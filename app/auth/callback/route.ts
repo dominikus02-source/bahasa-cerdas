@@ -3,7 +3,6 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import {
   ROLE_INTENT_COOKIE,
-  dashboardForRole,
   intentClearCookie,
   isSafeNext,
   resolveGoogleProvisioning,
@@ -97,7 +96,7 @@ export async function GET(request: Request) {
           role: decision.role,
         });
         return withClearedIntent(
-          NextResponse.redirect(`${origin}${dashboardForRole(decision.role)}`)
+          NextResponse.redirect(`${origin}${resolvePostAuthDestination(decision.role, next)}`)
         );
       }
 

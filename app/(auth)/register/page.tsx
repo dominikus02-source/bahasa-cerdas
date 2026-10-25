@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { GraduationCap, BookOpen, ArrowRight, ArrowLeft, Check, Eye, EyeOff, ShieldCheck, AlertTriangle } from "lucide-react";
 import { registerUser } from "@/app/actions/register";
 import { createClient } from "@/lib/supabase/client";
 import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
+import { isSafeNext } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 
@@ -115,6 +116,13 @@ export default function RegisterPage() {
   const [province, setProvince] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [role, setRole] = useState<Role | null>(null);
+  // Tujuan setelah daftar (mis. tautan undangan JUMPA). Divalidasi isSafeNext.
+  const [next, setNext] = useState("");
+  useEffect(() => {
+    const n = new URLSearchParams(window.location.search).get("next");
+    if (n && n !== "/" && isSafeNext(n)) setNext(n);
+  }, []);
+  const nextQuery = next ? `?next=${encodeURIComponent(next)}` : "";
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
@@ -202,7 +210,7 @@ export default function RegisterPage() {
         return;
       }
 
-      const redirectUrl = role === "MURID" ? "/arena" : "/guru/beranda";
+      const redirectUrl = next || (role === "MURID" ? "/arena" : "/guru/beranda");
       window.location.href = redirectUrl;
     } catch (err: any) {
       setError(err?.message || "Terjadi kesalahan");
@@ -237,7 +245,7 @@ export default function RegisterPage() {
       const supabase = createClient();
       const { error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${baseUrl}/auth/callback` },
+        options: { redirectTo: `${baseUrl}/auth/callback${nextQuery}` },
       });
       if (oauthError) {
         setError(oauthError.message);
@@ -328,7 +336,7 @@ export default function RegisterPage() {
                 </p>
                 <div className="pt-4">
                   <Link
-                    href={role === "MURID" ? "/auth/arena-login" : "/login"}
+                    href={role === "MURID" ? "/auth/arena-login" : `/login${nextQuery}`}
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 px-6 font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
                   >
                     Masuk Sekarang <ArrowRight className="h-4 w-4" />
@@ -727,7 +735,7 @@ export default function RegisterPage() {
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     Sudah punya akun?{" "}
                     <Link
-                      href="/login"
+                      href={`/login${nextQuery}`}
                       className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400"
                     >
                       Masuk
