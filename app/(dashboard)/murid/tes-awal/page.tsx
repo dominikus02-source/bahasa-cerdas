@@ -67,7 +67,7 @@ export default function TesAwalPage(){
         <h1 className="mt-5 text-4xl font-black leading-[1.02] sm:text-5xl">Kenali kemampuanmu.</h1>
         <p className="mt-4 text-sm leading-6 text-blue-100/75 sm:text-base">10 tantangan terarah dan 1 tugas menulis untuk membangun gambaran awal kemampuanmu. Ini bukan tes Jalur Cerdas dan tidak mengunci kamu ke satu jalur belajar.</p>
         <div className="mt-6 flex flex-wrap gap-2"><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">5 kompetensi</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">3 tingkat kesulitan</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">✍️ Menulis</span><span className="rounded-full border border-white/10 bg-white/[.08] px-3 py-2 text-[11px] font-bold">±15 menit</span></div>
-        <button onClick={()=>post({action:"start"})} disabled={busy} className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-60">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Brain className="h-4 w-4"/>}Mulai Tes Awal<ArrowRight className="h-4 w-4"/></button>
+        <button onClick={()=>post({action:"start"})} disabled={busy} /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */ className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-60">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:<Brain className="h-4 w-4"/>}Mulai Tes Awal<ArrowRight className="h-4 w-4"/></button>
         {feedback&&<p role="alert" className="mt-4 max-w-xl rounded-xl border border-rose-300/30 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-100">{feedback}</p>}
       </div>
     </section>
@@ -94,7 +94,7 @@ export default function TesAwalPage(){
       <textarea value={writing} onChange={e=>setWriting(e.target.value)} rows={11} placeholder="Tulis dengan bahasamu sendiri..." className="mt-6 w-full rounded-2xl border border-white/10 bg-white/[.08] p-4 text-sm leading-6 text-white placeholder:text-white/35 outline-none focus:border-cyan-300/60"/>
       <p className="mt-2 text-[11px] text-blue-100/60">{writing.trim()?writing.trim().split(/\s+/).filter(Boolean).length:0} kata</p>
       {feedback&&<p className="mt-3 text-sm text-rose-200">{feedback}</p>}
-      <button onClick={()=>state.sessionId&&post({action:"writing",sessionId:state.sessionId,text:writing})} disabled={!writing.trim()||busy} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-50">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:"Kirim tulisan"}<CheckCircle2 className="h-4 w-4"/></button>
+      <button onClick={()=>state.sessionId&&post({action:"writing",sessionId:state.sessionId,text:writing})} disabled={!writing.trim()||busy} /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */ className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-white px-5 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] disabled:opacity-50">{busy?<Loader2 className="h-4 w-4 animate-spin"/>:"Kirim tulisan"}<CheckCircle2 className="h-4 w-4"/></button>
     </section>
   </main>;
 

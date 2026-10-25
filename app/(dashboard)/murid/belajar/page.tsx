@@ -205,7 +205,7 @@ export default function BelajarPage() {
                 ))}
               </div>
             </div>
-            <span className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition-transform group-hover:translate-x-1">
+            <span /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */ className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition-transform group-hover:translate-x-1">
               Lanjutkan
               <ArrowRight className="h-4 w-4" />
             </span>

@@ -111,7 +111,7 @@ function MentorRoom() {
             </p>
             <Link
               href="/murid/premium"
-              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5"
+              className="mt-8 inline-flex items-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5" /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */
             >
               Buka Premium
               <Gem className="h-4 w-4" />
@@ -168,7 +168,7 @@ function MentorRoom() {
             <button
               onClick={askMentor}
               disabled={loading}
-              className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70"
+              className="mt-7 inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-6 dark:bg-white/95 py-3.5 text-sm font-black text-[#18255b] shadow-xl transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-70" /* warna-izin: CTA putih + tinta navy lama di atas hero gelap, sama di kedua tema */
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Brain className="h-4 w-4" />}
               {loading ? "NARA Mentor sedang membaca…" : result ? "Perbarui analisis" : "Tanya NARA Mentor"}
