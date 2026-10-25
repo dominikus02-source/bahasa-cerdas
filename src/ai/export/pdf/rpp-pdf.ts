@@ -86,7 +86,7 @@ export async function generateRPppdf(input: RPPInput): Promise<Buffer> {
   );
   doc.moveDown(0.2);
   doc.font(FONT).fontSize(9).fillColor(COLORS.GRAY);
-  doc.text("Dibuat dengan BahasaCerdas AI", { align: "center", width: CONTENT_WIDTH });
+  doc.text("Dibuat dengan NARA · BahasaCerdas", { align: "center", width: CONTENT_WIDTH });
   doc.moveDown(0.5);
   separator(doc);
 

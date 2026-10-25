@@ -57,9 +57,9 @@ const tools = [
   },
   {
     icon: BrainCircuit,
-    title: "Asisten AI BC",
+    title: "NARA",
     description:
-      "Tanya apapun tentang Bahasa Indonesia, dapatkan jawaban instan. Bantuan mengajar 24/7 dengan AI.",
+      "Tanya apa pun tentang Bahasa Indonesia dan diskusikan ide mengajar kapan saja bersama Nara, rekan Anda di BahasaCerdas.",
     color: "bg-cyan-50 text-cyan-600",
     href: "/ai-bc",
   },

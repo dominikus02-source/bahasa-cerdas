@@ -65,8 +65,8 @@ const QUICK_ACTIONS: QuickAction[] = [
     overlay: "linear-gradient(135deg, rgba(21,72,160,.96), rgba(40,94,192,.88) 55%, rgba(93,130,217,.72))",
   },
   {
-    label: "AI BC",
-    desc: "Asisten untuk ide dan persiapan mengajar.",
+    label: "NARA",
+    desc: "Rekan Anda untuk ide dan persiapan mengajar.",
     href: "/guru/ai-bc",
     image: PHOTO.aiWorkspace,
     icon: Bot,

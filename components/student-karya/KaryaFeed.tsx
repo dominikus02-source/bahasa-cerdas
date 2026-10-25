@@ -340,11 +340,11 @@ function FeedContent({
       <div className="flex-1 min-w-[200px]">
         <p className="text-sm font-bold text-bc-text">Butuh ide?</p>
         <p className="text-xs text-bc-text-3 mt-0.5 leading-relaxed">
-          Bingung mau menulis apa? AI BC bisa membantumu menemukan tema dan mengembangkan idemu.
+          Bingung mau menulis apa? Nara bisa membantumu menemukan tema dan mengembangkan idemu.
         </p>
       </div>
       <Link href="/arena/ai" className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-violet-600 text-white text-xs font-bold hover:bg-violet-700 transition-colors">
-        Tanya AI BC
+        Tanya Nara
         <span aria-hidden>→</span>
       </Link>
     </div>

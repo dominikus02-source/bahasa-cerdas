@@ -791,7 +791,7 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
       <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-gradient-to-r from-emerald-50 to-green-50 rounded-xl border border-emerald-100">
         <div className="flex items-center gap-2">
           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span className="text-sm font-medium text-emerald-700">{agentId === "bc-assistant" ? "Jawaban AI BC siap" : "Dokumen berhasil dibuat"}</span>
+          <span className="text-sm font-medium text-emerald-700">{agentId === "bc-assistant" ? "Jawaban Nara siap" : "Dokumen berhasil dibuat"}</span>
         </div>
         <div className="flex items-center gap-2">
           {resultSource === "history" && (

@@ -23,7 +23,7 @@ export function MentorHomeCard() {
 
   return (
     <section
-      aria-label="AI Mentor"
+      aria-label="NARA Mentor"
       className="relative overflow-hidden rounded-[1.75rem] border border-violet-200/70 bg-gradient-to-br from-violet-50 via-white to-cyan-50 p-5 shadow-[0_20px_55px_-38px_rgba(79,70,229,0.75)] dark:border-white/10 dark:from-[#111a32] dark:via-[#10182d] dark:to-[#0d2138] sm:p-6"
     >
       <div className="pointer-events-none absolute -right-20 -top-24 h-64 w-64 rounded-full bg-violet-400/15 blur-3xl" />
@@ -41,7 +41,7 @@ export function MentorHomeCard() {
           <div className="min-w-0">
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-700 dark:text-violet-300">
-                AI Mentor
+                NARA Mentor
               </span>
               <span className="inline-flex items-center gap-1 rounded-full border border-violet-200 bg-white/80 px-2 py-1 text-[9px] font-black uppercase tracking-[0.12em] text-violet-700 dark:border-violet-300/15 dark:bg-white/[0.06] dark:text-violet-200">
                 <Gem className="h-3 w-3" />
@@ -62,7 +62,7 @@ export function MentorHomeCard() {
             href="/murid/mentor"
             className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-[#18255b] px-5 py-3 text-xs font-black text-white shadow-lg shadow-violet-900/15 transition hover:-translate-y-0.5 hover:bg-[#223273] dark:bg-white dark:text-[#18255b] dark:hover:bg-violet-50"
           >
-            Buka Mentor
+            Buka NARA Mentor
             <ArrowRight className="h-4 w-4" />
           </Link>
         ) : (
@@ -72,7 +72,7 @@ export function MentorHomeCard() {
             className="inline-flex shrink-0 items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-white/90 px-5 py-3 text-xs font-black text-violet-700 shadow-sm transition hover:-translate-y-0.5 hover:bg-white dark:border-white/10 dark:bg-white/[0.07] dark:text-violet-200 dark:hover:bg-white/[0.1]"
           >
             <LockKeyhole className="h-4 w-4" />
-            Buka Mentor
+            Buka NARA Mentor
           </button>
         )}
       </div>
@@ -85,7 +85,7 @@ export function MentorHomeCard() {
         >
           <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-violet-600 dark:text-violet-300" />
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-black">AI Mentor adalah fitur Premium.</p>
+            <p className="text-xs font-black">NARA Mentor adalah fitur Premium.</p>
             <p className="mt-0.5 text-[11px] leading-5 text-violet-900/75 dark:text-violet-100/70">
               Aktifkan Premium untuk mendapatkan analisis progres dan langkah belajar yang lebih personal.
             </p>

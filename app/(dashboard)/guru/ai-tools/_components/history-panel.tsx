@@ -42,7 +42,7 @@ const AGENT_LABELS: Record<string, string> = {
   rpp: "Rencana Pembelajaran",
   soal: "Soal",
   review: "Review",
-  "bc-assistant": "AI BC",
+  "bc-assistant": "NARA",
   eyd: "EYD",
   feedback: "Feedback",
   grading: "Nilai",
@@ -74,7 +74,7 @@ export function HistoryPanel({ items, loading, activeFilter, onFilterChange, onO
     { value: "grading", label: "Nilai" },
     { value: "text-analysis", label: "Analisis" },
     { value: "review", label: "Review" },
-    { value: "bc-assistant", label: "AI BC" },
+    { value: "bc-assistant", label: "NARA" },
   ];
 
   const handleStartEdit = (item: SavedAiResult) => {

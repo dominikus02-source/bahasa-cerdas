@@ -119,7 +119,7 @@ export function footerNote(): Paragraph {
   return new Paragraph({
     children: [
       new TextRun({
-        text: "Dibuat dengan BahasaCerdas AI",
+        text: "Dibuat dengan NARA · BahasaCerdas",
         size: 18,
         italics: true,
         color: "888888",

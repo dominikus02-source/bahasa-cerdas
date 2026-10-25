@@ -290,7 +290,7 @@ export async function processVerifiedMidtransNotification(
               userId: transaksi.userId,
               title: "Pembayaran Berhasil!",
               body: isMurid
-                ? "Premium aktif! Nikmati latihan personal dan mentor AI."
+                ? "Premium aktif! Nikmati latihan personal dan NARA Mentor."
                 : "Akunmu telah diupgrade ke PRO. Selamat menikmati fitur premium!",
               type: "PREMIUM",
             },

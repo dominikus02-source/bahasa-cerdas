@@ -71,7 +71,7 @@ const DAILY_NOTES = [
   {
     quote: "Kemampuanmu tumbuh setiap kali kamu berani mencoba lagi.",
     tipTitle: "Coba lagi dengan cara berbeda",
-    tip: "Jika satu cara belum berhasil, ubah strategi: baca ulang, buat contoh sendiri, atau tanyakan kepada Mentor AI.",
+    tip: "Jika satu cara belum berhasil, ubah strategi: baca ulang, buat contoh sendiri, atau tanyakan kepada NARA Mentor.",
   },
 ];
 
