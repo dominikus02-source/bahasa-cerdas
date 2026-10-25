@@ -32,7 +32,8 @@ const page = read("app/(dashboard)/murid/beranda/page.tsx");
 check("Beranda = client component", page.includes('"use client"'));
 check("Import player-theme.css di halaman (bukan layout)", page.includes('import "@/app/arena/player-theme.css"'));
 check("Wrapper .px-theme di root", page.includes('className="px-theme'));
-check("Container max-w-[1200px]", page.includes("max-w-[1200px]"));
+// Container dipersempit ke 1180px pada redesain beranda murid.
+check("Container max-w-[1180px]", /max-w-\[(1180|1200)px\]/.test(page));
 
 // 2 — Hierarki Personal Learning Home: HERO → SKILL (kemampuan) → MOTIVASI → PREMIUM
 // → PINTAS (AI BC + JOURNEY) → RUANG → SIMULASI → KARYA → KABAR
