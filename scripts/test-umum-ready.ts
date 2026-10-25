@@ -2,7 +2,8 @@
  * Dasbor UMUM "ready to go" — regression tests (tanpa DB; DB & Supabase di-mock).
  *
  * Membuktikan:
- *   1. Pilihan kategori yang terlihat hanya Mahasiswa/Dosen/Umum; INVESTOR/TAMU internal.
+ *   1. Kategori sah di server hanya Mahasiswa/Dosen/Umum; INVESTOR/TAMU internal.
+ *      UI tidak lagi menanyakan kategori: kosong → UMUM (bawaan server).
  *   2. Allowlist server parseRoleSelection + flag ENABLE_ROLE_UMUM (default mati).
  *   3. Intent v2 UMUM: roundtrip saat flag hidup; ditolak saat flag mati; v1 tak berubah.
  *   4. GET /api/auth/role-options menyembunyikan UMUM saat flag mati.
@@ -92,7 +93,10 @@ async function main() {
   assert(ri.parseRoleSelection?.("GURU", null)?.role === "GURU" && ri.parseRoleSelection?.("MURID", "DOSEN")?.kategoriUmum === null, "flag MATI: GURU/MURID tetap (kategori diabaikan)");
   setFlag(true);
   for (const k of ["MAHASISWA", "DOSEN", "UMUM"]) assert(ri.parseRoleSelection?.("UMUM", k)?.kategoriUmum === k, `flag HIDUP: UMUM+${k} diterima`);
-  for (const k of ["INVESTOR", "TAMU", "", null, "mahasiswa", "ADMIN"]) assert(ri.parseRoleSelection?.("UMUM", k) === null, `flag HIDUP: UMUM+${JSON.stringify(k)} ditolak`);
+  for (const k of [undefined, null]) assert(ri.parseRoleSelection?.("UMUM", k)?.role === "UMUM" && ri.parseRoleSelection?.("UMUM", k)?.kategoriUmum === "UMUM", `flag HIDUP: UMUM tanpa kategori (${String(k)}) → bawaan UMUM`);
+  // Kategori tidak wajib, tetapi nilai yang DIKIRIM tetap divalidasi ketat.
+  for (const k of ["INVESTOR", "TAMU", "", "mahasiswa", "ADMIN", 1, {}]) assert(ri.parseRoleSelection?.("UMUM", k) === null, `flag HIDUP: UMUM+${JSON.stringify(k)} ditolak`);
+  assert(kat.resolveKategoriUmumInput?.(undefined) === "UMUM" && kat.resolveKategoriUmumInput?.(null) === "UMUM" && kat.resolveKategoriUmumInput?.("DOSEN") === "DOSEN" && kat.resolveKategoriUmumInput?.("INVESTOR") === null, "resolveKategoriUmumInput: kosong → UMUM, sah → dirinya, lain → tolak");
   for (const r of ["ADMIN", "INVESTOR", "umum", "", null]) assert(ri.parseRoleSelection?.(r, "UMUM") === null, `peran ${JSON.stringify(r)} ditolak`);
 
   // ═══ 3. Intent v2 ═══
@@ -118,10 +122,10 @@ async function main() {
     const ro = R("app/api/auth/role-options/route.ts");
     setFlag(false);
     const off = await (await ro.GET()).json();
-    assert(JSON.stringify(off.roles) === JSON.stringify(["GURU", "MURID"]) && off.kategoriUmum.length === 0, "flag MATI: hanya GURU/MURID");
+    assert(JSON.stringify(off.roles) === JSON.stringify(["GURU", "MURID"]), "flag MATI: hanya GURU/MURID");
     setFlag(true);
     const on = await (await ro.GET()).json();
-    assert(on.roles.includes("UMUM") && JSON.stringify(on.kategoriUmum.map((k: any) => k.label)) === JSON.stringify(["Mahasiswa", "Dosen", "Umum"]), "flag HIDUP: UMUM + Mahasiswa/Dosen/Umum");
+    assert(on.roles.includes("UMUM") && on.kategoriUmum === undefined, "flag HIDUP: UMUM tampil, tanpa daftar kategori (tidak ditanyakan)");
     assert(!JSON.stringify(on).toLowerCase().includes("investor") && !JSON.stringify(on).includes("TAMU"), "role-options tidak pernah mengirim INVESTOR/TAMU");
   } else assert(false, "role-options route ada");
   for (const p of ["app/api/auth/role-intent/route.ts", "app/api/auth/complete-role/route.ts", "app/api/auth/create-user/route.ts"]) {
@@ -135,7 +139,26 @@ async function main() {
   const byKey = Object.fromEntries((prod.UMUM_PRODUCTS as any[]).map((p) => [p.key, p]));
   assert((prod.UMUM_PRODUCTS as any[]).length === 8, "tepat 8 kartu produk");
   assert(byKey.NARA?.href === "/arena/ai", "NARA → /arena/ai");
-  assert(byKey.JUMPA?.status === "dev" && byKey.MAIN_BERSAMA?.status === "dev", "JUMPA & MAIN BERSAMA berstatus pengembangan");
+  // JUMPA siap: tanpa label pengembangan saat flag build JUMPA hidup;
+  // bila flag mati (/jumpa = 404) kartu kembali ke status pengembangan.
+  {
+    const prodPath = resolve(ROOT, "lib/umum/products.ts");
+    const featPath = resolve(ROOT, "lib/features.ts");
+    const load = (on: boolean) => {
+      const prev = process.env.NEXT_PUBLIC_JUMPA_ENABLED;
+      if (on) process.env.NEXT_PUBLIC_JUMPA_ENABLED = "true"; else delete process.env.NEXT_PUBLIC_JUMPA_ENABLED;
+      delete require.cache[prodPath]; delete require.cache[featPath];
+      const j = (require(prodPath).UMUM_PRODUCTS as any[]).find((x) => x.key === "JUMPA");
+      if (prev === undefined) delete process.env.NEXT_PUBLIC_JUMPA_ENABLED; else process.env.NEXT_PUBLIC_JUMPA_ENABLED = prev;
+      delete require.cache[prodPath]; delete require.cache[featPath];
+      return j;
+    };
+    const on = load(true), off = load(false);
+    assert(on?.status === undefined && on?.href === "/jumpa", "JUMPA siap (flag JUMPA hidup): tanpa status pengembangan, → /jumpa");
+    assert(off?.status === "dev", "flag JUMPA mati: kartu tidak menautkan ke 404 (status pengembangan)");
+  }
+  assert(byKey.NARA?.status === undefined, "NARA siap: tanpa status pengembangan");
+  assert(byKey.MAIN_BERSAMA?.status === "dev" && byKey.AKU_SASTRAWAN?.status === "dev", "MAIN BERSAMA & AKU SASTRAWAN tetap berstatus pengembangan");
   assert(byKey.JALUR_CERDAS?.href === "/arena/jalur-cerdas", "JALUR CERDAS → /arena/jalur-cerdas");
   assert(byKey.BIGT?.external === true && /^https:\/\//.test(byKey.BIGT?.href ?? ""), "BIGT = tautan eksternal https");
   assert(byKey.AKSARA?.href === "/artikel" && byKey.TOKO_KARYA?.href === "/marketplace", "AKSARA → /artikel, TOKO KARYA → /marketplace");
@@ -179,14 +202,34 @@ async function main() {
   assert(/Sedang dalam pengembangan/.test(page), "badge 'Sedang dalam pengembangan' untuk kartu dev");
   assert(/noopener noreferrer/.test(page) && /_blank/.test(page), "tautan eksternal rel=noopener noreferrer");
   assert(/href="#konten-umum"|#konten-umum/.test(shell), "skip link ke konten");
-  assert(/Kembali ke dasbor/.test(src("app/jumpa/page.tsx")) && /Kembali ke dasbor/.test(src("app/main-bersama/page.tsx")), "JUMPA/MAIN BERSAMA tidak lagi 'Kembali ke NARA'");
+  assert(/UMUM_HOME/.test(code("app/jumpa/page.tsx")) && /Kembali ke dasbor/.test(src("app/main-bersama/page.tsx")), "JUMPA (dasbor /umum) / MAIN BERSAMA tidak lagi 'Kembali ke NARA'");
+  assert(!/ComingSoon|Sedang dalam pengembangan/.test(code("app/jumpa/page.tsx")), "/jumpa tidak lagi menampilkan status pengembangan untuk UMUM");
+  // Sentuhan warna merek: token tema saja (bg-bc-brand, buttonClass), tanpa palet mentah.
+  assert(/bg-bc-brand/.test(page) && /buttonClass\(\{ variant: "primary"/.test(page) && /BRAND_CHIP/.test(page), "kartu & CTA /umum memakai token merek (bg-bc-brand, ui-btn primary, chip teal/biru/violet)");
+  assert(!/\b(?:bg|text|border|from|to|via)-(?:sky|blue|violet|emerald|teal|indigo)-\d/.test(page), "dasbor /umum tanpa kelas palet Tailwind mentah");
 
   // ═══ 8. Investor ═══
   console.log("\n8. Tanpa 'Investor' di UI");
-  const visible = ["app/(auth)/register/page.tsx", "app/auth/pilih-peran/page.tsx", "components/auth/KategoriUmumPicker.tsx", "app/umum/page.tsx", "app/umum/pengaturan/page.tsx", "components/umum/UmumShell.tsx", "components/umum/UmumDashboardNav.tsx", "lib/umum/products.ts", "app/api/auth/role-options/route.ts"];
+  const visible = ["app/(auth)/register/page.tsx", "app/auth/pilih-peran/page.tsx", "components/auth/useRoleUmumAvailable.ts", "app/umum/page.tsx", "app/umum/pengaturan/page.tsx", "components/umum/UmumShell.tsx", "components/umum/UmumDashboardNav.tsx", "lib/umum/products.ts", "app/api/auth/role-options/route.ts"];
   for (const p of visible) assert(has(p) && !/investor/i.test(code(p)), `${p} ada & tanpa kata Investor`);
   assert(/UMUM/.test(code("app/(auth)/register/page.tsx")) && /UMUM/.test(code("app/auth/pilih-peran/page.tsx")), "register & pilih-peran punya opsi UMUM");
-  assert(!/Untuk Mahasiswa, Umum & Investor/.test(src("app/umum/page.tsx")) && /Untuk Mahasiswa, Dosen &amp; Umum|Untuk Mahasiswa, Dosen & Umum/.test(src("app/umum/page.tsx")), "badge → 'Untuk Mahasiswa, Dosen & Umum'");
+  assert(!/Investor|Mahasiswa|Dosen/.test(src("app/umum/page.tsx")), "dasbor /umum tanpa label kategori (Investor/Mahasiswa/Dosen)");
+
+  // ═══ 8b. Langkah kategori dihapus ═══
+  console.log("\n8b. Tanpa langkah kategori");
+  assert(!has("components/auth/KategoriUmumPicker.tsx"), "KategoriUmumPicker dihapus");
+  for (const p of ["app/(auth)/register/page.tsx", "app/auth/pilih-peran/page.tsx", "app/umum/page.tsx", "app/umum/pengaturan/page.tsx"]) {
+    const c = code(p);
+    assert(!/KategoriUmumPicker|kategoriUmum|KATEGORI_UMUM|kategoriUmumLabel|Mahasiswa|Dosen/.test(c), `${p}: tanpa pemilih/label kategori`);
+  }
+  for (const p of ["app/(auth)/register/page.tsx", "app/auth/pilih-peran/page.tsx"]) {
+    const c = code(p);
+    assert(/useRoleUmumAvailable/.test(c), `${p}: opsi Umum tetap mengikuti flag server`);
+    const umumStyle = c.slice(c.indexOf("UMUM: {"), c.indexOf("},", c.indexOf("UMUM: {")));
+    assert(/bg-bc-brand/.test(umumStyle) && /border-bc-info/.test(umumStyle) && !/sky-\d/.test(umumStyle), `${p}: opsi Umum memakai token merek (tanpa sky-*)`);
+  }
+  assert(/roleReady = !!role;/.test(code("app/(auth)/register/page.tsx")) && /canContinue = !!role;/.test(code("app/auth/pilih-peran/page.tsx")), "Lanjut aktif cukup dengan memilih peran");
+  assert(/kategoriUmum \?\? KATEGORI_UMUM_DEFAULT/.test(code("lib/auth/google-provision.ts")), "provisioning Google: kategori kosong → UMUM");
 
   // ═══ 9. AI guru tools ═══
   console.log("\n9. Alat AI guru → 403 untuk UMUM");

@@ -326,7 +326,9 @@ async function main() {
     const d = perm.canCreateRoom({ actor: { role: "UMUM", isFounder: false, isJunior: false }, kind, group: { ownedByActor: true, isActive: true, actorIsMember: true } });
     assert(d.ok === false, `UMUM tidak bisa membuat ruang ${kind}`);
   }
-  assert(/isUmum\(user\.role\)/.test(src("app/jumpa/page.tsx")) && /ComingSoon/.test(src("app/jumpa/page.tsx")), "/jumpa untuk UMUM menampilkan status pengembangan");
+  // JUMPA siap: UMUM membuka beranda JUMPA asli (tanpa status pengembangan),
+  // tombol kembali ke /umum. Izin ruang tetap default-deny di server (di atas).
+  assert(/isUmum\(user\.role\) \? UMUM_HOME/.test(src("app/jumpa/page.tsx")) && !/ComingSoon/.test(src("app/jumpa/page.tsx")), "/jumpa untuk UMUM menampilkan beranda JUMPA (tanpa status pengembangan), kembali ke /umum");
   assert(/isUmum\(user\.role\)/.test(src("app/main-bersama/page.tsx")), "/main-bersama untuk UMUM menampilkan status pengembangan");
   const aku = code("app/umum/aku-sastrawan/page.tsx");
   assert(/ComingSoon/.test(aku) && !/\/murid\/katastra/.test(aku), "/umum/aku-sastrawan coming-soon, tanpa tautan ke /murid/katastra");
