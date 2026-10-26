@@ -151,13 +151,13 @@
 .durationPanel .teamHead { margin-bottom: 12px; }
 .durationPanel .teamHead h3 svg { color: var(--clr-aud); }
 .durationOptions { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
-.durationOption { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 0; min-height: 60px; padding: 6px 2px; border: 1px solid var(--setup-border); border-radius: 10px; background: transparent; color: var(--setup-ink); cursor: pointer; transition: border-color var(--bc-dur-fast) var(--bc-ease), background var(--bc-dur-fast) var(--bc-ease); }
+/* Tombol durasi = primitif <Button> (ui-btn--accent terpilih, --secondary lainnya);
+   di sini hanya bentuk kotak bertumpuk angka + satuan. */
+.durationOptions .durationOption { flex-direction: column; gap: 2px; min-width: 0; min-height: 60px; padding: 6px 2px; border-radius: 10px; }
 .durationOption strong { font-size: 20px; font-weight: 800; line-height: 1.2; font-variant-numeric: tabular-nums; }
-.durationOption span { color: var(--setup-muted); font-size: 10px; }
-.durationOption:hover { border-color: var(--clr-aud); }
-.durationOption[aria-pressed='true'] { border-color: var(--clr-aud-strong); background: var(--clr-aud-soft); box-shadow: inset 0 0 0 1px var(--clr-aud-strong); color: var(--clr-aud-strong); }
-.durationOption[aria-pressed='true'] span { color: var(--clr-aud-strong); }
-.durationOption:focus-visible { outline-color: var(--clr-aud) !important; }
+.durationOption span { font-size: 10px; font-weight: 600; }
+.durationOption[aria-pressed='false'] span { color: var(--clr-text-2); }
+.setup .durationOptions .durationOption:focus-visible { outline-color: var(--clr-aud); }
 .durationNote { margin: 10px 0 0; color: var(--setup-muted); font-size: 11px; line-height: 1.6; }
 .mascots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 .mascot { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 40px; color: #516b60; font-size: 8px; font-weight: 700; }
@@ -276,3 +276,60 @@
 @media (prefers-reduced-motion: reduce) {
   .setup :is(button, input) { transition: none; }
 }
+/* Mode gelap: hanya menimpa warna terang di atas; tampilan terang tidak berubah. */
+:global(.dark) .setup {
+  --setup-ink: var(--clr-text);
+  --setup-muted: var(--clr-text-2);
+  --setup-border: var(--clr-border);
+  --setup-green: var(--clr-success);
+  color-scheme: dark;
+}
+:global(.dark) .setup :is(button, input, summary):focus-visible { outline-color: var(--clr-success); }
+:global(.dark) .setup :is(.section, .summary, .packageItem, .previewButton, .librarySearch, .teamOption, .suggestion, .classChip, .stepItem > span, .inputLabel input) {
+  border-color: var(--clr-border);
+  background: var(--clr-surface);
+  box-shadow: none;
+}
+:global(.dark) .setup :is(.libraryTabs, .empty, .modeNote, .packagePicker summary > span, .libraryAccess select, .packageItem:hover) {
+  border-color: var(--clr-border-strong);
+  background: var(--clr-surface-2);
+}
+:global(.dark) .setup .libraryTabs button { color: var(--clr-text-2); }
+:global(.dark) .setup .libraryTabs button[aria-pressed="true"] { background: var(--clr-surface); color: var(--clr-text); box-shadow: 0 0 0 1px var(--clr-border-strong); }
+:global(.dark) .setup :is(.stepBadge, .bankButton, .packageIcon, .libraryMessage, .autoBadge, .capacity) {
+  border-color: color-mix(in srgb, var(--clr-success) 35%, var(--clr-border));
+  background: var(--clr-success-soft);
+  color: var(--clr-success);
+}
+:global(.dark) .setup :is(.bankButton, .previewButton):hover { border-color: var(--clr-success); background: var(--clr-success-soft); }
+:global(.dark) .setup .previewButton { color: var(--clr-success); }
+:global(.dark) .setup :is(.packageSelected, .teamOption[aria-pressed='true'], .classChip[aria-pressed='true']) {
+  border-color: var(--clr-success);
+  background: var(--clr-success-soft);
+  box-shadow: inset 0 0 0 1px var(--clr-success);
+  color: var(--clr-success);
+}
+:global(.dark) .setup :is(.teamOption, .classChip, .packageItem):hover { border-color: color-mix(in srgb, var(--clr-success) 60%, var(--clr-border)); }
+:global(.dark) .setup :is(.teamOption[aria-pressed='true'] span, .stepDone, .packageCompat, .capacityStatus, .suggestion, .modeNote svg, .summaryStats strong, .libraryMessage button) { color: var(--clr-success); }
+:global(.dark) .setup .stepDone > span { border-color: var(--clr-success); background: var(--clr-success); color: var(--clr-bg); }
+:global(.dark) .setup .stepItem > span { color: var(--clr-text-2); }
+:global(.dark) .setup .stepLine { background: var(--clr-border-strong); }
+:global(.dark) .setup .check { background: var(--clr-success); color: var(--clr-bg); }
+:global(.dark) .setup :is(.teamPanel, .summaryStats, .summaryStats > div + div) { border-color: var(--clr-border); }
+:global(.dark) .setup :is(.librarySearch, .libraryHint, .libraryAccess label, .libraryAccess > span, .mascot, .capacity span, .summaryRow > svg) { color: var(--clr-text-2); }
+:global(.dark) .setup .libraryAccess select { color: var(--clr-text); }
+:global(.dark) .setup .inputLabel input::placeholder { color: var(--clr-text-3); }
+:global(.dark) .setup .summaryRow dd[data-empty='true'] { color: var(--clr-text-3); }
+:global(.dark) .setup .summaryHeading > svg { color: var(--clr-warning); }
+:global(.dark) .setup :is(.packageIncompat, .capacityStatus[data-error='true']) { color: var(--clr-danger); }
+:global(.dark) .setup :is(.capacityShort, .error) {
+  border-color: color-mix(in srgb, var(--clr-danger) 45%, var(--clr-border));
+  background: var(--clr-danger-soft);
+  color: var(--clr-danger);
+}
+:global(.dark) .setup .summaryTip { background: var(--clr-warning-soft); color: var(--clr-warning-strong); }
+:global(.dark) .setup .summary .openButton:global(.mb-primary-btn) { background: var(--clr-success); color: var(--clr-bg); box-shadow: none; }
+:global(.dark) .setup .summary .openButton:global(.mb-primary-btn):disabled { background: var(--clr-surface-2); color: var(--clr-text-2); }
+:global(.dark) .setup :global(.mb-author-launch) { border-color: var(--clr-border); background: var(--clr-surface-2); color: var(--clr-text); }
+:global(.dark) .setup :global(.mb-author-launch strong) { color: var(--clr-text); }
+:global(.dark) .setup :global(.mb-author-launch-icon) { background: var(--clr-success-soft); color: var(--clr-success); }

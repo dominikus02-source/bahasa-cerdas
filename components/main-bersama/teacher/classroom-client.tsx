@@ -133,7 +133,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
     gameMode: view?.gameMode ?? 'jelajah-kata',
     kotaUnlockedCount: kotaUnlocked.length,
     teamProgress: gameMode === 'jelajah-kata' ? teamProgress : undefined,
-  });
+  }, { surface: 'layar', channelKey: sessionId });
 
   const run = useCallback(
     async (action: DockCommand) => {

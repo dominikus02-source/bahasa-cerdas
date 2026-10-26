@@ -1,46 +1,62 @@
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) { font-family: var(--mb-font-modern), var(--mb-font-ui); background: #f5f8f5; color: #1c3f31; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar:global(.mb-room-toolbar) { position: sticky; top: 0; z-index: 30; padding: 14px 24px 12px; border-bottom: 1px solid #dce7df; background: #fffffffa; box-shadow: 0 4px 20px #183c2606; }
+/* Palet ruang guru dari token tema — otomatis terang/gelap mengikuti
+   kelas .dark (next-themes). Hijau tetap identitas permainan. */
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) {
+  --room-bg: color-mix(in srgb, var(--clr-bg) 94%, var(--clr-success));
+  --room-surface: var(--clr-surface);
+  --room-surface-2: color-mix(in srgb, var(--clr-surface-2) 95%, var(--clr-success));
+  --room-soft: var(--clr-success-soft);
+  --room-border: color-mix(in srgb, var(--clr-border) 85%, var(--clr-success));
+  --room-border-green: color-mix(in srgb, var(--clr-border) 70%, var(--clr-success));
+  --room-border-strong: var(--clr-border-strong);
+  --room-ink: color-mix(in srgb, var(--clr-text) 85%, var(--clr-success));
+  --room-muted: color-mix(in srgb, var(--clr-text-2) 88%, var(--clr-success));
+  --room-green: color-mix(in srgb, var(--clr-success) 78%, var(--clr-text));
+  --room-on-green: var(--clr-surface);
+  --room-shadow: color-mix(in srgb, var(--clr-text) 4%, transparent);
+}
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) { font-family: var(--mb-font-modern), var(--mb-font-ui); background: var(--room-bg); color: var(--room-ink); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar:global(.mb-room-toolbar) { position: sticky; top: 0; z-index: 30; padding: 14px 24px 12px; border-bottom: 1px solid var(--room-border); background: color-mix(in srgb, var(--room-surface) 98%, transparent); box-shadow: 0 4px 20px var(--room-shadow); }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-header) { width: min(100%, 1280px); margin: 0 auto; padding: 0; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-mode) { padding: 7px 12px; border: 1px solid #d3e9dc; border-radius: 9px; background: #edf8f1; color: #047857; font-size: 12px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-pkg) { color: #607769; font-size: 12px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-round) { padding: 5px 8px; border-radius: 6px; background: #f1f5f2; color: #52695b; font-size: 11px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-mode) { padding: 7px 12px; border: 1px solid var(--room-border-green); border-radius: 9px; background: var(--room-soft); color: var(--room-green); font-size: 12px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-pkg) { color: var(--room-muted); font-size: 12px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-round) { padding: 5px 8px; border-radius: 6px; background: var(--room-surface-2); color: var(--room-muted); font-size: 11px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-actions) { gap: 7px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-pin-live) { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 12px; border: 1px solid #d6e4da; border-radius: 9px; background: #f9fcf9; color: #53715f; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-pin-live) { display: flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--room-border); border-radius: 9px; background: var(--room-surface-2); color: var(--room-muted); }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-pin-live span) { font-size: 10px; letter-spacing: 1px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-pin-live strong) { font-size: 16px; letter-spacing: 2px; color: #1d5038; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-pin-live strong) { font-size: 16px; letter-spacing: 2px; color: var(--room-ink); }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-fullscreen-control),
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-sound-toggle),
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-fullscreen-exit) { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 9px 11px; border: 1px solid #d6e4da; border-radius: 9px; background: #fff; color: #355c45; font-size: 11px; font-weight: 700; box-shadow: none; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-fullscreen-exit) { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 9px 11px; border: 1px solid var(--room-border); border-radius: 9px; background: var(--room-surface); color: var(--room-ink); font-size: 11px; font-weight: 700; box-shadow: none; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-sound-toggle) { width: 40px; min-width: 40px; flex: none; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-room-fullscreen-control kbd) { display: none; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-host-tabs) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: min(100%, 560px); margin: 14px auto 0; padding: 4px; border: 1px solid #e1e9e3; border-radius: 12px; background: #f2f6f3; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-host-tab) { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; padding: 8px 10px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: #5b7264; font-size: 12px; font-weight: 800; cursor: pointer; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-host-tab-active) { border-color: #d3e6da; background: #fff; color: #047857; box-shadow: 0 2px 4px #24523908; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar:global(.mb-classroom-actions) { display: flex; align-items: center; justify-content: space-between; width: min(100%, 1280px); margin: 12px auto 0; padding: 12px 16px; border: 1px solid #dce9df; border-radius: 12px; background: #f8fcf9; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-classroom-action-context strong) { color: #204d36; font-size: 13px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-classroom-action-context span) { color: #64776b; font-size: 11px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-host-tabs) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: min(100%, 560px); margin: 14px auto 0; padding: 4px; border: 1px solid var(--room-border); border-radius: 12px; background: var(--room-surface-2); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-host-tab) { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; padding: 8px 10px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--room-muted); font-size: 12px; font-weight: 800; cursor: pointer; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-host-tab-active) { border-color: var(--room-border-green); background: var(--room-surface); color: var(--room-green); box-shadow: 0 2px 4px var(--room-shadow); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar:global(.mb-classroom-actions) { display: flex; align-items: center; justify-content: space-between; width: min(100%, 1280px); margin: 12px auto 0; padding: 12px 16px; border: 1px solid var(--room-border); border-radius: 12px; background: var(--room-surface-2); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-classroom-action-context strong) { color: var(--room-ink); font-size: 13px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-classroom-action-context span) { color: var(--room-muted); font-size: 11px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-classroom-action-buttons) { gap: 8px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-primary-btn),
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-secondary-btn) { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 10px 16px; border-radius: 9px; font-family: inherit; font-size: 12px; font-weight: 800; white-space: nowrap; box-shadow: none; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-primary-btn) { background: #047857; color: #fff; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-secondary-btn) { border: 1px solid #d3e1d7; background: #fff; color: #476754; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar .endButton { border-color: #e8d5d2; color: #9a4540; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar .finishedButton { border-color: #047857; background: #047857; color: #fff; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :is(button, a, summary):focus-visible { outline: 3px solid #047857; outline-offset: 3px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-primary-btn) { background: var(--room-green); color: var(--room-on-green); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar :global(.mb-secondary-btn) { border: 1px solid var(--room-border); background: var(--room-surface); color: var(--room-ink); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar .endButton { border-color: var(--room-border-strong); color: var(--room-ink); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar .finishedButton { border-color: var(--room-green); background: var(--room-green); color: var(--room-on-green); }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :is(button, a, summary):focus-visible { outline: 3px solid var(--room-green); outline-offset: 3px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .controlBar button:disabled { opacity: .45; cursor: not-allowed; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-stage) { width: min(calc(100% - 40px), 1320px); margin: 20px auto; padding: 20px; border: 1px solid #dce8de; border-radius: 20px; background: #fff; box-shadow: none; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-title) { font-size: clamp(21px, 2vw, 28px); font-weight: 800; color: #234833; letter-spacing: -.7px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-head p) { margin-top: 6px; color: #687c6e; font-size: 12px; line-height: 1.6; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-stage) { width: min(calc(100% - 40px), 1320px); margin: 20px auto; padding: 20px; border: 1px solid var(--room-border); border-radius: 20px; background: var(--room-surface); box-shadow: none; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-title) { font-size: clamp(21px, 2vw, 28px); font-weight: 800; color: var(--room-ink); letter-spacing: -.7px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-head p) { margin-top: 6px; color: var(--room-muted); font-size: 12px; line-height: 1.6; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-head) { gap: 16px; margin-bottom: 16px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-live) { border: 1px solid #d6e9dc; border-radius: 10px; background: #eff8f2; color: #56725e; box-shadow: none; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-live strong) { color: #047857; font-size: 20px; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-live) { border: 1px solid var(--room-border-green); border-radius: 10px; background: var(--room-soft); color: var(--room-muted); box-shadow: none; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-live strong) { color: var(--room-green); font-size: 20px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-footer) { margin-top: 14px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-team-status) { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; width: 100%; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-team) { min-width: 0; padding: 10px 12px; border: 1px solid #e1e9e3; border-radius: 10px; background: #f8fbf8; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-team) { min-width: 0; padding: 10px 12px; border: 1px solid var(--room-border); border-radius: 10px; background: var(--room-surface-2); }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-team-name) { font-size: 11px; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-team-name small) { font-size: 9px; line-height: 1.6; }
 :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-jelajah-host-team-progress) { font-size: 14px; }
-:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-classroom-control-hint) { color: #64776b; font-size: 10px; line-height: 1.7; }
+:global(.mb-premium.mb-scope-guru) .room:global(.mb-room) :global(.mb-classroom-control-hint) { color: var(--room-muted); font-size: 10px; line-height: 1.7; }
 @media (max-width: 700px) {
   :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar:global(.mb-room-toolbar) { padding: 12px; }
   :global(.mb-premium.mb-scope-guru) .room:global(.mb-room) .toolbar :global(.mb-session-header) { gap: 10px; }

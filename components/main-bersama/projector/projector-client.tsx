@@ -160,7 +160,7 @@ export function ProjectorClient() {
     kotaUnlockedCount: kotaUnlocked.length,
     teamProgress:
       gameMode === "jelajah-kata" ? teamProgress : undefined,
-  });
+  }, { surface: "layar", channelKey: view?.sessionId ?? null });
 
   if (lookupError && !view) {
     return (
