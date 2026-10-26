@@ -6,7 +6,7 @@
 import { Prisma, type JumpaRoom } from "@prisma/client";
 import { db } from "@/lib/db";
 import { JUMPA_MURID_MAX_ACTIVE_ROOMS, roomEndsAt, type JumpaKind } from "./caps";
-import { resolveJumpaTier } from "./entitlement";
+import { resolveJumpaTier, tierForRoomKind } from "./entitlement";
 import { checkDailyQuota, checkWebinarWeeklyQuota, limitsFor, startOfJakartaDay, startOfJakartaWeek, tierFromCreatedMetadata, JUMPA_TIERS, JUMPA_UPGRADE_URL, type JumpaTier } from "./tiers";
 import { generateLivekitRoomName, generateRoomCode, hashInviteToken, INVITE_TOKEN_RE } from "./code";
 import {
@@ -143,8 +143,9 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
   const now = Date.now();
   // Fase 3: paket dari pembuat ruang (langganan/trial BC yang sudah ada).
   // Ruang MURID memakai tier pembuat untuk batas 8/15.
+  // Murid Premium → ruang MURID 15 orang; webinar & ruang guru tetap tierForPlan.
   const resolved = await resolveJumpaTier(user.id);
-  const tier: JumpaTier = resolved.tier;
+  const tier: JumpaTier = isWebinar ? resolved.tier : tierForRoomKind(resolved.plan, req.kind);
   const caps = limitsFor(tier, req.kind, isWebinar);
 
   if (isWebinar) {
