@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { ArrowLeft, BookOpen, Check, Clock3, FilePlus2, Feather, LoaderCircle, Save, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, Clock3, FilePlus2, Feather, LoaderCircle, Save, Trash2, Sparkles, Layers3 } from "lucide-react";
 
 type Project = {
   id: string;
@@ -26,6 +26,9 @@ export default function WritingStudioPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("Perubahan tersimpan di perangkatmu setelah disimpan ke server.");
+  const [coachPrompt, setCoachPrompt] = useState("Berikan umpan balik tentang kekuatan naskah ini dan tiga hal paling penting untuk diperbaiki.");
+  const [coachReply, setCoachReply] = useState("");
+  const [coachBusy, setCoachBusy] = useState(false);
 
   const loadProjects = useCallback(async () => {
     setLoading(true);
@@ -104,6 +107,22 @@ export default function WritingStudioPage() {
 
   const words = content.trim() ? content.trim().split(/\s+/).length : 0;
 
+  const askCoach = async () => {
+    if (!active || coachBusy) return;
+    if (!content.trim()) { setMessage("Tulis cuplikan naskah terlebih dahulu agar coach bisa memberi masukan."); return; }
+    setCoachBusy(true); setCoachReply(""); setMessage("Mengirim cuplikan naskah ke AI Writing Coach…");
+    try {
+      const response = await fetch("/api/aku-sastrawan/coach", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: coachPrompt, track: active.genre === "NOVEL" ? "novel" : "cerpen", task: "Umpan balik naskah", context: [`Judul: ${title}`, `Sinopsis: ${synopsis}`, content.slice(0, 12000)].join("\\n\\n") }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || "AI Writing Coach belum tersedia.");
+      setCoachReply(data.reply); setMessage("Masukan coach siap. Naskah asli tidak diubah.");
+    } catch (error) { setMessage(error instanceof Error ? error.message : "AI Writing Coach belum tersedia."); }
+    finally { setCoachBusy(false); }
+  };
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-20 border-b border-border bg-background/90 backdrop-blur">
@@ -145,6 +164,14 @@ export default function WritingStudioPage() {
               <textarea value={synopsis} onChange={(e) => setSynopsis(e.target.value)} maxLength={10000} aria-label="Sinopsis" placeholder="Sinopsis atau catatan cerita (opsional)…" rows={2} className="mt-3 w-full resize-y rounded-xl border border-border bg-background px-3 py-2.5 text-sm leading-6 outline-none focus:border-primary/50" />
             </div>
             <textarea value={content} onChange={(e) => setContent(e.target.value)} aria-label="Isi naskah" placeholder="Mulai menulis di sini…\n\nTidak perlu sempurna pada draf pertama. Teruskan ceritamu." className="min-h-[55vh] w-full resize-y bg-card px-4 py-5 text-base leading-8 outline-none sm:px-7 sm:py-7" />
+            {active.genre === "NOVEL" && <div className="border-t border-border px-4 py-4 sm:px-6"><Link href={"/aku-sastrawan/novel/" + active.id} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-semibold"><Layers3 size={16}/> Kelola bab novel</Link></div>}
+            <div className="border-t border-border p-4 sm:p-6">
+              <div className="flex items-center gap-2"><Sparkles size={18} className="text-primary"/><h2 className="text-lg font-bold">AI Writing Coach</h2><span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Premium</span></div>
+              <p className="mt-1 text-sm leading-6 text-muted-foreground">Minta masukan tentang karakter, konflik, dialog, struktur, atau revisi. Coach memberi saran; suara dan keputusan kreatif tetap milikmu.</p>
+              <textarea value={coachPrompt} onChange={(e) => setCoachPrompt(e.target.value)} rows={2} maxLength={8000} className="mt-3 w-full rounded-xl border border-border bg-background p-3 text-sm outline-none focus:border-primary" placeholder="Apa yang ingin kamu diskusikan dengan coach?"/>
+              <button onClick={() => void askCoach()} disabled={coachBusy} className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60"><Sparkles size={15}/>{coachBusy ? "Coach sedang membaca…" : "Minta masukan"}</button>
+              {coachReply && <div className="mt-4 whitespace-pre-wrap rounded-2xl border border-border bg-muted/30 p-4 text-sm leading-7">{coachReply}</div>}
+            </div>
             <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/30 px-4 py-3 sm:px-6"><p className="flex items-center gap-2 text-xs text-muted-foreground"><Check size={14} /> {message}</p><button onClick={() => void deleteProject()} className="inline-flex items-center gap-1.5 text-xs font-semibold text-destructive hover:opacity-80"><Trash2 size={14} /> Hapus karya</button></div>
           </>}
         </section>
