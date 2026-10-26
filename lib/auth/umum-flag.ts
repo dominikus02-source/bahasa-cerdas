@@ -8,6 +8,11 @@
  *   create-user) dan intent UMUM yang sudah tersegel dianggap tidak valid.
  * Akun UMUM yang SUDAH ada tetap bisa masuk dan memakai /umum (data lama tetap
  * terbaca); flag hanya mengatur pendaftaran baru.
+ *
+ * JUMPA: flag ini JUGA menggerbangi JUMPA untuk akun UMUM (bersama flag JUMPA
+ * NEXT_PUBLIC_JUMPA_ENABLED). Saat MATI, akun UMUM tidak punya peran efektif
+ * JUMPA (lib/jumpa/permissions.ts → effectiveRole = null) sehingga membuat &
+ * masuk ruang ditolak seperti sebelumnya. Lihat docs/JUMPA_UMUM.md.
  */
 export function isRoleUmumEnabled(): boolean {
   const v = (process.env.ENABLE_ROLE_UMUM || "").trim().toLowerCase();

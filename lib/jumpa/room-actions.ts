@@ -262,7 +262,8 @@ export async function sendChat(user: JumpaUserLike, code: string, rawContent: un
   if (room.status !== "LIVE") return fail(410, "ROOM_ENDED", "Ruang ini sudah berakhir.");
   const me = await actorInRoom(user, room);
   if (!me) return NOT_IN_ROOM;
-  const isGuruHost = me.actor.effective === "GURU" && me.actor.roomRole !== "MEMBER";
+  // Pemandu dewasa (guru, atau akun UMUM di ruang UMUM) tetap bisa menulis saat obrolan dimatikan.
+  const isGuruHost = (me.actor.effective === "GURU" || (me.actor.effective === "UMUM" && room.kind === "UMUM")) && me.actor.roomRole !== "MEMBER";
   if (!room.chatEnabled && !isGuruHost) return fail(423, "CHAT_DISABLED", "Obrolan sedang dimatikan oleh pemandu.");
 
   const v = sanitizeChatContent(rawContent);
@@ -407,7 +408,10 @@ export async function inviteCandidates(user: JumpaUserLike, code: string): Promi
   const h = await hostActor(user, code);
   if (!h.ok) return h;
   const { room, actor } = h;
-  const base = canInvite({ actor, roomKind: room.kind, invite: { kind: "USER", targetEffective: "GURU" } });
+  // Ruang UMUM hanya dibagikan lewat tautan/kode (tanpa direktori pengguna).
+  const base = room.kind === "UMUM"
+    ? canInvite({ actor, roomKind: room.kind, invite: { kind: "LINK" } })
+    : canInvite({ actor, roomKind: room.kind, invite: { kind: "USER", targetEffective: "GURU" } });
   if (!base.ok) return fail(403, base.code, base.message);
   const existing = await db.jumpaInvite.findMany({ where: { roomId: room.id, revokedAt: null }, select: { kind: true, groupId: true, communityId: true } });
   const invitedGroups = new Set(existing.filter((i) => i.kind === "GROUP").map((i) => i.groupId));
@@ -437,8 +441,8 @@ export async function inviteCandidates(user: JumpaUserLike, code: string): Promi
       .map((c) => c.community)
       .filter((c) => c.id !== room.communityId)
       .map((c) => ({ id: c.id, name: c.name, members: c._count.members, invited: invitedComms.has(c.id) })),
-    canLink: room.kind === "GURU",
-    canInviteUsers: true,
+    canLink: room.kind === "GURU" || room.kind === "UMUM",
+    canInviteUsers: room.kind !== "UMUM",
   };
 }
 
@@ -448,6 +452,8 @@ export async function searchInvitees(user: JumpaUserLike, code: string, q: strin
   if (!h.ok) return h;
   const term = q.trim().slice(0, 60);
   if (term.length < 2) return { ok: true, users: [] };
+  // Ruang UMUM: tidak ada pencarian pengguna (isolasi + privasi akun umum).
+  if (h.room.kind === "UMUM" || h.actor.effective === "UMUM") return { ok: true, users: [] };
   const allowMurid = h.room.kind === "KELAS";
   const nameMatch = { OR: [{ fullName: { contains: term, mode: "insensitive" as const } }, { nickname: { contains: term, mode: "insensitive" as const } }] };
   const rows = await db.user.findMany({

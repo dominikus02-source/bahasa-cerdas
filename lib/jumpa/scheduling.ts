@@ -115,6 +115,7 @@ export async function rescheduleRoom(user: JumpaUserLike, code: string, input: {
   const m = canManageSchedule({ actorId: user.id, createdById: room.createdById, status: room.status });
   if (!m.ok) return fail(403, m.code, m.message);
   if (room.kind === "MURID") return fail(400, "KIND_NOT_SCHEDULABLE", "Ruang belajar bareng tidak bisa dijadwalkan.");
+  if (room.kind === "UMUM") return fail(400, "KIND_NOT_SCHEDULABLE", "Ruang umum belum bisa dijadwalkan.");
   const { tier } = await resolveJumpaTier(user.id);
   const v = validateSchedule({ ...input, tier, kind: room.kind, hasAudience: true, now });
   if (!v.ok) return fail(400, v.code, v.message);
@@ -252,7 +253,8 @@ async function relevantRoomWhere(user: JumpaUserLike) {
   ]);
   const groupIds = [...owned.map((g) => g.id), ...member.map((m) => m.group.id)];
   const communityIds = comms.map((c) => c.community.id);
-  const kinds: Array<JumpaRoom["kind"]> = effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
+  // UMUM hanya melihat ruang UMUM (isolasi dua arah dengan ruang sekolah).
+  const kinds: Array<JumpaRoom["kind"]> = effective === "UMUM" ? ["UMUM"] : effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
   const where = {
     kind: { in: kinds },
     OR: [
@@ -449,7 +451,7 @@ export async function loadEditableSchedule(user: JumpaUserLike, code: string) {
     where: { code },
     select: { code: true, title: true, kind: true, status: true, createdById: true, scheduledAt: true, maxDurationMin: true, groupId: true },
   });
-  if (!room || !room.scheduledAt || room.kind === "MURID") return null;
+  if (!room || !room.scheduledAt || room.kind === "MURID" || room.kind === "UMUM") return null;
   if (!canManageSchedule({ actorId: user.id, createdById: room.createdById, status: room.status }).ok) return null;
   return {
     code: room.code,

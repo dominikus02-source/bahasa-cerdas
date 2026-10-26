@@ -4263,6 +4263,8 @@ enum JumpaRoomKind {
   KELAS
   GURU
   MURID
+  /// Ruang akun UMUM (mahasiswa/dosen/masyarakat). Terisolasi dari sekolah.
+  UMUM
 }
 
 /// Mode pakai dari sistem ruang yang SAMA (bukan sistem berbeda).
