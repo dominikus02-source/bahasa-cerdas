@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/karya
@@ -9,7 +10,7 @@ import { getUser } from "@/lib/supabase/server";
  * NOT student works (StudentKarya). The canonical marketplace product model
  * represents teacher-created goods/services/content that users can purchase.
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+async function adminDELETE(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -61,3 +62,6 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/karya", method: "GET" });
+export const DELETE = withAdmin(adminDELETE, { route: "/api/admin/karya", method: "DELETE" });

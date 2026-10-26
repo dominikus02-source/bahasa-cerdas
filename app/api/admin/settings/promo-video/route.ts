@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { getSetting, setSetting, extractYouTubeId, PROMO_VIDEO_KEY } from "@/lib/site-settings";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!user || (!user.isFounder && user.role !== "ADMIN")) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -14,7 +15,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(req: NextRequest) {
+async function adminPUT(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || (!user.isFounder && user.role !== "ADMIN")) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -38,3 +39,6 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/settings/promo-video", method: "GET" });
+export const PUT = withAdmin(adminPUT, { route: "/api/admin/settings/promo-video", method: "PUT" });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
 const AGENT_LABELS: Record<string, string> = {
   rpp: "Rencana Pembelajaran",
@@ -25,7 +26,7 @@ const LEGACY_FEATURES: { feature: string; label: string }[] = [
 const AGENT_IDS = Object.keys(AGENT_LABELS);
 const AGENT_FEATURE_PREFIX = "agent:";
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -377,3 +378,5 @@ export async function GET(req: NextRequest) {
     }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/ai-analytics", method: "GET" });

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { executeReconciliation } from "@/lib/premium-reconciliation";
+import { withAdmin } from "@/lib/admin/guard";
 
 // ════════════════════════════════════════════════════════════════════
 // PREMIUM RECONCILIATION — API Endpoint
@@ -11,7 +12,7 @@ import { executeReconciliation } from "@/lib/premium-reconciliation";
 // Founder-only. Reports scanned/matched/repaired/skipped/manualReview/errors.
 // ════════════════════════════════════════════════════════════════════
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -26,7 +27,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -49,3 +50,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/analytics/reconciliation", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/analytics/reconciliation", method: "POST" });

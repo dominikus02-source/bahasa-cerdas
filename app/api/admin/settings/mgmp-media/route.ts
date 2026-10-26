@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { getMgmpMedia, setMgmpMedia, extractYouTubeId, type MgmpMedia } from "@/lib/site-settings";
+import { withAdmin } from "@/lib/admin/guard";
 
 function isAdmin(user: any) {
   return !!user && (user.isFounder || user.role === "ADMIN");
 }
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!isAdmin(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -18,7 +19,7 @@ export async function GET() {
   }
 }
 
-export async function PUT(req: NextRequest) {
+async function adminPUT(req: NextRequest) {
   try {
     const user = await getUser();
     if (!isAdmin(user)) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -51,3 +52,6 @@ export async function PUT(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/settings/mgmp-media", method: "GET" });
+export const PUT = withAdmin(adminPUT, { route: "/api/admin/settings/mgmp-media", method: "PUT" });

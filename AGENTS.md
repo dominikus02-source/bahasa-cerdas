@@ -123,6 +123,14 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - Prisma User supabaseId matches Auth user id
 - GET /api/user/me now auto-creates User record if missing (fix deployed)
 
+### Founder & Admin (Okt 2026) — WAJIB BACA sebelum menyentuh peran/admin
+- Founder = `User.isFounder=true` (bukan role). Founder punya akses admin PENUH, termasuk uang.
+- Super founder (hanya `dominikus.02@gmail.com`, `lib/auth/super-founder.ts`) satu-satunya yang boleh menambah/mencabut founder (`/api/admin/make-founder`, `/api/admin/revoke-founder`, halaman `/admin/founder`).
+- Setiap route `app/api/admin/**` WAJIB diekspor lewat `withAdmin()` (`lib/admin/guard.ts`): cek sesi + founder/ADMIN, konfirmasi ketik `KONFIRMASI` (header `x-admin-confirm`) untuk aksi uang/massal (`lib/admin/confirm.ts`), dan log `AdminAuditLog` untuk setiap aksi non-GET. Dijaga oleh `npm run test:founder-access` (CI).
+- Founder tidak bisa memproses penarikan/pencairan miliknya sendiri (`lib/admin/self-action.ts`).
+- Founder GURU tetap dapat komisi guru (`isEligibleForCommission`). Pilot payout canary/pre-canary tetap mengecualikan founder.
+- Detail lengkap: `docs/FOUNDER_ACCESS.md`.
+
 ## Build Config
 - `next.config.ts`: `typescript.ignoreBuildErrors: false` (build fails on real TS errors)
 - Build command: `prisma generate && next build`
@@ -3387,7 +3395,7 @@ Gate approval manusia untuk 75 kandidat enrichment AI_SUGGESTED (manifest `data/
 3. **Satu transaksi per batch** — CONFLICT/error → seluruh batch rollback, audit tidak di-append.
 4. **Audit append-only** `data/question-metadata/enrichment-approval-audit-001.jsonl`: manifestId/batch/action/questionId/performedByEmail/performedById/timestamp/before/after/reason — tanpa secret, tanpa correctAnswer/options.
 5. **Coverage tetap YELLOW** (15 sel × 5 terisi; 13 sel INSUFFICIENT jujur dicatat) — bukan GREEN.
-6. Konvensi: founder/admin emails = `dominikus.02@gmail.com`, `hdsastra47@gmail.com`, `alexsurya1968@gmail.com`.
+6. Konvensi (historis, Agu 2026): reviewer founder/admin = `dominikus.02@gmail.com`, `alexsurya1968@gmail.com`. Washadi (`hdsastra47@gmail.com`) bukan founder lagi sejak Okt 2026 — lihat `docs/FOUNDER_ACCESS.md`.
 
 ### Verifikasi (Aug 15, post-execution)
 | Check | Hasil |

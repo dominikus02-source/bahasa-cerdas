@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { reconcileTeacherPayout } from "@/lib/commission/payout/orchestrator";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * POST /api/admin/teacher-commissions/payouts/[id]/reconcile
  * Rekonsiliasi paksa satu payout (founder-only, audited).
  * Read-only terhadap wallet kecuali outcome sah dari provider.
  */
-export async function POST(
+async function adminPOST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -26,3 +27,5 @@ export async function POST(
     return NextResponse.json({ error: "Gagal merekonsiliasi payout" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/payouts/[id]/reconcile", method: "POST" });

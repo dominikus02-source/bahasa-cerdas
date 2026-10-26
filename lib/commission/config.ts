@@ -62,12 +62,19 @@ export function teacherCommissionLaunchDate(): Date {
 }
 
 /**
- * Founder/ADMIN exclusion — server-side only.
- * Users with `isFounder === true` or `role === "ADMIN"` are never eligible
- * for teacher commission, even if they have an active GURU plan.
+ * Kelayakan komisi guru — server-side only.
+ *
+ * Keputusan CEO 2026-10-26: founder yang juga GURU TETAP mendapat komisi
+ * (mereka mengajar dan mengundang murid seperti guru lain). Yang dikecualikan
+ * hanya akun non-GURU (ADMIN, MURID, UMUM). Pengaman konflik kepentingan ada
+ * di tempat lain: founder tidak bisa menyetujui/mencairkan penarikannya
+ * sendiri (lib/admin/self-action.ts), dan pilot canary payout tetap hanya guru
+ * non-founder (lib/commission/payout/pre-canary.ts).
+ *
+ * `isFounder` dipertahankan di signature agar pemanggil tidak berubah.
  */
-export function isEligibleForCommission(role: string, isFounder: boolean): boolean {
-  return role === "GURU" && !isFounder;
+export function isEligibleForCommission(role: string, _isFounder: boolean): boolean {
+  return role === "GURU";
 }
 
 /**

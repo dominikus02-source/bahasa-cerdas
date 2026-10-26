@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { requireFounder } from "@/lib/supabase/server";
 import { configureBucket } from "@/lib/upload";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function POST() {
+async function adminPOST() {
   try {
     await requireFounder();
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -20,3 +21,5 @@ export async function POST() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/configure-storage", method: "POST" });

@@ -11,6 +11,7 @@ import {
 } from "@/lib/commission/payout/pilot";
 import { globalDailyPayoutTotal } from "@/lib/commission/payout/safety";
 import { auditCommission } from "@/lib/commission/audit";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET/POST /api/admin/teacher-commissions/payout-control
@@ -20,7 +21,7 @@ import { auditCommission } from "@/lib/commission/audit";
  * POST: PILOT_PAUSE | PILOT_RESUME | PILOT_ADD_TEACHER {teacherId} |
  *       PILOT_REMOVE_TEACHER {teacherId} — WAJIB alasan, audited.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -66,7 +67,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -124,3 +125,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Gagal memproses aksi" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/payout-control", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/payout-control", method: "POST" });

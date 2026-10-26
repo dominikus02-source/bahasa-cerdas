@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!user || (!user.isFounder && user.role !== "ADMIN")) {
@@ -110,3 +111,5 @@ export async function GET() {
     return NextResponse.json({ error: e.message }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/data-center", method: "GET" });

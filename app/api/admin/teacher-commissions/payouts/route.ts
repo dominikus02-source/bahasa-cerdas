@@ -2,13 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { maskAccount } from "@/lib/commission/payout/profile";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions/payouts
  * Semua payout komisi guru (founder-only) — inspeksi penuh (spec §21).
  * Nomor rekening masked; aksi admin lain di audit terpisah.
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -100,3 +101,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Gagal memuat payout" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/payouts", method: "GET" });

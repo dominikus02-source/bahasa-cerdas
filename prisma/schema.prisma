@@ -2468,6 +2468,30 @@ model AdminQuotaAuditLog {
   @@index([createdAt])
 }
 
+/// Jejak SETIAP aksi admin yang mengubah data (POST/PUT/PATCH/DELETE di
+/// /api/admin/*), ditulis oleh lib/admin/guard.ts. Sengaja TANPA relasi ke
+/// User supaya log tetap utuh walau akun pelaku/target dihapus. Hanya kunci &
+/// nilai aman (id, status, jumlah) — rahasia/token/URL tidak pernah disimpan.
+model AdminAuditLog {
+  id           String   @id @default(cuid())
+  actorId      String
+  actorEmail   String
+  action       String // contoh: "POST /api/admin/make-founder"
+  method       String
+  path         String
+  status       Int
+  targetUserId String?
+  metadata     Json?
+  ip           String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  @@index([actorId])
+  @@index([action])
+  @@index([createdAt])
+  @@index([targetUserId])
+}
+
 enum BackupTrigger {
   MANUAL
   SCHEDULED

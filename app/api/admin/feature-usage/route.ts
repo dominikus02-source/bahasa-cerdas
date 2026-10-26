@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
 // Pemakaian fitur per hari (WIB). Setiap fitur punya sumber data berbeda;
 // count = jumlah aksi, users = jumlah user UNIK yang beraksi di hari itu.
@@ -94,7 +95,7 @@ interface DayRow {
   users: number;
 }
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -137,3 +138,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/feature-usage", method: "GET" });

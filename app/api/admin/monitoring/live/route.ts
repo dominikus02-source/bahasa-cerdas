@@ -14,10 +14,11 @@ import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 import { getOnlineUsers, PRESENCE_TTL_SECONDS } from "@/lib/presence";
+import { withAdmin } from "@/lib/admin/guard";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function adminGET() {
   const user = await getUser();
   if (!user || !user.isFounder) {
     return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
@@ -91,3 +92,5 @@ export async function GET() {
     return NextResponse.json({ success: false, error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/monitoring/live", method: "GET" });

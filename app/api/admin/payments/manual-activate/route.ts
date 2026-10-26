@@ -5,6 +5,7 @@ import { z } from "zod";
 import cache from "@/lib/redis";
 import { getPlan, isUmumPlanId } from "@/lib/billing/plans";
 import { UMUM_TRIAL_PLAN } from "@/lib/account/identity";
+import { withAdmin } from "@/lib/admin/guard";
 
 const bodySchema = z.object({
   transactionId: z.string().min(1, "transactionId wajib diisi"),
@@ -18,7 +19,7 @@ function getCurrentPeriod(): string {
   return new Date().toISOString().slice(0, 7);
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -237,3 +238,5 @@ async function activateUmum({ transaksi, adminId, reason, bodyPlanId }: { transa
   // Sengaja TANPA sinkron ledger kredit AI (Premium Umum tidak punya kredit).
   return NextResponse.json({ ok: true, message: "Premium Umum diaktifkan secara manual", premiumUntil });
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/payments/manual-activate", method: "POST" });

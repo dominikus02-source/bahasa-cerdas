@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions
  * Ringkasan program "Guru Cerdas Sejahtera" untuk admin (founder-only).
  * Tanpa data finansial pihak ketiga — hanya agregat program sendiri.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -67,3 +68,5 @@ export async function GET() {
     return NextResponse.json({ error: "Gagal memuat ringkasan komisi" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions", method: "GET" });

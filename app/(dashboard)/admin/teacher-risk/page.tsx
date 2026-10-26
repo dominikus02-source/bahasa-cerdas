@@ -6,6 +6,7 @@
  * CLEAR / RESTRICT / KEEP_REVIEW (financial safety ≠ hukuman permanen).
  */
 
+import { useTypedConfirm, adminConfirmHeaders } from "@/components/admin/TypedConfirm";
 import { useCallback, useEffect, useState } from "react";
 import { ShieldAlert, ShieldCheck, ShieldOff, Search } from "lucide-react";
 
@@ -43,6 +44,7 @@ const SEVERITY_TONE: Record<string, string> = {
 
 export default function TeacherRiskPage() {
   const [cases, setCases] = useState<RiskCase[]>([]);
+  const { confirm: konfirmasi, dialog: dialogKonfirmasi } = useTypedConfirm();
   const [metrics, setMetrics] = useState<Record<string, unknown> | null>(null);
   const [detail, setDetail] = useState<CaseDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -83,11 +85,12 @@ export default function TeacherRiskPage() {
       alert("Alasan wajib diisi sebelum mengambil keputusan.");
       return;
     }
+    if (!(await konfirmasi({ title: `Keputusan risiko: ${decision}?`, detail: "Keputusan ini memengaruhi pencairan komisi guru." }))) return;
     setSubmitting(`${id}:${decision}`);
     try {
       const res = await fetch(`/api/admin/teacher-risk/${id}/decision`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ decision, reason }),
       });
       const data = await res.json().catch(() => ({}));
@@ -107,6 +110,7 @@ export default function TeacherRiskPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+      {dialogKonfirmasi}
       <header>
         <div className="flex items-center gap-2">
           <ShieldAlert className="h-6 w-6 text-bc-warning" />

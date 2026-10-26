@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { processWithdrawal } from "@/lib/commission/withdrawals";
 import type { WithdrawalAction } from "@/lib/commission/types";
+import { withAdmin } from "@/lib/admin/guard";
+import { rejectSelfMoneyAction } from "@/lib/admin/self-action";
+import { db } from "@/lib/db";
 
 /**
  * PATCH /api/admin/teacher-commissions/withdrawals/[id]
@@ -15,7 +18,7 @@ import type { WithdrawalAction } from "@/lib/commission/types";
  *   PENDING → REJECTED (locked → available — dana kembali)
  * Callback/klik dobel aman: transisi diklaim dengan `updateMany WHERE status`.
  */
-export async function PATCH(
+async function adminPATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -26,6 +29,9 @@ export async function PATCH(
     }
 
     const { id } = await params;
+    const pemilik = await db.teacherCommissionWithdrawal.findUnique({ where: { id }, select: { teacherId: true } });
+    const diriSendiri = rejectSelfMoneyAction(admin.id, pemilik?.teacherId);
+    if (diriSendiri) return diriSendiri;
     const body = await req.json().catch(() => ({}));
     const action = typeof body.action === "string" ? (body.action as WithdrawalAction) : null;
 
@@ -61,3 +67,5 @@ export async function PATCH(
     return NextResponse.json({ error: "Gagal memproses penarikan" }, { status: 500 });
   }
 }
+
+export const PATCH = withAdmin(adminPATCH, { route: "/api/admin/teacher-commissions/withdrawals/[id]", method: "PATCH" });

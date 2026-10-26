@@ -4,6 +4,7 @@ import {
   getDailyTeacherPayoutReport,
   getDailyTeacherPayoutReportByProvider,
 } from "@/lib/commission/payout/finance-report";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions/finance-report?date=YYYY-MM-DD
@@ -12,7 +13,7 @@ import {
  * processing/paid/failed/retryable + provider fees + net payout.
  * Fee provider TIDAK mengurangi komisi guru.
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -40,3 +41,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Gagal membuat laporan finansial" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/finance-report", method: "GET" });

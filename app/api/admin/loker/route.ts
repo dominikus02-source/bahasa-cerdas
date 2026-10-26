@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -12,7 +13,7 @@ export async function GET() {
   } catch { return NextResponse.json({ error: "Internal error" }, { status: 500 }); }
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -29,7 +30,7 @@ export async function POST(req: NextRequest) {
   } catch { return NextResponse.json({ error: "Internal error" }, { status: 500 }); }
 }
 
-export async function PUT(req: NextRequest) {
+async function adminPUT(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -43,7 +44,7 @@ export async function PUT(req: NextRequest) {
   } catch { return NextResponse.json({ error: "Internal error" }, { status: 500 }); }
 }
 
-export async function DELETE(req: NextRequest) {
+async function adminDELETE(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -56,3 +57,8 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ success: true });
   } catch { return NextResponse.json({ error: "Internal error" }, { status: 500 }); }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/loker", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/loker", method: "POST" });
+export const PUT = withAdmin(adminPUT, { route: "/api/admin/loker", method: "PUT" });
+export const DELETE = withAdmin(adminDELETE, { route: "/api/admin/loker", method: "DELETE" });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useTypedConfirm, adminConfirmHeaders } from "@/components/admin/TypedConfirm";
 import { Loader2, Wallet, Clock, CheckCircle2, XCircle, Send, AlertCircle } from "lucide-react";
 
 type Penarikan = {
@@ -54,20 +55,36 @@ export default function AdminWithdrawalsPage() {
 
   useEffect(() => { muat(); }, [muat]);
 
+  const { confirm: konfirmasi, dialog: dialogKonfirmasi } = useTypedConfirm();
+
   const ubahStatus = async (id: string, status: string, perluCatatan = false) => {
     let notes: string | null = null;
     if (perluCatatan) {
       notes = window.prompt("Alasan penolakan (akan dikirim ke guru):");
       if (notes === null) return; // dibatalkan
     }
-    if (status === "TRANSFERRED" && !window.confirm("Tandai sudah ditransfer? Pastikan transfer benar-benar sudah dilakukan.")) return;
+    const judul: Record<string, string> = {
+      APPROVED: "Setujui penarikan ini?",
+      REJECTED: "Tolak penarikan ini?",
+      TRANSFERRED: "Tandai sudah ditransfer?",
+    };
+    const ok = await konfirmasi({
+      title: judul[status] || "Proses penarikan?",
+      detail:
+        status === "TRANSFERRED"
+          ? "Pastikan transfer benar-benar sudah dilakukan."
+          : status === "REJECTED"
+            ? "Saldo akan dikembalikan ke guru."
+            : "Dana tetap terkunci sampai ditandai sudah ditransfer.",
+    });
+    if (!ok) return;
 
     setProses(id);
     setError("");
     try {
       const res = await fetch(`/api/admin/withdrawals/${id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ status, notes }),
       });
       const d = await res.json().catch(() => ({}));
@@ -85,6 +102,7 @@ export default function AdminWithdrawalsPage() {
 
   return (
     <div className="space-y-6">
+      {dialogKonfirmasi}
       <div>
         <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Penarikan Saldo</h1>
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Tinjau dan proses pencairan saldo guru</p>

@@ -69,7 +69,7 @@ assert(/COMMISSION_HOLDING_PERIOD_DAYS[\s\S]*?7/.test(configSrc), "A10 default h
 assert(configSrc.includes("TEACHER_COMMISSION_MIN_WITHDRAWAL"), "A11 minimum withdrawal configurable via env");
 assert(configSrc.includes("MURID_PREMIUM_MONTHLY"), "A12 plan eligible = MURID premium (komisi dari murid)");
 assert(configSrc.includes("MURID_PREMIUM_YEARLY"), "A13 plan tahunan murid eligible");
-assert(configSrc.includes("role === \"GURU\" && !isFounder"), "A14 ADMIN/founder dikecualikan (server-side)");
+assert(configSrc.includes("return role === \"GURU\";"), "A14 hanya GURU (termasuk founder GURU) yang layak komisi; ADMIN dikecualikan");
 assert(configSrc.includes("TEACHER_COMMISSION_LAUNCH_DATE"), "A15 launch date configurable — backfill pre-launch");
 
 const engineSrc = read("lib/commission/engine.ts");

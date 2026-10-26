@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { withAdmin } from "@/lib/admin/guard";
+import { rejectSelfMoneyAction } from "@/lib/admin/self-action";
 
 const TRANSISI_SAH: Record<string, string[]> = {
   PENDING: ["APPROVED", "REJECTED"],
@@ -22,7 +24,7 @@ const TRANSISI_SAH: Record<string, string[]> = {
  * selesai tidak bisa diproses ulang — mengembalikan saldo dua kali untuk satu
  * penolakan sama saja mencetak uang.
  */
-export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+async function adminPATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -30,6 +32,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const { id } = await params;
+    const pemilik = await db.withdrawal.findUnique({ where: { id }, select: { userId: true } });
+    const diriSendiri = rejectSelfMoneyAction(user.id, pemilik?.userId);
+    if (diriSendiri) return diriSendiri;
     const body = await req.json().catch(() => ({}));
     const status = String(body.status || "").toUpperCase();
     const notes = typeof body.notes === "string" ? body.notes.trim().slice(0, 500) : null;
@@ -108,3 +113,5 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: "Gagal memproses penarikan" }, { status: 500 });
   }
 }
+
+export const PATCH = withAdmin(adminPATCH, { route: "/api/admin/withdrawals/[id]", method: "PATCH" });
