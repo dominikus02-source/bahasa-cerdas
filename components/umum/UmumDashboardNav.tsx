@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
-import { Bell, Compass, House, LayoutGrid, Library, UserRound } from "lucide-react";
+import { Bell, Compass, Crown, House, LayoutGrid, Library, UserRound } from "lucide-react";
 import {
   NAV_ICON_ACTIVE,
   NAV_ICON_CLASS,
@@ -30,6 +30,7 @@ export const UMUM_DASHBOARD_NAV: NavItem[] = [
   { key: "produk", label: "Semua Produk", href: "/umum#produk", icon: LayoutGrid, mobile: true },
   { key: "jelajahi", label: "Jelajahi", href: "/umum#gim", icon: Compass },
   { key: "koleksi", label: "Koleksi Saya", href: "/umum/koleksi", icon: Library, match: "/umum/koleksi", mobile: true },
+  { key: "premium", label: "Premium", href: "/umum/premium", icon: Crown, match: "/umum/premium" },
   { key: "notifikasi", label: "Notifikasi", href: "/umum/notifikasi", icon: Bell, match: "/umum/notifikasi", mobile: true },
   { key: "akun", label: "Akun", href: "/umum/pengaturan", icon: UserRound, match: "/umum/pengaturan", mobile: true },
 ];

@@ -53,7 +53,11 @@ export interface MRRBreakdown {
 type PremiumUserClient = Pick<typeof db, "user">;
 async function getActivePremiumUsers(now: Date = new Date(), client: PremiumUserClient = db) {
   return client.user.findMany({
-    where: { isPremium: true, premiumUntil: { gt: now }, isFounder: false },
+    // Premium Umum (role UMUM) sengaja BELUM masuk MRR: snapshot historis
+    // menyimpan dekomposisi murid/guru × bulanan/tahunan dengan invariant
+    // jumlah. Menambah komponen UMUM butuh kolom snapshot baru (follow-up) —
+    // sampai itu, UMUM dilaporkan terpisah di /api/admin/premium/report.
+    where: { isPremium: true, premiumUntil: { gt: now }, isFounder: false, role: { not: "UMUM" } },
     select: {
       id: true, role: true, premiumPlan: true,
       transaksi: {

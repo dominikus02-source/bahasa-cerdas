@@ -285,7 +285,8 @@ async function main() {
   const trial = code("lib/ai-gateway/trial-service.ts");
   assert(/role !== "GURU"\) return false/.test(trial), "Pro trial tetap khusus GURU (Dosen/UMUM tidak dapat trial)");
   const checkout = code("app/api/billing/checkout/route.ts");
-  assert(/allowedRoles = \["GURU", "ADMIN", "MURID"\]/.test(checkout) && /403/.test(checkout), "checkout paket: UMUM di luar allowlist → 403");
+  // Premium Umum: UMUM hanya boleh paket UMUM (targetRole cocok) & di balik flag.
+  assert(/allowedRoles = \["GURU", "ADMIN", "MURID", "UMUM"\]/.test(checkout) && /plan\.targetRole !== user\.role/.test(checkout) && /isUmumPremiumEnabled\(\)/.test(checkout) && /403/.test(checkout), "checkout paket: UMUM hanya paket UMUM (lintas peran → 403, flag mati → 403)");
 
   const proxy = code("lib/supabase/proxy.ts");
   assert(/selfAuthPaths = \[[^\]]*"\/umum"/.test(proxy), "proxy: /umum menggerbangi sendiri (login mempertahankan ?next=/umum)");

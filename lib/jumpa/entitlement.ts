@@ -9,9 +9,13 @@ import type { PlanCode } from "@/lib/premium-economy/plans";
 import { resolvePlan } from "@/lib/premium-economy/plans";
 import type { JumpaTier } from "./tiers";
 
-/** PRO (termasuk trial guru) & FOUNDER → PREMIUM. Lainnya → FREE. */
+/**
+ * PRO (termasuk trial guru), UMUM_PREMIUM (bayar atau uji coba Umum) &
+ * FOUNDER → PREMIUM. Lainnya → FREE. Keputusan pendiri: JUMPA UMUM premium =
+ * batas guru premium. Ruang UMUM memakai tabel tier sendiri (feat/jumpa-umum).
+ */
 export function tierForPlan(plan: PlanCode | null | undefined): JumpaTier {
-  return plan === "PRO" || plan === "FOUNDER" ? "PREMIUM" : "FREE";
+  return plan === "PRO" || plan === "UMUM_PREMIUM" || plan === "FOUNDER" ? "PREMIUM" : "FREE";
 }
 
 /** Paket JUMPA milik user. Gagal baca DB → FREE (fail-closed untuk batas). */

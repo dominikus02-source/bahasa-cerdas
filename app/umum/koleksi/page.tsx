@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Download, Library, Receipt, Store } from "lucide-react";
+import { Crown, Download, Library, Receipt, Store } from "lucide-react";
 import { db } from "@/lib/db";
 import { requireUmumPage } from "@/lib/auth/umum-page";
 import { UmumShell } from "@/components/umum/UmumShell";
@@ -33,9 +33,15 @@ export default async function UmumKoleksiPage() {
             <h1 className="text-bc-h1 text-bc-text">Koleksi Saya</h1>
             <p className="mt-1 text-bc-small text-bc-text-3">Karya yang sudah kamu beli di Toko Karya.</p>
           </div>
-          <Link href="/orders" className="inline-flex items-center gap-1.5 rounded-bc-ctl border border-bc-line bg-bc-surface px-3 py-2 text-sm font-semibold text-bc-text hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
-            <Receipt size={16} aria-hidden /> Riwayat pesanan
-          </Link>
+          <div className="flex flex-wrap gap-2">
+            {/* Kait penjualan: menjual karya = Premium Umum (segera). Beli tetap gratis. */}
+            <Link href="/umum/premium#jual-karya" data-testid="jual-karya-premium" className="inline-flex items-center gap-1.5 rounded-bc-ctl border border-bc-line bg-bc-surface px-3 py-2 text-sm font-semibold text-bc-text hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
+              <Crown size={16} aria-hidden className="text-bc-violet" /> Jual karya (Premium)
+            </Link>
+            <Link href="/orders" className="inline-flex items-center gap-1.5 rounded-bc-ctl border border-bc-line bg-bc-surface px-3 py-2 text-sm font-semibold text-bc-text hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-bc-focus">
+              <Receipt size={16} aria-hidden /> Riwayat pesanan
+            </Link>
+          </div>
         </div>
 
         {koleksi.length === 0 ? (

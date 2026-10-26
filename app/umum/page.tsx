@@ -11,6 +11,8 @@ import { isUmumGameId } from "@/lib/auth/roles";
 import { GAME_REGISTRY } from "@/lib/arena/game-registry";
 import { UMUM_PRODUCTS, type UmumProductKey } from "@/lib/umum/products";
 import { UmumShell } from "@/components/umum/UmumShell";
+import { UmumTrialOffer } from "@/components/umum/UmumTrialOffer";
+import { umumTrialView } from "@/lib/umum/trial";
 import { buttonClass } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -129,6 +131,9 @@ export default async function UmumDashboardPage() {
             </div>
           </dl>
         </section>
+
+        {/* Premium Umum: tawaran lunak uji coba (tidak otomatis) */}
+        <UmumTrialOffer view={umumTrialView(user)} />
 
         {/* Produk */}
         <section id="produk" aria-labelledby="judul-produk" className="scroll-mt-24">

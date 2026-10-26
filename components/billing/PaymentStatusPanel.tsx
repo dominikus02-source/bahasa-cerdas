@@ -8,7 +8,7 @@ import { ProBadge, formatTanggal } from "./parts";
 import "./billing.css";
 
 export type PanelStatus = "SUCCESS" | "PENDING" | "FAILED" | "EXPIRED" | "CANCELLED" | "REFUNDED" | "REPLACED" | "NOT_FOUND";
-export type PanelKind = "GURU_PRO" | "MURID_PREMIUM" | "KARYA" | "LAIN";
+export type PanelKind = "GURU_PRO" | "MURID_PREMIUM" | "UMUM_PREMIUM" | "KARYA" | "LAIN";
 
 export interface PanelView {
   orderId: string;
@@ -21,12 +21,14 @@ export interface PanelView {
     kuponKode: string | null;
     premiumUntil: string | null;
     isPremium: boolean;
+    manualReview?: boolean;
   };
 }
 
 const COPY: Record<PanelKind, { pro: string; go: string; goLabel: string; plans: string; plansLabel: string }> = {
   GURU_PRO: { pro: "Guru Pro", go: "/guru/beranda", goLabel: "Mulai pakai Guru Pro", plans: "/guru/berlangganan", plansLabel: "Lihat paket" },
   MURID_PREMIUM: { pro: "Premium", go: "/murid/belajar", goLabel: "Mulai belajar", plans: "/murid/premium", plansLabel: "Lihat paket" },
+  UMUM_PREMIUM: { pro: "Premium Umum", go: "/umum", goLabel: "Ke beranda Umum", plans: "/umum/premium", plansLabel: "Lihat paket" },
   KARYA: { pro: "Karya", go: "/orders", goLabel: "Buka pesanan saya", plans: "/marketplace", plansLabel: "Ke Toko Karya" },
   LAIN: { pro: "Paket", go: "/", goLabel: "Ke beranda", plans: "/", plansLabel: "Ke beranda" },
 };
@@ -110,6 +112,24 @@ export default function PaymentStatusPanel({
       <LogIn size={18} aria-hidden="true" /> Masuk untuk melihat akun
     </Link>
   ) : null;
+
+  if (view.status === "SUCCESS" && view.owner?.manualReview) {
+    return (
+      <section className="bp-card bp-card--accent bp-status bp-in" role="status" aria-live="polite">
+        <span className="bp-icon bp-icon--lg" aria-hidden="true"><Clock size={26} /></span>
+        <p className="bp-eyebrow" style={{ marginTop: 10 }}>Pembayaran diterima</p>
+        <h1 className="bp-h1">Sedang diverifikasi</h1>
+        <p className="bp-text">
+          Dana sudah masuk. Tim BahasaCerdas memverifikasi pesanan ini secara manual, lalu {c.pro} diaktifkan.
+          Kamu akan menerima notifikasi. Tidak perlu membayar lagi.
+        </p>
+        {facts}
+        <div className="bp-actions" style={{ width: "100%" }}>
+          {loggedIn ? <Link href={c.go} className="bp-btn">{c.goLabel}</Link> : loginAction}
+        </div>
+      </section>
+    );
+  }
 
   if (view.status === "SUCCESS") {
     const until = view.owner?.premiumUntil;

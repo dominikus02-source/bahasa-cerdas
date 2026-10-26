@@ -123,7 +123,11 @@ async function main() {
 
   // ── 5. Checkout Creates Correct Transaction ──
   console.log(`\n${YELLOW}--- 5. Checkout Flow ---${RESET}`);
-  assertContains(checkoutPath, 'plan.targetRole === "MURID" ? "MURID_PREMIUM" : "PREMIUM_UPGRADE"', "Checkout sets correct transaksi type");
+  // Tipe transaksi kini dari allowlist eksplisit di plans.ts (UMUM_PREMIUM
+  // ditambahkan); pemetaan guru/murid harus tetap sama.
+  assertContains(checkoutPath, "transactionTypeForPlan(plan)", "Checkout sets correct transaksi type (via allowlist)");
+  assertContains("lib/billing/plans.ts", 'MURID: "MURID_PREMIUM"', "Allowlist: MURID → MURID_PREMIUM");
+  assertContains("lib/billing/plans.ts", 'GURU: "PREMIUM_UPGRADE"', "Allowlist: GURU → PREMIUM_UPGRADE");
   assertContains(checkoutPath, "metadata:", "Checkout stores metadata");
   assertContains(checkoutPath, "planId", "Checkout stores planId in metadata");
   assertContains(checkoutPath, "durationDays", "Checkout stores durationDays in metadata");
