@@ -16,7 +16,9 @@ async function ownedChapter(projectId: string, chapterId: string, userId: string
 export async function PATCH(req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
-  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
+  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
+  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
+  if (!hasPremium) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId, chapterId } = await params;
     if (!await ownedChapter(projectId, chapterId, user.id)) return NextResponse.json({ error: "Bab tidak ditemukan." }, { status: 404 });
@@ -36,7 +38,9 @@ export async function PATCH(req: NextRequest, { params }: Context) {
 export async function DELETE(_req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
-  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
+  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
+  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
+  if (!hasPremium) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId, chapterId } = await params;
     if (!await ownedChapter(projectId, chapterId, user.id)) return NextResponse.json({ error: "Bab tidak ditemukan." }, { status: 404 });
