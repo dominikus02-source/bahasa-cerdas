@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { isStorageMediaUrl, resolveMediaUrl } from "@/lib/media/resolve-media-url";
 import { Megaphone, Sparkles, CalendarDays, AlertTriangle, X, ChevronRight } from "lucide-react";
 
 type Kategori = "INFO" | "PEMBARUAN" | "ACARA" | "PENTING";
@@ -87,6 +88,7 @@ export function SiaranBanner() {
       {tampil.map((s) => {
         const meta = META[s.kategori] ?? META.INFO;
         const bisaDitutup = !s.pinned && s.kategori !== "PENTING";
+        const gambar = resolveMediaUrl(s.gambar);
 
         return (
           <div
@@ -94,12 +96,14 @@ export function SiaranBanner() {
             className={`relative overflow-hidden rounded-2xl border bg-gradient-to-br shadow-sm ${meta.bg}`}
             style={{ borderColor: `${meta.warna}33` }}
           >
-            {s.gambar && (
+            {gambar && (
               <div className="relative h-32 w-full sm:h-40">
                 <Image
-                  src={s.gambar}
+                  src={gambar}
                   alt=""
                   fill
+                  // URL Storage tidak boleh lewat optimizer (host self-host tak ada di remotePatterns; Cloud lama mati).
+                  unoptimized={isStorageMediaUrl(gambar)}
                   className="object-cover"
                   sizes="(max-width: 640px) 100vw, 720px"
                 />
@@ -107,7 +111,7 @@ export function SiaranBanner() {
               </div>
             )}
 
-            <div className={`relative p-4 ${s.gambar ? "-mt-10" : ""}`}>
+            <div className={`relative p-4 ${gambar ? "-mt-10" : ""}`}>
               <div className="mb-1.5 flex items-center gap-2">
                 <span
                   className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-black uppercase tracking-wider"
@@ -117,16 +121,16 @@ export function SiaranBanner() {
                   {meta.label}
                 </span>
                 {s.pinned && (
-                  <span className={`text-[10px] font-bold ${s.gambar ? "text-white/60" : "text-gray-400 dark:text-slate-500"}`}>
+                  <span className={`text-[10px] font-bold ${gambar ? "text-white/60" : "text-gray-400 dark:text-slate-500"}`}>
                     Disematkan
                   </span>
                 )}
               </div>
 
-              <p className={`pr-6 text-sm font-black ${s.gambar ? "text-white" : "text-gray-900 dark:text-slate-100"}`}>
+              <p className={`pr-6 text-sm font-black ${gambar ? "text-white" : "text-gray-900 dark:text-slate-100"}`}>
                 {s.judul}
               </p>
-              <p className={`mt-1 whitespace-pre-line text-xs leading-relaxed ${s.gambar ? "text-white/80" : "text-gray-600 dark:text-slate-400"}`}>
+              <p className={`mt-1 whitespace-pre-line text-xs leading-relaxed ${gambar ? "text-white/80" : "text-gray-600 dark:text-slate-400"}`}>
                 {s.isi}
               </p>
 
@@ -145,7 +149,7 @@ export function SiaranBanner() {
                 <button
                   onClick={() => tutup(s.id)}
                   className={`absolute right-3 top-3 rounded-full p-1 transition ${
-                    s.gambar ? "bg-black/30 text-white/70 hover:text-white" : "bg-black/5 text-gray-400 hover:text-gray-700 dark:text-slate-300"
+                    gambar ? "bg-black/30 text-white/70 hover:text-white" : "bg-black/5 text-gray-400 hover:text-gray-700 dark:text-slate-300"
                   }`}
                   aria-label="Tutup pengumuman"
                 >

@@ -408,6 +408,7 @@ function FeedContent({
                   alt={`Foto untuk ${k.title}`}
                   fallbackType="default"
                   containerClassName="h-full w-full"
+                  cover={{ title: k.title, author: nameOf(k.user), type: k.type, fallback: "karya" }}
                 />
               </div>
             </Link>
@@ -483,6 +484,7 @@ function FeedContent({
                 alt={`Foto untuk ${k.title}`}
                 fallbackType="default"
                 containerClassName="h-full w-full"
+                cover={{ title: k.title, author: nameOf(k.user), type: k.type, fallback: "karya" }}
               />
             </div>
           </Link>

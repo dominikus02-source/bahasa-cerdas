@@ -265,20 +265,14 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                 >
                   {/* Tanpa cover: placeholder disembunyikan di layar kecil supaya daftar tidak terlalu panjang. */}
                   <div className={`${compact ? "relative aspect-[16/6] w-full shrink-0 overflow-hidden bg-bc-aud-soft" : "relative h-28 w-full shrink-0 overflow-hidden bg-bc-aud-soft"} ${a.coverImage ? "" : "hidden md:block"}`}>
-                    {a.coverImage ? (
-                      <SafeMediaImage
-                        src={a.coverImage}
-                        alt={a.title}
-                        fallbackType="article"
-                        containerClassName="h-full w-full"
-                      />
-                    ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-bc-aud-soft">
-                        <span className="grid h-11 w-11 place-items-center rounded-bc-icon bg-bc-surface text-bc-aud shadow-bc-1">
-                          {isPuisi ? <Feather size={21} /> : <BookOpen size={21} />}
-                        </span>
-                      </div>
-                    )}
+                    {/* Sampul kosong, URL lama mati, atau gagal dimuat → sampul buatan bermerek. */}
+                    <SafeMediaImage
+                      src={a.coverImage}
+                      alt={a.title}
+                      fallbackType="article"
+                      containerClassName="h-full w-full"
+                      cover={{ title: a.title, author: penulis, type: a.articleType }}
+                    />
                   </div>
                   <div className="flex flex-1 flex-col p-4">
                     <div className="flex min-w-0 items-center gap-3">

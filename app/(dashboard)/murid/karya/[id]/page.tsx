@@ -150,6 +150,7 @@ export default function DetailKaryaPage() {
                 alt={`Foto utama untuk ${karya.title}`}
                 fallbackType="default"
                 containerClassName="h-full w-full"
+                cover={{ title: karya.title, author: nameOf(karya.user), type: karya.type, fallback: "karya" }}
               />
             </div>
 

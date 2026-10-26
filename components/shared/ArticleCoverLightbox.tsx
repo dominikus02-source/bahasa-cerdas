@@ -2,18 +2,31 @@
 
 import Image from "next/image";
 import { Maximize2, X } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 import { resolveMediaUrl } from "@/lib/media/resolve-media-url";
 
 interface ArticleCoverLightboxProps {
   src: string | null | undefined;
   title: string;
+  /** Untuk sampul buatan bila foto kosong/mati/gagal dimuat. */
+  articleType?: string | null;
+  tags?: readonly string[] | null;
+  author?: string | null;
 }
 
-export default function ArticleCoverLightbox({ src, title }: ArticleCoverLightboxProps) {
+export default function ArticleCoverLightbox({ src, title, articleType, tags, author }: ArticleCoverLightboxProps) {
   const resolvedSrc = useMemo(() => resolveMediaUrl(src), [src]);
   const [open, setOpen] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const cover = useMemo(
+    () => ({ title, author, type: articleType, tags }),
+    [title, author, articleType, tags],
+  );
+  const handleUnavailable = useCallback(() => {
+    setFailed(true);
+    setOpen(false);
+  }, []);
   const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -38,7 +51,7 @@ export default function ArticleCoverLightbox({ src, title }: ArticleCoverLightbo
     };
   }, [open]);
 
-  if (!resolvedSrc) {
+  if (!resolvedSrc || failed) {
     return (
       <div className="mb-2 aspect-video w-full overflow-hidden rounded-2xl shadow-lg">
         <SafeMediaImage
@@ -46,6 +59,7 @@ export default function ArticleCoverLightbox({ src, title }: ArticleCoverLightbo
           alt={title}
           fallbackType="article"
           containerClassName="h-full w-full"
+          cover={cover}
         />
       </div>
     );
@@ -64,6 +78,8 @@ export default function ArticleCoverLightbox({ src, title }: ArticleCoverLightbo
           alt={title}
           fallbackType="article"
           containerClassName="h-full w-full"
+          cover={cover}
+          onUnavailable={handleUnavailable}
         />
         <span className="pointer-events-none absolute bottom-3 right-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-black/60 px-3 py-2 text-xs font-semibold text-white opacity-100 backdrop-blur-sm transition sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-visible:opacity-100">
           <Maximize2 size={15} aria-hidden="true" />

@@ -100,6 +100,7 @@ export default function FeaturedWorks() {
                         alt={`Foto untuk ${k.title}`}
                         fallbackType="default"
                         containerClassName="h-full w-full"
+                        cover={{ title: k.title, author: k.user.displayName || k.user.fullName, type: k.type, fallback: "karya" }}
                       />
                     </div>
                   </Link>

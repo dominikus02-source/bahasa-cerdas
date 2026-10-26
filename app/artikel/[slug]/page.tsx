@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { resolveMediaUrl } from "@/lib/media/resolve-media-url";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
@@ -23,6 +24,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       select: { title: true, excerpt: true, coverImage: true, tags: true, coverImageCredit: true },
     });
     if (!artikel) return { title: "Artikel Tidak Ditemukan" };
+    // URL Supabase Cloud lama diarahkan ke Storage aktif (atau dibuang bila tak
+    // bisa); tanpa sampul pakai gambar OG merek supaya pratinjau tidak kosong.
+    const ogCover = resolveMediaUrl(artikel.coverImage) || "/opengraph-image";
     return {
       title: artikel.title,
       description: artikel.excerpt || `Baca artikel ${artikel.title} di BahasaCerdas.`,
@@ -31,13 +35,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
         title: artikel.title,
         description: artikel.excerpt || undefined,
         type: "article",
-        images: artikel.coverImage ? [{ url: artikel.coverImage, width: 1200, height: 630 }] : undefined,
+        images: [{ url: ogCover, width: 1200, height: 630 }],
       },
       twitter: {
         card: "summary_large_image",
         title: artikel.title,
         description: artikel.excerpt || undefined,
-        images: artikel.coverImage ? [artikel.coverImage] : undefined,
+        images: [ogCover],
       },
     };
   } catch {
@@ -91,6 +95,9 @@ export default async function ArtikelDetailPage({ params }: Props) {
           <ArticleCoverLightbox
             src={artikel.coverImage}
             title={artikel.title}
+            articleType={artikel.articleType}
+            tags={artikel.tags}
+            author={artikel.author?.fullName}
           />
           {artikel.coverImageCredit && (
             <p className="text-xs text-bc-text-3 mt-1 mb-8">Foto: {artikel.coverImageCredit}</p>

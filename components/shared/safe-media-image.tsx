@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { resolveMediaUrl } from "@/lib/media/resolve-media-url";
 import { FileText, Play, ImageIcon } from "lucide-react";
+import GeneratedCover, { type GeneratedCoverProps } from "@/components/shared/GeneratedCover";
 
 type FallbackType = "article" | "video" | "default";
 
@@ -12,6 +13,13 @@ interface SafeMediaImageProps {
   className?: string;
   fallbackType?: FallbackType;
   containerClassName?: string;
+  /**
+   * Bila diisi, sampul kosong / URL mati / gambar gagal dimuat diganti sampul
+   * buatan bermerek (judul, jenis karya, penulis) alih-alih placeholder abu-abu.
+   */
+  cover?: Omit<GeneratedCoverProps, "className">;
+  /** Dipanggil sekali saat gambar gagal dimuat (atau URL dianggap mati). */
+  onUnavailable?: () => void;
 }
 
 const FALLBACK_CONFIG: Record<FallbackType, {
@@ -64,6 +72,8 @@ export default function SafeMediaImage({
   className = "",
   fallbackType = "default",
   containerClassName = "",
+  cover,
+  onUnavailable,
 }: SafeMediaImageProps) {
   const resolvedSrc = useMemo(() => resolveMediaUrl(src), [src]);
   const [imgError, setImgError] = useState(false);
@@ -74,18 +84,29 @@ export default function SafeMediaImage({
 
   const handleError = useCallback(() => {
     setImgError(true);
-  }, []);
+    onUnavailable?.();
+  }, [onUnavailable]);
 
   const handleLoad = useCallback(() => {
     setImgLoaded(true);
   }, []);
 
+  // Gambar yang di-render server bisa sudah gagal/selesai dimuat sebelum React
+  // hydrate, sehingga event onError/onLoad terlewat. Cek status awalnya sekali.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img || !img.complete) return;
+    if (img.naturalWidth === 0) handleError();
+    else handleLoad();
+  }, [resolvedSrc, handleError, handleLoad]);
+
   const containerClasses = containerClassName || className;
+  const fallback = cover ? <GeneratedCover {...cover} /> : <FallbackInner type={fallbackType} />;
 
   if (!showImage) {
     return (
       <div className={`relative ${containerClasses}`}>
-        <FallbackInner type={fallbackType} />
+        {fallback}
       </div>
     );
   }
@@ -94,7 +115,7 @@ export default function SafeMediaImage({
     <div className={`relative ${containerClasses}`}>
       {!imgLoaded && (
         <div className="absolute inset-0 z-10">
-          <FallbackInner type={fallbackType} />
+          {fallback}
         </div>
       )}
       <img
