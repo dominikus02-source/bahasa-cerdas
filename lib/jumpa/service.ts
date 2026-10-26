@@ -3,11 +3,13 @@
  * permissions.ts (murni); file ini hanya mengumpulkan fakta lalu
  * menyerahkan keputusan ke sana.
  */
+import { advisoryXactLock } from "@/lib/db/advisory-lock";
 import { Prisma, type JumpaRoom } from "@prisma/client";
 import { db } from "@/lib/db";
-import { JUMPA_MURID_MAX_ACTIVE_ROOMS, roomEndsAt, type JumpaKind } from "./caps";
-import { resolveJumpaTier } from "./entitlement";
-import { checkDailyQuota, checkWebinarWeeklyQuota, limitsFor, startOfJakartaDay, startOfJakartaWeek, tierFromCreatedMetadata, JUMPA_TIERS, JUMPA_UPGRADE_URL, type JumpaTier } from "./tiers";
+import { checkUmumCreateGuards, JUMPA_MURID_MAX_ACTIVE_ROOMS, roomEndsAt, umumConcurrentCap, type JumpaKind } from "./caps";
+import { isRoleUmumEnabled } from "@/lib/auth/umum-flag";
+import { resolveJumpaTier, tierForRoomKind } from "./entitlement";
+import { checkDailyQuota, checkWebinarWeeklyQuota, cameraCapFor, limitsFor, startOfJakartaDay, startOfJakartaWeek, tierFromCreatedMetadata, umumTierDef, JUMPA_TIERS, JUMPA_UPGRADE_URL, type JumpaTier } from "./tiers";
 import { generateLivekitRoomName, generateRoomCode, hashInviteToken, INVITE_TOKEN_RE } from "./code";
 import {
   canCreateRoom,
@@ -23,7 +25,10 @@ import {
 
 export interface JumpaUserLike {
   id: string;
-  role: "GURU" | "MURID" | "ADMIN";
+  // UMUM hanya mendapat peran efektif JUMPA bila ENABLE_ROLE_UMUM menyala
+  // (loadActor → umumEnabled); tanpa flag effectiveRole() → null dan ruang
+  // UMUM tertutup bagi semua akun.
+  role: "GURU" | "MURID" | "ADMIN" | "UMUM";
   isFounder: boolean;
 }
 
@@ -32,7 +37,7 @@ export async function loadActor(user: JumpaUserLike): Promise<JumpaActor> {
     where: { userId: user.id },
     select: { id: true },
   });
-  return { role: user.role, isFounder: user.isFounder, isJunior: Boolean(junior) };
+  return { role: user.role, isFounder: user.isFounder, isJunior: Boolean(junior), umumEnabled: isRoleUmumEnabled() };
 }
 
 export type CreateRoomResult =
@@ -62,12 +67,12 @@ export interface CreateRoomRequest {
  * menurut createdAt, ruang terjadwal menurut hari rapatnya. Jadwal yang
  * dibatalkan tidak dihitung.
  */
-export function countRoomsOnDay(userId: string, dayStart: Date): Promise<number> {
+export function countRoomsOnDay(userId: string, dayStart: Date, kinds: Array<JumpaRoom["kind"]> = ["KELAS", "GURU"]): Promise<number> {
   const dayEnd = new Date(dayStart.getTime() + 86_400_000);
   return db.jumpaRoom.count({
     where: {
       createdById: userId,
-      kind: { in: ["KELAS", "GURU"] },
+      kind: { in: kinds },
       // NOT {endReason} di Prisma ikut membuang NULL — tulis eksplisit.
       AND: [
         { OR: [{ endReason: null }, { endReason: { not: "CANCELLED" } }] },
@@ -139,12 +144,14 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
     const missing = (decision.code === "NOT_GROUP_OWNER" || decision.code === "NOT_GROUP_MEMBER") && !group && Boolean(req.groupId);
     return { ok: false, status: missing ? 404 : 403, code: decision.code, message: decision.message };
   }
+  if (req.kind === "UMUM") return createUmumRoom(user, req);
 
   const now = Date.now();
   // Fase 3: paket dari pembuat ruang (langganan/trial BC yang sudah ada).
   // Ruang MURID memakai tier pembuat untuk batas 8/15.
+  // Murid Premium → ruang MURID 15 orang; webinar & ruang guru tetap tierForPlan.
   const resolved = await resolveJumpaTier(user.id);
-  const tier: JumpaTier = resolved.tier;
+  const tier: JumpaTier = isWebinar ? resolved.tier : tierForRoomKind(resolved.plan, req.kind);
   const caps = limitsFor(tier, req.kind, isWebinar);
 
   if (isWebinar) {
@@ -238,6 +245,105 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
         select: { id: true, code: true, title: true },
       });
       return { ok: true, room, reused: false, tier };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") continue;
+      throw error;
+    }
+  }
+  return { ok: false, status: 500, code: "CODE_COLLISION", message: "Gagal membuat ruang. Coba lagi." };
+}
+
+// ═══════════════════════ Ruang UMUM (akun umum) ═══════════════════════
+
+/** Ruang UMUM masih memakan slot: belum mulai (≤ 3 jam) atau belum lewat durasi. */
+export function isUmumRoomActive(r: { startedAt: Date | null; createdAt: Date; maxDurationMin: number }, now: number): boolean {
+  if (r.startedAt) return r.startedAt.getTime() + r.maxDurationMin * 60_000 > now;
+  return r.createdAt.getTime() > now - REUSE_WINDOW_MS;
+}
+
+/** Kunci advisory supaya cek "1 ruang aktif" + batas global tidak balapan. */
+const UMUM_CREATE_LOCK_KEY = 4_202_610_260;
+
+/**
+ * Buat ruang UMUM (sudah lolos canCreateRoom → akun UMUM + flag menyala).
+ * Paket selalu Gratis UMUM (umumTierDef), tanpa kelas/komunitas/jadwal/webinar.
+ * Pagar: pakai ulang ruang aktif sendiri → 1 ruang aktif per akun → kuota
+ * harian → batas global env JUMPA_UMUM_MAX_CONCURRENT_ROOMS (default 50).
+ */
+async function createUmumRoom(user: JumpaUserLike, req: CreateRoomRequest): Promise<CreateRoomResult> {
+  if (req.isWebinar) return { ok: false, status: 403, code: "WEBINAR_NOT_AVAILABLE", message: "Webinar belum tersedia untuk akun umum." };
+  // Kait UMUM_PREMIUM: selama JUMPA_UMUM_PREMIUM_ENABLED = false, paket UMUM
+  // selalu FREE (tidak membaca langganan → pembayaran tidak tersentuh).
+  const tier: JumpaTier = "FREE";
+  const caps = limitsFor(tier, "UMUM");
+  const custom = cleanTitle(req.title);
+  const title = (custom ?? "Ruang umum").slice(0, 120);
+
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      return await db.$transaction(async (tx) => {
+        await advisoryXactLock(tx, UMUM_CREATE_LOCK_KEY);
+        const now = Date.now();
+        const mine = await tx.jumpaRoom.findMany({
+          where: { createdById: user.id, kind: "UMUM", status: { in: ["SCHEDULED", "LIVE"] } },
+          orderBy: { createdAt: "desc" },
+          take: 10,
+          select: { id: true, code: true, title: true, startedAt: true, createdAt: true, maxDurationMin: true },
+        });
+        const myActive = mine.filter((r) => isUmumRoomActive(r, now));
+        // Klik ganda / buka ulang: ruang aktif sendiri yang masih punya waktu.
+        const reuse = myActive.find((r) => {
+          const endsAt = roomEndsAt(r.startedAt, r.maxDurationMin);
+          return !endsAt || endsAt.getTime() > now + 5 * 60_000;
+        });
+        if (reuse) return { ok: true as const, room: { id: reuse.id, code: reuse.code, title: reuse.title }, reused: true };
+
+        const createdToday = await tx.jumpaRoom.count({
+          where: {
+            createdById: user.id,
+            kind: "UMUM",
+            createdAt: { gte: startOfJakartaDay(new Date(now)), lt: new Date(startOfJakartaDay(new Date(now)).getTime() + 86_400_000) },
+          },
+        });
+        const globalRows = await tx.jumpaRoom.findMany({
+          where: { kind: "UMUM", status: { in: ["SCHEDULED", "LIVE"] }, createdAt: { gt: new Date(now - 24 * 3_600_000) } },
+          select: { startedAt: true, createdAt: true, maxDurationMin: true },
+          take: 20_000,
+        });
+        const guard = checkUmumCreateGuards({
+          myActiveRooms: myActive.length,
+          globalActiveRooms: globalRows.filter((r) => isUmumRoomActive(r, now)).length,
+          globalCap: umumConcurrentCap(process.env.JUMPA_UMUM_MAX_CONCURRENT_ROOMS),
+        });
+        // Urutan: 1 ruang aktif → kuota harian → batas global.
+        if (!guard.ok && guard.code === "TOO_MANY_ROOMS") return { ok: false as const, status: guard.status, code: guard.code, message: guard.message };
+        const quota = checkDailyQuota(tier, "UMUM", createdToday);
+        if (!quota.ok) return { ok: false as const, status: 429, code: quota.code, message: quota.message, extra: { limit: quota.limit } };
+        if (!guard.ok) return { ok: false as const, status: guard.status, code: guard.code, message: guard.message };
+
+        const room = await tx.jumpaRoom.create({
+          data: {
+            code: generateRoomCode(),
+            livekitRoomName: generateLivekitRoomName(),
+            title,
+            kind: "UMUM",
+            mode: "MEETING",
+            createdById: user.id,
+            creatorRole: "UMUM",
+            groupId: null,
+            communityId: null,
+            maxParticipants: caps.maxParticipants,
+            maxDurationMin: caps.maxDurationMin,
+            scheduledAt: null,
+            notifyClass: false,
+            events: {
+              create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: "UMUM", groupId: null, communityId: null, scheduledAt: null, notifyClass: false, tier, isWebinar: false } },
+            },
+          },
+          select: { id: true, code: true, title: true },
+        });
+        return { ok: true as const, room, reused: false, tier };
+      });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") continue;
       throw error;
@@ -490,6 +596,16 @@ export interface JumpaHomeData {
     guru: { maxParticipants: number; maxDurationMin: number };
     upgradeUrl: string;
   } | null;
+  /** Akun ber-Role UMUM (apa pun status flag) — UI menyembunyikan ketentuan kelas. */
+  umumAccount?: boolean;
+  /** Ruang UMUM: batas paket Gratis UMUM + kuota hari ini (null selain akun UMUM). */
+  umum?: {
+    roomsToday: number;
+    roomsPerDay: number | null;
+    maxParticipants: number;
+    maxDurationMin: number;
+    maxCameraHeight: number;
+  } | null;
 }
 
 /** Ruang aktif yang relevan untuk user + pilihan untuk membuat ruang. */
@@ -502,7 +618,9 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
     effective === "GURU"
       ? db.group.findMany({ where: { teacherId: user.id, isActive: true }, select: { id: true, name: true }, orderBy: { name: "asc" }, take: 100 })
       : Promise.resolve([]),
-    db.groupMember.findMany({ where: { userId: user.id, group: { isActive: true } }, select: { group: { select: { id: true, name: true } } }, take: 100 }),
+    effective === "UMUM"
+      ? Promise.resolve([])
+      : db.groupMember.findMany({ where: { userId: user.id, group: { isActive: true } }, select: { group: { select: { id: true, name: true } } }, take: 100 }),
     effective === "GURU"
       ? db.communityMember.findMany({ where: { userId: user.id, community: { status: "APPROVED" } }, select: { community: { select: { id: true, name: true } } }, take: 100 })
       : Promise.resolve([]),
@@ -511,7 +629,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   const communityIds = communities.map((c) => c.community.id);
 
   const visibleKinds: Array<JumpaRoom["kind"]> =
-    effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
+    effective === "UMUM" ? ["UMUM"] : effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
 
   const rooms = effective
     ? await db.jumpaRoom.findMany({
@@ -525,6 +643,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
             ...(groupIds.length ? [{ groupId: { in: groupIds }, kind: { in: ["KELAS", "MURID"] as Array<JumpaRoom["kind"]> } }] : []),
             ...(effective === "GURU" && communityIds.length ? [{ communityId: { in: communityIds } }] : []),
             { invites: { some: { kind: "USER", userId: user.id, revokedAt: null } } },
+            // UMUM: ruang orang lain yang pernah dimasuki lewat tautan/kode.
+            ...(effective === "UMUM" ? [{ participants: { some: { userId: user.id, removedAt: null } } }] : []),
             ...(groupIds.length ? [{ invites: { some: { kind: "GROUP", groupId: { in: groupIds }, revokedAt: null } } }] : []),
           ],
           // Guru tidak perlu melihat ruang MURID kelas lain; hanya kelas miliknya.
@@ -573,6 +693,17 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
     };
   }
 
+  let umum: JumpaHomeData["umum"] = null;
+  if (effective === "UMUM") {
+    const def = umumTierDef("FREE");
+    umum = {
+      roomsToday: await countRoomsOnDay(user.id, startOfJakartaDay(new Date()), ["UMUM"]),
+      roomsPerDay: def.roomsPerDay,
+      ...limitsFor("FREE", "UMUM"),
+      maxCameraHeight: cameraCapFor("FREE", "UMUM"),
+    };
+  }
+
   const groupName = new Map([...ownedGroups, ...memberGroups.map((m) => m.group)].map((g) => [g.id, g.name]));
   const commName = new Map(communities.map((c) => [c.community.id, c.community.name]));
 
@@ -593,10 +724,12 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };
       })(),
     })),
-    groups: effective === "GURU" ? ownedGroups : actor.isJunior ? [] : memberGroups.map((m) => m.group),
+    groups: effective === "GURU" ? ownedGroups : actor.isJunior || effective === "UMUM" ? [] : memberGroups.map((m) => m.group),
     communities: communities.map((c) => c.community),
     canSeePanel: user.role === "ADMIN" || user.isFounder || effective === "GURU",
     plan,
+    umum,
+    umumAccount: user.role === "UMUM",
   };
 }
 

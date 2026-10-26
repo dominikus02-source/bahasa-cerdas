@@ -57,6 +57,7 @@ const PLAN_BADGE: Record<string, { label: string; class: string }> = {
   GURU_PRO: { label: "Pro", class: "bg-emerald-100 text-emerald-800 border-emerald-200 dark:border-emerald-800" },
   GURU_PRO_TRIAL: { label: "Trial", class: "bg-sky-100 text-sky-800 border-sky-200 dark:border-sky-800" },
   GURU_FREE: { label: "Free", class: "bg-slate-100 dark:bg-slate-800/70 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700" },
+  UMUM_FREE: { label: "Umum", class: "bg-bc-tint text-bc-text-3 border-bc-line" },
   SCHOOL: { label: "Sekolah", class: "bg-blue-100 text-blue-800 border-blue-200 dark:border-blue-800" },
 };
 

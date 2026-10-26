@@ -14,12 +14,13 @@
  *   protocol-relative, never back into /login or /register.
  */
 
-/** Role-based dashboard destination (canonical, do not invent new paths). */
-export function dashboardForRole(role: string): string {
-  if (role === "MURID") return "/murid/beranda";
-  if (role === "ADMIN") return "/admin";
-  return "/guru/beranda";
-}
+import { dashboardForRole } from "@/lib/auth/roles";
+
+/** Role-based dashboard destination (canonical, do not invent new paths).
+ * Implementasi tinggal di lib/auth/roles.ts (allowlist eksplisit: GURU,
+ * MURID, ADMIN, UMUM; peran tak dikenal → halaman akses ditolak). Diekspor
+ * ulang di sini agar import lama tetap berlaku (nama tidak diubah). */
+export { dashboardForRole };
 
 /** User-aware dashboard destination.
  *

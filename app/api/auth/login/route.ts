@@ -147,6 +147,7 @@ export async function POST(req: NextRequest) {
 
     // ── Ensure user exists in our DB ──
     let dbUser = null;
+    let needsRole = false;
     try {
       dbUser = await db.user.findUnique({
         where: { supabaseId: data.user.id },
@@ -183,16 +184,14 @@ export async function POST(req: NextRequest) {
       }
 
       if (!dbUser) {
-        dbUser = await db.user.create({
-          data: {
-            supabaseId: data.user.id,
-            email: data.user.email || normalizedEmail,
-            fullName:
-              data.user.user_metadata?.full_name ||
-              normalizedEmail.split("@")[0],
-            role: data.user.user_metadata?.role === "GURU" ? "GURU" : "MURID",
-          },
-        });
+        // SECURITY: never provision an application User from user_metadata.
+        // user_metadata is writable by the account holder (auth.updateUser),
+        // so it is not a trusted source for the role. An Auth identity without
+        // an application row completes provisioning through the server-side
+        // role selection (/auth/pilih-peran → POST /api/auth/complete-role),
+        // exactly like a new Google sign-in. The session cookies set above stay
+        // valid so that page can finish provisioning.
+        needsRole = true;
       }
     } catch {
       // DB error — still return session, let /api/user/me handle DB sync
@@ -217,6 +216,17 @@ export async function POST(req: NextRequest) {
     // adapter in createLoginClient(). The browser does NOT need the raw
     // access/refresh tokens in JSON; returning them would unnecessarily expose
     // long-lived session credentials to page JavaScript.
+    if (needsRole) {
+      const roleResponse = NextResponse.json({
+        user: null,
+        needsRole: true,
+        code: "ROLE_REQUIRED",
+        redirect: "/auth/pilih-peran",
+      });
+      roleResponse.headers.set("Cache-Control", "private, no-store");
+      return roleResponse;
+    }
+
     const response = NextResponse.json({
       user: dbUser
         ? {

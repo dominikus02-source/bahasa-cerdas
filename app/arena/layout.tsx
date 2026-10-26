@@ -23,6 +23,9 @@ import { ShellNavList } from "@/components/shell/ShellNavList"
 import { RoleSections } from "@/components/shell/RoleSections"
 import { ShellSidebarFooter } from "@/components/shell/ShellSidebarFooter"
 import { ArenaWorkspaceContainer } from "@/components/arena/workspace-container"
+import { dashboardForUser } from "@/lib/auth/redirect"
+import { isUmum, isUmumArenaPath, UMUM_HOME } from "@/lib/auth/roles"
+import { UmumMobileNav, UmumNavList, UmumRouteGate } from "@/components/arena/UmumArenaChrome"
 
 // ARENA FINAL CONSOLIDATION — Arena adalah produk Student Shell, BUKAN
 // aplikasi kedua: tidak ada navbar/subnav Arena sendiri di web. Navigasi
@@ -53,8 +56,17 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   const user = await getUser()
   if (!user) redirect(RUTE_TANPA_GERBANG)
   // Guru boleh mengintip Arena murid (mode pratinjau) — peran tetap Guru.
-  // Selain Murid/Founder/Guru, arahkan ke dasbor guru.
-  if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect("/guru/beranda")
+  // UMUM hanya boleh rute di allowlist (lib/auth/roles.ts → isUmumArenaPath);
+  // di luar itu → beranda UMUM (selalu diizinkan → tanpa loop). Bila header
+  // x-pathname absen, UmumRouteGate (klien) yang menegakkan allowlist.
+  // Peran lain (ADMIN non-founder, tak dikenal) → dasbor kanoniknya sendiri
+  // (dulu /guru/beranda: ADMIN memantul guru ↔ murid, UMUM dianggap guru).
+  const umum = isUmum(user.role)
+  if (umum) {
+    if (pathname && !isUmumArenaPath(pathname)) redirect(UMUM_HOME)
+  } else if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) {
+    redirect(dashboardForUser(user.role, user.isFounder))
+  }
 
   // 4.2.2 — Akses Guru/Founder ke dasbor guru adalah ROLE-BASED DESTINATION
   // lewat RoleSections di sidebar (Mode Guru / Akses Founder). Tidak ada CTA
@@ -93,11 +105,11 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
         apk ? undefined : (
           <>
  <div className="p-5 bg-bc-murid">
-              <Link href="/murid/beranda" className="flex items-center gap-3 min-w-0">
+              <Link href={umum ? UMUM_HOME : "/murid/beranda"} className="flex items-center gap-3 min-w-0">
                 <img src="/brand/bc2026-icon.png" alt="" className="h-12 w-12 shrink-0 object-contain drop-shadow-md" />
                 <div className="min-w-0">
                   <span className="shell-label font-extrabold text-bc-on-brand text-sm block truncate">BahasaCerdas</span>
-                  <p className="shell-label text-[11px] font-semibold text-bc-on-brand/80">Dasbor Murid</p>
+                  <p className="shell-label text-[11px] font-semibold text-bc-on-brand/80">{umum ? "Pengguna Umum" : "Dasbor Murid"}</p>
                 </div>
               </Link>
             </div>
@@ -114,8 +126,8 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
               </div>
             </div>
 
-            <ShellNavList />
-            <RoleSections role={user.role} isFounder={user.isFounder} />
+            {umum ? <UmumNavList /> : <ShellNavList />}
+            {!umum && <RoleSections role={user.role} isFounder={user.isFounder} />}
             <ShellSidebarFooter />
           </>
         )
@@ -132,7 +144,7 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
               RoleSections; logout via sidebar footer dan Pemain tab. APK
               menurunkan tombol kembali (escape hatch keluar scope). */}
  <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
-            {!apk && <ArenaBackButton />}
+            {!apk && <ArenaBackButton homeHref={umum ? UMUM_HOME : undefined} />}
             <div className="flex items-center gap-1 md:gap-2">
               <UserAvatar
                 size={36}
@@ -157,12 +169,12 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
               chrome penuh + BottomNav-nya sendiri (kompatibilitas TWA tidak
               berubah). Halaman fullscreen game/kerjakan tetap menutup nav via
               CSS :has(.game-fullscreen)/:has(.owns-bottom-bar). */}
-          {apk ? <BottomNav /> : <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />}
+          {umum ? <UmumMobileNav /> : <>{apk ? <BottomNav /> : <MuridMobileNav fullName={user.fullName} role={user.role} isFounder={user.isFounder} />}</>}
         </>
       }
     >
       <ArenaClientWrapper>
-        <ArenaWorkspaceContainer apk={apk}>{children}</ArenaWorkspaceContainer>
+        <ArenaWorkspaceContainer apk={apk}>{umum ? <UmumRouteGate>{children}</UmumRouteGate> : children}</ArenaWorkspaceContainer>
       </ArenaClientWrapper>
     </ShellLayout>
   )

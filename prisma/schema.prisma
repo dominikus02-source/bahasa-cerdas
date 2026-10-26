@@ -386,6 +386,9 @@ model Profile {
   bank       String?
   bankHolder String?
   bankNumber String?
+  // Sub-kategori pengguna UMUM (nullable, tanpa default/backfill — data lama
+  // tetap NULL). Migrasi: 20261025000100_profile_kategori_umum.
+  kategoriUmum KategoriUmum?
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   schoolRef  School?  @relation(fields: [schoolId], references: [id], onDelete: SetNull)
 
@@ -1820,6 +1823,24 @@ enum Role {
   GURU
   MURID
   ADMIN
+  // Pengguna umum (mahasiswa/umum/investor/tamu). Akses dibatasi allowlist
+  // eksplisit di lib/auth/roles.ts — BUKAN "selain murid = guru".
+  // Migrasi: 20261025000000_role_umum (ADD VALUE, aditif).
+  UMUM
+}
+
+/// Sub-kategori opsional untuk Role UMUM (Profile.kategoriUmum). NULL = belum
+/// diisi. Tidak pernah dipakai untuk otorisasi — hanya identitas/analitik.
+// Sub-kategori opsional untuk Role UMUM (identitas/analitik, BUKAN otorisasi).
+// Yang bisa DIPILIH pengguna hanya MAHASISWA, DOSEN, UMUM
+// (lib/auth/kategori-umum.ts). INVESTOR & TAMU = nilai internal/teknis:
+// tidak pernah ditampilkan atau bisa dipilih.
+enum KategoriUmum {
+  MAHASISWA
+  UMUM
+  INVESTOR
+  TAMU
+  DOSEN
 }
 
 enum PremiumPlan {
@@ -4248,6 +4269,8 @@ enum JumpaRoomKind {
   KELAS
   GURU
   MURID
+  /// Ruang akun UMUM (mahasiswa/dosen/masyarakat). Terisolasi dari sekolah.
+  UMUM
 }
 
 /// Mode pakai dari sistem ruang yang SAMA (bukan sistem berbeda).
@@ -4447,4 +4470,31 @@ model JumpaNotice {
   room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@index([roomId, createdAt])
+}
+
+/// Klaim uji coba sekali per orang (Premium Umum). SENGAJA tanpa relasi ke
+/// User: baris ini bertahan saat akun dihapus/dianonimkan
+/// (lib/account/deletion.ts), sehingga daftar ulang dengan email/akun Google
+/// yang sama tidak bisa mengklaim lagi. Hanya HASH (HMAC-SHA256) — tidak ada
+/// email/IP mentah. ipPrefixHash = sinyal lunak (log/tunda), BUKAN blokir.
+model TrialClaim {
+  id            String   @id @default(cuid())
+  /// "UMUM_PREMIUM_TRIAL"
+  kind          String
+  /// HMAC email ternormalisasi (huruf kecil; Gmail tanpa titik & +tag).
+  emailHash     String
+  /// HMAC id akun Google (identity sub) bila akun ditautkan Google.
+  googleSubHash String?
+  /// HMAC prefiks IP (/24 IPv4, /48 IPv6) — sinyal lunak saja.
+  ipPrefixHash  String?
+  /// id User saat klaim (tanpa FK — tetap ada setelah akun dihapus).
+  userId        String
+  /// Ditandai sinyal lunak (mis. banyak klaim dari prefiks IP yang sama).
+  flagged       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([kind, emailHash])
+  @@unique([kind, googleSubHash])
+  @@index([kind, ipPrefixHash, createdAt])
+  @@index([userId])
 }

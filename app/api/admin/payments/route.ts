@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const sortDir = (searchParams.get("sortDir") || "desc") === "asc" ? "asc" : "desc";
 
-    const where: any = { type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM"] } };
+    const where: any = { type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM", "UMUM_PREMIUM"] } };
     if (status) where.status = status;
     if (planId) where.reference = planId;
     if (from || to) {
@@ -54,6 +54,7 @@ export async function GET(req: NextRequest) {
           amount: true,
           status: true,
           reference: true,
+          type: true,
           metadata: true,
           createdAt: true,
           updatedAt: true,
@@ -71,7 +72,7 @@ export async function GET(req: NextRequest) {
       }),
     ]);
 
-    const statWhere = (s: string) => ({ type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM"] }, status: s });
+    const statWhere = (s: string) => ({ type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM", "UMUM_PREMIUM"] }, status: s });
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
 
@@ -102,6 +103,8 @@ export async function GET(req: NextRequest) {
         trialEndsAt: t.user.trialEndsAt,
         isFounder: t.user.isFounder,
       },
+      type: t.type,
+      needsManualReview: t.type === "UMUM_PREMIUM" && (t.metadata as any)?.needsManualReview === true,
       premiumActivated: t.status === "SUCCESS" && !!t.user.premiumUntil && t.user.premiumUntil > new Date(),
     }));
 

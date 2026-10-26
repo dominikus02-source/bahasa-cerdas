@@ -111,7 +111,7 @@ export function ChatPanel() {
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const actor: ModerationActor = { userId: self.userId, roomRole: self.roomRole, effective: self.bcRole };
-  const isGuruHost = self.bcRole === "GURU" && self.roomRole !== "MEMBER";
+  const isGuruHost = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER";
   const canWrite = info.chatEnabled || isGuruHost;
 
   useEffect(() => {
@@ -135,7 +135,9 @@ export function ChatPanel() {
         <ShieldCheck size={14} className="mr-1 inline align-[-2px] text-[var(--jp-accent)]" />
         {info.kind === "MURID"
           ? `Obrolan ruang ini disimpan ${JUMPA_CHAT_RETENTION_DAYS} hari dan bisa dilihat guru kelas. Jaga sopan santun, ya.`
-          : `Obrolan disimpan ${JUMPA_CHAT_RETENTION_DAYS} hari untuk keamanan dan bisa ditinjau guru/admin.`}
+          : info.kind === "UMUM"
+            ? `Obrolan disimpan ${JUMPA_CHAT_RETENTION_DAYS} hari untuk keamanan dan bisa ditinjau admin.`
+            : `Obrolan disimpan ${JUMPA_CHAT_RETENTION_DAYS} hari untuk keamanan dan bisa ditinjau guru/admin.`}
       </p>
       <div ref={listRef} className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 pb-3" aria-live="polite">
         {!chatLoaded && <Loader2 className="mx-auto mt-6 animate-spin text-[var(--jp-accent)]" aria-label="Memuat obrolan" />}
@@ -241,7 +243,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
     }).ok;
   };
   const isHostish = self.roomRole !== "MEMBER";
-  const canInviteAny = self.bcRole === "GURU" && isHostish && info.kind !== "MURID";
+  const canInviteAny = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && isHostish && info.kind !== "MURID";
 
   const queue = useMemo(() => {
     const byId = new Map(participants.map((p) => [p.identity, p]));
@@ -336,7 +338,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                   <span className="mt-0.5 flex gap-1">
                     {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Pemandu</span>}
                     {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Wakil pemandu</span>}
-                    {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : "Murid"}</span>}
+                    {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : meta.bcRole === "UMUM" ? "Umum" : "Murid"}</span>}
                   </span>
                 </span>
                 {p.isMicrophoneEnabled ? <Mic size={16} className="text-[var(--jp-text-3)]" aria-label="Mikrofon nyala" /> : <MicOff size={16} className="text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
@@ -400,7 +402,10 @@ interface Candidates {
 export function InvitePanel() {
   const { info, self, api, toast } = useJumpa();
   const base = `/api/jumpa/rooms/${encodeURIComponent(info.code)}/invites`;
-  const canInvite = self.bcRole === "GURU" && self.roomRole !== "MEMBER" && info.kind !== "MURID";
+  const isUmumRoom = info.kind === "UMUM";
+  const canInvite = (isUmumRoom ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER" && info.kind !== "MURID";
+  // Ruang UMUM: tanpa pencarian pengguna — dibagikan lewat tautan/kode saja.
+  const canSearch = canInvite && !isUmumRoom;
   const [cands, setCands] = useState<Candidates | null>(null);
   const [copied, setCopied] = useState<"room" | "link" | null>(null);
   const [q, setQ] = useState("");
@@ -416,7 +421,7 @@ export function InvitePanel() {
   }, [api, base, canInvite]);
 
   useEffect(() => {
-    if (!canInvite || q.trim().length < 2) {
+    if (!canSearch || q.trim().length < 2) {
       setResults([]);
       return;
     }
@@ -426,7 +431,7 @@ export function InvitePanel() {
       });
     }, 300);
     return () => clearTimeout(t);
-  }, [api, base, canInvite, q]);
+  }, [api, base, canSearch, q]);
 
   const copy = async (text: string, which: "room" | "link") => {
     try {
@@ -445,7 +450,7 @@ export function InvitePanel() {
     if (!r.ok) return toast(r.message, "warn");
     if (typeof r.data.path === "string") {
       await copy(`${window.location.origin}${r.data.path}`, "link");
-      toast("Tautan undangan guru (24 jam) tersalin.", "ok");
+      toast(isUmumRoom ? "Tautan undangan (24 jam) tersalin." : "Tautan undangan guru (24 jam) tersalin.", "ok");
       return;
     }
     setDone((s) => new Set(s).add(key));
@@ -476,11 +481,13 @@ export function InvitePanel() {
             ? "Hanya teman sekelas yang bisa masuk."
             : info.kind === "KELAS"
               ? "Hanya murid kelas ini & yang diundang yang bisa masuk."
-              : "Hanya guru anggota komunitas & yang diundang yang bisa masuk."}
+              : isUmumRoom
+                ? "Akun umum yang punya tautan atau kode ini bisa masuk."
+                : "Hanya guru anggota komunitas & yang diundang yang bisa masuk."}
         </p>
         {canInvite && cands?.canLink && (
           <button type="button" className="jumpa-menu-item !px-3" disabled={busy !== null} onClick={() => void invite("link", { kind: "LINK" })}>
-            {copied === "link" ? <Check size={18} className="text-[var(--jp-accent)]" /> : <UserPlus size={18} />} Buat tautan undangan guru (24 jam)
+            {copied === "link" ? <Check size={18} className="text-[var(--jp-accent)]" /> : <UserPlus size={18} />} {isUmumRoom ? "Buat tautan undangan (24 jam)" : "Buat tautan undangan guru (24 jam)"}
           </button>
         )}
       </section>
@@ -511,7 +518,7 @@ export function InvitePanel() {
         </section>
       )}
 
-      {canInvite && (
+      {canSearch && (
         <section>
           <p className="jumpa-section-label">{info.kind === "KELAS" ? "Undang guru atau murid kelasmu" : "Undang guru"}</p>
           <label className="relative block">

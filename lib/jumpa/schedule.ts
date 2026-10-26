@@ -96,6 +96,7 @@ export function canSchedule(actor: JumpaActor, kind: JumpaKind): ScheduleCheck<R
   const role = effectiveRole(actor);
   if (!role) return no("ROLE_NOT_ALLOWED", "Akun ini belum bisa memakai JUMPA.");
   if (kind === "MURID") return no("KIND_NOT_SCHEDULABLE", "Ruang belajar bareng tidak bisa dijadwalkan.");
+  if (kind === "UMUM") return no("KIND_NOT_SCHEDULABLE", "Ruang umum belum bisa dijadwalkan.");
   if (actor.isJunior) return no("JUNIOR_NOT_ALLOWED", "Akun Junior belum bisa menjadwalkan.");
   if (role !== "GURU") return no("ROLE_NOT_ALLOWED", "Hanya guru yang bisa menjadwalkan JUMPA.");
   return { ok: true };

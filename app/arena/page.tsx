@@ -1,4 +1,5 @@
 import { getUser } from "@/lib/supabase/server"
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles"
 import { redirect } from "next/navigation"
 import { getOrCreateDailyQuests, trackDailyStreak } from "@/lib/coins"
 import { jenjangMurid } from "@/lib/arena-junior/kurikulum"
@@ -18,6 +19,9 @@ export const dynamic = "force-dynamic"
 export default async function BerandaPage() {
   const user = await getUser()
   if (!user) redirect("/arena/login")
+  // UMUM: halaman ini di luar allowlist Arena UMUM (lib/auth/roles.ts).
+  // Guard di level halaman karena layout tidak dirender ulang saat navigasi klien.
+  if (isUmum(user.role)) redirect(UMUM_HOME)
 
   // Murid TK–SD punya dasbor sendiri (Arena Junior).
   if (user.role === "MURID") {
@@ -25,7 +29,8 @@ export default async function BerandaPage() {
     if (jenjang) redirect("/junior")
   }
 
-  const isGuruPreview = user.role !== "MURID" && !user.isFounder
+  // Allowlist eksplisit: pratinjau hanya untuk GURU (bukan "selain murid").
+  const isGuruPreview = user.role === "GURU" && !user.isFounder
   if (!isGuruPreview) await trackDailyStreak(user.id)
 
   // Real daily quest rows are passed as a small, serializable view. Reward

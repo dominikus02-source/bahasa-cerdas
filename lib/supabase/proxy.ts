@@ -48,7 +48,10 @@ const publicPaths = [
 // /t/ handles auth in Server Component so ?next= parameter is preserved through login redirect
 // /jumpa/ (ruang video) menggerbangi sendiri di Server Component dengan ?next= agar
 // tautan undangan kembali ke ruang yang sama setelah login.
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/"];
+// /umum (dasbor UMUM) menggerbangi sendiri per halaman lewat requireUmumPage()
+// dengan ?next= agar pengunjung kembali ke dasbornya setelah login;
+// /umum/aku-sastrawan sengaja tetap publik.
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/", "/umum"];
 
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];

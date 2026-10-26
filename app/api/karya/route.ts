@@ -32,6 +32,17 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // UMUM (termasuk kategori Dosen/Mahasiswa) belum bisa menjual di Toko Karya.
+    // Keputusan pendiri: jual karya UMUM = Premium Umum, TAPI alur jual
+    // (pencairan, moderasi, komisi) belum dibangun → tetap 403 untuk SEMUA
+    // akun UMUM, termasuk yang premium. Kait UI: /umum/premium#jual-karya.
+    // Celah lama untuk peran lain sengaja tidak diubah di sini (di luar lingkup).
+    if (user.role === "UMUM" && !user.isFounder) {
+      return NextResponse.json(
+        { error: "Jual karya untuk akun Umum segera dibuka bagi Premium Umum.", code: "UMUM_SELL_NOT_AVAILABLE", upgradeUrl: "/umum/premium#jual-karya" },
+        { status: 403 }
+      );
+    }
 
     const body = await req.json();
     const { title, description, type, price, fileUrl, grade, subject } = body;

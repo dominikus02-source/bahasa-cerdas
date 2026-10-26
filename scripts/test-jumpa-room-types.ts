@@ -121,7 +121,7 @@ check("Masa berlaku 24 jam", JUMPA_LINK_INVITE_TTL_HOURS === 24)
 
 console.log("\n7. Wiring (statis)")
 const roomsRoute = read("app/api/jumpa/rooms/route.ts")
-check("POST /rooms menerima kind KELAS|GURU|MURID", roomsRoute.includes('z.enum(["KELAS", "GURU", "MURID"])') && roomsRoute.includes('.default("KELAS")'))
+check("POST /rooms menerima kind KELAS|GURU|MURID (+UMUM di balik flag)", roomsRoute.includes('z.enum(["KELAS", "GURU", "MURID", "UMUM"])') && roomsRoute.includes('.default("KELAS")'))
 const service = read("lib/jumpa/service.ts")
 check("createRoom memakai canCreateRoom (tanpa bypass)", service.includes("canCreateRoom({"))
 check("createRoom membatasi 1 ruang MURID aktif", service.includes("JUMPA_MURID_MAX_ACTIVE_ROOMS"))

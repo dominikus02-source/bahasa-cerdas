@@ -1,8 +1,9 @@
 /**
  * POST /api/jumpa/rooms — buat ruang JUMPA.
- * Body: { kind?: "KELAS"|"GURU"|"MURID", groupId?, communityId?, title?, notifyClass?, isWebinar? }.
+ * Body: { kind?: "KELAS"|"GURU"|"MURID"|"UMUM", groupId?, communityId?, title?, notifyClass?, isWebinar? }.
  * Tanpa `kind` = KELAS (kompatibel Fase 1: { groupId }).
  * isWebinar: hanya Premium, 1x per minggu, 200 peserta.
+ * UMUM: akun umum (ENABLE_ROLE_UMUM), tanpa kelas; lihat docs/JUMPA_UMUM.md.
  * Izin di lib/jumpa/permissions.ts → canCreateRoom.
  */
 import { z } from "zod";
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 const bodySchema = z
   .object({
-    kind: z.enum(["KELAS", "GURU", "MURID"]).default("KELAS"),
+    kind: z.enum(["KELAS", "GURU", "MURID", "UMUM"]).default("KELAS"),
     groupId: z.string().min(1).max(64).optional(),
     communityId: z.string().min(1).max(64).optional(),
     title: z.string().max(200).optional(),
@@ -24,7 +25,7 @@ const bodySchema = z
     /** Webinar: hanya guru Premium, 1x per minggu, 200 peserta. */
     isWebinar: z.boolean().optional(),
   })
-  .refine((b) => b.kind === "GURU" || Boolean(b.groupId), { message: "groupId wajib" });
+  .refine((b) => b.kind === "GURU" || b.kind === "UMUM" || Boolean(b.groupId), { message: "groupId wajib" });
 
 export async function POST(request: Request) {
   const disabled = jumpaDisabledResponse();

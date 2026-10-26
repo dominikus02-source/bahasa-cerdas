@@ -8,6 +8,7 @@
 
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles";
 import { gameById } from "@/lib/arena/game-registry";
 import {
   canUseRpgFounderPreview,
@@ -18,6 +19,9 @@ import RpgClient from "../RpgClient";
 export default async function RpgFounderPreviewPage() {
   const user = await getUser();
   if (!user) redirect("/arena/login");
+  // UMUM: halaman ini di luar allowlist Arena UMUM (lib/auth/roles.ts).
+  // Guard di level halaman karena layout tidak dirender ulang saat navigasi klien.
+  if (isUmum(user.role)) redirect(UMUM_HOME);
 
   const access = canUseRpgFounderPreview(user, currentRpgPreviewEnvironment());
 

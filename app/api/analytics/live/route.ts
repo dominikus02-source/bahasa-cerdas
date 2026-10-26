@@ -35,6 +35,7 @@ export async function GET() {
       onlineGuru: online.guru,
       onlineMurid: online.murid,
       onlineAdmin: online.admin,
+      onlineUmum: online.umum,
       onlineLocations: online.locations,
       totalKarya,
       generatedAt: new Date().toISOString(),

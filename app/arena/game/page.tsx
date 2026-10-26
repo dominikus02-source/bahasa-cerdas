@@ -1,5 +1,6 @@
 import { getUser } from "@/lib/supabase/server"
 import { redirect } from "next/navigation"
+import { isUmum } from "@/lib/auth/roles"
 import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
 import GameHubClient from "@/components/arena/game-hub/GameHubClient"
@@ -42,6 +43,7 @@ export default async function ArenaGimPage() {
           level={level}
           rank={rank}
           multiplayerEnabled={MULTIPLAYER_ENABLED}
+          umumMode={isUmum(user.role)}
         />
       </div>
     </div>

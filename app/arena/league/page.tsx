@@ -1,5 +1,6 @@
 import { identitySelect, resolveIdentity } from "@/lib/account/identity";
 import { getUser } from "@/lib/supabase/server"
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles"
 import { db } from "@/lib/db"
 import { redirect } from "next/navigation"
 import cache from "@/lib/redis"
@@ -19,6 +20,9 @@ export default async function LeaguePage({
 }) {
   const user = await getUser()
   if (!user) redirect("/arena/login")
+  // UMUM: halaman ini di luar allowlist Arena UMUM (lib/auth/roles.ts).
+  // Guard di level halaman karena layout tidak dirender ulang saat navigasi klien.
+  if (isUmum(user.role)) redirect(UMUM_HOME)
 
   const { tab } = await searchParams
   const initialTab: "harian" | "mingguan" | "hall-of-fame" =

@@ -90,7 +90,7 @@ export interface PublicPaymentView {
   orderId: string;
   status: PublicPaymentStatus;
   /** "PREMIUM_UPGRADE" | "MURID_PREMIUM" | "KARYA_PURCHASE" | lainnya */
-  kind: "GURU_PRO" | "MURID_PREMIUM" | "KARYA" | "LAIN";
+  kind: "GURU_PRO" | "MURID_PREMIUM" | "UMUM_PREMIUM" | "KARYA" | "LAIN";
   planLabel: string | null;
   /** Hanya diisi bila penonton adalah pemilik pesanan. */
   owner: null | {
@@ -99,6 +99,8 @@ export interface PublicPaymentView {
     kuponKode: string | null;
     premiumUntil: string | null;
     isPremium: boolean;
+    /** Premium Umum: dana diterima tapi menunggu verifikasi manual founder. */
+    manualReview?: boolean;
   };
 }
 
@@ -107,6 +109,8 @@ const PLAN_LABELS: Record<string, string> = {
   GURU_PRO_YEARLY: "Guru Pro Tahunan",
   MURID_PREMIUM_MONTHLY: "Premium Bulanan",
   MURID_PREMIUM_YEARLY: "Premium Tahunan",
+  UMUM_PREMIUM_MONTHLY: "Premium Umum Bulanan",
+  UMUM_PREMIUM_YEARLY: "Premium Umum Tahunan",
 };
 
 const KNOWN: PublicPaymentStatus[] = ["SUCCESS", "PENDING", "FAILED", "EXPIRED", "CANCELLED", "REFUNDED", "REPLACED"];
@@ -151,7 +155,7 @@ export async function getPublicPaymentStatus(
   const meta = (trx.metadata || {}) as Record<string, unknown>;
   const planId = typeof meta.planId === "string" ? meta.planId : null;
   const kind: PublicPaymentView["kind"] =
-    trx.type === "PREMIUM_UPGRADE" ? "GURU_PRO" : trx.type === "MURID_PREMIUM" ? "MURID_PREMIUM" : trx.type === "KARYA_PURCHASE" ? "KARYA" : "LAIN";
+    trx.type === "PREMIUM_UPGRADE" ? "GURU_PRO" : trx.type === "MURID_PREMIUM" ? "MURID_PREMIUM" : trx.type === "UMUM_PREMIUM" ? "UMUM_PREMIUM" : trx.type === "KARYA_PURCHASE" ? "KARYA" : "LAIN";
   const status = (KNOWN.includes(trx.status as PublicPaymentStatus) ? trx.status : "PENDING") as PublicPaymentStatus;
 
   let owner: PublicPaymentView["owner"] = null;
@@ -166,6 +170,7 @@ export async function getPublicPaymentStatus(
       kuponKode: typeof meta.kuponKode === "string" ? meta.kuponKode : null,
       premiumUntil: user?.premiumUntil ? user.premiumUntil.toISOString() : null,
       isPremium: Boolean(user?.isPremium),
+      ...(trx.type === "UMUM_PREMIUM" && meta.needsManualReview === true ? { manualReview: true } : {}),
     };
   }
 

@@ -27,3 +27,16 @@
 .panel :is(button,a,input,select):focus-visible { outline: 3px solid #2d9969; outline-offset: 3px; }
 @media (max-width: 760px) { .panel { padding: 18px; } .columns { grid-template-columns: 1fr; gap: 14px; } .columns > div { padding: 16px; } }
 @media (max-width: 380px) { .shareButtons { grid-template-columns: 1fr; } }
+/* Mode gelap: hanya menimpa warna terang di atas. */
+:global(.dark) .panel { color: var(--clr-text); background: var(--clr-surface); border-color: var(--clr-border); box-shadow: none; }
+:global(.dark) .icon { background: var(--clr-success-soft); color: var(--clr-success); }
+:global(.dark) .panel :is(.header p, .columns p, .share small) { color: var(--clr-text-2); }
+:global(.dark) .columns > div { border-color: var(--clr-border); background: var(--clr-surface-2); }
+:global(.dark) .panel :is(.destination select, .preview, .shareButtons a, .shareButtons button) { border-color: var(--clr-border-strong); background: var(--clr-surface); color: var(--clr-text); }
+:global(.dark) .panel :is(.shareButtons a, .shareButtons button):hover { background: var(--clr-success-soft); }
+:global(.dark) .primary { background: var(--clr-success); color: var(--clr-bg); }
+:global(.dark) .panel :is(.gradebookLink, .columns .success, .columns .savedCount) { color: var(--clr-success); }
+:global(.dark) .columns .error { color: var(--clr-danger); }
+:global(.dark) .includeStudents { color: var(--clr-text-2); }
+:global(.dark) .includeStudents input { accent-color: var(--clr-success); }
+:global(.dark) .panel :is(button,a,input,select):focus-visible { outline-color: var(--clr-success); }

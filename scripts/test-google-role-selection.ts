@@ -169,7 +169,13 @@ assert(
 );
 assert(pilihPeranExists, "Role-selection page app/auth/pilih-peran exists");
 assert(
-  completeRole.includes("existing") && completeRole.includes("isAllowedGoogleRole"),
+  completeRole.includes("existing") &&
+    (completeRole.includes("isAllowedGoogleRole") ||
+      // Phase 2 (UMUM): allowlist dipusatkan di parseRoleSelection, yang tetap
+      // memakai isAllowedGoogleRole untuk GURU/MURID dan menolak (null → 400) sisanya.
+      (/parseRoleSelection\(/.test(completeRole) &&
+        /if \(!selection\)[\s\S]{0,120}status: 400/.test(completeRole) &&
+        /export function parseRoleSelection[\s\S]{0,200}isAllowedGoogleRole\(role\)/.test(src("../lib/auth/role-intent.ts")))),
   "complete-role preserves existing users + validates role allowlist"
 );
 
@@ -179,12 +185,19 @@ console.log("\n🔑 EMAIL/PASSWORD REGRESSION (static)\n");
 const loginRoute = src("../app/api/auth/login/route.ts");
 const registerAction = src("../app/actions/register.ts");
 assert(
-  loginRoute.includes("signInWithPassword") && loginRoute.includes("user_metadata?.role"),
-  "Password login path unchanged (metadata role still flows)"
+  loginRoute.includes("signInWithPassword") &&
+    !loginRoute.includes("user_metadata?.role") &&
+    !loginRoute.includes("db.user.create") &&
+    loginRoute.includes("/auth/pilih-peran"),
+  "Password login never provisions from user_metadata; missing row → server-side role selection"
 );
 assert(
-  registerAction.includes("db.user.create") && registerAction.includes("parsed.data"),
-  "Password register action unchanged (explicit validated role)"
+  registerAction.includes("parsed.data") &&
+    registerAction.includes("auth.getUser()") &&
+    !registerAction.includes("db.user.create") &&
+    !registerAction.includes('formData.get("supabaseId")') &&
+    !registerAction.includes('formData.get("email")'),
+  "Password register action: explicit validated role, identity from server session (no client supabaseId/email, no account creation)"
 );
 
 // ─── Summary ─────────────────────────────────────────────────────
