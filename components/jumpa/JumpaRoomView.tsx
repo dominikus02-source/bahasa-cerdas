@@ -611,8 +611,9 @@ function ControlBar({
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
-  // Pemandu dewasa: guru, atau akun UMUM di ruang UMUM (server tetap menegakkan izin).
-  const adult = self.bcRole === "GURU" || (self.bcRole === "UMUM" && info.kind === "UMUM");
+  // Pemandu dewasa: guru di ruang sekolah, atau akun UMUM di ruang UMUM. Guru/murid
+  // yang ikut ruang UMUM lewat tautan = peserta biasa (server tetap menegakkan izin).
+  const adult = info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU";
   const isGuruHost = adult && self.roomRole !== "MEMBER";
   const canInvite = isGuruHost && info.kind !== "MURID";
   const canLock = (adult && self.roomRole !== "MEMBER") || (info.kind === "MURID" && self.roomRole === "HOST");

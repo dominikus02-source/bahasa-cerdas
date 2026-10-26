@@ -96,7 +96,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       apiSecret: config.apiSecret,
       identity: user.id,
       name: (profile?.nickname || profile?.fullName || "Pengguna BC").slice(0, 60),
-      metadata: { v: 1, bcRole: effective, roomRole, avatar: profile?.avatar ?? null },
+      // Murid di ruang UMUM: hanya nama tampilan (tanpa foto profil) untuk peserta lain.
+      metadata: { v: 1, bcRole: effective, roomRole, avatar: ctx.room.kind === "UMUM" && effective === "MURID" ? null : profile?.avatar ?? null },
       grant: buildJoinGrant(
         ctx.room.livekitRoomName,
         publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare }),

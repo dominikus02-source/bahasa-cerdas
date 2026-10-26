@@ -51,9 +51,15 @@ export default async function JumpaRoomPage({
   if (!ctx) notFound();
 
   const role = ctx.effective ?? "MURID";
-  // Isolasi UMUM ↔ sekolah: penonton dari sisi lain tidak melihat judul/nama
-  // pemandu, hanya pesan penolakan.
-  const crossed = (ctx.room.kind === "UMUM") !== (ctx.effective === "UMUM");
+  // Isolasi satu arah: akun UMUM yang membuka ruang sekolah tidak melihat
+  // judul/nama pemandu, hanya pesan penolakan. Akun sekolah boleh membuka
+  // ruang UMUM (tautan/kode) — judul tampil hanya bila boleh masuk.
+  const isUmumRoom = ctx.room.kind === "UMUM";
+  const crossed = isUmumRoom ? !ctx.decision.ok && ctx.effective !== "UMUM" : ctx.effective === "UMUM";
+  // Perlindungan murid: pengingat di lobi saat murid membuka ruang akun umum.
+  const umumNotice = isUmumRoom && ctx.effective === "MURID" && ctx.decision.ok
+    ? "Ruang ini dibuat akun umum, bukan kelasmu. Jangan bagikan data pribadi (nomor HP, alamat, sekolah). Kalau ada yang membuatmu tidak nyaman, keluar dan tekan Laporkan."
+    : null;
   const place = ctx.view.groupName ?? ctx.view.communityName ?? KIND_LABEL[ctx.view.kind];
   const subtitle = crossed ? null : [place, ctx.view.hostName ? `Pemandu: ${ctx.view.hostName}` : null].filter(Boolean).join(" · ") || null;
 
@@ -69,7 +75,9 @@ export default async function JumpaRoomPage({
       denyCode={ctx.decision.ok ? null : ctx.decision.code}
       scheduledAt={ctx.view.scheduledAt}
       share={
-        (ctx.room.kind === "MURID" || ctx.room.kind === "UMUM" || crossed) && !ctx.decision.ok
+        // Ruang UMUM: lembar bagikan hanya untuk akun UMUM (guru/murid yang
+        // ikut lewat tautan tidak menyebarkan ruang ini).
+        ((ctx.room.kind === "MURID" || isUmumRoom || crossed) && !ctx.decision.ok) || (isUmumRoom && ctx.effective !== "UMUM")
           ? null
           : {
               code: ctx.view.code,
@@ -82,6 +90,7 @@ export default async function JumpaRoomPage({
       }
       dashboardHref={isUmum(user.role) ? UMUM_HOME : dashboardForUser(user.role, user.isFounder)}
       inviteToken={inviteToken}
+      umumNotice={umumNotice}
       tier={tierView({
         tier: ctx.view.tier,
         kind: ctx.room.kind,

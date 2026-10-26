@@ -253,7 +253,9 @@ async function relevantRoomWhere(user: JumpaUserLike) {
   ]);
   const groupIds = [...owned.map((g) => g.id), ...member.map((m) => m.group.id)];
   const communityIds = comms.map((c) => c.community.id);
-  // UMUM hanya melihat ruang UMUM (isolasi dua arah dengan ruang sekolah).
+  // UMUM hanya melihat ruang UMUM. Guru/murid yang pernah ikut ruang UMUM
+  // lewat tautan tetap tidak melihatnya di riwayat (ruang UMUM tidak pernah
+  // didaftarkan ke akun sekolah).
   const kinds: Array<JumpaRoom["kind"]> = effective === "UMUM" ? ["UMUM"] : effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
   const where = {
     kind: { in: kinds },
@@ -389,7 +391,7 @@ export interface RoomSummary {
   backHref: string;
   backLabel: string;
   /** Kehadiran per orang — hanya untuk guru pemilik/pembuat & admin. */
-  attendance: Array<{ name: string; role: "GURU" | "MURID"; minutes: number; joins: number }> | null;
+  attendance: Array<{ name: string; role: "GURU" | "MURID" | "UMUM"; minutes: number; joins: number }> | null;
 }
 
 export async function loadRoomSummary(user: JumpaUserLike, code: string, now = new Date()): Promise<RoomSummary | null> {
@@ -413,7 +415,7 @@ export async function loadRoomSummary(user: JumpaUserLike, code: string, now = n
         const openSec = isAttending(p) && p.lastJoinedAt ? Math.max(0, (end.getTime() - p.lastJoinedAt.getTime()) / 1000) : 0;
         return {
           name: (u?.nickname || u?.fullName || "Pengguna BC").slice(0, 60),
-          role: (u?.role === "GURU" || u?.isFounder ? "GURU" : "MURID") as "GURU" | "MURID",
+          role: (u?.role === "GURU" || u?.isFounder ? "GURU" : u?.role === "UMUM" ? "UMUM" : "MURID") as "GURU" | "MURID" | "UMUM",
           minutes: Math.round((p.totalSeconds + openSec) / 60),
           joins: Math.max(1, p.joinCount),
         };
@@ -427,7 +429,9 @@ export async function loadRoomSummary(user: JumpaUserLike, code: string, now = n
       : !isGuru
         ? { href: `/murid/kelasku/${room.groupId}`, label: "Kembali ke kelas" }
         : { href: "/guru/beranda", label: "Kembali ke beranda" }
-    : { href: isGuru ? "/guru/beranda" : "/murid/beranda", label: "Kembali ke beranda" };
+    : user.role === "UMUM"
+      ? { href: "/jumpa", label: "Kembali ke JUMPA" }
+      : { href: isGuru ? "/guru/beranda" : "/murid/beranda", label: "Kembali ke beranda" };
   return {
     code: room.code,
     title: room.title,

@@ -6,7 +6,7 @@
  * pratinjau memakai resolusi kebijakan perangkat (HP lebih ringan).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldCheck, Users, Video, VideoOff, X, Info } from "lucide-react";
+import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldAlert, ShieldCheck, Users, Video, VideoOff, X, Info } from "lucide-react";
 import { formatWib } from "@/lib/jumpa/schedule";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import LobbyDeny from "./LobbyDeny";
@@ -35,6 +35,8 @@ interface Props {
   joinError: string | null;
   onJoin: (prefs: JumpaMediaPrefs) => void;
   tier: JumpaTierView;
+  /** Pengingat keselamatan murid di ruang akun umum (dihitung server). */
+  umumNotice?: string | null;
 }
 
 type PermissionNote = null | "camera" | "mic" | "both";
@@ -390,6 +392,12 @@ export default function JumpaLobby(props: Props) {
           <PackageRules tier={props.tier} />
         </div>
 
+        {props.canJoin && props.umumNotice && (
+          <p role="note" data-testid="jumpa-umum-notice" className="jumpa-umum-notice flex w-full items-start gap-2 rounded-xl border border-[var(--clr-warning)] bg-[var(--clr-warning-soft)] px-3 py-2.5 text-left text-sm font-medium text-[var(--jp-text)]">
+            <ShieldAlert size={18} aria-hidden className="mt-0.5 shrink-0 text-[var(--clr-warning)]" />
+            <span>{props.umumNotice}</span>
+          </p>
+        )}
         {props.canJoin ? (
           <>
             <button type="button" className="jumpa-primary w-full sm:w-auto" onClick={handleJoin} disabled={!prefs || props.joining}>

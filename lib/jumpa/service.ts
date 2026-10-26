@@ -26,7 +26,8 @@ import {
 export interface JumpaUserLike {
   id: string;
   // UMUM hanya mendapat peran efektif JUMPA bila ENABLE_ROLE_UMUM menyala
-  // (loadActor → umumEnabled); tanpa flag effectiveRole() → null.
+  // (loadActor → umumEnabled); tanpa flag effectiveRole() → null dan ruang
+  // UMUM tertutup bagi semua akun.
   role: "GURU" | "MURID" | "ADMIN" | "UMUM";
   isFounder: boolean;
 }
@@ -36,7 +37,7 @@ export async function loadActor(user: JumpaUserLike): Promise<JumpaActor> {
     where: { userId: user.id },
     select: { id: true },
   });
-  return { role: user.role, isFounder: user.isFounder, isJunior: Boolean(junior), umumEnabled: user.role === "UMUM" && isRoleUmumEnabled() };
+  return { role: user.role, isFounder: user.isFounder, isJunior: Boolean(junior), umumEnabled: isRoleUmumEnabled() };
 }
 
 export type CreateRoomResult =

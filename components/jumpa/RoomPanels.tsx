@@ -111,7 +111,7 @@ export function ChatPanel() {
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const actor: ModerationActor = { userId: self.userId, roomRole: self.roomRole, effective: self.bcRole };
-  const isGuruHost = (self.bcRole === "GURU" || (self.bcRole === "UMUM" && info.kind === "UMUM")) && self.roomRole !== "MEMBER";
+  const isGuruHost = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER";
   const canWrite = info.chatEnabled || isGuruHost;
 
   useEffect(() => {
@@ -239,11 +239,11 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
       actor,
       action,
       roomKind: info.kind,
-      target: target ? { userId: target.identity, roomRole: meta?.roomRole ?? "MEMBER", effective: meta?.bcRole ?? (info.kind === "UMUM" ? "UMUM" : "MURID") } : null,
+      target: target ? { userId: target.identity, roomRole: meta?.roomRole ?? "MEMBER", effective: meta?.bcRole ?? "MURID" } : null,
     }).ok;
   };
   const isHostish = self.roomRole !== "MEMBER";
-  const canInviteAny = (self.bcRole === "GURU" || (self.bcRole === "UMUM" && info.kind === "UMUM")) && isHostish && info.kind !== "MURID";
+  const canInviteAny = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && isHostish && info.kind !== "MURID";
 
   const queue = useMemo(() => {
     const byId = new Map(participants.map((p) => [p.identity, p]));
@@ -403,7 +403,7 @@ export function InvitePanel() {
   const { info, self, api, toast } = useJumpa();
   const base = `/api/jumpa/rooms/${encodeURIComponent(info.code)}/invites`;
   const isUmumRoom = info.kind === "UMUM";
-  const canInvite = (self.bcRole === "GURU" || (isUmumRoom && self.bcRole === "UMUM")) && self.roomRole !== "MEMBER" && info.kind !== "MURID";
+  const canInvite = (isUmumRoom ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER" && info.kind !== "MURID";
   // Ruang UMUM: tanpa pencarian pengguna — dibagikan lewat tautan/kode saja.
   const canSearch = canInvite && !isUmumRoom;
   const [cands, setCands] = useState<Candidates | null>(null);

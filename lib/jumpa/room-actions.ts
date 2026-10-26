@@ -262,8 +262,8 @@ export async function sendChat(user: JumpaUserLike, code: string, rawContent: un
   if (room.status !== "LIVE") return fail(410, "ROOM_ENDED", "Ruang ini sudah berakhir.");
   const me = await actorInRoom(user, room);
   if (!me) return NOT_IN_ROOM;
-  // Pemandu dewasa (guru, atau akun UMUM di ruang UMUM) tetap bisa menulis saat obrolan dimatikan.
-  const isGuruHost = (me.actor.effective === "GURU" || (me.actor.effective === "UMUM" && room.kind === "UMUM")) && me.actor.roomRole !== "MEMBER";
+  // Pemandu dewasa (guru di ruang sekolah, atau akun UMUM di ruang UMUM) tetap bisa menulis saat obrolan dimatikan.
+  const isGuruHost = (room.kind === "UMUM" ? me.actor.effective === "UMUM" : me.actor.effective === "GURU") && me.actor.roomRole !== "MEMBER";
   if (!room.chatEnabled && !isGuruHost) return fail(423, "CHAT_DISABLED", "Obrolan sedang dimatikan oleh pemandu.");
 
   const v = sanitizeChatContent(rawContent);

@@ -158,7 +158,7 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
         {target.canLink && (
           <p className="jpe-cap mt-2 flex items-center gap-1.5" aria-live="polite">
             {busy && <Loader2 size={14} className="animate-spin" />}
-            {link24 ? (target.kind === "UMUM" ? "Akun umum yang membuka tautan ini langsung bisa masuk." : "Guru yang membuka tautan ini langsung bisa masuk.") : busy ? "Menyiapkan tautan undangan…" : null}
+            {link24 ? (target.kind === "UMUM" ? "Akun BahasaCerdas yang membuka tautan ini langsung bisa masuk." : "Guru yang membuka tautan ini langsung bisa masuk.") : busy ? "Menyiapkan tautan undangan…" : null}
           </p>
         )}
 
@@ -168,7 +168,7 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
         </div>
 
         {target.kind === "UMUM" ? (
-          <p className="jpe-cap mt-3">Akun umum BahasaCerdas yang punya tautan atau kode ini bisa masuk.</p>
+          <p className="jpe-cap mt-3">Akun BahasaCerdas (umum, guru, atau murid) yang punya tautan atau kode ini bisa masuk sebagai peserta.</p>
         ) : !target.canLink && <p className="jpe-cap mt-3">Hanya akun BahasaCerdas yang terdaftar di ruang ini yang bisa masuk.</p>}
         {err && <p role="alert" className="mt-2 text-sm text-[var(--clr-danger)]">{err}</p>}
       </div>

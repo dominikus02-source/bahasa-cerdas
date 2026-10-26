@@ -41,6 +41,11 @@ export interface JumpaAppProps {
   inviteToken?: string | null;
   /** Fase 3: paket ruang (dihitung server). */
   tier: JumpaTierView;
+  /**
+   * Pengingat keselamatan (murid di ruang akun umum). Bila ada, tautan
+   * undangan TIDAK auto-join: murid harus melihat pengingat di lobi dulu.
+   */
+  umumNotice?: string | null;
 }
 
 const ENDED_TEXT: Record<EndedReason, string> = {
@@ -120,11 +125,11 @@ export default function JumpaApp(props: JumpaAppProps) {
   const autoJoined = useRef(false);
   useEffect(() => {
     if (autoJoined.current) return;
-    if (props.inviteToken && props.canJoin && phase.name === "lobby" && !joining) {
+    if (props.inviteToken && props.canJoin && !props.umumNotice && phase.name === "lobby" && !joining) {
       autoJoined.current = true;
       void join(DEFAULT_MEDIA_PREFS);
     }
-  }, [props.inviteToken, props.canJoin, phase.name, joining, join]);
+  }, [props.inviteToken, props.canJoin, props.umumNotice, phase.name, joining, join]);
 
   const handleLeave = useCallback((reason: LeaveReason, ended?: EndedReason | null) => {
     // Keluar manual meng-unmount room → onDisconnected bisa menyusul; abaikan.
@@ -234,6 +239,7 @@ export default function JumpaApp(props: JumpaAppProps) {
       joinError={joinError}
       onJoin={join}
       tier={props.tier}
+      umumNotice={props.umumNotice ?? null}
     />
   );
 }
