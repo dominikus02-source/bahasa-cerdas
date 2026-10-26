@@ -71,6 +71,7 @@ export async function GET() {
         onlineGuru: online.guru,
         onlineMurid: online.murid,
         onlineAdmin: online.admin,
+        onlineUmum: online.umum,
         locations: online.locations,
         available: online.available,
         ttlSeconds: PRESENCE_TTL_SECONDS,

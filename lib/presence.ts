@@ -3,7 +3,7 @@
  *
  * Architecture:
  *  - Key: `bc:presence:{userId}` (user-level, not tab-level — multiple tabs share one key)
- *  - Value: `{ r: "GURU"|"MURID"|"ADMIN", p?: "coarse:menu-key" }`
+ *  - Value: `{ r: "GURU"|"MURID"|"ADMIN"|"UMUM", p?: "coarse:menu-key" }`
  *  - TTL: 60 seconds (auto-expires if heartbeat stops)
  *  - Heartbeat interval (client): 20 seconds
  *
@@ -36,7 +36,7 @@ const PRESENCE_TTL_SECONDS = 60
 const PRESENCE_KEY_PREFIX = "bc:presence:"
 const PRESENCE_KEY_PATTERN = `${PRESENCE_KEY_PREFIX}*`
 
-export type PresenceRole = "GURU" | "MURID" | "ADMIN"
+export type PresenceRole = "GURU" | "MURID" | "ADMIN" | "UMUM"
 
 interface PresenceValue {
   r: PresenceRole
@@ -50,6 +50,8 @@ export interface PresenceLocationBreakdown {
   guru: number
   murid: number
   admin: number
+  /** Pengguna UMUM (aditif — konsumen lama yang tak membaca field ini tetap jalan). */
+  umum: number
 }
 
 export interface OnlineBreakdown {
@@ -57,6 +59,8 @@ export interface OnlineBreakdown {
   guru: number
   murid: number
   admin: number
+  /** Pengguna UMUM — dihitung terpisah, BUKAN dimasukkan ke murid. */
+  umum: number
   locations: PresenceLocationBreakdown[]
   available: boolean
 }
@@ -80,7 +84,7 @@ export async function setPresence(
 
 // ─── Read: Aggregate online users from Redis ─────────────────
 export async function getOnlineUsers(): Promise<OnlineBreakdown> {
-  const empty: OnlineBreakdown = { total: 0, guru: 0, murid: 0, admin: 0, locations: [], available: false }
+  const empty: OnlineBreakdown = { total: 0, guru: 0, murid: 0, admin: 0, umum: 0, locations: [], available: false }
   if (!redis) return empty
 
   try {
@@ -96,6 +100,7 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
     let guru = 0
     let murid = 0
     let admin = 0
+    let umum = 0
     const locations = new Map<string, PresenceLocationBreakdown>()
 
     for (const val of values) {
@@ -105,6 +110,7 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
       if (role === "GURU") guru++
       else if (role === "MURID") murid++
       else if (role === "ADMIN") admin++
+      else if (role === "UMUM") umum++
       else continue
 
       const key = presence.p || "unknown"
@@ -115,19 +121,22 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
         guru: 0,
         murid: 0,
         admin: 0,
+        umum: 0,
       }
       current.total++
       if (role === "GURU") current.guru++
       else if (role === "MURID") current.murid++
+      else if (role === "UMUM") current.umum++
       else current.admin++
       locations.set(key, current)
     }
 
     return {
-      total: guru + murid + admin,
+      total: guru + murid + admin + umum,
       guru,
       murid,
       admin,
+      umum,
       locations: Array.from(locations.values()).sort((a, b) => b.total - a.total || a.label.localeCompare(b.label)),
       available: true,
     }
