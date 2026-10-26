@@ -17,9 +17,11 @@ import type { ActivityType, User } from "@prisma/client";
  * Peran konteks — diselaraskan dengan BcPersonaKey (personas.ts).
  * gatherBcContext hanya menghasilkan dua jalur data: student (data belajar
  * murid) dan teacher (data kelas guru). Founder/ADMIN memakai jalur guru.
+ * UMUM (pengguna umum) & peran tak dikenal → neutral: hanya nama (tanpa
+ * data kelas/sekolah) — allowlist eksplisit, bukan "selain guru = murid".
  */
 export type BcRole = "student" | "teacher" | "founder" | "admin" | "neutral";
-export type BcHintRole = "student" | "teacher";
+export type BcHintRole = "student" | "teacher" | "general";
 
 export interface BcContextItem {
   key: string;
@@ -75,9 +77,9 @@ function pushItem(items: BcContextItem[], key: string, label: string, value: str
 }
 
 function roleOf(user: User): BcRole {
-  return user.role === "GURU" || user.role === "ADMIN" || user.isFounder
-    ? "teacher"
-    : "student";
+  if (user.role === "GURU" || user.role === "ADMIN" || user.isFounder) return "teacher";
+  if (user.role === "MURID") return "student";
+  return "neutral";
 }
 
 function displayName(user: User): string {
@@ -117,7 +119,7 @@ export async function gatherBcContext(user: User): Promise<BcContext> {
     const activity = await getRecentActivity(user.id, 7).catch(() => []);
     const lastActivity = Array.isArray(activity) && activity.length > 0 ? activity[0] : null;
     pushItem(items, "aktivitas", "Aktivitas terakhir", lastActivity ? activityLabel(String(lastActivity.type)) : null);
-  } else {
+  } else if (role === "teacher") {
     const groups = await db.group
       .count({ where: { teacherId: user.id } })
       .catch(() => 0);
@@ -176,6 +178,10 @@ const STATIC_HINTS: Record<BcHintRole, BcHint[]> = {
     { label: "RPP", prompt: "Buatkan Rencana Pembelajaran 1 lembar materi puisi kelas 10." },
     { label: "Koreksi", prompt: "Koreksi tata bahasa paragraf berikut: [tempel teks]" },
   ],
+  general: [
+    { label: "Arti kata", prompt: "Jelaskan arti kata 'apresiasi' beserta contoh kalimatnya." },
+    { label: "Perbaiki tulisan", prompt: "Perbaiki ejaan dan tata bahasa teks berikut: [tempel teks]" },
+  ],
 };
 
 /**
@@ -187,7 +193,8 @@ const STATIC_HINTS: Record<BcHintRole, BcHint[]> = {
  * singgah pun tidak melihat saran guru.
  */
 export async function getBcHints(user: User, roleOverride?: BcHintRole): Promise<BcHint[]> {
-  const role: BcHintRole = roleOverride ?? (roleOf(user) === "teacher" ? "teacher" : "student");
+  const base = roleOf(user);
+  const role: BcHintRole = roleOverride ?? (base === "teacher" ? "teacher" : base === "student" ? "student" : "general");
   const hints = STATIC_HINTS[role].slice(0, 2);
 
   if (role === "student") {

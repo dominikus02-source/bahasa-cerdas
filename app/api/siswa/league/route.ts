@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import { isUmum, UMUM_FORBIDDEN_MESSAGE } from "@/lib/auth/roles";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
 import { levelFromXp, cumulativeXpForLevel } from "@/lib/gamification/levels";
@@ -19,6 +20,8 @@ export async function GET() {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // UMUM punya progresi XP sendiri; papan sesama rank murid tertutup baginya.
+    if (isUmum(user.role)) return NextResponse.json({ error: UMUM_FORBIDDEN_MESSAGE }, { status: 403 });
 
     // v2: bentuk respons berubah (tier → rank resmi). Tanpa versi, entri lama
     // di Redis masih menyajikan label liga usang sampai TTL habis.
@@ -36,7 +39,11 @@ export async function GET() {
         const maxXp = next ? cumulativeXpForLevel(minLevelForRank(next)) : null;
 
         const peersRaw = await db.user.findMany({
-          where: { xp: maxXp === null ? { gte: minXp } : { gte: minXp, lt: maxXp } },
+          // XP UMUM dihitung terpisah — jangan pernah bercampur di papan murid.
+          where: {
+            role: { not: "UMUM" },
+            xp: maxXp === null ? { gte: minXp } : { gte: minXp, lt: maxXp },
+          },
           select: { id: true, fullName: true, nickname: true, avatar: true, xp: true, level: true },
           orderBy: { xp: "desc" },
           take: 30,

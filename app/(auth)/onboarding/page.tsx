@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { UMUM_HOME } from "@/lib/auth/roles";
 import { BookOpen, Sparkles, Users, Gamepad2, GraduationCap, ArrowRight, Loader2, Check } from "lucide-react";
 
 const steps = [
@@ -45,7 +46,8 @@ export default function OnboardingPage() {
         const res = await fetch("/api/user/me");
         const data = await res.json();
         if (data.user?.onboarded) {
-          router.replace(data.user.role === "GURU" ? "/guru/beranda" : "/murid/beranda");
+          // UMUM eksplisit ke berandanya; GURU/lainnya tidak berubah.
+          router.replace(data.user.role === "GURU" ? "/guru/beranda" : data.user.role === "UMUM" ? UMUM_HOME : "/murid/beranda");
           return;
         }
       } catch {}
@@ -62,7 +64,7 @@ export default function OnboardingPage() {
       // get fresh user data from DB for correct role
       const me = await fetch("/api/user/me").then(r => r.json());
       const role = me.user?.role || "murid";
-      const dest = role === "GURU" ? "/guru/beranda" : role === "ADMIN" ? "/admin" : "/murid/beranda";
+      const dest = role === "GURU" ? "/guru/beranda" : role === "ADMIN" ? "/admin" : role === "UMUM" ? UMUM_HOME : "/murid/beranda";
 
       // also try to update supabase metadata (non-blocking)
       supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {});

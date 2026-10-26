@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isUmum, UMUM_FORBIDDEN_MESSAGE } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { ensureAttributionOnClassJoin } from "@/lib/commission/attribution";
@@ -16,6 +17,8 @@ export async function POST(req: NextRequest) {
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    // UMUM: fitur multipemain/kelas khusus guru & murid sekolah (lib/auth/roles.ts).
+    if (isUmum(dbUser.role)) return NextResponse.json({ error: UMUM_FORBIDDEN_MESSAGE }, { status: 403 });
 
     const body = await req.json();
     const { accessCode } = body;

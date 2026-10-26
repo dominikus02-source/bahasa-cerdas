@@ -2,6 +2,7 @@ import { getUser } from "@/lib/supabase/server";
 import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
 import { redirect } from "next/navigation";
+import { dashboardForUser } from "@/lib/auth/redirect";
 // Kerangka (sidebar · header [BackHome … UserAvatar, NotificationBell, ThemeToggle] · MuridMobileNav)
 // ada di components/shell/MuridShellFrame.tsx.
 import { MuridShellFrame } from "@/components/shell/MuridShellFrame";
@@ -13,9 +14,12 @@ export default async function MuridLayout({ children }: { children: React.ReactN
   }
 
   // 4.2.2 — Guru boleh mengintip Student Shell sebagai mode pratinjau
-  // (role tetap GURU). Hanya selain Murid/Guru/Founder yang dipindahkan.
+  // (role tetap GURU). Hanya selain Murid/Guru/Founder yang dipindahkan —
+  // ke dasbor kanonik perannya (ADMIN → /admin, UMUM → beranda UMUM, tak
+  // dikenal → akses ditolak). Dulu semua ke /guru/beranda: ADMIN non-founder
+  // memantul guru ↔ murid (loop) dan UMUM akan diperlakukan seperti guru.
   if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) {
-    redirect("/guru/beranda");
+    redirect(dashboardForUser(user.role, user.isFounder));
   }
 
   if (user.role === "MURID" && !user.onboarded) {

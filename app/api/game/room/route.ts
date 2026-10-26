@@ -1,4 +1,5 @@
 import { getUser } from '@/lib/supabase/server';
+import { isUmum, UMUM_FORBIDDEN_MESSAGE } from '@/lib/auth/roles';
 import { db } from '@/lib/db';
 import { NextResponse } from 'next/server';
 
@@ -6,6 +7,8 @@ export async function POST(request: Request) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    // UMUM: fitur multipemain/kelas khusus guru & murid sekolah (lib/auth/roles.ts).
+    if (isUmum(user.role)) return NextResponse.json({ error: UMUM_FORBIDDEN_MESSAGE }, { status: 403 });
 
     const { code, name, gameType, category, difficulty, questionCount, timePerQuestion } = await request.json();
 

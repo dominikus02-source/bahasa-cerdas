@@ -40,6 +40,22 @@ export function resolveUserAiPlan(user: UserLike): PlanResolverResult {
     };
   }
 
+  // UMUM & peran tak dikenal — TIDAK jatuh ke jalur Guru (GURU_FREE 30 kredit).
+  // Allowlist eksplisit: hanya GURU yang lanjut ke plan kredit guru di bawah.
+  if (user.role !== "GURU") {
+    return {
+      plan: "UMUM_FREE",
+      unlimited: false,
+      creditsTotal: 0,
+      period,
+      isTrial: false,
+      trialEndsAt: null,
+      reason: user.role === "UMUM"
+        ? "Umum — alat AI gateway tidak tersedia (0 credits)"
+        : "Peran tidak dikenal — default-deny (0 credits)",
+    };
+  }
+
   // Guru with active premium subscription
   if (identity.subscriptionStatus === "ACTIVE") {
     return {

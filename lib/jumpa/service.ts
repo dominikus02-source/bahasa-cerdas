@@ -23,7 +23,9 @@ import {
 
 export interface JumpaUserLike {
   id: string;
-  role: "GURU" | "MURID" | "ADMIN";
+  // UMUM ikut di tipe agar Prisma Role bisa diteruskan apa adanya; JUMPA
+  // tetap tertutup untuk UMUM karena effectiveRole() mengembalikan null.
+  role: "GURU" | "MURID" | "ADMIN" | "UMUM";
   isFounder: boolean;
 }
 

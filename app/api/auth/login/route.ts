@@ -190,7 +190,15 @@ export async function POST(req: NextRequest) {
             fullName:
               data.user.user_metadata?.full_name ||
               normalizedEmail.split("@")[0],
-            role: data.user.user_metadata?.role === "GURU" ? "GURU" : "MURID",
+            // Allowlist eksplisit. UMUM punya akses LEBIH SEMPIT dari MURID,
+            // jadi memilihnya lewat metadata tidak menambah hak. Nilai lain
+            // tetap jatuh ke MURID (perilaku lama, tidak diubah di PR ini).
+            role:
+              data.user.user_metadata?.role === "GURU"
+                ? "GURU"
+                : data.user.user_metadata?.role === "UMUM"
+                  ? "UMUM"
+                  : "MURID",
           },
         });
       }

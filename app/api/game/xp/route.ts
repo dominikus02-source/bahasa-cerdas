@@ -95,6 +95,11 @@ export async function POST(req: NextRequest) {
     // menerima Teacher XP → teacher leaderboard + badge guru (GURU_GAME).
     // Murid tetap memakai Player XP Engine (tidak disentuh).
     const isGuru = dbUser.role === "GURU" || dbUser.isFounder
+    // UMUM (pengguna umum) memakai mesin XP pemain yang sama, tetapi progresinya
+    // TERPISAH dari murid: XP/level/kuota harian disimpan per pengguna (baris
+    // User/PlayerProfile/XpLedger milik akun UMUM itu sendiri), dan setiap papan
+    // peringkat/musim/podium murid memfilter `role: "MURID"` — jadi XP UMUM
+    // tidak pernah masuk peringkat, musim, atau kuota murid/guru.
 
     // Game Reward Economy v1: seluruh gim yang memakai endpoint ini sekarang
     // memakai bahasa reward yang sama. Akurasi mengatur payout, sedangkan
