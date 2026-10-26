@@ -433,6 +433,7 @@
     "test:jumpa-no-english": "npx tsx scripts/test-jumpa-no-english.ts",
     "test:jumpa-flow": "npx tsx scripts/test-jumpa-flow.ts",
     "test:jumpa-input": "npx tsx scripts/test-jumpa-input.ts",
+    "test:jumpa-umum": "npx tsx scripts/test-jumpa-umum.ts",
     "jumpa:bundle-report": "node scripts/jumpa-bundle-report.mjs",
     "email:preview": "node scripts/preview-recovery-email.mjs",
     "test:password-recovery": "node --import tsx scripts/test-password-recovery.ts"
