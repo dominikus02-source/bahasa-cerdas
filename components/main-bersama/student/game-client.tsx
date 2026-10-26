@@ -111,7 +111,7 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
       musicActive: isMusicPhase(view?.phase) && gameClock.running,
       remainingMs: gameClock.remainingMs,
     },
-    { storageKey: 'mb-sound-muted-murid', defaultEnabled: false },
+    { storageKey: 'mb-sound-muted-murid', defaultEnabled: false, surface: 'murid', channelKey: sessionId },
   );
 
   if (exitError) {

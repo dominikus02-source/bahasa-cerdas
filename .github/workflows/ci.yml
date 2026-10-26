@@ -78,6 +78,9 @@ jobs:
       - name: Main Bersama game duration gate
         run: npm run test:main-bersama-game-duration
 
+      - name: Main Bersama single music source gate
+        run: npm run test:main-bersama-music-leader
+
       - name: Midtrans payment activation gate
         run: npm run test:midtrans-activation
       - name: Payment pages gate

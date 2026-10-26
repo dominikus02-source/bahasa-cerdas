@@ -1,0 +1,145 @@
+/* ─────────────────────────────────────────────────────────────
+   Main Bersama — tema gelap untuk permukaan guru (ruang & setup).
+   Hanya aktif di bawah html.dark (next-themes). Semua warna dari
+   app/theme/tokens.css; versi terang tidak berubah.
+   ───────────────────────────────────────────────────────────── */
+.dark .mb-scope-guru {
+  --mb-surface-guru: color-mix(in srgb, var(--clr-bg) 94%, var(--clr-success));
+  --mb-surface-guru-elevated: var(--clr-surface);
+  --mb-surface-light: var(--clr-surface);
+  --mb-surface-light-elevated: var(--clr-surface-2);
+  --mb-text-guru: var(--clr-text);
+  --mb-text-guru-secondary: var(--clr-text-2);
+  --mb-text-light-primary: var(--clr-text);
+  --mb-text-light-secondary: var(--clr-text-2);
+  --mb-shadow-light: 0 6px 24px var(--clr-scrim);
+  color-scheme: dark;
+}
+
+/* Ruang guru: kartu monitor, analisis, papan skor & podium (styled-jsx di
+   room-client.tsx bernuansa terang). Spesifisitas .dark .mb-scope-guru .x
+   mengalahkan .x.jsx-hash tanpa !important. */
+.dark .mb-scope-guru :is(
+  .mb-jelajah-host-live,
+  .mb-teacher-student,
+  .mb-leaderboard-row,
+  .mb-analysis-round,
+  .mb-podium-item,
+  .mb-team-podium-item,
+  .mb-lobby-control-note
+) {
+  border-color: var(--clr-border);
+  background: var(--clr-surface);
+  color: var(--clr-text-2);
+}
+.dark .mb-scope-guru :is(
+  .mb-teacher-status-card,
+  .mb-analysis-overview > div,
+  .mb-analysis-current,
+  .mb-final-bottom > div,
+  .mb-leaderboard-card,
+  .mb-final-podium-card,
+  .mb-final-city-card,
+  .mb-final-jelajah-card,
+  .mb-jelajah-host-team
+) {
+  border-color: var(--clr-border);
+  background: var(--clr-surface-2);
+  box-shadow: none;
+}
+.dark .mb-scope-guru :is(.mb-teacher-monitor, .mb-teacher-status-title) {
+  border-color: var(--clr-border);
+}
+.dark .mb-scope-guru :is(
+  .mb-teacher-monitor-total,
+  .mb-teacher-status-done .mb-teacher-status-title,
+  .mb-leaderboard-live,
+  .mb-podium-step,
+  .mb-team-podium-step,
+  .mb-podium-rank-1 .mb-podium-step,
+  .mb-team-podium-rank-1 .mb-team-podium-step,
+  .mb-team-podium-emblem
+) {
+  border-color: var(--clr-border);
+  background: var(--clr-success-soft);
+  color: var(--clr-success);
+}
+.dark .mb-scope-guru .mb-teacher-status-wait .mb-teacher-status-title {
+  background: var(--clr-warning-soft);
+  color: var(--clr-warning-strong);
+}
+.dark .mb-scope-guru :is(
+  .mb-jelajah-host-title,
+  .mb-teacher-monitor-head h3,
+  .mb-teacher-student,
+  .mb-leaderboard-head h3,
+  .mb-final-section-head h3,
+  .mb-leaderboard-name,
+  .mb-leaderboard-row > strong,
+  .mb-podium-item strong,
+  .mb-team-podium-item strong,
+  .mb-final-bottom > div strong,
+  .mb-analysis-overview strong,
+  .mb-analysis-current h3,
+  .mb-analysis-round-copy strong,
+  .mb-room-pin-live strong
+) {
+  color: var(--clr-text);
+}
+.dark .mb-scope-guru :is(
+  .mb-jelajah-host-head p,
+  .mb-classroom-hint,
+  .mb-classroom-control-hint,
+  .mb-teacher-empty,
+  .mb-leaderboard-head p,
+  .mb-leaderboard-rank,
+  .mb-leaderboard-score,
+  .mb-final-subtitle,
+  .mb-podium-item > span:not(.mb-podium-avatar),
+  .mb-team-podium-item > span,
+  .mb-podium-step small,
+  .mb-team-podium-step small,
+  .mb-final-podium-caption,
+  .mb-final-jelajah-note,
+  .mb-final-city-card > p,
+  .mb-final-bottom p,
+  .mb-analysis-overview span,
+  .mb-analysis-option > div:first-child,
+  .mb-analysis-round-no,
+  .mb-analysis-round-copy span
+) {
+  color: var(--clr-text-2);
+}
+.dark .mb-scope-guru :is(
+  .mb-jelajah-host-live strong,
+  .mb-jelajah-host-team-progress,
+  .mb-room-pin-live span,
+  .mb-classroom-control-hint strong,
+  .mb-lobby-control-note strong,
+  .mb-teacher-student b,
+  .mb-final-total,
+  .mb-final-city-progress,
+  .mb-analysis-option.is-correct > div:first-child
+) {
+  color: var(--clr-success);
+}
+.dark .mb-scope-guru .mb-jelajah-host-team-name { color: var(--clr-text); }
+.dark .mb-scope-guru :is(.mb-teacher-student-avatar, .mb-leaderboard-avatar, .mb-podium-avatar) {
+  background: var(--clr-surface-2);
+}
+.dark .mb-scope-guru .mb-podium-avatar { border-color: var(--clr-surface); }
+.dark .mb-scope-guru :is(.mb-analysis-bar, .mb-analysis-mini-bar) { background: var(--clr-border); }
+.dark .mb-scope-guru .mb-jelajah-next-btn {
+  background: var(--clr-text);
+  color: var(--clr-bg);
+  box-shadow: none;
+}
+.dark .mb-scope-guru :is(.mb-jelajah-back-btn, .mb-final-share-secondary) {
+  border-color: var(--clr-border);
+  background: var(--clr-surface-2);
+  color: var(--clr-text);
+}
+.dark .mb-scope-guru .mb-final-share-btn:not(.mb-final-share-secondary) {
+  background: var(--clr-success);
+  color: var(--clr-bg);
+}

@@ -24,6 +24,7 @@ import {
   MINUTE_MS,
   type GameDurationMinutes,
 } from '@/src/main-bersama/domain/rules/game-duration';
+import { Button } from '@/components/ui/button';
 import styles from './setup.module.css';
 
 export interface SetupPackage {
@@ -370,10 +371,11 @@ export function SetupClient({
               </div>
               <div className={styles.durationOptions}>
                 {GAME_DURATION_MINUTES.map((m) => (
-                  <button key={m} type="button" aria-pressed={durationMin === m}
-                    aria-label={`${m} menit`} onClick={() => setDurationMin(m)} className={styles.durationOption}>
+                  <Button key={m} type="button" size="sm" variant={durationMin === m ? 'accent' : 'secondary'}
+                    aria-pressed={durationMin === m} aria-label={`${m} menit`}
+                    onClick={() => setDurationMin(m)} className={styles.durationOption}>
                     <strong>{m}</strong><span>menit</span>
-                  </button>
+                  </Button>
                 ))}
               </div>
               <p className={styles.durationNote}>Permainan selesai otomatis saat waktu habis.</p>

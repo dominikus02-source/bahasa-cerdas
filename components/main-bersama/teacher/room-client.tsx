@@ -105,7 +105,7 @@ export function TeacherRoomClient({
       view?.gameState?.gameMode === 'jelajah-kata'
         ? view.gameState.jelajahKata.teamProgress
         : undefined,
-  });
+  }, { surface: 'guru', channelKey: sessionId });
 
   const kotaCahayaState =
     view?.gameState?.gameMode === 'kota-cahaya'
