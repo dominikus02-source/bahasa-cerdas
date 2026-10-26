@@ -115,7 +115,7 @@ export default async function AkuSastrawanCurriculumPage({
                       {stage.lessons.map((lesson) => <span key={lesson} className="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs">{lesson}</span>)}
                     </div>
                   </div>
-                  <CircleLock size={16} className="mt-1 shrink-0 text-muted-foreground" />
+                  <Lock size={16} className="mt-1 shrink-0 text-muted-foreground" />
                 </div>
               </article>
             ))}
