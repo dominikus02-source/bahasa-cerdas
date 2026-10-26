@@ -114,7 +114,7 @@ export default function WritingStudioPage() {
     try {
       const response = await fetch("/api/aku-sastrawan/coach", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: coachPrompt, track: active.genre === "NOVEL" ? "novel" : "cerpen", task: "Umpan balik naskah", context: [`Judul: ${title}`, `Sinopsis: ${synopsis}`, content.slice(0, 12000)].join("\\n\\n") }),
+        body: JSON.stringify({ prompt: coachPrompt, track: active.genre === "NOVEL" ? "novel" : "cerpen", task: "Umpan balik naskah", context: [`Judul: ${title}`, `Sinopsis: ${synopsis}`, content.slice(0, 12000)].join("\n\n") }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error || "AI Writing Coach belum tersedia.");
