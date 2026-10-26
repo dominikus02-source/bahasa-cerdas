@@ -183,7 +183,7 @@ async function main() {
     const ok = await tryGuard({ id: "u", role: "UMUM", isFounder: false });
     assert((ok as any).ok?.id === "u", "UMUM → halaman tampil");
   } else assert(false, "lib/auth/umum-page.ts ada");
-  for (const p of ["app/umum/page.tsx", "app/umum/koleksi/page.tsx", "app/umum/notifikasi/page.tsx", "app/umum/pengaturan/page.tsx"]) {
+  for (const p of ["app/umum/page.tsx", "app/umum/koleksi/page.tsx", "app/umum/notifikasi/page.tsx", "app/umum/pengaturan/page.tsx", "app/umum/aktivitas/page.tsx"]) {
     assert(/requireUmumPage\(/.test(code(p)), `${p} dijaga requireUmumPage`);
   }
 
@@ -192,25 +192,31 @@ async function main() {
   const shell = code("components/umum/UmumShell.tsx");
   const page = code("app/umum/page.tsx");
   const nav = code("components/umum/UmumDashboardNav.tsx");
-  assert(/Akun/.test(shell) && !/>\s*Masuk\s*</.test(shell + page), "header memakai avatar/Akun, bukan tombol Masuk");
+  const topbar = code("components/umum/UmumTopBar.tsx");
+  const aktLib = code("lib/umum/aktivitas.ts");
+  assert(/UmumAccountMenu/.test(shell) && /Akun/.test(topbar) && !/>\s*Masuk\s*</.test(shell + topbar + page), "header memakai avatar/menu Akun, bukan tombol Masuk");
+  assert(/>Umum</.test(topbar) && !/Mahasiswa|Investor/i.test(topbar), "subjudul header = Umum (bukan Mahasiswa/Investor)");
+  assert(/db\.notifikasi\s*\.count/.test(shell) && /unread > 0/.test(shell), "badge notifikasi = jumlah nyata, hanya bila > 0");
+  assert(/name="q"/.test(topbar) && /searchParams/.test(page) && /cocok\(/.test(page), "pencarian header benar-benar memfilter /umum?q=");
   for (const l of ["Beranda", "Semua Produk", "Jelajahi", "Koleksi Saya", "Notifikasi", "Akun"]) assert(nav.includes(`"${l}"`), `nav memuat "${l}"`);
   assert(/UmumMobileBottomNav/.test(nav) && /lg:hidden/.test(nav) && /aria-current/.test(nav), "bottom nav mobile (lg:hidden, aria-current)");
   assert(/id="produk"/.test(page) && /id="gim"/.test(page), "seksi #produk & #gim ada");
   assert(/isUmumGameId/.test(page) && /unpublished/.test(page) && /premiumOnly/.test(page), "gim difilter allowlist UMUM, tanpa unpublished/premiumOnly");
-  assert(/xpLedger/.test(page) && /pembelian/.test(page) && /aktivitas-kosong/.test(page), "Aktivitas dari data nyata (XpLedger/Pembelian) + empty state");
-  assert(!/Math\.random|faker|lorem|dummy|contoh aktivitas/i.test(page), "tanpa data palsu di dasbor");
+  assert(/loadAktivitas/.test(page) && /xpLedger/.test(aktLib) && /pembelian/.test(aktLib) && /aktivitas-kosong/.test(page), "Aktivitas dari data nyata (XpLedger/Pembelian) + empty state");
+  assert(!/Math\.random|faker|lorem|dummy|contoh aktivitas/i.test(page + aktLib), "tanpa data palsu di dasbor");
   assert(/Sedang dalam pengembangan/.test(page), "badge 'Sedang dalam pengembangan' untuk kartu dev");
   assert(/noopener noreferrer/.test(page) && /_blank/.test(page), "tautan eksternal rel=noopener noreferrer");
   assert(/href="#konten-umum"|#konten-umum/.test(shell), "skip link ke konten");
   assert(/UMUM_HOME/.test(code("app/jumpa/page.tsx")) && /Kembali ke dasbor/.test(src("app/main-bersama/page.tsx")), "JUMPA (dasbor /umum) / MAIN BERSAMA tidak lagi 'Kembali ke NARA'");
   assert(!/ComingSoon|Sedang dalam pengembangan/.test(code("app/jumpa/page.tsx")), "/jumpa tidak lagi menampilkan status pengembangan untuk UMUM");
   // Sentuhan warna merek: token tema saja (bg-bc-brand, buttonClass), tanpa palet mentah.
-  assert(/bg-bc-brand/.test(page) && /buttonClass\(\{ variant: "primary"/.test(page) && /BRAND_CHIP/.test(page), "kartu & CTA /umum memakai token merek (bg-bc-brand, ui-btn primary, chip teal/biru/violet)");
+  assert(/var\(--bc-tile-nara\)/.test(page) && /bg-bc-navy/.test(page) && /buttonClass\(\{ variant: "primary"/.test(page), "kartu & CTA /umum memakai token tema (ubin --bc-tile-*, tombol navy, ui-btn primary)");
+  assert(/next\/image/.test(page) && /umum-hero\.webp/.test(page) && /umum-jelajahi\.webp/.test(page), "hero & kartu Jelajahi memakai gambar WebP via next/image");
   assert(!/\b(?:bg|text|border|from|to|via)-(?:sky|blue|violet|emerald|teal|indigo)-\d/.test(page), "dasbor /umum tanpa kelas palet Tailwind mentah");
 
   // ═══ 8. Investor ═══
   console.log("\n8. Tanpa 'Investor' di UI");
-  const visible = ["app/(auth)/register/page.tsx", "app/auth/pilih-peran/page.tsx", "components/auth/useRoleUmumAvailable.ts", "app/umum/page.tsx", "app/umum/pengaturan/page.tsx", "components/umum/UmumShell.tsx", "components/umum/UmumDashboardNav.tsx", "lib/umum/products.ts", "app/api/auth/role-options/route.ts"];
+  const visible = ["app/(auth)/register/page.tsx", "app/auth/pilih-peran/page.tsx", "components/auth/useRoleUmumAvailable.ts", "app/umum/page.tsx", "app/umum/pengaturan/page.tsx", "app/umum/aktivitas/page.tsx", "components/umum/UmumShell.tsx", "components/umum/UmumTopBar.tsx", "components/umum/AktivitasList.tsx", "lib/umum/aktivitas.ts", "components/umum/UmumDashboardNav.tsx", "lib/umum/products.ts", "app/api/auth/role-options/route.ts"];
   for (const p of visible) assert(has(p) && !/investor/i.test(code(p)), `${p} ada & tanpa kata Investor`);
   assert(/UMUM/.test(code("app/(auth)/register/page.tsx")) && /UMUM/.test(code("app/auth/pilih-peran/page.tsx")), "register & pilih-peran punya opsi UMUM");
   assert(!/Investor|Mahasiswa|Dosen/.test(src("app/umum/page.tsx")), "dasbor /umum tanpa label kategori (Investor/Mahasiswa/Dosen)");

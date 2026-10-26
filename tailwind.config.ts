@@ -15,6 +15,8 @@ const BC_COLORS = [
   "danger", "danger-soft", "violet", "violet-soft", "info", "info-soft",
   // Aksen per audiens (murid = violet/gradien merek, guru = biru) — tokens.css §3
   "aud", "aud-strong", "aud-soft", "on-aud",
+  // Dasbor Umum: tombol navy — tokens.css §4
+  "navy", "on-navy",
 ] as const;
 const bcColors = Object.fromEntries(BC_COLORS.map((n) => [n, tok(n)]));
 
