@@ -4458,7 +4458,24 @@ model WritingProject {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapters  WritingChapter[]
 
   @@index([userId, updatedAt])
   @@index([userId, genre])
+}
+
+
+model WritingChapter {
+  id          String         @id @default(cuid())
+  projectId   String
+  title       String
+  content     String         @default("") @db.Text
+  orderIndex  Int            @default(0)
+  wordCount   Int            @default(0)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  project     WritingProject @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, orderIndex])
+  @@index([projectId, updatedAt])
 }
