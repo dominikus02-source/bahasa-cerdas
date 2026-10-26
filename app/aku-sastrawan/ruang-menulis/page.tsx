@@ -94,7 +94,7 @@ export default function RuangMenulisPage() {
       setNotice(error instanceof Error ? error.message : "Draf belum tersimpan. Salinan lokal tetap dipertahankan.");
     } finally { setSaving(false); }
   }
-  const words = active?.body.trim() ? active.body.trim().split(/\\s+/u).length : 0;
+  const words = active?.body.trim() ? active.body.trim().split(/\s+/u).length : 0;
   async function askCoach() {
     if (!active || coachBusy) return;
     if (!active.body.trim()) { setNotice("Tulis atau tempelkan cuplikan naskah terlebih dahulu agar coach bisa memberi masukan yang spesifik."); return; }
