@@ -16,8 +16,14 @@ import type { GameMode } from '@/src/main-bersama/domain/types/session';
 import { ModeCard } from '@/components/main-bersama/shared/ModeCard';
 import { PrimaryGameButton } from '@/components/main-bersama/shared/PrimaryGameButton';
 import { MbApiError, postTeacherCommand } from '@/lib/main-bersama/api-client';
-import { ArrowRight, BookOpen, Check, ChevronRight, Eye, Gamepad2, Info, Monitor, Sparkles, Users } from 'lucide-react';
+import { ArrowRight, BookOpen, Check, ChevronRight, Clock3, Eye, Gamepad2, Info, Monitor, Sparkles, Users } from 'lucide-react';
 import { TeamMascot } from '@/components/main-bersama/art/registry';
+import {
+  DEFAULT_GAME_DURATION_MINUTES,
+  GAME_DURATION_MINUTES,
+  MINUTE_MS,
+  type GameDurationMinutes,
+} from '@/src/main-bersama/domain/rules/game-duration';
 import styles from './setup.module.css';
 
 export interface SetupPackage {
@@ -90,7 +96,7 @@ export function SetupClient({
   const [compat, setCompat] = useState<Record<string, CompatibilityInfo>>({});
   const [checking, setChecking] = useState(false);
   const [opening, setOpening] = useState(false);
-  const [durationMin, setDurationMin] = useState(10);
+  const [durationMin, setDurationMin] = useState<GameDurationMinutes>(DEFAULT_GAME_DURATION_MINUTES);
   const [teamCount, setTeamCount] = useState(4);
   const [maxMembersPerTeam, setMaxMembersPerTeam] = useState(8);
   const [estimatedStudents, setEstimatedStudents] = useState(0);
@@ -215,13 +221,13 @@ export function SetupClient({
         packageRef,
         ...(classId ? { classId } : {}),
         config: { roundDurationMs: 60 * 1000,
+          gameDurationMs: durationMin * MINUTE_MS,
           ...(mode === 'jelajah-kata' ? { teamCount, maxMembersPerTeam } : {}),
         },
         ...(partial ? { useSupportedQuestions: true } : {}),
       });
       const created = result.session as { id?: unknown } | undefined;
       const sessionId = created && typeof created.id === 'string' ? created.id : '';
-      if (sessionId) localStorage.setItem(`mb-session-duration-${sessionId}`, String(durationMin));
       if (!sessionId) throw new MbApiError('INTERNAL', 'Sesi gagal dibuat.', 500);
 
       // UX lobby satu langkah: setelah sesi durable dibuat, langsung buka
@@ -276,14 +282,6 @@ export function SetupClient({
           <div className={styles.heroFeatures}>
             <span><Users size={14} aria-hidden /> Bermain sekelas</span>
             <span><Monitor size={14} aria-hidden /> Tampilkan di proyektor</span>
-          </div>
-          <div className={styles.durationPicker}>
-            <label>Durasi permainan</label>
-            <div className={styles.durationOptions}>
-              {[5, 10, 15, 20, 30].map((m) => (
-                <button key={m} type="button" className={durationMin === m ? styles.durationActive : ""} onClick={() => setDurationMin(m)}>{m} menit</button>
-              ))}
-            </div>
           </div>
         </div>
       </header>
@@ -364,6 +362,21 @@ export function SetupClient({
             <div className={styles.modeList} role="group" aria-labelledby="mb-mode-h">
               <ModeCard mode="jelajah-kata" selected={mode === 'jelajah-kata'} onSelect={() => setMode('jelajah-kata')} />
               <ModeCard mode="kota-cahaya" selected={mode === 'kota-cahaya'} onSelect={() => setMode('kota-cahaya')} />
+            </div>
+
+            <div className={styles.durationPanel} role="group" aria-labelledby="mb-duration-h">
+              <div className={styles.teamHead}>
+                <h3 id="mb-duration-h"><Clock3 size={16} aria-hidden /> Waktu permainan</h3>
+              </div>
+              <div className={styles.durationOptions}>
+                {GAME_DURATION_MINUTES.map((m) => (
+                  <button key={m} type="button" aria-pressed={durationMin === m}
+                    aria-label={`${m} menit`} onClick={() => setDurationMin(m)} className={styles.durationOption}>
+                    <strong>{m}</strong><span>menit</span>
+                  </button>
+                ))}
+              </div>
+              <p className={styles.durationNote}>Permainan selesai otomatis saat waktu habis.</p>
             </div>
 
             {mode === 'jelajah-kata' ? (
@@ -461,6 +474,10 @@ export function SetupClient({
                 <div><dt>Cara bermain</dt><dd data-empty={!modeName}>{modeName ?? 'Belum dipilih'}
                   {mode === 'jelajah-kata' ? <small>{teamCount} regu · Berlomba</small> : mode === 'kota-cahaya' ? <small>Satu kelas · Berkolaborasi</small> : null}
                 </dd></div>
+              </div>
+              <div className={styles.summaryRow}>
+                <Clock3 size={16} aria-hidden />
+                <div><dt>Durasi</dt><dd>{durationMin} menit<small>Selesai otomatis saat waktu habis</small></dd></div>
               </div>
               <div className={styles.summaryRow}>
                 <Users size={16} aria-hidden />

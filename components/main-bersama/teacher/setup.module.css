@@ -146,6 +146,19 @@
 .teamOption:hover { border-color: #8abda3; }
 .teamOption[aria-pressed='true'] { border-color: #047857; background: #eaf8f0; box-shadow: inset 0 0 0 1px #047857; color: #047857; }
 .teamOption[aria-pressed='true'] span { color: #047857; }
+/* Waktu permainan — aksen guru biru dari token audiens (bukan hijau setup). */
+.durationPanel { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--setup-border); }
+.durationPanel .teamHead { margin-bottom: 12px; }
+.durationPanel .teamHead h3 svg { color: var(--clr-aud); }
+.durationOptions { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.durationOption { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-width: 0; min-height: 60px; padding: 6px 2px; border: 1px solid var(--setup-border); border-radius: 10px; background: transparent; color: var(--setup-ink); cursor: pointer; transition: border-color var(--bc-dur-fast) var(--bc-ease), background var(--bc-dur-fast) var(--bc-ease); }
+.durationOption strong { font-size: 20px; font-weight: 800; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.durationOption span { color: var(--setup-muted); font-size: 10px; }
+.durationOption:hover { border-color: var(--clr-aud); }
+.durationOption[aria-pressed='true'] { border-color: var(--clr-aud-strong); background: var(--clr-aud-soft); box-shadow: inset 0 0 0 1px var(--clr-aud-strong); color: var(--clr-aud-strong); }
+.durationOption[aria-pressed='true'] span { color: var(--clr-aud-strong); }
+.durationOption:focus-visible { outline-color: var(--clr-aud) !important; }
+.durationNote { margin: 10px 0 0; color: var(--setup-muted); font-size: 11px; line-height: 1.6; }
 .mascots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 .mascot { display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 40px; color: #516b60; font-size: 8px; font-weight: 700; }
 .teamInputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }

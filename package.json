@@ -255,6 +255,7 @@
     "test:guru-berkarya2-social-feed": "npx tsx scripts/test-guru-berkarya2-social-feed.ts",
     "test:guru-berkarya-social": "npx tsx scripts/test-guru-berkarya-social.ts",
     "test:gamification-engine": "npx tsx scripts/test-gamification-engine.ts",
+    "test:main-bersama-game-duration": "npx tsx scripts/test-main-bersama-game-duration.ts",
     "test:main-bersama-mascot-assets": "npx tsx scripts/test-main-bersama-mascot-assets.ts",
     "test:main-bersama-jelajah-motion": "npx tsx scripts/test-main-bersama-jelajah-motion.ts",
     "test:main-bersama-kota-motion": "npx tsx scripts/test-main-bersama-kota-motion.ts",
