@@ -23,7 +23,7 @@ export async function PATCH(req: NextRequest, { params }: Context) {
     const body = await req.json();
     const data: { title?: string; content?: string; wordCount?: number; orderIndex?: number } = {};
     if (typeof body.title === "string") data.title = body.title.trim().slice(0, 160) || "Bab tanpa judul";
-    if (typeof body.content === "string") { data.content = body.content.slice(0, 500_000); data.wordCount = words(data.content); }
+    if (typeof body.content === "string") { const content = body.content.slice(0, 500_000); data.content = content; data.wordCount = words(content); }
     if (Number.isInteger(body.orderIndex) && body.orderIndex >= 1 && body.orderIndex <= 500) data.orderIndex = body.orderIndex;
     const chapter = await db.writingChapter.update({ where: { id: chapterId }, data });
     return NextResponse.json({ chapter });
