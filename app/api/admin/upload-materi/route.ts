@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     console.log("Manual PPT Upload: Starting...");
     
@@ -113,3 +114,5 @@ export async function POST(req: NextRequest) {
     }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/upload-materi", method: "POST" });

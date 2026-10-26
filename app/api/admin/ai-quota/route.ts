@@ -17,12 +17,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
+import { withAdmin } from "@/lib/admin/guard";
 
 function getPeriod(): string {
   return new Date().toISOString().slice(0, 7);
 }
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -163,3 +164,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, error: err.message || "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/ai-quota", method: "GET" });

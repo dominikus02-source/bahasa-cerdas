@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
+import { withAdmin } from "@/lib/admin/guard";
 
 // ════════════════════════════════════════════════════════════════════
 // LEARNING ANALYTICS DASHBOARD — /admin/analytics
@@ -181,7 +182,7 @@ function pctChange(cur: number, prev: number): number | null {
   return Math.round(((cur - prev) / prev) * 100);
 }
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -820,3 +821,5 @@ function buildInsights(ctx: InsightCtx) {
 
   return out.slice(0, 10);
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/analytics/dashboard", method: "GET" });

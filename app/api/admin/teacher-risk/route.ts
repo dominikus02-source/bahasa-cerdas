@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-risk
  * Antrean review risk (founder-only, P8C §11/§21).
  * Hanya yang diperlukan operasional — tanpa exposure finansial publik.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -77,3 +78,5 @@ export async function GET() {
     return NextResponse.json({ error: "Gagal memuat antrean risk" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-risk", method: "GET" });

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * POST /api/admin/bank-soal/seed — DISABLED (fail-closed).
@@ -16,7 +17,7 @@ import { NextResponse } from "next/server";
  * Content changes go through scripts/import-founder-bank.ts (dry-run default,
  * --execute gated) under human review.
  */
-export async function POST() {
+async function adminPOST() {
   return NextResponse.json(
     {
       success: false,
@@ -27,3 +28,5 @@ export async function POST() {
     { status: 410 }
   );
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/bank-soal/seed", method: "POST" });

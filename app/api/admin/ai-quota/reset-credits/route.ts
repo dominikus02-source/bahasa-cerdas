@@ -20,6 +20,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
 import { z } from "zod";
+import { withAdmin } from "@/lib/admin/guard";
 
 const bodySchema = z.object({
   userId: z.string().min(1, "userId wajib diisi"),
@@ -31,7 +32,7 @@ function getPeriod(): string {
   return new Date().toISOString().slice(0, 7);
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -160,3 +161,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: false, error: err.message || "Internal error" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/ai-quota/reset-credits", method: "POST" });

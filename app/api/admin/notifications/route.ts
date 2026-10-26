@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -28,7 +29,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
+async function adminPATCH(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -45,3 +46,6 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/notifications", method: "GET" });
+export const PATCH = withAdmin(adminPATCH, { route: "/api/admin/notifications", method: "PATCH" });

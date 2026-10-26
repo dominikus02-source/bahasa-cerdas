@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { recordFounderDecision } from "@/lib/commission/payout/founder-decision";
 import type { FounderDecisionState } from "@/lib/commission/payout/founder-decision";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * POST /api/admin/teacher-commissions/pre-canary/decision
@@ -9,7 +10,7 @@ import type { FounderDecisionState } from "@/lib/commission/payout/founder-decis
  * Keputusan teraudit (AdminPaymentAuditLog). Sistem TIDAK pernah menginfer
  * approval dari build/test — hanya record ini.
  */
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const founder = await getUser();
     if (!founder || !founder.isFounder) {
@@ -46,3 +47,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Gagal mencatat keputusan" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/pre-canary/decision", method: "POST" });

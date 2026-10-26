@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-risk/[id]
  * Detail case + timeline append-only (signals + actions). Founder-only.
  * Evidence tersamarkan (tanpa rekening penuh).
  */
-export async function GET(
+async function adminGET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -80,3 +81,5 @@ export async function GET(
     return NextResponse.json({ error: "Gagal memuat detail case" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-risk/[id]", method: "GET" });

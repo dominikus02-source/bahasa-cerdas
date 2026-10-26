@@ -26,6 +26,7 @@ import {
   validateImportBatch,
   type ValidatedQuestion,
 } from "@/lib/question-bank/import-validation";
+import { withAdmin } from "@/lib/admin/guard";
 
 interface ImportSummary {
   imported: number;
@@ -38,7 +39,7 @@ interface ImportSummary {
   withMetadata: number;
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const supabase = await createClient();
     const {
@@ -208,3 +209,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/bank-soal/import", method: "POST" });

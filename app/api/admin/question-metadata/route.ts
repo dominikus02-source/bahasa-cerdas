@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { validateQuestionMetadata, type QuestionMetadataInput } from "@/lib/question-metadata/validation";
+import { withAdmin } from "@/lib/admin/guard";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -36,7 +37,7 @@ async function requireMetadataEditor() {
   return { user } as const;
 }
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   const auth = await requireMetadataEditor();
   if (auth.error) return auth.error;
 
@@ -76,7 +77,7 @@ export async function GET(req: NextRequest) {
 }
 
 /** Admin/founder-only import/update. Student clients cannot mutate metadata. */
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   const auth = await requireMetadataEditor();
   if (auth.error) return auth.error;
 
@@ -132,3 +133,6 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({ ok: true, count: saved.length, items: saved }, { status: 201 });
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/question-metadata", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/question-metadata", method: "POST" });

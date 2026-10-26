@@ -93,6 +93,9 @@ jobs:
           npm run test:umum-premium
           npm run test:role-umum
 
+      - name: Founder access gate (pengaman admin, super founder, komisi)
+        run: npm run test:founder-access
+
       - name: Lint
         run: npm run lint
 

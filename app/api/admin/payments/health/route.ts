@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -99,3 +100,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/payments/health", method: "GET" });

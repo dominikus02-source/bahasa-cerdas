@@ -17,6 +17,7 @@ import {
   payoutMinimumAmount,
   payoutProvider,
 } from "@/lib/commission/payout/config";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET/POST /api/admin/teacher-commissions/payout-safety
@@ -26,7 +27,7 @@ import {
  * Hanya menghentikan pengiriman BARU — TIDAK menghapus withdrawal/wallet/ledger,
  * TIDAK menyembunyikan riwayat finansial.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -54,7 +55,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -93,3 +94,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Gagal mengubah kill switch" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/payout-safety", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/payout-safety", method: "POST" });

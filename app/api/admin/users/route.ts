@@ -7,8 +7,9 @@ import {
   getPeriodKey,
   entitlementValueToLimit,
 } from "@/lib/premium-economy";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -95,7 +96,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: NextRequest) {
+async function adminPATCH(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -103,6 +104,9 @@ export async function PATCH(req: NextRequest) {
     const { userIds, action } = await req.json();
     if (!Array.isArray(userIds) || userIds.length === 0) {
       return NextResponse.json({ error: "userIds required" }, { status: 400 });
+    }
+    if (userIds.length > 200) {
+      return NextResponse.json({ error: "Maksimal 200 pengguna per aksi massal." }, { status: 400 });
     }
 
     if (action === "togglePremium") {
@@ -123,3 +127,6 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/users", method: "GET" });
+export const PATCH = withAdmin(adminPATCH, { route: "/api/admin/users", method: "PATCH" });

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { bulkReconcile } from "@/lib/commission/wallet";
 import { auditCommission } from "@/lib/commission/audit";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions/reconciliation
@@ -11,7 +12,7 @@ import { auditCommission } from "@/lib/commission/audit";
  * dibandingkan dengan state tersimpan. Mismatch DILAPORKAN + diaudit —
  * TIDAK pernah diperbaiki diam-diam.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -40,3 +41,5 @@ export async function GET() {
     return NextResponse.json({ error: "Gagal menjalankan rekonsiliasi" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/reconciliation", method: "GET" });

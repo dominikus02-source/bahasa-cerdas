@@ -28,8 +28,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
           <div className="flex items-center gap-2 min-w-0">
             <BackHome href="/admin" />
-            <span className="hidden md:inline-flex items-center gap-1.5 text-sm font-bold text-red-700 dark:text-red-400 truncate">
-              <ShieldCheck className="w-4 h-4 shrink-0" /> Panel Admin
+            <span className="hidden md:inline-flex items-center gap-1.5 text-sm font-bold text-bc-text truncate">
+              <ShieldCheck className="w-4 h-4 shrink-0 text-bc-violet" aria-hidden="true" /> Panel Admin
             </span>
           </div>
           <ThemeToggle />

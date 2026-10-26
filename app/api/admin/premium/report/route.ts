@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { calculateMRR } from "@/lib/admin/executive";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/premium/report
@@ -30,7 +31,7 @@ type Audience = (typeof VALID_AUDIENCES)[number];
 type Status = (typeof VALID_STATUSES)[number];
 type PlanFilter = (typeof VALID_PLANS)[number];
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -408,3 +409,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/premium/report", method: "GET" });

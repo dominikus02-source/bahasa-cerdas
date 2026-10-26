@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { calculateMRR } from "@/lib/admin/executive";
+import { withAdmin } from "@/lib/admin/guard";
 
 // ════════════════════════════════════════════════════════════════════
 // FOUNDER CONTROL TOWER — Executive KPI API (DEPRECATED)
@@ -24,7 +25,7 @@ function pctChange(cur: number, prev: number): number {
   return Math.round(((cur - prev) / prev) * 100);
 }
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -282,3 +283,5 @@ export async function GET() {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/analytics/executive", method: "GET" });

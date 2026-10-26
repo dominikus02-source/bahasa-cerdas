@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { listAllWithdrawals } from "@/lib/commission/withdrawals";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions/withdrawals
  * Semua penarikan komisi guru (founder-only) untuk diproses admin.
  * Nomor rekening ditampilkan utuh HANYA ke founder (dibutuhkan untuk transfer).
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -45,3 +46,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Gagal memuat penarikan" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/withdrawals", method: "GET" });

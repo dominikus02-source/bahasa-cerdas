@@ -20,10 +20,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db as prisma } from "@/lib/db";
+import { withAdmin } from "@/lib/admin/guard";
 
 const VALID_ACTIONS = ["EXTEND_TRIAL", "RESET_CREDITS", "ALLOCATE_CREDITS"];
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -141,3 +142,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ success: false, error: err.message || "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/ai-quota/audit-log", method: "GET" });

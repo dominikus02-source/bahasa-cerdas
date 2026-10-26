@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * Daftar pengajuan penarikan saldo guru untuk ditinjau admin.
@@ -9,7 +10,7 @@ import { getUser } from "@/lib/supabase/server";
  * kolom `saldo` ke baris Withdrawal berstatus PENDING dan berhenti di situ —
  * saldonya berkurang tapi tidak pernah ada yang mentransfer.
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -51,3 +52,5 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Gagal memuat data penarikan" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/withdrawals", method: "GET" });

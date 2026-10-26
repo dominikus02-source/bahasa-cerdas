@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { resolveRiskCase } from "@/lib/guru/risk/signals";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * POST /api/admin/teacher-risk/[id]/decision
@@ -9,7 +10,7 @@ import { resolveRiskCase } from "@/lib/guru/risk/signals";
  * WAJIB reason — tidak ada keputusan senyap. Semua di-audit (RiskAction +
  * AdminPaymentAuditLog). Notifikasi respectful ke guru bila relevan.
  */
-export async function POST(
+async function adminPOST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
@@ -75,3 +76,5 @@ export async function POST(
     return NextResponse.json({ error: "Gagal memproses keputusan" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-risk/[id]/decision", method: "POST" });

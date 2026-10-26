@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { z } from "zod";
+import { withAdmin } from "@/lib/admin/guard";
 
 // ════════════════════════════════════════════════════════════════════
 // PAYMENT HEALTH — Fix Entitlement
@@ -24,7 +25,7 @@ const bodySchema = z.object({
 
 const QUALIFYING_TYPES = ["MURID_PREMIUM", "PREMIUM_UPGRADE"] as const;
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -187,3 +188,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/analytics/payment-health/fix", method: "POST" });
