@@ -132,7 +132,7 @@ export async function POST(req: NextRequest) {
         packageRef: body.packageRef as never,
         ...(typeof body.classId === 'string' ? { classId: body.classId } : {}),
         ...(body.config !== undefined && body.config !== null
-          ? { config: body.config as { roundDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number } }
+          ? { config: body.config as { roundDurationMs?: number; gameDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number } }
           : {}),
         ...(body.useSupportedQuestions === true ? { useSupportedQuestions: true } : {}),
       },

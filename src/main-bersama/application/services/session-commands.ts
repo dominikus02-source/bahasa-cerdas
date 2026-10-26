@@ -21,6 +21,11 @@ import type {
 import { buildRoundFacts } from './round-facts-projection';
 import { finalizeKotaTarget } from './kota-target-policy';
 import type { VerifiedTeacherActor } from '../use-cases/create-main-session';
+import {
+  computeGameEndsAt,
+  extendGameEndsAtAfterPause,
+  isGameTimeUp,
+} from '../../domain/rules/game-duration';
 
 // ─── Typed error codes (mapped ke HTTP oleh route handler) ───
 
@@ -90,7 +95,51 @@ async function requireOwnedEngine(
   deps.resolver.discard?.(sessionId);
   const loaded = await loadEngineWithGameState(deps, sessionId);
   if (!loaded) return { ok: false, code: 'SESSION_NOT_FOUND' };
-  return { ok: true, ...loaded };
+  // Waktu permainan habis → server mengakhiri sesi dulu; command apa pun
+  // setelah itu melihat fase `ended` yang authoritative.
+  const fresh = await expireSessionIfTimeUp(deps, sessionId, loaded);
+  if (!fresh) return { ok: false, code: 'SESSION_NOT_FOUND' };
+  return { ok: true, ...fresh };
+}
+
+// ─── Durasi permainan (server-authoritative) ────────────────
+
+/**
+ * Bila batas waktu permainan sudah lewat dan sesi masih berjalan, akhiri
+ * sesi (sama dengan tombol Akhiri guru) lalu muat ulang state durable.
+ * Dipanggil oleh semua boundary baca/tulis (GET state guru/siswa/layar,
+ * submit jawaban, command guru) sehingga tidak bergantung pada tab guru.
+ * Aman dipanggil paralel: penutupan kedua idempotent / tertolak DB.
+ */
+export async function expireSessionIfTimeUp(
+  deps: SessionOrchestratorDeps,
+  sessionId: SessionId,
+  loaded: { engine: SessionEngine; gameState: GameEngineState | null },
+): Promise<{ engine: SessionEngine; gameState: GameEngineState | null } | null> {
+  const session = loaded.engine.state.session;
+  if (!isGameTimeUp({ phase: session.phase, gameEndsAt: session.gameEndsAt, now: deps.clock.now() })) {
+    return loaded;
+  }
+  try {
+    await finalizeSession(deps, sessionId, loaded.engine, loaded.gameState);
+  } catch (error) {
+    // Request lain menang balapan menutup sesi — state DB tetap benar.
+    console.warn('[main-bersama] penutupan otomatis sesi dilewati:', error);
+  }
+  deps.resolver.discard?.(sessionId);
+  return loadEngineWithGameState(deps, sessionId);
+}
+
+/** Kunci batas waktu permainan saat permainan dimulai. */
+async function lockGameClock(
+  deps: SessionOrchestratorDeps,
+  engine: SessionEngine,
+): Promise<void> {
+  const session = engine.state.session;
+  if (!session.gameDurationMs) return;
+  const endsAt = computeGameEndsAt(deps.clock.now(), session.gameDurationMs);
+  session.gameEndsAt = endsAt;
+  await deps.sessions.saveGameEndsAt?.(engine.sessionId, endsAt);
 }
 
 /**
@@ -180,6 +229,10 @@ export async function startSession(
   if (rosterPlayerIds.length === 0) {
     return { ok: false, code: 'NO_ELIGIBLE_PLAYERS' };
   }
+
+  // Jam permainan mulai berjalan sekarang (sebelum soal pertama terbuka
+  // agar semua klien langsung menerima batas waktu yang sama).
+  await lockGameClock(deps, engine);
 
   if (session.gameMode === 'jelajah-kata' && deps.rounds.startIndependentJelajah) {
     const opened = await deps.rounds.startIndependentJelajah(sessionId, deps.clock.now());
@@ -524,6 +577,7 @@ export async function pauseSession(
   if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
   const result: EngineMutation = guard.engine.pause();
   if (!result.ok) return { ok: false, code: mapMutationCode(result.code) };
+  guard.engine.state.session.pausedAt = deps.clock.now();
   await persistSession(deps, guard.engine);
   return { ok: true, value: { phase: 'paused' } };
 }
@@ -536,7 +590,15 @@ export async function resumeSession(
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
   if (isIndependentJelajah(guard.engine.state)) return { ok: false, code: 'INVALID_PHASE', reason: 'Jelajah Kata berjalan otomatis per regu.' };
+  const session = guard.engine.state.session;
+  const gameEndsAtBefore = session.gameEndsAt;
   const result: EngineMutation = guard.engine.resume();
+  if (result.ok && gameEndsAtBefore && session.pausedAt) {
+    // Jeda tidak memakan waktu permainan: geser batas sebesar lama jeda.
+    session.gameEndsAt = extendGameEndsAtAfterPause(gameEndsAtBefore, session.pausedAt, deps.clock.now());
+    session.pausedAt = undefined;
+    await deps.sessions.saveGameEndsAt?.(sessionId, session.gameEndsAt);
+  }
   if (!result.ok) return { ok: false, code: mapMutationCode(result.code) };
   await persistSession(deps, guard.engine);
   return { ok: true, value: { phase: result.value.phase } };
@@ -549,7 +611,19 @@ export async function endSession(
 ): Promise<TeacherCommandResult<{ phase: 'ended' }>> {
   const guard = await requireOwnedEngine(deps, actor, sessionId);
   if (!guard.ok) return guard;
-  const { engine, gameState } = guard;
+  return finalizeSession(deps, sessionId, guard.engine, guard.gameState);
+}
+
+/**
+ * Akhiri sesi: dipakai tombol Akhiri guru DAN penutupan otomatis saat
+ * waktu permainan habis. Idempotent untuk sesi yang sudah `ended`.
+ */
+async function finalizeSession(
+  deps: SessionOrchestratorDeps,
+  sessionId: SessionId,
+  engine: SessionEngine,
+  gameState: GameEngineState | null,
+): Promise<TeacherCommandResult<{ phase: 'ended' }>> {
   const independentActive = isIndependentJelajah(engine.state) && engine.state.session.phase === 'question';
   if (independentActive && !deps.rounds.finishIndependentJelajah) {
     return { ok: false, code: 'INTERNAL', reason: 'Penutupan Jelajah belum tersedia.' };

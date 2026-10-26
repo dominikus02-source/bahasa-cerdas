@@ -20,6 +20,9 @@ import {
 import { useSessionView } from '@/lib/main-bersama/use-session-view';
 import { clearCredential } from '@/lib/main-bersama/credential-store';
 import { SessionHeader } from '@/components/main-bersama/shared/SessionHeader';
+import { GameTimer, useGameClock } from '@/components/main-bersama/shared/GameTimer';
+import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
+import { isMusicPhase, useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
 import { StudentBackButton } from '@/components/main-bersama/shared/StudentBackButton';
 import { TeamBadge } from '@/components/main-bersama/art/shared/TeamBadge';
 import { TeamMascot } from '@/components/main-bersama/art/registry';
@@ -97,6 +100,20 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
     { onError, pollIntervalMs: 1_500, debounceMs: 40 },
   );
 
+  // Jam permainan dari server: sama untuk semua pemain. Suara murid
+  // opt-in (default mati) agar kelas tidak riuh 30 ponsel sekaligus.
+  const gameClock = useGameClock(view?.gameClock, view?.serverTime);
+  const studentSound = useMainBersamaSound(
+    {
+      participantCount: 0,
+      phase: view?.phase ?? 'preparing',
+      gameMode: view?.gameMode ?? 'jelajah-kata',
+      musicActive: isMusicPhase(view?.phase) && gameClock.running,
+      remainingMs: gameClock.remainingMs,
+    },
+    { storageKey: 'mb-sound-muted-murid', defaultEnabled: false },
+  );
+
   if (exitError) {
     return (
       <main className="mb-sexit mb-fade-in">
@@ -168,6 +185,17 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
           <StudentLandscapeControl />
         </div>
       ) : null}
+      {!isFinish(view) && view.gameClock ? (
+        <div className="mb-sgame-status">
+          <GameTimer clock={view.gameClock} serverTime={view.serverTime} compact className="mb-sgame-timer" />
+          <SoundToggle
+            enabled={studentSound.enabled}
+            unlocked={studentSound.unlocked}
+            onToggle={() => void studentSound.toggle()}
+            compact
+          />
+        </div>
+      ) : null}
       {isPreRound(view) ? (
         <StudentLobby view={view} />
       ) : view.phase === 'question' ? (
@@ -224,6 +252,20 @@ export function StudentGameClient({ sessionId }: { sessionId: string }) {
           background: rgba(11, 32, 49, .72);
           box-shadow: 0 12px 28px rgba(0,0,0,.14);
           backdrop-filter: blur(12px);
+        }
+        .mb-sgame-status {
+          position: relative;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: min(100%, 820px);
+          margin: 0 auto;
+          padding: 8px 14px 0;
+        }
+        .mb-sgame-status :global(.mb-sgame-timer) {
+          flex: 1;
+          min-width: 0;
         }
         @media (min-width: 700px) {
           .mb-sgame-head { padding-top: 18px; }

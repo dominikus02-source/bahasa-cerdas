@@ -75,6 +75,9 @@ jobs:
           npm run test:jumpa-flow
           npm run test:jumpa-input
 
+      - name: Main Bersama game duration gate
+        run: npm run test:main-bersama-game-duration
+
       - name: Midtrans payment activation gate
         run: npm run test:midtrans-activation
       - name: Payment pages gate

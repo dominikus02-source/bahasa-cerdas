@@ -142,6 +142,8 @@ export async function postTeacherCommand(payload: {
   /** Konfigurasi sesi yang dikunci saat sesi dibuat. */
   config?: {
     roundDurationMs?: number;
+    /** Total durasi permainan (ms): 10/15/25/30/45 menit. */
+    gameDurationMs?: number;
     kotaTargetCorrect?: number;
     teamCount?: number;
     maxMembersPerTeam?: number;

@@ -16,6 +16,10 @@
 
 import type { GameMode } from '../../domain/types/session';
 import { DEFAULT_TEAM_COUNT, MIN_TEAM_COUNT, MAX_TEAM_COUNT } from '../../domain/entities/team';
+import {
+  DEFAULT_GAME_DURATION_MS,
+  isAllowedGameDurationMs,
+} from '../../domain/rules/game-duration';
 
 /** Durasi default per round (ms). 60 detik — cukup baca + jawab. */
 export const DEFAULT_ROUND_DURATION_MS = 60_000;
@@ -65,14 +69,14 @@ export function resolveKotaTarget(input: {
 
 /** Konfigurasi efektif per mode setelah default diisi. */
 export type ResolvedGameConfig =
-  | { gameMode: 'jelajah-kata'; roundDurationMs: number; teamCount: number; maxMembersPerTeam?: number }
-  | { gameMode: 'kota-cahaya'; roundDurationMs: number; kotaTarget: KotaTargetResolution };
+  | { gameMode: 'jelajah-kata'; roundDurationMs: number; gameDurationMs: number; teamCount: number; maxMembersPerTeam?: number }
+  | { gameMode: 'kota-cahaya'; roundDurationMs: number; gameDurationMs: number; kotaTarget: KotaTargetResolution };
 
 /** Isi default untuk input minimal guru. Deterministik. */
 export function resolveGameConfig(
   gameMode: GameMode,
   totalRounds: number,
-  input: { roundDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number } = {},
+  input: { roundDurationMs?: number; gameDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number } = {},
 ): { ok: true; config: ResolvedGameConfig } | { ok: false; code: 'INVALID_GAME_CONFIG'; reason: string } {
   if (!Number.isInteger(totalRounds) || totalRounds <= 0) {
     return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'totalRounds harus integer > 0' };
@@ -81,6 +85,12 @@ export function resolveGameConfig(
   const roundDurationMs = input.roundDurationMs ?? DEFAULT_ROUND_DURATION_MS;
   if (!Number.isInteger(roundDurationMs) || roundDurationMs <= 0) {
     return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'roundDurationMs harus integer > 0' };
+  }
+
+  // Durasi permainan: hanya 10/15/25/30/45 menit (server-enforced).
+  const gameDurationMs = input.gameDurationMs ?? DEFAULT_GAME_DURATION_MS;
+  if (!isAllowedGameDurationMs(gameDurationMs)) {
+    return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'Durasi permainan harus 10, 15, 25, 30, atau 45 menit.' };
   }
 
   if (gameMode === 'jelajah-kata') {
@@ -92,7 +102,7 @@ export function resolveGameConfig(
     if (cap !== undefined && (!Number.isInteger(cap) || cap < 1 || cap > 50)) {
       return { ok: false, code: 'INVALID_GAME_CONFIG', reason: 'Maksimal peserta per regu harus 1–50.' };
     }
-    return { ok: true, config: { gameMode: 'jelajah-kata', roundDurationMs, teamCount, ...(cap !== undefined ? { maxMembersPerTeam: cap } : {}) } };
+    return { ok: true, config: { gameMode: 'jelajah-kata', roundDurationMs, gameDurationMs, teamCount, ...(cap !== undefined ? { maxMembersPerTeam: cap } : {}) } };
   }
 
   // Kota Cahaya: target eksplisit divalidasi; tanpa target → pending
@@ -101,6 +111,6 @@ export function resolveGameConfig(
   if (!target.ok) return target;
   return {
     ok: true,
-    config: { gameMode: 'kota-cahaya', roundDurationMs, kotaTarget: target.resolution },
+    config: { gameMode: 'kota-cahaya', roundDurationMs, gameDurationMs, kotaTarget: target.resolution },
   };
 }

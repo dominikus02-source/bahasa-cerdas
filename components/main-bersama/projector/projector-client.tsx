@@ -21,7 +21,8 @@ import { QuestionCard } from "@/components/main-bersama/shared/QuestionCard";
 import { ConnectionBanner } from "@/components/main-bersama/shared/ConnectionBanner";
 import { RoundCountdown } from "@/components/main-bersama/shared/RoundCountdown";
 import { LobbyRoster } from "@/components/main-bersama/shared/LobbyRoster";
-import { useMainBersamaSound } from "@/components/main-bersama/sound/useMainBersamaSound";
+import { isMusicPhase, useMainBersamaSound } from "@/components/main-bersama/sound/useMainBersamaSound";
+import { GameTimer, useGameClock } from "@/components/main-bersama/shared/GameTimer";
 import { SoundToggle } from "@/components/main-bersama/sound/SoundToggle";
 import { JelajahTrail } from "@/components/main-bersama/art/jelajah/JelajahTrail";
 import { KotaScene } from "@/components/main-bersama/art/kota/KotaScene";
@@ -149,7 +150,10 @@ export function ProjectorClient() {
       : [];
   const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
+  const gameClock = useGameClock(view?.gameClock, view?.serverTime);
   const gameSound = useMainBersamaSound({
+    musicActive: isMusicPhase(view?.phase) && (gameClock.running || !view?.gameClock),
+    remainingMs: gameClock.remainingMs,
     participantCount: view?.participation.playerCount ?? 0,
     phase: view?.phase ?? "preparing",
     gameMode: view?.gameMode ?? "jelajah-kata",
@@ -206,6 +210,7 @@ export function ProjectorClient() {
               <span className="mb-pj-class">Kelas {view.className}</span>
             ) : null}
           </div>
+          <GameTimer clock={view.gameClock} serverTime={view.serverTime} />
           <div
             className="mb-pj-rejoin-pin"
             aria-label={`PIN untuk masuk kembali: ${view.joinInfo.pin}`}
