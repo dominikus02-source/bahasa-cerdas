@@ -156,3 +156,47 @@
   background: var(--clr-warning-soft);
   color: var(--clr-warning-strong);
 }
+
+/* Layar akhir di ruang guru: hero + tab Kota Cahaya, podium, kotak ringkasan.
+   Komponen ini dipakai juga di layar/murid, jadi tetap dibatasi .mb-scope-guru;
+   kelas ganda menaikkan spesifisitas di atas aturan styled-jsx yang dimuat belakangan. */
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-final-heading {
+  border-color: var(--clr-border);
+  background: linear-gradient(125deg, var(--clr-success-soft), var(--clr-surface) 55%, var(--clr-info-soft));
+}
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-final-heading h2,
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium h3 { color: var(--clr-text); }
+.dark .mb-scope-guru.mb-scope-guru :is(.mb-kota-final-heading p, .mb-kota-podium header p, .mb-kota-podium-note, .mb-kota-podium-empty, .mb-kota-podium-contribution) { color: var(--clr-text-2); }
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-final-tabs button {
+  border-color: var(--clr-border-strong);
+  background: var(--clr-surface-2);
+  color: var(--clr-text);
+}
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-final-tabs button[aria-pressed="true"] {
+  border-color: var(--clr-success);
+  background: var(--clr-success);
+  color: var(--clr-bg);
+}
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium {
+  border-color: var(--clr-border);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  box-shadow: none;
+}
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium-card {
+  border-color: var(--clr-border);
+  background: var(--clr-surface-2);
+}
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium-card[data-rank="1"] {
+  border-color: color-mix(in srgb, var(--clr-warning) 55%, var(--clr-border));
+  background: linear-gradient(var(--clr-warning-soft), var(--clr-surface-2));
+}
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium-avatar { border-color: var(--clr-surface); background: var(--clr-surface); }
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium-contribution b { color: var(--clr-success); }
+.dark .mb-scope-guru.mb-scope-guru .mb-kota-podium-card:not([data-rank="1"]) .mb-kota-podium-step { background: var(--clr-border); color: var(--clr-text); }
+.dark .mb-scope-guru.mb-scope-guru.mb-scope-guru .mb-final-bottom > div {
+  border-color: var(--clr-border);
+  background: var(--clr-surface-2);
+}
+.dark .mb-scope-guru.mb-scope-guru.mb-scope-guru .mb-final-bottom > div strong { color: var(--clr-text); }
+.dark .mb-scope-guru.mb-scope-guru.mb-scope-guru .mb-final-bottom p { color: var(--clr-text-2); }
