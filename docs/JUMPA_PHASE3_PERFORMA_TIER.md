@@ -176,6 +176,10 @@ layar keluar, empty state, dan toast dipadatkan. Ada tesnya di `test:jumpa-tiers
 
 ---
 
+### 2.x Paket ruang UMUM
+
+Akun UMUM selalu memakai paket **Gratis UMUM**: 10 orang · 45 menit · 720p · 3 ruang/hari, tanpa webinar, tanpa ajakan upgrade. `UMUM_PREMIUM` (25 orang/120 menit) sudah didefinisikan sebagai kait tetapi **belum aktif** (`JUMPA_UMUM_PREMIUM_ENABLED = false`). Lihat `docs/JUMPA_UMUM.md`.
+
 ## 3. Pengujian
 
 - `npm run test:jumpa-tiers` (baru, 86 cek): tabel paket, MURID selalu tetap, pemetaan plan,
