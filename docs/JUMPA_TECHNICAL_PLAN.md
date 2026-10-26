@@ -154,7 +154,7 @@ model JumpaReport { id, roomId, reporterId, reportedUserId?, category String, de
 
 Aturan join: ruang GURU = hanya GURU; ruang MURID = hanya MURID sekelas pembuat (cegah orang asing menghubungi anak; murid Junior → open question); ruang KELAS = guru pembuat + anggota `Group` terkait + undangan individual; link tetap mensyaratkan login BC dan lolos aturan kind. Tidak ada tamu.
 
-**Ruang UMUM (akun umum, `ENABLE_ROLE_UMUM`):** terisolasi dua arah — hanya akun UMUM yang membuat & masuk ruang UMUM (lewat tautan/kode); UMUM tidak bisa masuk KELAS/GURU/MURID; GURU, founder dan MURID **tidak** bisa masuk ruang UMUM (default). Rincian: `docs/JUMPA_UMUM.md`.
+**Ruang UMUM (akun umum, `ENABLE_ROLE_UMUM`):** hanya akun UMUM yang **membuat** & memandu ruang UMUM; akun BC mana pun yang login (guru, founder, murid non-Junior, umum) dengan tautan/kode boleh **masuk** sebagai peserta (MEMBER, tanpa kuasa pemandu; keputusan founder 2026-10-26); UMUM tidak bisa masuk KELAS/GURU/MURID; ruang UMUM tidak pernah didaftarkan/diumumkan ke guru/murid. Rincian: `docs/JUMPA_UMUM.md`.
 
 Batas default (bisa diubah di `lib/jumpa/caps.ts`): MURID 8 org/60 mnt, KELAS 50 org/120 mnt, WEBINAR 100 org (hanya host/cohost publish video), GURU 25 org/120 mnt.
 
