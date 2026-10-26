@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
+import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ projectId: string; chapterId: string }> };
@@ -16,9 +17,7 @@ async function ownedChapter(projectId: string, chapterId: string, userId: string
 export async function PATCH(req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
-  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
-  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
-  if (!hasPremium) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
+  if (!await hasAkuSastrawanAccess(user.id)) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId, chapterId } = await params;
     if (!await ownedChapter(projectId, chapterId, user.id)) return NextResponse.json({ error: "Bab tidak ditemukan." }, { status: 404 });
@@ -38,9 +37,7 @@ export async function PATCH(req: NextRequest, { params }: Context) {
 export async function DELETE(_req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
-  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
-  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
-  if (!hasPremium) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
+  if (!await hasAkuSastrawanAccess(user.id)) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId, chapterId } = await params;
     if (!await ownedChapter(projectId, chapterId, user.id)) return NextResponse.json({ error: "Bab tidak ditemukan." }, { status: 404 });
