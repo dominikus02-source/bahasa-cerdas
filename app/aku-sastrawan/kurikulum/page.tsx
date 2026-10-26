@@ -4,7 +4,7 @@ import {
   ArrowRight,
   BookOpen,
   CheckCircle2,
-  CircleLock,
+  Lock,
   Feather,
   Layers3,
   Sparkles,
