@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
-import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
 
 export const runtime = "nodejs";
 
