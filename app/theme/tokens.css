@@ -212,6 +212,52 @@
   --clr-focus: #93c5fd;
 }
 
+/* ── 4. Dasbor Umum (§4) (/umum, [data-audience="umum"]) ───────────────────
+   Desain pendiri 2026-10-26: aksen biru, tombol navy, latar navy di mode
+   gelap, dan satu gradien per produk untuk ubin ikon "Ruang Jelajahmu".
+   Kontras: ikon putih di atas tiap gradien ≥ 3:1 (non-teks); teks putih di
+   atas --clr-navy ≥ 9:1; aksen #1d4ed8 di atas #e8f0fe ≥ 5.6:1, #93c5fd di
+   atas #15264a ≥ 7:1. Teks di atas gambar hero/jelajahi = putih di atas
+   area biru tua gambar + --bc-umum-scrim (≥ 4.5:1). */
+[data-audience="umum"] {
+  --clr-bg: #f5f7fb;
+  --clr-surface-2: #f7f9fd;
+  --clr-aud: #1d4ed8;
+  --clr-aud-strong: #1e3a8a;
+  --clr-aud-soft: #e8f0fe;
+  --clr-on-aud: #ffffff;
+  --clr-navy: #0b3a75;
+  --clr-on-navy: #ffffff;
+  --clr-focus: #1d4ed8;
+  --bc-umum-scrim: linear-gradient(90deg, color-mix(in srgb, #083a8c 42%, transparent) 0%, color-mix(in srgb, #083a8c 18%, transparent) 40%, transparent 60%);
+  --bc-umum-quote-shadow: 0 1px 2px color-mix(in srgb, #06275e 70%, transparent), 0 0 14px color-mix(in srgb, #06275e 45%, transparent);
+  --bc-umum-promo: linear-gradient(160deg, #eaf2ff, #dbe8fd);
+  --bc-tile-nara: linear-gradient(140deg, #6366f1, #2563eb);
+  --bc-tile-jumpa: linear-gradient(140deg, #0d9488, #0f766e);
+  --bc-tile-main: linear-gradient(140deg, #f43f5e, #ea580c);
+  --bc-tile-jalur: linear-gradient(140deg, #a855f7, #7c3aed);
+  --bc-tile-bigt: linear-gradient(140deg, #3b82f6, #1d4ed8);
+  --bc-tile-aksara: linear-gradient(140deg, #0891b2, #0e7490);
+  --bc-tile-toko: linear-gradient(140deg, #f43f5e, #be123c);
+  --bc-tile-aku: linear-gradient(140deg, #d97706, #b45309);
+}
+.dark [data-audience="umum"],
+.dark[data-audience="umum"] {
+  --clr-bg: #0a1228;
+  --clr-surface: #0f1a35;
+  --clr-surface-2: #13203f;
+  --clr-border: #1d2b4f;
+  --clr-border-strong: #283a64;
+  --clr-aud: #93c5fd;
+  --clr-aud-strong: #bfdbfe;
+  --clr-aud-soft: #15264a;
+  --clr-on-aud: #0a1228;
+  --clr-navy: #0c2c5e;
+  --clr-on-navy: #ffffff;
+  --clr-focus: #93c5fd;
+  --bc-umum-promo: linear-gradient(160deg, #13244a, #0f1d3d);
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root { --bc-dur-fast: 0s; --bc-dur: 0s; --bc-dur-slow: 0s; }
 }

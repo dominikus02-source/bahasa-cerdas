@@ -1,16 +1,31 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import type { LucideIcon } from "lucide-react";
 import {
-  ArrowUpRight, BookOpenText, ChevronRight, Feather, Gamepad2, Hourglass, Inbox, Route,
-  ShoppingBag, Sparkles, Star, Store, Target, Users, Video, Zap,
+  ArrowRight,
+  ArrowUpRight,
+  BookOpenText,
+  Camera,
+  ChevronRight,
+  Crown,
+  Feather,
+  Gamepad2,
+  Hourglass,
+  Inbox,
+  Route,
+  SearchX,
+  Sparkles,
+  Store,
+  Target,
 } from "lucide-react";
-import { db } from "@/lib/db";
 import { requireUmumPage } from "@/lib/auth/umum-page";
 import { isUmumGameId } from "@/lib/auth/roles";
 import { GAME_REGISTRY } from "@/lib/arena/game-registry";
 import { UMUM_PRODUCTS, type UmumProductKey } from "@/lib/umum/products";
+import { loadAktivitas } from "@/lib/umum/aktivitas";
 import { UmumShell } from "@/components/umum/UmumShell";
+import { AktivitasList } from "@/components/umum/AktivitasList";
 import { buttonClass } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -20,181 +35,402 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const PRODUCT_ICON: Record<UmumProductKey, LucideIcon> = {
-  NARA: Sparkles,
-  JUMPA: Video,
-  MAIN_BERSAMA: Users,
-  JALUR_CERDAS: Route,
-  BIGT: Target,
-  AKSARA: BookOpenText,
-  TOKO_KARYA: Store,
-  AKU_SASTRAWAN: Feather,
-};
-
 /**
- * Sentuhan warna merek BahasaCerdas pada kartu produk: chip ikon bergiliran
- * teal → biru → violet (tiga warna gradien merek). Semua dari token tema
- * (app/theme/tokens.css), kontras ikon ≥ 3:1 di mode terang & gelap.
+ * Ubin ikon "Ruang Jelajahmu": satu gradien per produk (tokens.css §4,
+ * --bc-tile-*), ikon putih (kontras ≥ 3:1). Tanpa palet Tailwind mentah.
  */
-const BRAND_CHIP = [
-  "bg-bc-accent-soft text-bc-accent-strong",
-  "bg-bc-info-soft text-bc-info",
-  "bg-bc-violet-soft text-bc-violet",
-] as const;
+const PRODUCT_TILE: Record<UmumProductKey, { icon: LucideIcon; tile: string }> =
+  {
+    NARA: { icon: Sparkles, tile: "bg-[image:var(--bc-tile-nara)]" },
+    JUMPA: { icon: Camera, tile: "bg-[image:var(--bc-tile-jumpa)]" },
+    MAIN_BERSAMA: { icon: Gamepad2, tile: "bg-[image:var(--bc-tile-main)]" },
+    JALUR_CERDAS: { icon: Route, tile: "bg-[image:var(--bc-tile-jalur)]" },
+    BIGT: { icon: Target, tile: "bg-[image:var(--bc-tile-bigt)]" },
+    AKSARA: { icon: BookOpenText, tile: "bg-[image:var(--bc-tile-aksara)]" },
+    TOKO_KARYA: { icon: Store, tile: "bg-[image:var(--bc-tile-toko)]" },
+    AKU_SASTRAWAN: { icon: Feather, tile: "bg-[image:var(--bc-tile-aku)]" },
+  };
+/** Produk berlabel Premium di desain (AKU SASTRAWAN = produk premium). */
+const PREMIUM: ReadonlySet<UmumProductKey> = new Set(["AKU_SASTRAWAN"]);
 
-const XP_SOURCE_LABEL: Record<string, string> = {
-  GAME: "Bermain gim",
-  KATASTRA: "Berkarya",
-  MENARA: "Menara Cerdas",
-  TANTANG: "Tantangan",
-  JALUR_CERDAS: "Jalur Cerdas",
-  KOMPETENSI: "Uji kompetensi",
-  PENUGASAN: "Penugasan",
-  KOTAK_HARIAN: "Kotak harian",
-};
+const NAVY_BTN =
+  "inline-flex items-center justify-center gap-2 rounded-bc-ctl bg-bc-navy font-bold text-bc-on-navy shadow-bc-2 transition-[opacity,transform] hover:opacity-90 active:scale-[.98] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-on-navy motion-reduce:transition-none";
+const QUOTE = "Bahasa Menghubungkan Gagasan, Manusia, dan Masa Depan";
 
-type Aktivitas = {
-  id: string;
-  kind: "xp" | "beli";
-  title: string;
-  detail: string;
-  at: Date;
-  href?: string;
-};
-
-const fmtWaktu = new Intl.DateTimeFormat("id-ID", {
-  day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Jakarta",
-});
-const fmtRupiah = new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 });
-
-async function loadAktivitas(userId: string): Promise<Aktivitas[]> {
-  // Data NYATA saja: XP yang tercatat + pembelian karya yang lunas.
-  const [xp, beli] = await Promise.all([
-    db.xpLedger
-      .findMany({ where: { userId, amount: { gt: 0 } }, orderBy: { createdAt: "desc" }, take: 6, select: { id: true, amount: true, source: true, createdAt: true } })
-      .catch(() => []),
-    db.pembelian
-      .findMany({ where: { buyerId: userId, status: "PAID" }, orderBy: { createdAt: "desc" }, take: 6, select: { id: true, amount: true, createdAt: true, karyaId: true, karya: { select: { title: true } } } })
-      .catch(() => []),
-  ]);
-  const items: Aktivitas[] = [
-    ...xp.map((x) => ({
-      id: `xp-${x.id}`,
-      kind: "xp" as const,
-      title: `+${x.amount} XP`,
-      detail: XP_SOURCE_LABEL[x.source] ?? "Aktivitas belajar",
-      at: x.createdAt,
-    })),
-    ...beli.map((p) => ({
-      id: `beli-${p.id}`,
-      kind: "beli" as const,
-      title: p.karya?.title || "Karya",
-      detail: `Dibeli · ${fmtRupiah.format(p.amount)}`,
-      at: p.createdAt,
-      href: `/marketplace/${p.karyaId}`,
-    })),
-  ];
-  return items.sort((a, b) => b.at.getTime() - a.at.getTime()).slice(0, 6);
+/** Pencarian sederhana tanpa beda huruf besar/kecil & tanda baca. */
+function norm(s: string): string {
+  return s
+    .toLocaleLowerCase("id-ID")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+function cocok(q: string, ...fields: string[]): boolean {
+  const words = norm(q).split(" ").filter(Boolean);
+  const hay = norm(fields.join(" "));
+  return words.every((w) => hay.includes(w));
 }
 
-export default async function UmumDashboardPage() {
+export default async function UmumDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
   const user = await requireUmumPage("/umum");
   // Kategori Umum tidak lagi ditampilkan (cukup "Umum"); kolom DB tetap ada.
-  const aktivitas = await loadAktivitas(user.id);
+  const rawQ = (await searchParams).q;
+  const q = (Array.isArray(rawQ) ? rawQ[0] : (rawQ ?? "")).trim().slice(0, 80);
+  const aktivitas = await loadAktivitas(user.id, 4);
   const name = user.nickname || user.fullName;
-  const games = GAME_REGISTRY.filter((g) => isUmumGameId(g.id) && !g.unpublished && !g.premiumOnly);
+  const firstName = name.trim().split(/\s+/)[0] || name;
+  const allGames = GAME_REGISTRY.filter(
+    (g) => isUmumGameId(g.id) && !g.unpublished && !g.premiumOnly,
+  );
+  const products = q
+    ? UMUM_PRODUCTS.filter((p) => cocok(q, p.name, p.label, p.description))
+    : UMUM_PRODUCTS;
+  const games = q
+    ? allGames.filter((g) => cocok(q, g.title, g.description))
+    : allGames;
+  const now = new Date();
 
   return (
-    <UmumShell user={user}>
-      <div className="mx-auto w-full max-w-6xl space-y-10">
-        {/* Sapaan */}
-        <section aria-labelledby="sapaan" className="rounded-bc-hero border border-bc-line bg-bc-surface p-5 shadow-bc-1 sm:p-7">
-          <p className="text-bc-eyebrow uppercase text-bc-violet">Ruang belajar untuk semua</p>
-          <h1 id="sapaan" className="mt-2 text-bc-h1 text-bc-text">
-            Halo, <span className="break-words">{name}</span>
-          </h1>
-          <p className="mt-2 max-w-2xl text-bc-body text-bc-text-2">
-            Belajar, bermain, membaca, dan berkarya dalam bahasa Indonesia — semuanya dari satu tempat.
-          </p>
-          <dl className="mt-5 flex flex-wrap gap-2 text-sm">
-            <div className="flex items-center gap-1.5 rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
-              <Zap size={14} aria-hidden className="text-bc-warning" />
-              <dt className="text-bc-text-3">XP</dt>
-              <dd className="font-semibold tabular-nums text-bc-text">{user.xp.toLocaleString("id-ID")}</dd>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-full border border-bc-line bg-bc-surface-2 px-3 py-1.5">
-              <Star size={14} aria-hidden className="text-bc-violet" />
-              <dt className="text-bc-text-3">Level</dt>
-              <dd className="font-semibold tabular-nums text-bc-text">{user.level}</dd>
-            </div>
-          </dl>
-        </section>
-
-        {/* Produk */}
-        <section id="produk" aria-labelledby="judul-produk" className="scroll-mt-24">
-          <div className="mb-4 flex items-end justify-between gap-3">
-            <div>
-              <h2 id="judul-produk" className="text-bc-h2 text-bc-text">Semua Produk</h2>
-              <p className="text-bc-small text-bc-text-3">Pilih ruang yang ingin kamu buka.</p>
-            </div>
+    <UmumShell user={user} searchQuery={q}>
+      <div className="w-full space-y-7">
+        <div className="space-y-4 md:space-y-0">
+          {/* Sapaan (mobile: di atas kartu hero, sesuai desain) */}
+          <div className="md:hidden">
+            <h1 className="text-[26px] font-extrabold leading-tight tracking-tight text-bc-text">
+              Halo, <span className="break-words">{firstName}</span>!
+            </h1>
+            <p className="mt-1 text-sm text-bc-text-2">
+              Selamat datang di BahasaCerdas
+            </p>
           </div>
-          <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-4">
-            {UMUM_PRODUCTS.map((p, i) => {
-              const Icon = PRODUCT_ICON[p.key];
-              const dev = p.status === "dev";
-              const body = (
-                <>
-                  {!dev && (
-                    <span aria-hidden className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-bc-brand opacity-60 transition-opacity duration-200 group-hover:opacity-100 motion-reduce:transition-none" />
-                  )}
-                  <div className="flex items-start justify-between gap-3">
-                    <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon ${dev ? "bg-bc-surface-2 text-bc-text-3" : BRAND_CHIP[i % BRAND_CHIP.length]}`}>
-                      <Icon size={22} aria-hidden />
-                    </span>
-                    {p.external ? (
-                      <ArrowUpRight size={18} aria-hidden className="text-bc-text-3 transition-colors group-hover:text-bc-text" />
-                    ) : (
-                      <ChevronRight size={18} aria-hidden className="text-bc-text-3 transition-colors group-hover:text-bc-text" />
+
+          {/* Hero */}
+          <section
+            aria-labelledby="sapaan"
+            data-testid="umum-hero"
+            className="relative isolate overflow-hidden rounded-bc-hero bg-bc-navy text-white shadow-bc-2"
+          >
+            <Image
+              src="/images/umum/umum-hero.webp"
+              alt=""
+              fill
+              priority
+              sizes="(min-width: 1280px) 1000px, (min-width: 1024px) 75vw, 100vw"
+              className="-z-10 object-cover object-[100%_45%] dark:brightness-[.82]"
+            />
+            <div
+              aria-hidden
+              className="absolute inset-0 -z-10 bg-[image:var(--bc-umum-scrim)]"
+            />
+            <div className="flex min-h-[168px] flex-col justify-between gap-4 p-5 sm:p-7 md:block md:min-h-[248px] md:p-9">
+              <div className="hidden max-w-[33rem] md:block">
+                <h1
+                  id="sapaan"
+                  className="text-[34px] font-extrabold leading-tight tracking-tight"
+                >
+                  Halo, <span className="break-words">{firstName}</span>!
+                </h1>
+                <p className="mt-1.5 text-lg font-bold">
+                  Selamat datang di BahasaCerdas
+                </p>
+                <p className="mt-3 text-[15px] leading-relaxed text-white/90">
+                  Jelajahi berbagai ruang belajar, berdiskusi, berkarya, dan
+                  kembangkan potensi terbaikmu melalui bahasa Indonesia.
+                </p>
+              </div>
+              <p className="max-w-[60%] font-display text-[19px] italic leading-snug [text-shadow:var(--bc-umum-quote-shadow)] md:hidden">
+                {QUOTE}
+              </p>
+              <Link
+                href="#produk"
+                className={`${NAVY_BTN} h-11 w-fit px-5 text-sm md:mt-6`}
+              >
+                Mulai Jelajahi <ArrowRight size={18} aria-hidden />
+              </Link>
+            </div>
+            <p
+              aria-hidden
+              className="absolute right-[22%] top-[14%] hidden w-[16.5rem] text-right font-display text-[28px] italic leading-snug [text-shadow:var(--bc-umum-quote-shadow)] xl:block"
+            >
+              {QUOTE}
+            </p>
+          </section>
+        </div>
+
+        {/* Ruang Jelajahmu */}
+        <section
+          id="produk"
+          aria-labelledby="judul-produk"
+          className="scroll-mt-24"
+        >
+          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2
+                id="judul-produk"
+                className="text-xl font-extrabold tracking-tight text-bc-text"
+              >
+                {q ? "Hasil pencarian" : "Ruang Jelajahmu"}
+              </h2>
+              <p className="mt-0.5 text-sm text-bc-text-3">
+                {q ? (
+                  <>
+                    Untuk “
+                    <span className="font-semibold text-bc-text-2">{q}</span>” —{" "}
+                    {products.length} produk, {games.length} gim.
+                  </>
+                ) : (
+                  "Pilih produk yang sesuai dengan minat dan kebutuhanmu."
+                )}
+              </p>
+            </div>
+            {q ? (
+              <Link
+                href="/umum#produk"
+                className={buttonClass({ variant: "secondary", size: "sm" })}
+              >
+                Hapus pencarian
+              </Link>
+            ) : (
+              <span className="hidden rounded-full border border-bc-line bg-bc-surface px-3 py-1.5 text-xs font-semibold text-bc-text-2 sm:inline-block">
+                Terbuka untuk semua
+              </span>
+            )}
+          </div>
+          {products.length === 0 ? (
+            <div
+              data-testid="cari-kosong"
+              className="flex flex-col items-center rounded-bc-card border border-dashed border-bc-line bg-bc-surface p-8 text-center"
+            >
+              <SearchX size={28} aria-hidden className="text-bc-text-3" />
+              <p className="mt-3 font-semibold text-bc-text">
+                Tidak ada produk yang cocok
+              </p>
+              <p className="mt-1 text-bc-small text-bc-text-3">
+                Coba kata kunci lain, misalnya “baca”, “gim”, atau “karya”.
+              </p>
+            </div>
+          ) : (
+            <ul className="grid grid-cols-4 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+              {products.map((p) => {
+                const { icon: Icon, tile } = PRODUCT_TILE[p.key];
+                const dev = p.status === "dev";
+                const premium = PREMIUM.has(p.key);
+                const Arrow = p.external ? ArrowUpRight : ArrowRight;
+                const body = (
+                  <>
+                    <div className="flex w-full items-start justify-center sm:justify-between">
+                      <span
+                        className={`relative grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon text-white shadow-bc-1 sm:h-12 sm:w-12 ${tile}`}
+                      >
+                        <Icon size={22} aria-hidden />
+                        {dev && (
+                          <span
+                            aria-hidden
+                            className="absolute -right-1 -top-1 grid h-4 w-4 place-items-center rounded-full bg-bc-warning-soft text-bc-warning-strong ring-2 ring-bc-surface sm:hidden"
+                          >
+                            <Hourglass size={9} />
+                          </span>
+                        )}
+                      </span>
+                      {premium && (
+                        <span className="hidden items-center gap-1 rounded-full bg-bc-warning-strong px-2 py-0.5 text-[11px] font-bold text-bc-on-brand sm:inline-flex">
+                          <Crown size={11} aria-hidden /> Premium
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mt-2 text-[10.5px] font-extrabold uppercase leading-tight tracking-tight text-bc-text sm:mt-4 sm:text-[15px]">
+                      {p.name}
+                    </h3>
+                    <p className="mt-1.5 hidden pr-1 text-[13px] leading-relaxed text-bc-text-2 sm:line-clamp-2">
+                      {p.description}
+                    </p>
+                    {premium && (
+                      <span className="mt-1.5 inline-flex items-center rounded-full bg-bc-warning-strong px-1.5 py-0.5 text-[9.5px] font-bold text-bc-on-brand sm:hidden">
+                        Premium
+                      </span>
                     )}
-                  </div>
-                  <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-bc-text-3">{p.label}</p>
-                  <h3 className="mt-0.5 text-base font-extrabold tracking-tight text-bc-text">{p.name}</h3>
-                  <p className="mt-1.5 text-bc-small text-bc-text-2">{p.description}</p>
-                  {dev && (
-                    <span className="mt-3 inline-flex w-fit items-center gap-1 rounded-full bg-bc-warning-soft px-2.5 py-1 text-xs font-semibold text-bc-warning-strong">
-                      <Hourglass size={12} aria-hidden /> Sedang dalam pengembangan
-                    </span>
-                  )}
-                  {p.external && <span className="sr-only">(membuka situs eksternal di tab baru)</span>}
-                </>
-              );
-              const cls = `group relative flex h-full flex-col overflow-hidden rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 ${dev ? "hover:border-bc-line-strong" : "hover:border-bc-info"} hover:shadow-bc-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus motion-reduce:transition-none motion-reduce:hover:translate-y-0`;
-              return (
-                <li key={p.key} className="min-w-0">
-                  {p.external ? (
-                    <a href={p.href} target="_blank" rel="noopener noreferrer" data-product={p.key} className={cls}>{body}</a>
-                  ) : (
-                    <Link href={p.href} data-product={p.key} className={cls}>{body}</Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+                    {dev && (
+                      <span className="mt-3 hidden w-fit items-center gap-1 rounded-full bg-bc-warning-soft px-2.5 py-1 text-[11px] font-semibold text-bc-warning-strong sm:inline-flex">
+                        <Hourglass size={12} aria-hidden /> Sedang dalam
+                        pengembangan
+                      </span>
+                    )}
+                    {dev && (
+                      <span className="sr-only sm:hidden">
+                        (Sedang dalam pengembangan)
+                      </span>
+                    )}
+                    {p.external && (
+                      <span className="sr-only">
+                        (membuka situs eksternal di tab baru)
+                      </span>
+                    )}
+                    <Arrow
+                      size={18}
+                      aria-hidden
+                      className="absolute bottom-4 right-4 hidden text-bc-text-2 transition-transform group-hover:translate-x-0.5 group-hover:text-bc-aud motion-reduce:transition-none sm:block"
+                    />
+                  </>
+                );
+                const cls =
+                  "group relative flex h-full flex-col items-center rounded-bc-tile border border-bc-line bg-bc-surface px-1.5 py-3 text-center shadow-bc-1 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-bc-line-strong hover:shadow-bc-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus motion-reduce:transition-none motion-reduce:hover:translate-y-0 sm:items-start sm:rounded-bc-card sm:p-5 sm:pb-10 sm:text-left";
+                return (
+                  <li key={p.key} className="min-w-0">
+                    {p.external ? (
+                      <a
+                        href={p.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-product={p.key}
+                        className={cls}
+                      >
+                        {body}
+                      </a>
+                    ) : (
+                      <Link href={p.href} data-product={p.key} className={cls}>
+                        {body}
+                      </Link>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </section>
 
-        {/* Gim */}
+        {/* Baris bawah: Aktivitas + Jelajahi Dunia Bahasa */}
+        <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
+          <section
+            aria-labelledby="judul-aktivitas"
+            className="rounded-bc-card border border-bc-line bg-bc-surface p-5 shadow-bc-1"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h2
+                  id="judul-aktivitas"
+                  className="text-base font-extrabold text-bc-text"
+                >
+                  Aktivitas Terbaru
+                </h2>
+                <p className="mt-0.5 text-xs text-bc-text-3">
+                  Lanjutkan dari yang terakhir kamu lakukan.
+                </p>
+              </div>
+              {aktivitas.length > 0 && (
+                <Link
+                  href="/umum/aktivitas"
+                  className="inline-flex shrink-0 items-center gap-1 rounded-bc-sm text-xs font-semibold text-bc-aud hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
+                >
+                  Lihat semua <ArrowRight size={14} aria-hidden />
+                </Link>
+              )}
+            </div>
+            {aktivitas.length === 0 ? (
+              <div
+                data-testid="aktivitas-kosong"
+                className="mt-4 flex flex-col items-center rounded-bc-tile border border-dashed border-bc-line p-6 text-center"
+              >
+                <Inbox size={26} aria-hidden className="text-bc-text-3" />
+                <p className="mt-2 font-semibold text-bc-text">
+                  Belum ada aktivitas
+                </p>
+                <p className="mt-1 max-w-sm text-bc-small text-bc-text-3">
+                  Mainkan gim atau beli karya pertamamu — aktivitasmu akan
+                  muncul di sini.
+                </p>
+                <div className="mt-4 flex flex-wrap justify-center gap-2">
+                  <Link
+                    href="#gim"
+                    className={buttonClass({ variant: "primary", size: "sm" })}
+                  >
+                    Main gim
+                  </Link>
+                  <Link
+                    href="/marketplace"
+                    className={buttonClass({
+                      variant: "secondary",
+                      size: "sm",
+                    })}
+                  >
+                    Toko Karya
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-2">
+                <AktivitasList items={aktivitas} now={now} />
+              </div>
+            )}
+          </section>
+
+          <section
+            aria-labelledby="judul-dunia"
+            className="flex flex-col rounded-bc-card border border-bc-line bg-bc-surface p-5 shadow-bc-1"
+          >
+            <h2
+              id="judul-dunia"
+              className="text-base font-extrabold text-bc-text"
+            >
+              Jelajahi Dunia Bahasa
+            </h2>
+            <p className="mt-0.5 text-xs text-bc-text-3">
+              Temukan bacaan, karya, diskusi, dan konten menarik lainnya.
+            </p>
+            <div className="relative isolate mt-4 flex min-h-[168px] flex-1 flex-col justify-between overflow-hidden rounded-bc-tile bg-bc-navy p-5 text-white">
+              <Image
+                src="/images/umum/umum-jelajahi.webp"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 480px, 100vw"
+                className="-z-10 object-cover object-right dark:brightness-[.85]"
+              />
+              <p className="max-w-[16rem] text-[17px] font-bold leading-snug [text-shadow:var(--bc-umum-quote-shadow)]">
+                Baca, Tulis, dan <br className="hidden sm:inline" />
+                Jadi Bagian dari Komunitas <br className="hidden sm:inline" />
+                Bahasa Indonesia
+              </p>
+              <Link
+                href="/artikel"
+                className={`${NAVY_BTN} mt-4 h-10 w-fit px-4 text-sm`}
+              >
+                Jelajahi Sekarang
+              </Link>
+            </div>
+          </section>
+        </div>
+
+        {/* Gim (tujuan menu "Jelajahi") */}
         <section id="gim" aria-labelledby="judul-gim" className="scroll-mt-24">
           <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 id="judul-gim" className="text-bc-h2 text-bc-text">Jelajahi Gim</h2>
-              <p className="text-bc-small text-bc-text-3">Main gim kata dan kumpulkan XP.</p>
+              <h2
+                id="judul-gim"
+                className="text-xl font-extrabold tracking-tight text-bc-text"
+              >
+                Jelajahi Gim
+              </h2>
+              <p className="mt-0.5 text-sm text-bc-text-3">
+                Main gim kata dan kumpulkan XP.
+              </p>
             </div>
-            <Link href="/arena/game" className={buttonClass({ variant: "soft", size: "sm" })}>
+            <Link
+              href="/arena/game"
+              className={buttonClass({ variant: "secondary", size: "sm" })}
+            >
               Semua gim <ChevronRight size={16} aria-hidden />
             </Link>
           </div>
           {games.length === 0 ? (
-            <p className="rounded-bc-card border border-dashed border-bc-line p-6 text-center text-bc-small text-bc-text-3">Belum ada gim yang tersedia.</p>
+            <p className="rounded-bc-card border border-dashed border-bc-line p-6 text-center text-bc-small text-bc-text-3">
+              {q
+                ? "Tidak ada gim yang cocok dengan pencarianmu."
+                : "Belum ada gim yang tersedia."}
+            </p>
           ) : (
             <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3">
               {games.map((g) => {
@@ -206,12 +442,18 @@ export default async function UmumDashboardPage() {
                       data-game={g.id}
                       className="group flex h-full items-start gap-3 rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-colors hover:border-bc-line-strong hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
                     >
-                      <span className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon bg-gradient-to-br text-white ${g.gradient}`}>
+                      <span
+                        className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon bg-gradient-to-br text-white ${g.gradient}`}
+                      >
                         <Icon size={22} aria-hidden />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate font-bold text-bc-text">{g.title}</span>
-                        <span className="mt-0.5 line-clamp-2 block text-bc-small text-bc-text-2">{g.description}</span>
+                        <span className="block truncate font-bold text-bc-text">
+                          {g.title}
+                        </span>
+                        <span className="mt-0.5 line-clamp-2 block text-bc-small text-bc-text-2">
+                          {g.description}
+                        </span>
                         <span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs font-semibold text-bc-text-3">
                           <span>{g.xp}</span>
                           <span>{g.time}</span>
@@ -222,54 +464,6 @@ export default async function UmumDashboardPage() {
                 );
               })}
             </ul>
-          )}
-        </section>
-
-        {/* Aktivitas */}
-        <section aria-labelledby="judul-aktivitas">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <h2 id="judul-aktivitas" className="text-bc-h2 text-bc-text">Aktivitas Terbaru</h2>
-            <Link href="/umum/koleksi" className={buttonClass({ variant: "soft", size: "sm" })}>
-              Koleksi Saya <ChevronRight size={16} aria-hidden />
-            </Link>
-          </div>
-          {aktivitas.length === 0 ? (
-            <div data-testid="aktivitas-kosong" className="flex flex-col items-center rounded-bc-card border border-dashed border-bc-line bg-bc-surface p-8 text-center">
-              <Inbox size={28} aria-hidden className="text-bc-text-3" />
-              <p className="mt-3 font-semibold text-bc-text">Belum ada aktivitas</p>
-              <p className="mt-1 max-w-sm text-bc-small text-bc-text-3">Mainkan gim atau beli karya pertamamu — aktivitasmu akan muncul di sini.</p>
-              <div className="mt-4 flex flex-wrap justify-center gap-2">
-                <Link href="#gim" className={buttonClass({ variant: "primary", size: "sm" })}>Main gim</Link>
-                <Link href="/marketplace" className={buttonClass({ variant: "secondary", size: "sm" })}>Toko Karya</Link>
-              </div>
-            </div>
-          ) : (
-            <ol data-testid="aktivitas-list" className="divide-y divide-bc-line overflow-hidden rounded-bc-card border border-bc-line bg-bc-surface">
-              {aktivitas.map((a) => {
-                const Icon = a.kind === "xp" ? Zap : ShoppingBag;
-                const inner = (
-                  <>
-                    <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${a.kind === "xp" ? "bg-bc-warning-soft text-bc-warning-strong" : "bg-bc-success-soft text-bc-success"}`}>
-                      <Icon size={16} aria-hidden />
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-semibold text-bc-text">{a.title}</span>
-                      <span className="block truncate text-xs text-bc-text-3">{a.detail}</span>
-                    </span>
-                    <time dateTime={a.at.toISOString()} className="shrink-0 text-xs tabular-nums text-bc-text-3">{fmtWaktu.format(a.at)}</time>
-                  </>
-                );
-                return (
-                  <li key={a.id}>
-                    {a.href ? (
-                      <Link href={a.href} className="flex items-center gap-3 px-4 py-3 hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-bc-focus">{inner}</Link>
-                    ) : (
-                      <div className="flex items-center gap-3 px-4 py-3">{inner}</div>
-                    )}
-                  </li>
-                );
-              })}
-            </ol>
           )}
         </section>
       </div>
