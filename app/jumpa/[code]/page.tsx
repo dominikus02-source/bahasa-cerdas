@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { dashboardForUser } from "@/lib/auth/redirect";
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles";
 import { INVITE_TOKEN_RE, isValidRoomCode } from "@/lib/jumpa/code";
 import { loadRoomContext } from "@/lib/jumpa/service";
 import { tierView } from "@/lib/jumpa/tiers";
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ code: str
   };
 }
 
-const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
+const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng", UMUM: "Ruang umum" } as const;
 
 export default async function JumpaRoomPage({
   params,
@@ -50,13 +51,16 @@ export default async function JumpaRoomPage({
   if (!ctx) notFound();
 
   const role = ctx.effective ?? "MURID";
+  // Isolasi UMUM ↔ sekolah: penonton dari sisi lain tidak melihat judul/nama
+  // pemandu, hanya pesan penolakan.
+  const crossed = (ctx.room.kind === "UMUM") !== (ctx.effective === "UMUM");
   const place = ctx.view.groupName ?? ctx.view.communityName ?? KIND_LABEL[ctx.view.kind];
-  const subtitle = [place, ctx.view.hostName ? `Pemandu: ${ctx.view.hostName}` : null].filter(Boolean).join(" · ") || null;
+  const subtitle = crossed ? null : [place, ctx.view.hostName ? `Pemandu: ${ctx.view.hostName}` : null].filter(Boolean).join(" · ") || null;
 
   return (
     <JumpaApp
       code={ctx.view.code}
-      title={ctx.view.title}
+      title={crossed ? "Ruang JUMPA" : ctx.view.title}
       subtitle={subtitle}
       displayName={user.nickname || user.fullName}
       bcRole={role}
@@ -65,18 +69,18 @@ export default async function JumpaRoomPage({
       denyCode={ctx.decision.ok ? null : ctx.decision.code}
       scheduledAt={ctx.view.scheduledAt}
       share={
-        ctx.room.kind === "MURID" && !ctx.decision.ok
+        (ctx.room.kind === "MURID" || ctx.room.kind === "UMUM" || crossed) && !ctx.decision.ok
           ? null
           : {
               code: ctx.view.code,
               title: ctx.view.title,
               kind: ctx.room.kind,
               scheduledAt: ctx.view.scheduledAt,
-              // Tautan 24 jam: hanya ruang guru, oleh pembuat/pemandu.
-              canLink: ctx.room.kind === "GURU" && ctx.decision.ok && ctx.decision.roomRole !== "MEMBER",
+              // Tautan 24 jam: ruang guru / ruang umum, oleh pembuat/pemandu.
+              canLink: (ctx.room.kind === "GURU" || ctx.room.kind === "UMUM") && ctx.decision.ok && ctx.decision.roomRole !== "MEMBER",
             }
       }
-      dashboardHref={dashboardForUser(user.role, user.isFounder)}
+      dashboardHref={isUmum(user.role) ? UMUM_HOME : dashboardForUser(user.role, user.isFounder)}
       inviteToken={inviteToken}
       tier={tierView({
         tier: ctx.view.tier,

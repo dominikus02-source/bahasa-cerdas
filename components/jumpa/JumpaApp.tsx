@@ -30,7 +30,7 @@ export interface JumpaAppProps {
   title: string;
   subtitle: string | null;
   displayName: string;
-  bcRole: "GURU" | "MURID";
+  bcRole: "GURU" | "MURID" | "UMUM";
   canJoin: boolean;
   denyMessage: string | null;
   denyCode?: string | null;
