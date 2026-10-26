@@ -18,7 +18,7 @@ import "./jumpa-entry.css";
 export interface ShareTarget {
   code: string;
   title: string;
-  kind: "KELAS" | "GURU" | "MURID";
+  kind: "KELAS" | "GURU" | "MURID" | "UMUM";
   scheduledAt?: string | null;
   /** Pemandu ruang guru: boleh membuat tautan undangan 24 jam. */
   canLink?: boolean;
@@ -158,7 +158,7 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
         {target.canLink && (
           <p className="jpe-cap mt-2 flex items-center gap-1.5" aria-live="polite">
             {busy && <Loader2 size={14} className="animate-spin" />}
-            {link24 ? "Guru yang membuka tautan ini langsung bisa masuk." : busy ? "Menyiapkan tautan undangan…" : null}
+            {link24 ? (target.kind === "UMUM" ? "Akun BahasaCerdas yang membuka tautan ini langsung bisa masuk." : "Guru yang membuka tautan ini langsung bisa masuk.") : busy ? "Menyiapkan tautan undangan…" : null}
           </p>
         )}
 
@@ -167,7 +167,9 @@ export default function ShareSheet({ target, onClose }: { target: ShareTarget; o
           <p className="jpe-cap">Pindai dengan kamera HP untuk membuka ruang ini.</p>
         </div>
 
-        {!target.canLink && <p className="jpe-cap mt-3">Hanya akun BahasaCerdas yang terdaftar di ruang ini yang bisa masuk.</p>}
+        {target.kind === "UMUM" ? (
+          <p className="jpe-cap mt-3">Akun BahasaCerdas (umum, guru, atau murid) yang punya tautan atau kode ini bisa masuk sebagai peserta.</p>
+        ) : !target.canLink && <p className="jpe-cap mt-3">Hanya akun BahasaCerdas yang terdaftar di ruang ini yang bisa masuk.</p>}
         {err && <p role="alert" className="mt-2 text-sm text-[var(--clr-danger)]">{err}</p>}
       </div>
     </div>,

@@ -7,7 +7,7 @@ export function initials(name: string): string {
 }
 
 export interface ParsedParticipantMeta {
-  bcRole: "GURU" | "MURID" | null;
+  bcRole: "GURU" | "MURID" | "UMUM" | null;
   roomRole: "HOST" | "COHOST" | "MEMBER" | null;
 }
 
@@ -16,7 +16,7 @@ export function parseParticipantMeta(raw: string | undefined): ParsedParticipant
   if (!raw) return { bcRole: null, roomRole: null };
   try {
     const v = JSON.parse(raw) as { bcRole?: unknown; roomRole?: unknown };
-    const bcRole = v.bcRole === "GURU" || v.bcRole === "MURID" ? v.bcRole : null;
+    const bcRole = v.bcRole === "GURU" || v.bcRole === "MURID" || v.bcRole === "UMUM" ? v.bcRole : null;
     const roomRole = v.roomRole === "HOST" || v.roomRole === "COHOST" || v.roomRole === "MEMBER" ? v.roomRole : null;
     return { bcRole, roomRole };
   } catch {

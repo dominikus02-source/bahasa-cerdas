@@ -39,7 +39,7 @@ export function buildJoinGrant(
 
 export interface JumpaParticipantMetadata {
   v: 1;
-  bcRole: "GURU" | "MURID";
+  bcRole: "GURU" | "MURID" | "UMUM";
   roomRole: "HOST" | "COHOST" | "MEMBER";
   avatar: string | null;
 }

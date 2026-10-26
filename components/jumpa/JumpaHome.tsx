@@ -4,9 +4,11 @@
  * JUMPA — beranda /jumpa yang disederhanakan.
  * Guru: mulai ruang guru atau buka KelasKu.
  * Murid: gabung ruang aktif atau buat belajar bareng.
+ * Umum (mahasiswa/dosen/masyarakat): mulai ruang baru, undang lewat
+ * tautan/kode. Tanpa kelas/murid; batas paket Gratis UMUM.
  * Ruang uji (judul mengandung "Uji" / "Test") disembunyikan.
  */
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type RefObject } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, BookOpen, CalendarPlus, Crown, History, GraduationCap, Info, KeyRound, Loader2, Plus, Users, Video } from "lucide-react";
@@ -17,7 +19,7 @@ import { UpgradeSheet } from "./TierUi";
 import { avatarTone, elapsedLabel, parseRoomInput } from "./format";
 import JumpaThemeToggle from "./JumpaThemeToggle";
 
-const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng" } as const;
+const KIND_LABEL = { KELAS: "Kelas", GURU: "Ruang guru", MURID: "Belajar bareng", UMUM: "Ruang umum" } as const;
 
 function useMinuteTick(): number | null {
   const [now, setNow] = useState<number | null>(null);
@@ -83,6 +85,62 @@ function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
   );
 }
 
+function UmumCreateCard({ umum, busy, titleRef, onCreate }: {
+  umum: NonNullable<JumpaHomeData["umum"]>;
+  busy: boolean;
+  titleRef: RefObject<HTMLInputElement>;
+  onCreate: () => void;
+}) {
+  const left = umum.roomsPerDay === null ? null : Math.max(0, umum.roomsPerDay - umum.roomsToday);
+  return (
+    <section className="jumpa-card jumpa-action-card jumpa-in-up" data-umum>
+      <div className="flex items-center gap-3">
+        <span className="jumpa-icon-chip" data-kind="UMUM" aria-hidden><Video size={20} /></span>
+        <div className="min-w-0">
+          <h2 className="text-base font-bold">Mulai ruang baru</h2>
+          <p className="text-xs text-[var(--jp-text-3)]">{umum.maxParticipants} orang · {umum.maxDurationMin} menit{left !== null && ` · sisa ${left} ruang hari ini`}</p>
+        </div>
+      </div>
+      <input
+        ref={titleRef}
+        maxLength={80}
+        placeholder="Topik (opsional)"
+        aria-label="Topik ruang"
+        autoComplete="off"
+        autoCapitalize="none"
+        autoCorrect="off"
+        spellCheck={false}
+        className="jumpa-input mt-4 w-full"
+      />
+      <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy || left === 0} onClick={onCreate}>
+        {busy ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai sekarang
+      </button>
+      <p className="mt-3 text-xs text-[var(--jp-text-3)]">Setelah masuk, bagikan tautan atau kode ruang ke sesama pengguna umum.</p>
+    </section>
+  );
+}
+
+function UmumTerms({ umum }: { umum: NonNullable<JumpaHomeData["umum"]> }) {
+  return (
+    <section className="jumpa-card jumpa-in-up overflow-hidden">
+      <div className="flex items-center gap-3 px-4 py-3" style={{ background: "linear-gradient(135deg, var(--jp-accent) 0%, var(--jp-accent-strong) 100%)" }}>
+        <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
+        <h2 className="text-sm font-bold text-white">Ketentuan JUMPA</h2>
+      </div>
+      <div className="p-4 space-y-3">
+        <div className="flex items-start gap-3">
+          <span className="jumpa-tier" data-tier="FREE" style={{ flexShrink: 0 }}>Gratis</span>
+          <span className="text-xs text-[var(--jp-text-2)]">{umum.maxParticipants} orang · {umum.maxDurationMin} menit · {umum.roomsPerDay ?? "tanpa batas"} ruang/hari · HD {umum.maxCameraHeight}p</span>
+        </div>
+        <div className="flex items-start gap-3">
+          <Info size={16} className="mt-0.5 shrink-0 text-[var(--jp-text-3)]" aria-hidden />
+          <span className="text-xs text-[var(--jp-text-2)]">Satu ruang aktif per akun. Ruang umum hanya untuk akun umum BahasaCerdas yang punya tautan atau kode.</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function scheduledLabel(scheduledAt: string | null, now: number | null): string {
   if (!scheduledAt) return "Belum mulai";
   const at = new Date(scheduledAt);
@@ -92,7 +150,7 @@ function scheduledLabel(scheduledAt: string | null, now: number | null): string 
 
 function RoomCard({ room, now }: { room: RoomListItem; now: number | null }) {
   const live = room.status === "LIVE";
-  const Icon = room.kind === "GURU" ? Users : room.kind === "MURID" ? BookOpen : GraduationCap;
+  const Icon = room.kind === "GURU" ? Users : room.kind === "MURID" ? BookOpen : room.kind === "UMUM" ? Video : GraduationCap;
   return (
     <Link href={`/jumpa/${room.code}`} className="jumpa-card jumpa-room-card">
       <span className="jumpa-icon-chip" data-kind={room.kind} aria-hidden><Icon size={20} /></span>
@@ -123,6 +181,9 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
   const titleRef = useRef<HTMLInputElement>(null);
   const [groupId, setGroupId] = useState(data.groups[0]?.id ?? "");
   const isGuru = data.effective === "GURU";
+  const isUmum = data.effective === "UMUM";
+  // Akun UMUM (flag mati / aktif): jangan tampilkan ketentuan kelas/murid.
+  const umumAccount = isUmum || Boolean(data.umumAccount);
   const firstName = displayName.split(" ")[0] || displayName;
   const rooms = data.rooms.filter((r) => !isTestRoom(r.title));
 
@@ -134,6 +195,8 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       const res = await fetch("/api/jumpa/rooms", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ ...body, title }) });
       const json = (await res.json().catch(() => null)) as { url?: string; error?: string; code?: string } | null;
       if (!res.ok || !json?.url) {
+        // UMUM tidak punya lembar upgrade: pesan kuota tampil di banner error.
+        if (json?.code === "TIER_DAILY_LIMIT" && isUmum) { setError(json.error ?? "Kuota ruang hari ini sudah habis."); return; }
         if (json?.code === "TIER_DAILY_LIMIT") { setLimitHit(true); return; }
         setError(json?.error ?? "Gagal membuat ruang. Coba lagi.");
         return;
@@ -158,7 +221,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
 
       <section className="jumpa-hero jumpa-in-up">
         <h1 className="jumpa-hero-title">Halo, {firstName}</h1>
-        <p className="jumpa-hero-sub">Masuk ke ruang dengan kode atau mulai ruang baru.</p>
+        <p className="jumpa-hero-sub">{isUmum ? "Masuk dengan kode dari temanmu, atau mulai ruang baru dan undang mereka." : "Masuk ke ruang dengan kode atau mulai ruang baru."}</p>
         <QuickJoin />
       </section>
 
@@ -166,7 +229,9 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
 
       {plan && <PlanCard plan={plan} />}
 
-      {isGuru ? (
+      {isUmum && data.umum ? (
+        <UmumCreateCard umum={data.umum} busy={busy} titleRef={titleRef} onCreate={() => void create({ kind: "UMUM" })} />
+      ) : isGuru ? (
         <section className="jumpa-card jumpa-action-card jumpa-guru jumpa-in-up">
           <div className="flex items-center gap-3">
             <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
@@ -242,6 +307,12 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
         <UpgradeSheet reason="daily" tier={{ maxDurationMin: plan.kelas.maxDurationMin, upgradeUrl: plan.upgradeUrl }} onClose={() => setLimitHit(false)} />
       )}
 
+      {isUmum && data.umum ? <UmumTerms umum={data.umum} /> : umumAccount ? (
+        <section className="jumpa-card jumpa-in-up flex items-start gap-3 px-4 py-3">
+          <Info size={18} className="mt-0.5 shrink-0 text-[var(--jp-text-3)]" aria-hidden />
+          <p className="text-sm text-[var(--jp-text-2)]">Ruang JUMPA untuk akun umum belum dibuka. Nantikan, ya.</p>
+        </section>
+      ) : (
       <section className="jumpa-card jumpa-in-up overflow-hidden">
         <div className="flex items-center gap-3 px-4 py-3" style={{ background: "linear-gradient(135deg, var(--jp-accent) 0%, var(--jp-accent-strong) 100%)" }}>
           <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
@@ -266,6 +337,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           </div>
         </div>
       </section>
+      )}
     </main>
   );
 }

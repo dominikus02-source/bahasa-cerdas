@@ -13,14 +13,22 @@
  *   undang/hapus chat orang lain). Murid host ruang MURID hanya boleh
  *   mengunci & mengakhiri ruangnya sendiri; selebihnya pakai "Laporkan".
  * - Akun Arena Junior (TK–SD) tidak bisa membuat maupun ikut ruang MURID.
+ * - UMUM (mahasiswa/dosen/masyarakat): hanya akun UMUM yang bisa MEMBUAT
+ *   ruang UMUM, dan akun UMUM hanya bisa membuat & masuk ruang UMUM (tidak
+ *   pernah ruang KELAS/GURU/MURID). Ruang UMUM bisa DIMASUKI akun BC mana
+ *   pun (guru, founder, murid non-Junior, umum) yang memegang tautan/kode —
+ *   sebagai peserta (MEMBER) biasa, tanpa kuasa pemandu. Pemandu ruang UMUM
+ *   selalu akun UMUM. Ruang UMUM tidak pernah didaftarkan/diumumkan ke
+ *   guru/murid (tanpa direktori, notifikasi, jadwal). Aktif hanya bila
+ *   ENABLE_ROLE_UMUM menyala (JumpaActor.umumEnabled). Lihat docs/JUMPA_UMUM.md.
  */
 import { isPastDuration, JUMPA_EARLY_JOIN_MIN, type JumpaKind } from "./caps";
 
-// UMUM (pengguna umum non-sekolah) ikut di tipe agar cocok dengan Prisma
-// Role, tetapi TIDAK punya peran efektif JUMPA: effectiveRole() → null →
-// semua keputusan JUMPA ditolak (default-deny).
+// UMUM (pengguna umum non-sekolah) hanya punya peran efektif "UMUM" bila
+// flag ENABLE_ROLE_UMUM menyala (actor.umumEnabled). Tanpa flag →
+// effectiveRole() → null → semua keputusan JUMPA ditolak (default-deny).
 export type BcRole = "GURU" | "MURID" | "ADMIN" | "UMUM";
-export type JumpaEffectiveRole = "GURU" | "MURID";
+export type JumpaEffectiveRole = "GURU" | "MURID" | "UMUM";
 export type JumpaRoomRole = "HOST" | "COHOST" | "MEMBER";
 export type JumpaStatus = "SCHEDULED" | "LIVE" | "ENDED";
 export type JumpaAccessVia =
@@ -42,12 +50,38 @@ export interface JumpaActor {
   isFounder: boolean;
   /** Akun Arena Junior (TK–SD). */
   isJunior: boolean;
+  /**
+   * ENABLE_ROLE_UMUM menyala (diisi server di loadActor untuk SEMUA akun).
+   * Default mati: akun UMUM tanpa peran JUMPA & ruang UMUM tertutup bagi siapa pun.
+   */
+  umumEnabled?: boolean;
 }
+
+/** Ruang UMUM: kode ruang = undangan (seperti Meet) untuk akun BC yang login. */
+export const JUMPA_UMUM_CODE_JOIN = true;
 
 export function effectiveRole(actor: JumpaActor): JumpaEffectiveRole | null {
   if (actor.isFounder) return "GURU";
   if (actor.role === "GURU") return "GURU";
   if (actor.role === "MURID") return "MURID";
+  if (actor.role === "UMUM" && actor.umumEnabled === true) return "UMUM";
+  return null;
+}
+
+/**
+ * Akun Arena Junior (TK–SD) tidak ikut ruang UMUM (orang dewasa yang tidak
+ * dikenal). Murid non-Junior boleh masuk lewat tautan/kode (keputusan founder).
+ */
+export const JUMPA_UMUM_ALLOW_JUNIOR = false;
+
+/**
+ * Isolasi SATU arah: akun UMUM tidak pernah masuk ruang sekolah
+ * (KELAS/GURU/MURID). Akun sekolah (guru/founder/murid) BOLEH masuk ruang
+ * UMUM sebagai peserta lewat tautan/kode — lihat evaluateJoin.
+ * null = boleh lanjut.
+ */
+function umumIsolation(role: JumpaEffectiveRole, kind: JumpaKind) {
+  if (role === "UMUM" && kind !== "UMUM") return deny("ROLE_NOT_ALLOWED", "Akun umum hanya bisa masuk ruang umum.");
   return null;
 }
 
@@ -95,6 +129,13 @@ export interface CreateRoomInput {
 export function canCreateRoom(input: CreateRoomInput): Decision<Record<never, never>> {
   const role = effectiveRole(input.actor);
   if (!role) return deny("ROLE_NOT_ALLOWED", "Akun ini belum bisa memakai JUMPA.");
+  if (input.kind === "UMUM" || role === "UMUM") {
+    if (role !== "UMUM") return deny("ROLE_NOT_ALLOWED", "Ruang umum hanya dibuat oleh akun umum.");
+    if (input.kind !== "UMUM") return deny("ROLE_NOT_ALLOWED", "Akun umum hanya bisa membuat ruang umum.");
+    if (input.actor.isJunior) return deny("JUNIOR_NOT_ALLOWED", "Akun Junior belum bisa membuat ruang.");
+    if (input.allowedKinds && !input.allowedKinds.includes("UMUM")) return deny("KIND_NOT_AVAILABLE", "Jenis ruang ini belum tersedia.");
+    return { ok: true };
+  }
   const allowed = input.allowedKinds ?? JUMPA_CREATABLE_KINDS;
   if (!allowed.includes(input.kind)) {
     return deny("KIND_NOT_AVAILABLE", "Jenis ruang ini belum tersedia.");
@@ -179,6 +220,14 @@ export function evaluateJoin(
   const { actor, room, relation } = input;
   const role = effectiveRole(actor);
   if (!role) return deny("ROLE_NOT_ALLOWED", "Akun ini belum bisa memakai JUMPA.");
+  const isolated = umumIsolation(role, room.kind);
+  if (isolated) return isolated;
+  if (role === "UMUM" && actor.isJunior) return deny("JUNIOR_NOT_ALLOWED", "Akun Junior belum bisa memakai JUMPA.");
+  if (room.kind === "UMUM") {
+    // Flag mati → ruang UMUM tertutup untuk siapa pun (default-deny).
+    if (actor.umumEnabled !== true) return deny("ROLE_NOT_ALLOWED", "Ruang umum belum tersedia.");
+    if (actor.isJunior && !JUMPA_UMUM_ALLOW_JUNIOR) return deny("JUNIOR_NOT_ALLOWED", "Akun Junior belum bisa ikut ruang umum.");
+  }
 
   if (room.status === "ENDED" && room.endReason === "CANCELLED") return deny("ROOM_CANCELLED", "JUMPA ini dibatalkan.");
   // Ditutup LiveKit karena kosong ≠ diakhiri. Tautan undangan (24 jam) & host
@@ -219,11 +268,21 @@ export function evaluateJoin(
     if (role === "MURID" && relation.isGroupMember && relation.groupActive) {
       access = { roomRole: "MEMBER", accessVia: "GROUP_MEMBER" };
     }
+  } else if (room.kind === "UMUM") {
+    // Akun BC mana pun yang login (umum, guru, founder, murid non-Junior)
+    // dengan tautan/kode = peserta biasa. HOST hanya pembuat (selalu akun
+    // UMUM, lihat canCreateRoom); tidak ada undangan direktori ke ruang UMUM.
+    if (role === "UMUM" && relation.isUserInvited) access = { roomRole: "MEMBER", accessVia: "INVITED_USER" };
+    else if (relation.hasValidLink || relation.isExistingParticipant || JUMPA_UMUM_CODE_JOIN) {
+      access = { roomRole: "MEMBER", accessVia: "LINK" };
+    }
   }
   if (!access) return deny("NOT_INVITED", "Kamu tidak terdaftar di ruang ini.");
 
-  // COHOST tersimpan hanya berlaku untuk guru (murid tidak pernah jadi cohost).
-  if (access.roomRole === "MEMBER" && relation.storedRoomRole === "COHOST" && role === "GURU") {
+  // COHOST tersimpan hanya berlaku untuk guru di ruang sekolah (murid tidak
+  // pernah jadi cohost) dan untuk akun UMUM di ruang UMUM. Guru/murid di
+  // ruang UMUM selalu peserta biasa.
+  if (access.roomRole === "MEMBER" && relation.storedRoomRole === "COHOST" && ((role === "GURU" && room.kind !== "UMUM") || (role === "UMUM" && room.kind === "UMUM"))) {
     access = { ...access, roomRole: "COHOST" };
   }
 
@@ -268,6 +327,7 @@ export function publishSourcesFor(
   if (!ctx) return base;
   const screen: JumpaPublishSource[] = ["screen_share", "screen_share_audio"];
   if (effective === "GURU") return [...base, ...screen];
+  if (effective === "UMUM") return ctx.kind === "UMUM" ? [...base, ...screen] : base;
   if (ctx.kind === "KELAS" && ctx.allowMuridScreenShare) return [...base, ...screen];
   if (ctx.kind === "MURID" && roomRole === "HOST") return [...base, ...screen];
   return base;
@@ -331,6 +391,11 @@ export function canModerate(input: {
   const { actor, action, roomKind, target } = input;
   const no = deny("NOT_ALLOWED", "Kamu tidak punya izin untuk tindakan ini.");
 
+  // Hanya akun UMUM yang memandu ruang UMUM (guru/murid yang ikut lewat
+  // tautan tidak punya kuasa pemandu), dan akun UMUM tidak memandu ruang
+  // sekolah. Pemandu UMUM BOLEH menindak peserta guru/murid (bisukan,
+  // keluarkan); wakil pemandu tetap khusus akun UMUM (SET_COHOST di bawah).
+  if ((roomKind === "UMUM") !== (actor.effective === "UMUM")) return no;
   if (actor.effective === "MURID") {
     // Murid tidak pernah punya kuasa atas peserta lain.
     if (roomKind === "MURID" && actor.roomRole === "HOST" && MURID_HOST_ACTIONS.includes(action)) return { ok: true };
@@ -351,7 +416,9 @@ export function canModerate(input: {
       return deny("BAD_TARGET", "Wakil pemandu tidak bisa menindak wakil pemandu lain.");
     }
     if (action === "SET_COHOST") {
-      if (target.effective !== "GURU") return deny("BAD_TARGET", "Hanya guru yang bisa dijadikan wakil pemandu.");
+      if (roomKind === "UMUM") {
+        if (target.effective !== "UMUM") return deny("BAD_TARGET", "Peserta ini tidak bisa dijadikan wakil pemandu.");
+      } else if (target.effective !== "GURU") return deny("BAD_TARGET", "Hanya guru yang bisa dijadikan wakil pemandu.");
       if (target.roomRole === "COHOST") return deny("BAD_TARGET", "Peserta ini sudah wakil pemandu.");
     }
     if (action === "UNSET_COHOST" && target.roomRole !== "COHOST") {
@@ -395,6 +462,15 @@ export function canInvite(input: {
   invite: InviteFacts;
 }): Decision<Record<never, never>> {
   const { actor, roomKind, invite } = input;
+  if (roomKind === "UMUM" || actor.effective === "UMUM") {
+    // Ruang UMUM: hanya tautan/kode dari pemandu UMUM. Tidak ada undangan
+    // kelas/komunitas/perorangan (tidak ada direktori pengguna umum).
+    if (roomKind !== "UMUM" || actor.effective !== "UMUM" || actor.roomRole === "MEMBER") {
+      return deny("NOT_ALLOWED", "Hanya pemandu ruang ini yang bisa mengundang.");
+    }
+    if (invite.kind !== "LINK") return deny("BAD_TARGET", "Ruang umum hanya bisa dibagikan lewat tautan atau kode.");
+    return { ok: true };
+  }
   if (actor.effective !== "GURU" || actor.roomRole === "MEMBER") {
     return deny("NOT_ALLOWED", "Hanya guru pemandu atau wakil pemandu yang bisa mengundang.");
   }

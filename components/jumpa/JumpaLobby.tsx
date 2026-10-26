@@ -6,12 +6,12 @@
  * pratinjau memakai resolusi kebijakan perangkat (HP lebih ringan).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldCheck, Users, Video, VideoOff, X, Info } from "lucide-react";
+import { CalendarClock, Camera, Loader2, Mic, MicOff, Settings2, Share2, ShieldAlert, ShieldCheck, Users, Video, VideoOff, X, Info } from "lucide-react";
 import { formatWib } from "@/lib/jumpa/schedule";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import LobbyDeny from "./LobbyDeny";
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
-import { JUMPA_TIERS, JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM, JUMPA_WEBINAR, JUMPA_WEBINAR_PER_WEEK } from "@/lib/jumpa/tiers";
+import { JUMPA_TIERS, JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM, JUMPA_UMUM_TIERS, JUMPA_WEBINAR, JUMPA_WEBINAR_PER_WEEK } from "@/lib/jumpa/tiers";
 import { readMediaPrefs, writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { detectDevice, publishPolicy, QUALITY_LABEL } from "./media-policy";
 import { initials } from "./format";
@@ -22,7 +22,7 @@ interface Props {
   title: string;
   subtitle: string | null;
   displayName: string;
-  roleLabel: "GURU" | "MURID";
+  roleLabel: "GURU" | "MURID" | "UMUM";
   canJoin: boolean;
   denyMessage: string | null;
   /** Kode penolakan server (mis. NOT_STARTED) untuk layar status yang jelas. */
@@ -35,6 +35,8 @@ interface Props {
   joinError: string | null;
   onJoin: (prefs: JumpaMediaPrefs) => void;
   tier: JumpaTierView;
+  /** Pengingat keselamatan murid di ruang akun umum (dihitung server). */
+  umumNotice?: string | null;
 }
 
 type PermissionNote = null | "camera" | "mic" | "both";
@@ -88,14 +90,21 @@ function useMicLevel(stream: MediaStream | null): number {
 }
 
 function PackageRules({ tier }: { tier: JumpaTierView }) {
-  const isGuru = tier.kind !== "MURID";
+  const isUmum = tier.kind === "UMUM";
+  const isGuru = tier.kind !== "MURID" && !isUmum;
   return (
     <details className="jumpa-rules mt-3 w-full text-left text-sm">
       <summary className="flex cursor-pointer items-center gap-2 text-[var(--jp-text-2)] hover:text-[var(--jp-text-1)]">
         <Info size={14} /> Aturan paket ruang ini
       </summary>
       <div className="mt-2 space-y-2 text-xs text-[var(--jp-text-2)]">
-        {isGuru ? (
+        {isUmum ? (
+          <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
+            <div className="font-semibold text-[var(--jp-text-1)]">Ruang umum</div>
+            <div>Gratis: {JUMPA_UMUM_TIERS.UMUM_FREE.room.maxParticipants} orang · {JUMPA_UMUM_TIERS.UMUM_FREE.room.maxDurationMin} menit · {JUMPA_UMUM_TIERS.UMUM_FREE.roomsPerDay} ruang/hari</div>
+            <div className="mt-1 text-[var(--jp-text-3)]">Hanya akun umum yang punya tautan atau kode yang bisa masuk</div>
+          </div>
+        ) : isGuru ? (
           <>
             <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
               <div className="font-semibold text-[var(--jp-text-1)]">Ruang kelas</div>
@@ -296,7 +305,7 @@ export default function JumpaLobby(props: Props) {
           <span className="jumpa-mark jumpa-mark-sm" aria-hidden>J</span>
           JUMPA <span className="jumpa-brand-by">dari BahasaCerdas</span>
         </span>
-        <span className="jumpa-badge shrink-0 whitespace-nowrap" data-role={props.roleLabel}>Sebagai {props.roleLabel === "GURU" ? "guru" : "murid"}</span>
+        <span className="jumpa-badge shrink-0 whitespace-nowrap" data-role={props.roleLabel}>Sebagai {props.roleLabel === "GURU" ? "guru" : props.roleLabel === "UMUM" ? "peserta umum" : "murid"}</span>
       </header>
       <div className="flex flex-1 flex-col justify-center gap-5 md:flex-row md:items-center md:gap-8">
       <section className="jumpa-in-up w-full md:flex-[1.4]">
@@ -383,6 +392,12 @@ export default function JumpaLobby(props: Props) {
           <PackageRules tier={props.tier} />
         </div>
 
+        {props.canJoin && props.umumNotice && (
+          <p role="note" data-testid="jumpa-umum-notice" className="jumpa-umum-notice flex w-full items-start gap-2 rounded-xl border border-[var(--clr-warning)] bg-[var(--clr-warning-soft)] px-3 py-2.5 text-left text-sm font-medium text-[var(--jp-text)]">
+            <ShieldAlert size={18} aria-hidden className="mt-0.5 shrink-0 text-[var(--clr-warning)]" />
+            <span>{props.umumNotice}</span>
+          </p>
+        )}
         {props.canJoin ? (
           <>
             <button type="button" className="jumpa-primary w-full sm:w-auto" onClick={handleJoin} disabled={!prefs || props.joining}>
