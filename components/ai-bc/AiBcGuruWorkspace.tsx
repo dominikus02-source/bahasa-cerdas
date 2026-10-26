@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Check, Copy, MessageSquarePlus, RefreshCw, Send } from "lucide-react";
+import { Check, Copy, MessageSquarePlus, RefreshCw, Send, Square } from "lucide-react";
 import AiBcMarkdown from "./AiBcMarkdown";
 import AiBcWelcome from "./AiBcWelcome";
 import useAiBcViewport from "./useAiBcViewport";
@@ -40,6 +40,9 @@ export const GURU_AI_BC_SUGGESTED_PROMPTS: string[] = [
 
 const AI_LABEL = "NARA";
 const THINKING_LABEL = "Nara sedang berpikir…";
+const WRITING_LABEL = "Nara sedang menulis…";
+const STOPPED_NOTE = "_(Jawaban dihentikan.)_";
+const STOPPED_EMPTY_COPY = "Jawaban dihentikan sebelum Nara sempat menulis.";
 const ERROR_COPY =
   "Maaf, Nara belum bisa menjawab sekarang. Silakan kirim ulang pesan Anda.";
 const WELCOME_HEADLINE = "Halo! Saya Nara, rekan Anda di BahasaCerdas.";
@@ -72,6 +75,8 @@ export default function AiBcGuruWorkspace({
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const abortRef = useRef<AbortController | null>(null);
+  // Controller yang dihentikan pengguna lewat tombol "Hentikan" (bukan reset).
+  const stoppedRef = useRef<AbortController | null>(null);
   const nearBottomRef = useRef(true);
   const lastUserTextRef = useRef("");
 
@@ -112,11 +117,14 @@ export default function AiBcGuruWorkspace({
     setDraftText("");
     const controller = new AbortController();
     abortRef.current = controller;
+    let partial = "";
     try {
       const result = await streamBcChat({
         messages: history.map((m) => ({ role: m.role, content: m.content })),
         onDelta: (delta) => {
-          if (!controller.signal.aborted) setDraftText((prev) => prev + delta);
+          if (controller.signal.aborted) return;
+          partial += delta;
+          setDraftText((prev) => prev + delta);
         },
         signal: controller.signal,
       });
@@ -147,6 +155,18 @@ export default function AiBcGuruWorkspace({
       }
     } finally {
       if (abortRef.current === controller) {
+        if (stoppedRef.current === controller) {
+          // Dihentikan pengguna: simpan jawaban sebagian agar tidak hilang.
+          stoppedRef.current = null;
+          setDraftText("");
+          const kept = partial.trim();
+          setMessages((prev) => [
+            ...prev,
+            kept
+              ? { role: "assistant", content: `${kept}\n\n${STOPPED_NOTE}` }
+              : { role: "assistant", content: STOPPED_EMPTY_COPY, isError: true },
+          ]);
+        }
         setStreaming(false);
         abortRef.current = null;
       }
@@ -199,7 +219,15 @@ export default function AiBcGuruWorkspace({
     void send(text, next);
   };
 
+  const handleStop = () => {
+    const controller = abortRef.current;
+    if (!controller || controller.signal.aborted) return;
+    stoppedRef.current = controller;
+    controller.abort();
+  };
+
   const handleReset = () => {
+    stoppedRef.current = null;
     abortRef.current?.abort();
     abortRef.current = null;
     setStreaming(false);
@@ -354,15 +382,16 @@ export default function AiBcGuruWorkspace({
                             )}
                             {copiedId === i ? "Tersalin" : "Salin"}
                           </button>
-                          <button
-                            type="button"
-                            onClick={handleRetry}
-                            title="Ulangi pertanyaan terakhir"
-                            disabled={streaming}
-                            className={`${styles.secondaryAction} flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-xs text-muted-foreground`}
-                          >
-                            <RefreshCw size={12} /> Tanya ulang
-                          </button>
+                          {!streaming && i === messages.length - 1 && (
+                            <button
+                              type="button"
+                              onClick={handleRetry}
+                              title="Ulangi pertanyaan terakhir"
+                              className={`${styles.secondaryAction} flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-xs text-muted-foreground`}
+                            >
+                              <RefreshCw size={12} /> Tanya ulang
+                            </button>
+                          )}
                         </div>
                       </>
                     )}
@@ -388,7 +417,7 @@ export default function AiBcGuruWorkspace({
                   {draftText ? (
                     <>
                       <p className="mb-1 text-xs font-semibold text-muted-foreground">
-                        {THINKING_LABEL}
+                        {WRITING_LABEL}
                       </p>
                       <AiBcMarkdown content={draftText} />
                     </>
@@ -407,6 +436,16 @@ export default function AiBcGuruWorkspace({
                       </span>
                     </div>
                   )}
+                  <div className="mt-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleStop}
+                      aria-label="Hentikan jawaban"
+                      className={`${styles.secondaryAction} inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-border px-3 text-xs font-medium text-muted-foreground`}
+                    >
+                      <Square size={12} aria-hidden="true" /> Hentikan
+                    </button>
+                  </div>
                 </div>
               </div>
             )}

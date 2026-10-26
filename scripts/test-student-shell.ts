@@ -110,6 +110,9 @@ function main() {
   const aiCard = read("components/student-home/AIBCHomeCard.tsx");
   test("AIBCHomeCard menautkan /arena/ai",
     () => aiCard.includes('href="/arena/ai"'));
+  test("chip topik AIBCHomeCard mengisi ?q= (tanpa kirim otomatis)",
+    () => aiCard.includes("/arena/ai?q=${encodeURIComponent(t.prompt)}") &&
+      read("components/ai-bc/AiBcArenaWorkspace.tsx").includes('searchParams.get("q")'));
 
   // ── 6. THEME ──
   console.log("\n── 6. Theme ──");

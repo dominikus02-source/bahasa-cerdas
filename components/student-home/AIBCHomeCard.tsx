@@ -4,7 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { gambarKarakter } from "@/lib/arena-junior/karakter";
 
-const QUICK_TOPICS = ["Arti kata", "Tata bahasa", "Sinonim", "Latihan UKBI"];
+// Chip mengisi kolom tanya di /arena/ai lewat ?q= (TIDAK terkirim otomatis).
+const QUICK_TOPICS: { label: string; prompt: string }[] = [
+  { label: "Arti kata", prompt: "Apa arti kata " },
+  { label: "Tata bahasa", prompt: "Tolong cek tata bahasa kalimat ini: " },
+  { label: "Sinonim", prompt: "Apa sinonim kata " },
+  { label: "Latihan UKBI", prompt: "Beri aku satu latihan soal UKBI beserta pembahasannya." },
+];
 
 export function AIBCHomeCard() {
   return (
@@ -44,11 +50,11 @@ export function AIBCHomeCard() {
           <div className="flex flex-wrap gap-1.5">
             {QUICK_TOPICS.map((t) => (
               <Link
-                key={t}
-                href="/arena/ai"
+                key={t.label}
+                href={`/arena/ai?q=${encodeURIComponent(t.prompt)}`}
  className="text-[11px] font-medium text-[var(--px-text-dim)] hover:text-[var(--px-text)] bg-[var(--px-glass)] hover:bg-[var(--px-glass-strong)] border border-[var(--px-border)] rounded-full px-3 py-1 transition-colors"
               >
-                {t}
+                {t.label}
               </Link>
             ))}
           </div>

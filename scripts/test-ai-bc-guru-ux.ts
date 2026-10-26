@@ -120,6 +120,13 @@ test("B14. workspace: teks error ramah tanpa detail internal", () =>
   !ws.includes("API details"));
 test("B15. workspace: retry 'Coba Lagi' + 'Tanya ulang'", () =>
   ws.includes("Coba Lagi") && ws.includes("Tanya ulang"));
+test("B15b. workspace: label 'Nara sedang menulis…' saat jawaban mengalir", () =>
+  ws.includes("Nara sedang menulis…") && ws.includes("{WRITING_LABEL}"));
+test("B15b. workspace: tombol Hentikan menyimpan jawaban sebagian", () =>
+  ws.includes('aria-label="Hentikan jawaban"') && ws.includes("stoppedRef.current = controller") &&
+  ws.includes("STOPPED_NOTE") && ws.includes("STOPPED_EMPTY_COPY"));
+test("B15b. workspace: 'Tanya ulang' hanya di balasan terakhir & tidak saat streaming", () =>
+  ws.includes("!streaming && i === messages.length - 1"));
 test("B16. workspace: salin 'Salin'/'Tersalin'", () =>
   ws.includes("Salin") && ws.includes("Tersalin"));
 test("B17. workspace: label AI 'NARA' (bukan Asisten/Assistant/AI BC)", () =>

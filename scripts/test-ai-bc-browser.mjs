@@ -114,7 +114,9 @@ const server = http.createServer(async (req, res) => {
     if (gate) await gate;
     const responseMode = mode;
     await new Promise(resolve => setTimeout(resolve, responseMode === "slow" ? 900 : 180));
-    for (const text of ["## Memahami ide pokok\n\n", richText.slice("## Memahami ide pokok\n\n".length)]) {
+    for (const [index, text] of ["## Memahami ide pokok\n\n", richText.slice("## Memahami ide pokok\n\n".length)].entries()) {
+      // "stall": the first delta arrives, then the stream pauses so the user can press Stop.
+      if (index > 0 && responseMode === "stall") await new Promise(resolve => setTimeout(resolve, 5000));
       if (res.destroyed) return;
       const frame = `data: ${JSON.stringify({ type: "delta", text })}\n\n`;
       res.write(frame.slice(0, 15));
@@ -157,9 +159,33 @@ page.on("requestfailed", request => {
   if (request.url().includes("/api/ai/bc/chat")) failedRequests.push(request.failure()?.errorText);
 });
 
+// Wait until the layout signature is identical for several consecutive frames (bounded).
+// useAiBcViewport measures in rAF after a resize; measuring or focusing before that frame
+// raced with the hook and made the short-viewport check flaky.
+async function settleLayout() {
+  await page.evaluate(() => new Promise(resolve => {
+    const signature = () => {
+      const root = document.documentElement;
+      const workspace = document.querySelector(".ai-bc-workspace, .ai-bc-guru-workspace");
+      return [innerWidth, innerHeight, scrollY, root.scrollWidth, root.scrollHeight, workspace?.getBoundingClientRect().height ?? -1].join("/");
+    };
+    let last = "";
+    let stable = 0;
+    let frames = 0;
+    const tick = () => {
+      const current = signature();
+      stable = current === last ? stable + 1 : 0;
+      last = current;
+      frames += 1;
+      if (stable >= 4 || frames >= 120) resolve();
+      else requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }));
+}
+
 async function checkBounds(label) {
-  // Resize schedules the viewport hook in rAF; measure the settled layout.
-  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await settleLayout();
   const geometry = await page.evaluate(() => {
     const rect = document.querySelector('[aria-label="Kirim pertanyaan"]')?.getBoundingClientRect();
     const nav = document.querySelector(".bc-mobile-nav, .arena-bottom-nav")?.getBoundingClientRect();
@@ -239,6 +265,33 @@ try {
     }
     await page.getByRole("button", { name: "Salin", exact: true }).last().click();
     await page.getByRole("button", { name: "Tersalin", exact: true }).waitFor();
+    assert.equal(await page.getByRole("button", { name: "Tanya ulang", exact: true }).count(), 1, `${role}: Tanya ulang only on the latest reply`);
+    // Stop after the first delta keeps the partial answer.
+    mode = "stall";
+    await input.fill("Pertanyaan yang dihentikan");
+    await input.press("Enter");
+    await page.getByText("Nara sedang menulis…", { exact: true }).waitFor();
+    assert.equal(await page.getByRole("button", { name: "Tanya ulang", exact: true }).count(), 0, `${role}: Tanya ulang hidden while streaming`);
+    await page.screenshot({ path: path.join(outputDir, `${role}-390-streaming-stop.png`) });
+    await page.getByRole("button", { name: "Hentikan jawaban", exact: true }).click();
+    await page.locator('[role="status"]').waitFor({ state: "detached" });
+    const stoppedText = await page.locator(".prose").last().textContent();
+    assert.ok(stoppedText.includes("Memahami ide pokok") && stoppedText.includes("(Jawaban dihentikan.)"), `${role}: stop keeps partial answer`);
+    assert.ok(!stoppedText.includes("Selesai memahami materi."), `${role}: stop ends the stream`);
+    assert.equal(await page.getByRole("button", { name: "Tanya ulang", exact: true }).count(), 1, `${role}: Tanya ulang after stop`);
+    // Stop before any delta shows a retryable notice.
+    mode = "ok";
+    const releaseStop = holdNextStream();
+    await input.fill("Pertanyaan dihentikan lebih awal");
+    await input.press("Enter");
+    await page.getByText("Nara sedang berpikir…", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "Hentikan jawaban", exact: true }).click();
+    await page.getByText("Jawaban dihentikan sebelum Nara sempat menulis.", { exact: true }).waitFor();
+    releaseStop();
+    await page.getByRole("button", { name: "Coba Lagi", exact: true }).click();
+    await page.getByText("Selesai memahami materi.", { exact: true }).last().waitFor();
+    await page.locator('[role="status"]').waitFor({ state: "detached" });
+    assert.equal(requests.at(-1).messages.filter(message => message.role === "user" && message.content === "Pertanyaan dihentikan lebih awal").length, 1, `${role}: retry after stop sends one copy`);
     await page.getByRole("button", { name: "Mulai percakapan baru" }).click();
     mode = "slow";
     const releaseReset = holdNextStream();
@@ -251,9 +304,27 @@ try {
     assert.equal(await page.locator(".ai-bc-messages").count(), 0, "stale response after reset");
     mode = "ok";
     await page.setViewportSize({ width: 390, height: 380 });
+    // Let the viewport hook re-measure before focusing the composer (mirrors resize → tap order).
+    await settleLayout();
     await input.fill("Viewport pendek");
     await checkBounds(`${role} short viewport`);
-    results.push(`${role}: hints, Enter/Shift+Enter, error/retry, copy, reset during SSE, short viewport`);
+    results.push(`${role}: hints, Enter/Shift+Enter, error/retry, copy, Tanya ulang on latest only, stop (partial + empty), reset during SSE, short viewport`);
+  }
+
+  // ?q= prefill (home-card chips): fills the composer, never auto-sends, strips the query.
+  {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const before = requests.length;
+    await page.goto(`${base}/?role=student&q=${encodeURIComponent("Apa arti kata ")}`);
+    await page.getByRole("heading", { level: 1 }).waitFor();
+    const input = page.getByRole("textbox", { name: "Tulis pesan untuk Nara" });
+    await page.waitForFunction(() => document.querySelector('[aria-label="Tulis pesan untuk Nara"]')?.value === "Apa arti kata ");
+    assert.equal(await input.inputValue(), "Apa arti kata ");
+    assert.ok(!new URL(page.url()).searchParams.has("q"), "prefill strips ?q=");
+    assert.equal(new URL(page.url()).searchParams.get("role"), "student", "prefill keeps other params");
+    await page.waitForTimeout(400);
+    assert.equal(requests.length, before, "prefill does not auto-send");
+    results.push("student: ?q= prefill without auto-send");
   }
 
   for (const role of ["public", "tool"]) {

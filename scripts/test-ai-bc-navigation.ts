@@ -48,7 +48,11 @@ test("ai-bc: GURU/founder → /guru/ai-bc", () =>
   publicPage.includes('redirect(isTeacher ? "/guru/ai-bc" : "/arena/ai")'));
 test("ai-bc: anonim melihat laman perkenalan", () =>
   publicPage.includes("Teman Berpikir, Berkata, dan Berkarya.") && publicPage.includes("Narasumber Andalan, Rekan Anda") &&
-  publicPage.includes('href="/login"'));
+  publicPage.includes('href="/login?next=/ai-bc"'));
+test("ai-bc: CTA daftar membawa kembali ke NARA", () => publicPage.includes('href="/register?next=/ai-bc"'));
+test("ai-bc: copy inklusif (tidak hanya murid)", () =>
+  !publicPage.includes("Gratis untuk murid") && publicPage.includes("mahasiswa") &&
+  publicLayout.includes("mahasiswa") && !publicLayout.includes("untuk murid dan guru"));
 test("ai-bc: tidak ada mode switch manual", () => !publicPage.includes("setMode"));
 test("ai-bc/layout metadata NARA (tanpa nama platform dobel di title)", () =>
   publicLayout.includes('title: "NARA — Teman Berpikir, Berkata, dan Berkarya"') &&

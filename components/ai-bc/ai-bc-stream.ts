@@ -46,7 +46,9 @@ export async function streamBcChat(req: BcStreamRequest): Promise<BcStreamResult
     let detail =
       res.status === 401
         ? "Sesi kamu sudah berakhir. Silakan masuk lagi untuk ngobrol dengan Nara."
-        : "Maaf, Nara sedang sibuk. Coba lagi sebentar ya.";
+        : res.status === 429
+          ? "Kamu mengirim pesan terlalu cepat. Tunggu sebentar, lalu coba lagi ya."
+          : "Maaf, Nara sedang sibuk. Coba lagi sebentar ya.";
     try {
       const data = (await res.json()) as { error?: string };
       // Hanya pesan server untuk galat 5xx (salinan ramah dari route); galat 4xx

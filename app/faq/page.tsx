@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 const faqs = [
   {
     q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun khusus untuk guru Bahasa Indonesia di SMP, SMA, SMK, dan MA.",
+    a: "BahasaCerdas adalah platform edukasi Bahasa Indonesia yang menyediakan generator Rencana Pembelajaran NARA, bank soal HOTS, kuis multiplayer, toko karya guru, dan komunitas MGMP dalam satu platform. Dibangun khusus untuk guru Bahasa Indonesia di SMP, SMA, SMK, dan MA.",
   },
   {
     q: "Apakah BahasaCerdas gratis?",
@@ -33,7 +33,7 @@ const faqs = [
   },
   {
     q: "Apa itu NARA dan alat AI apa saja yang tersedia?",
-    a: "NARA adalah AI BahasaCerdas — Narasumber Andalan, Rekan Anda. Di bawah payung Alat NARA tersedia enam alat: Generator Rencana Pembelajaran (buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik), Generator Soal HOTS (soal level kognitif C4-C6), Koreksi EYD Otomatis, Analisis Teks Kebahasaan, Feedback Karangan Otomatis, dan chat NARA untuk membantu persiapan mengajar.",
+    a: "NARA (Narasumber Andalan, Rekan Anda) adalah teman ngobrol berbasis AI di BahasaCerdas. Pelajar, mahasiswa, dan siapa saja yang punya akun BahasaCerdas bisa bertanya arti kata, tata bahasa dan PUEBI, merapikan tulisan, mencari ide karya, atau berlatih untuk UKBI. Untuk guru, di bawah payung Alat NARA tersedia enam alat: Generator Rencana Pembelajaran (buat Rencana Pembelajaran Kurikulum Nasional dalam 30 detik), Generator Soal HOTS (soal level kognitif C4-C6), Koreksi EYD Otomatis, Analisis Teks Kebahasaan, Feedback Karangan Otomatis, dan chat NARA untuk membantu persiapan mengajar. Nara bisa keliru, jadi periksa kembali informasi penting.",
   },
   {
     q: "Bagaimana cara Generator Rencana Pembelajaran NARA bekerja?",

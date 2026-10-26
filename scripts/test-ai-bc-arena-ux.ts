@@ -114,6 +114,13 @@ test("workspace: teks error persis", () =>
   workspace.includes("Maaf, Nara belum bisa menjawab sekarang. Coba kirim pesanmu lagi ya."));
 test("workspace: retry 'Coba Lagi' + 'Tanya ulang'", () =>
   workspace.includes("Coba Lagi") && workspace.includes("Tanya ulang"));
+test("workspace: label 'Nara sedang menulis…' saat jawaban mengalir", () =>
+  workspace.includes("Nara sedang menulis…") && workspace.includes("{WRITING_LABEL}"));
+test("workspace: tombol Hentikan menyimpan jawaban sebagian", () =>
+  workspace.includes('aria-label="Hentikan jawaban"') && workspace.includes("stoppedRef.current = controller") &&
+  workspace.includes("STOPPED_NOTE") && workspace.includes("STOPPED_EMPTY_COPY"));
+test("workspace: 'Tanya ulang' hanya di balasan terakhir & tidak saat streaming", () =>
+  workspace.includes("!streaming && i === messages.length - 1"));
 test("workspace: salin 'Salin'/'Tersalin'", () =>
   workspace.includes("Salin") && workspace.includes("Tersalin"));
 test("workspace: label AI 'NARA' (bukan Asisten/Assistant/AI BC)", () =>

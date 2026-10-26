@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   // jangan tulis nama platform lagi di sini agar judul tidak dobel.
   title: "NARA — Teman Berpikir, Berkata, dan Berkarya",
   description:
-    "NARA (Narasumber Andalan, Rekan Anda) adalah teman ngobrol di BahasaCerdas: arti kata, tata bahasa, PUEBI, latihan soal, menulis karya, dan persiapan UKBI — untuk murid dan guru.",
+    "NARA (Narasumber Andalan, Rekan Anda) adalah teman ngobrol di BahasaCerdas: arti kata, tata bahasa, PUEBI, latihan soal, menulis karya, dan persiapan UKBI — untuk pelajar, mahasiswa, guru, dan masyarakat umum.",
   openGraph: {
     title: "NARA dari BahasaCerdas — Teman Berpikir, Berkata, dan Berkarya",
     description:
