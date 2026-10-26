@@ -143,3 +143,16 @@
   background: var(--clr-success);
   color: var(--clr-bg);
 }
+
+/* Judul kartu status: aturan styled-jsx-nya 4 kelas & dimuat belakangan,
+   jadi perlu satu kelas tambahan (.mb-teacher-status-card) agar menang. */
+.dark .mb-scope-guru .mb-teacher-status-card.mb-teacher-status-done .mb-teacher-status-title {
+  border-color: var(--clr-border);
+  background: var(--clr-success-soft);
+  color: var(--clr-success);
+}
+.dark .mb-scope-guru .mb-teacher-status-card.mb-teacher-status-wait .mb-teacher-status-title {
+  border-color: var(--clr-border);
+  background: var(--clr-warning-soft);
+  color: var(--clr-warning-strong);
+}
