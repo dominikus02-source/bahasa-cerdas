@@ -10,7 +10,9 @@ type Context = { params: Promise<{ projectId: string }> };
 export async function GET(_req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
-  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
+  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
+  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
+  if (!hasPremium) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId } = await params;
     const project = await db.writingProject.findFirst({ where: { id: projectId, userId: user.id }, select: { id: true } });
@@ -26,7 +28,9 @@ export async function GET(_req: NextRequest, { params }: Context) {
 export async function POST(req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
-  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
+  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
+  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
+  if (!hasPremium) return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId } = await params;
     const project = await db.writingProject.findFirst({ where: { id: projectId, userId: user.id }, select: { id: true, genre: true } });
