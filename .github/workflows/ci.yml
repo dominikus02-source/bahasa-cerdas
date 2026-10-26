@@ -75,6 +75,9 @@ jobs:
           npm run test:jumpa-flow
           npm run test:jumpa-input
 
+      - name: Artikel/puisi indentation + sanitization gate
+        run: npm run test:artikel-indentasi
+
       - name: Main Bersama game duration gate
         run: npm run test:main-bersama-game-duration
 
