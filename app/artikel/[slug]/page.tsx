@@ -9,6 +9,7 @@ import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import ShareButton from "@/components/shared/ShareButton";
 import ArticleCoverLightbox from "@/components/shared/ArticleCoverLightbox";
+import { isKaryaBerbaris, preserveLeadingIndentation } from "@/lib/artikel/preserve-indentation";
 
 export const revalidate = 600;
 
@@ -52,7 +53,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
       where: { slug, isPublished: true },
       select: {
         id: true, title: true, slug: true, content: true, excerpt: true,
-        coverImage: true, coverImageCredit: true, tags: true, readCount: true, createdAt: true, updatedAt: true, publishedAt: true,
+        coverImage: true, coverImageCredit: true, tags: true, articleType: true, readCount: true, createdAt: true, updatedAt: true, publishedAt: true,
         author: { select: { id: true, fullName: true, avatar: true } },
       },
     });
@@ -60,7 +61,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
 
   if (!artikel) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+      <div className="min-h-screen bg-bc-bg">
         <PageNavbar />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
@@ -75,18 +76,18 @@ export default async function ArtikelDetailPage({ params }: Props) {
   try { await db.artikel.update({ where: { id: artikel.id }, data: { readCount: { increment: 1 } } }); } catch {}
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+    <div className="min-h-screen bg-bc-bg">
       <PageNavbar />
       {/* PageNavbar is fixed, so the page owns the offset. py-12 was not enough
           to clear it: the back link landed underneath the header and could not
           be clicked, and the cover image sat cramped against it. Matches the
           spacing the other public pages already use. */}
-      <div className="max-w-3xl mx-auto px-4 pt-28 pb-12">
+      <div className="max-w-3xl mx-auto w-full min-w-0 px-4 pt-28 pb-12">
         <Link href="/artikel" className="inline-flex items-center gap-1 text-sm text-bc-text-3 hover:text-red-600 mb-8 transition-colors">
           <ArrowLeft size={16} /> Kembali ke Artikel
         </Link>
 
-        <article>
+        <article className="min-w-0">
           <ArticleCoverLightbox
             src={artikel.coverImage}
             title={artikel.title}
@@ -115,8 +116,10 @@ export default async function ArtikelDetailPage({ params }: Props) {
             </div>
           )}
 
-          <div className="bg-bc-surface rounded-2xl p-6 md:p-8 border border-bc-line shadow-sm artikel-content">
-            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{artikel.content}</ReactMarkdown>
+          {/* Indentasi baris dipertahankan sebagai teks (NBSP), bukan blok kode — lihat
+              lib/artikel/preserve-indentation.ts. HTML mentah tetap tidak dirender (tanpa plugin raw). */}
+          <div className={`w-full min-w-0 bg-bc-surface rounded-2xl p-4 sm:p-6 md:p-8 border border-bc-line shadow-sm artikel-content${isKaryaBerbaris(artikel.articleType, artikel.tags) ? " artikel-content--berbaris" : ""}`}>
+            <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{preserveLeadingIndentation(artikel.content)}</ReactMarkdown>
           </div>
 
           <div className="mt-8 pt-6 border-t border-bc-line flex items-center justify-between">
