@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowLeft, BookOpen, Layers3, Plus, Save, Cloud, AlertCircle } from "lucide-react";
+import { ArrowLeft, BookOpen, Layers3, Plus, Save, Cloud, AlertCircle, Sparkles } from "lucide-react";
 
 type Track = "cerpen" | "novel";
 type Draft = { id: string; title: string; track: Track; body: string; saved?: boolean };
@@ -19,6 +19,9 @@ export default function RuangMenulisPage() {
   const [ready, setReady] = useState(false);
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const [coachPrompt, setCoachPrompt] = useState("Berikan umpan balik atas kekuatan dan hal yang perlu dikembangkan dari tulisan ini.");
+  const [coachReply, setCoachReply] = useState("");
+  const [coachBusy, setCoachBusy] = useState(false);
   const active = drafts.find((d) => d.id === activeId);
 
   useEffect(() => {
@@ -91,7 +94,19 @@ export default function RuangMenulisPage() {
       setNotice(error instanceof Error ? error.message : "Draf belum tersimpan. Salinan lokal tetap dipertahankan.");
     } finally { setSaving(false); }
   }
-  const words = active?.body.trim() ? active.body.trim().split(/\s+/u).length : 0;
+  const words = active?.body.trim() ? active.body.trim().split(/\\s+/u).length : 0;
+  async function askCoach() {
+    if (!active || coachBusy) return;
+    if (!active.body.trim()) { setNotice("Tulis atau tempelkan cuplikan naskah terlebih dahulu agar coach bisa memberi masukan yang spesifik."); return; }
+    setCoachBusy(true); setCoachReply(""); setNotice("");
+    try {
+      const res = await fetch("/api/aku-sastrawan/coach", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt: coachPrompt, track: active.track, task: "Umpan balik dan pengembangan naskah", context: active.body.slice(0, 12000) }) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "AI Writing Coach belum dapat menjawab.");
+      setCoachReply(data.reply);
+    } catch (error) { setNotice(error instanceof Error ? error.message : "AI Writing Coach belum tersedia."); }
+    finally { setCoachBusy(false); }
+  }
 
   return <main className="min-h-screen bg-background text-foreground">
     <header className="border-b border-border px-4 py-4 sm:px-6"><div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
@@ -122,6 +137,13 @@ export default function RuangMenulisPage() {
           <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-4"><span className="text-xs text-muted-foreground">{active.saved ? "Tersimpan ke akun" : "Ada perubahan belum disimpan"}</span><button onClick={saveActive} disabled={saving} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60"><Save size={15}/>{saving ? "Menyimpan…" : "Simpan ke akun"}</button></div>
         </> : <p className="p-8 text-sm text-muted-foreground">Menyiapkan ruang menulis…</p>}
         {notice && <p role="status" className="flex items-start gap-2 border-t border-border px-4 py-3 text-sm text-muted-foreground"><AlertCircle size={16} className="mt-0.5 shrink-0"/>{notice}</p>}
+        <div className="border-t border-border p-4 sm:p-6">
+          <div className="flex items-center gap-2"><Sparkles size={18} className="text-primary"/><h2 className="text-lg font-bold">AI Writing Coach</h2><span className="rounded-full border border-border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">Premium</span></div>
+          <p className="mt-1 text-sm leading-6 text-muted-foreground">Minta masukan tentang karakter, konflik, dialog, pembuka cerita, atau revisi. Coach membantu; keputusan kreatif tetap di tanganmu.</p>
+          <textarea value={coachPrompt} onChange={(e) => setCoachPrompt(e.target.value)} rows={2} maxLength={8000} className="mt-3 w-full rounded-xl border border-border bg-background p-3 text-sm outline-none focus:border-primary" placeholder="Apa yang ingin kamu diskusikan dengan coach?"/>
+          <button onClick={askCoach} disabled={coachBusy || !active} className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60"><Sparkles size={15}/>{coachBusy ? "Coach sedang membaca…" : "Minta masukan"}</button>
+          {coachReply && <div className="mt-4 whitespace-pre-wrap rounded-2xl border border-border bg-muted/30 p-4 text-sm leading-7">{coachReply}</div>}
+        </div>
       </section>
     </div>
   </main>;
