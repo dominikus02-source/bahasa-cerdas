@@ -13,7 +13,7 @@ export interface NoticeRoomRow {
   id: string;
   code: string;
   title: string;
-  kind: "KELAS" | "GURU" | "MURID";
+  kind: "KELAS" | "GURU" | "MURID" | "UMUM";
   groupId: string | null;
   communityId: string | null;
   createdById: string;
@@ -28,7 +28,7 @@ export const NOTICE_ROOM_SELECT = {
 
 /** Kumpulkan penerima ruang (kelas terikat + kelas/komunitas/orang yang diundang). */
 export async function roomAudience(room: NoticeRoomRow, opts?: { includeCreator?: boolean }): Promise<string[]> {
-  if (room.kind === "MURID") return [];
+  if (room.kind === "MURID" || room.kind === "UMUM") return [];
   const invites = await db.jumpaInvite.findMany({
     where: { roomId: room.id, revokedAt: null, kind: { in: ["GROUP", "COMMUNITY", "USER"] } },
     select: { kind: true, groupId: true, communityId: true, userId: true },
@@ -125,7 +125,7 @@ export async function deliverRoomNotice(
 /** Ruang mulai berlangsung (pemandu masuk) → "Kelas X sedang JUMPA". Sekali per ruang. */
 export async function notifyRoomLive(roomId: string): Promise<DeliverResult> {
   const room = await db.jumpaRoom.findUnique({ where: { id: roomId }, select: NOTICE_ROOM_SELECT });
-  if (!room || room.kind === "MURID") return { status: "empty", recipients: 0, pushed: 0 };
+  if (!room || room.kind === "MURID" || room.kind === "UMUM") return { status: "empty", recipients: 0, pushed: 0 };
   // "Beri tahu kelas" mati → roomAudience tidak menyertakan kelas/komunitas
   // (rapat instan = tanpa penerima sama sekali).
   return deliverRoomNotice(room, "LIVE");

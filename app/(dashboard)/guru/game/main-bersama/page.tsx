@@ -7,6 +7,7 @@ import { normalizePackageRef } from "@/src/main-bersama/adapters/bank-soal/packa
 import { questionPackageSummarySelect, questionPackageSummary } from "@/lib/main-bersama/question-package-library";
 import "@/components/main-bersama/main-bersama.css";
 import "@/components/main-bersama/premium-layout.css";
+import "@/components/main-bersama/guru-dark.css";
 
 /**
  * Setup Main Bersama (Tahap 7 §3) — route guru final:

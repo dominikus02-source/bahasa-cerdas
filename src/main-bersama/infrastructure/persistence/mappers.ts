@@ -95,6 +95,8 @@ export function sessionToDbCreate(session: MainSession): Prisma.MainSessionUnche
     phase: phaseToDb(session.phase),
     currentRoundIndex: session.currentRoundIndex,
     totalRounds: session.totalRounds,
+    gameDurationMs: session.gameDurationMs ?? null,
+    gameEndsAt: session.gameEndsAt ?? null,
     createdAt: session.createdAt,
     startedAt: session.startedAt,
     endedAt: session.endedAt,
@@ -106,6 +108,8 @@ export function sessionToDbUpdate(session: MainSession): Prisma.MainSessionUnche
     phase: phaseToDb(session.phase),
     currentRoundIndex: session.currentRoundIndex,
     totalRounds: session.totalRounds,
+    // undefined = tidak diubah (Prisma mengabaikan undefined).
+    gameEndsAt: session.gameEndsAt,
     startedAt: session.startedAt,
     endedAt: session.endedAt,
   };
@@ -148,6 +152,9 @@ export function sessionToDomain(row: SessionRow): MainSession {
     phase: phaseToDomain(row.phase),
     currentRoundIndex: row.currentRoundIndex,
     totalRounds: row.totalRounds,
+    ...(row.gameDurationMs !== null ? { gameDurationMs: row.gameDurationMs } : {}),
+    ...(row.gameEndsAt ? { gameEndsAt: row.gameEndsAt } : {}),
+    ...(row.pausedAt ? { pausedAt: row.pausedAt } : {}),
     createdAt: row.createdAt,
     startedAt: row.startedAt ?? undefined,
     endedAt: row.endedAt ?? undefined,

@@ -17,7 +17,7 @@ import {
   tierView,
 } from "../lib/jumpa/tiers"
 import { JUMPA_CAPS } from "../lib/jumpa/caps"
-import { tierForPlan } from "../lib/jumpa/entitlement"
+import { tierForPlan, tierForRoomKind } from "../lib/jumpa/entitlement"
 import { classifyDevice, publishPolicy, receivePolicy } from "../components/jumpa/media-policy"
 import { DEFAULT_MEDIA_PREFS, parseMediaPrefs } from "../components/jumpa/media-prefs"
 import { shortName } from "../components/jumpa/format"
@@ -53,6 +53,24 @@ check("FOUNDER → PREMIUM", tierForPlan("FOUNDER") === "PREMIUM")
 check("FREE → FREE", tierForPlan("FREE") === "FREE")
 check("MURID_PREMIUM tidak membuka ruang guru Premium", tierForPlan("MURID_PREMIUM") === "FREE")
 check("Plan tidak dikenal / null → FREE", tierForPlan(null) === "FREE" && tierForPlan("SCHOOL") === "FREE")
+
+console.log("\n2b. Murid Premium → ruang MURID 15 orang (guru tidak berubah)")
+check("MURID_PREMIUM + ruang MURID → PREMIUM", tierForRoomKind("MURID_PREMIUM", "MURID") === "PREMIUM")
+check("MURID_PREMIUM + ruang MURID → 15 peserta, 60 menit", (() => { const l = limitsFor(tierForRoomKind("MURID_PREMIUM", "MURID"), "MURID"); return l.maxParticipants === 15 && l.maxDurationMin === 60 })())
+check("Murid gratis + ruang MURID → 8 peserta", limitsFor(tierForRoomKind("FREE", "MURID"), "MURID").maxParticipants === 8)
+check("MURID_PREMIUM tidak membuka ruang KELAS/GURU Premium", tierForRoomKind("MURID_PREMIUM", "KELAS") === "FREE" && tierForRoomKind("MURID_PREMIUM", "GURU") === "FREE")
+check("MURID_PREMIUM tidak membuka webinar", limitsFor(tierForPlan("MURID_PREMIUM"), "KELAS", true).maxParticipants === 0)
+check("Kamera ruang MURID tetap maks 720p untuk Murid Premium", cameraCapFor(tierForRoomKind("MURID_PREMIUM", "MURID"), "MURID") === 720)
+const guruCases: Array<[string, "KELAS" | "GURU", number, number]> = [
+  ["PRO", "KELAS", 50, 120], ["PRO", "GURU", 25, 120], ["FOUNDER", "KELAS", 50, 120], ["FOUNDER", "GURU", 25, 120],
+  ["FREE", "KELAS", 30, 45], ["FREE", "GURU", 10, 45],
+]
+check("Guru: batas KELAS/GURU per plan tidak berubah (tierForRoomKind = tierForPlan)", guruCases.every(([plan, kind, p, m]) => {
+  const l = limitsFor(tierForRoomKind(plan, kind), kind)
+  return tierForRoomKind(plan, kind) === tierForPlan(plan) && l.maxParticipants === p && l.maxDurationMin === m
+}))
+check("Guru PRO/FOUNDER: ruang MURID tetap PREMIUM, FREE tetap FREE", tierForRoomKind("PRO", "MURID") === "PREMIUM" && tierForRoomKind("FOUNDER", "MURID") === "PREMIUM" && tierForRoomKind("FREE", "MURID") === "FREE")
+check("Guru: webinar tetap Premium 200/180", limitsFor(tierForPlan("PRO"), "KELAS", true).maxParticipants === 200 && limitsFor(tierForPlan("FREE"), "KELAS", true).maxParticipants === 0)
 const ent = read("lib/jumpa/entitlement.ts")
 check("entitlement memakai resolvePlan() yang sudah ada", ent.includes("resolvePlan(userId)") && ent.includes("@/lib/premium-economy/plans"))
 check("Gagal baca DB → FREE (fail-closed)", ent.includes('return { tier: "FREE"'))
@@ -86,6 +104,7 @@ check("createRoom memakai limitsFor(tier, kind)", svc.includes("limitsFor(tier, 
 check("createRoom menegakkan kuota harian", svc.includes("checkDailyQuota(tier, req.kind, createdToday)"))
 check("createRoom menyimpan tier di event ROOM_CREATED", svc.includes('action: "ROOM_CREATED"') && svc.includes("tier,"))
 check("createRoom: ruang MURID memakai tier pembuat", svc.includes("Ruang MURID memakai tier pembuat"))
+check("createRoom: tier per jenis ruang, webinar tetap tierForPlan", svc.includes("isWebinar ? resolved.tier : tierForRoomKind(resolved.plan, req.kind)"))
 check("loadRoomContext membaca tier ruang", svc.includes("tierFromCreatedMetadata(created?.metadata)"))
 const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts")
 check("Token API mengirim tierView (batas dari baris ruang)", tokenRoute.includes("tierView({") && tokenRoute.includes("maxParticipants: ctx.room.maxParticipants"))

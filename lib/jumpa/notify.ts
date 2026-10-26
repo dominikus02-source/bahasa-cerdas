@@ -15,7 +15,7 @@ export type JumpaNoticeKind = "SCHEDULED" | "REMINDER" | "LIVE" | "CANCELLED" | 
 export interface NoticeRoom {
   code: string;
   title: string;
-  kind: "KELAS" | "GURU" | "MURID";
+  kind: "KELAS" | "GURU" | "MURID" | "UMUM";
   groupName: string | null;
   scheduledAt: Date | null;
 }
@@ -72,11 +72,11 @@ export function noticeKey(kind: JumpaNoticeKind, roomId: string, variant?: strin
 }
 
 /**
- * Siapa yang diberi tahu. Ruang MURID tidak pernah menyiarkan notifikasi
+ * Siapa yang diberi tahu. Ruang MURID (dan UMUM) tidak pernah menyiarkan notifikasi
  * (perlindungan anak: ruang murid hanya diketahui teman yang diajak langsung).
  */
 export function noticeAudience(input: {
-  roomKind: "KELAS" | "GURU" | "MURID";
+  roomKind: "KELAS" | "GURU" | "MURID" | "UMUM";
   creatorId: string;
   /** Anggota kelas terikat + kelas yang diundang. */
   groupMemberIds: string[];
@@ -94,7 +94,8 @@ export function noticeAudience(input: {
    */
   notifyClass?: boolean;
 }): string[] {
-  if (input.roomKind === "MURID") return [];
+  // Ruang UMUM juga tanpa siaran: dibagikan hanya lewat tautan/kode.
+  if (input.roomKind === "MURID" || input.roomKind === "UMUM") return [];
   const ids = new Set<string>(input.invitedUserIds);
   const broadcast = input.notifyClass !== false;
   if (broadcast && input.roomKind === "KELAS") input.groupMemberIds.forEach((id) => ids.add(id));

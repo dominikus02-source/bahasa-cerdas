@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CompetitiveMusic, type MusicIntensity } from "./competitive-music";
+import { useMusicLeadership, type MusicSurface } from "./music-leader";
 
 type Phase =
   | "preparing"
@@ -19,6 +21,34 @@ interface SoundSnapshot {
   gameMode: "jelajah-kata" | "kota-cahaya";
   kotaUnlockedCount?: number;
   teamProgress?: Record<string, number>;
+  /** Musik kompetitif diputar selama permainan berjalan (bukan lobby/jeda/selesai). */
+  musicActive?: boolean;
+  /** Sisa waktu permainan (ms) dari jam server; null bila jam belum berjalan. */
+  remainingMs?: number | null;
+}
+
+interface SoundOptions {
+  /** Kunci localStorage preferensi mute (default bersama guru/layar). */
+  storageKey?: string;
+  /** Status awal bila belum ada preferensi tersimpan (murid: mati). */
+  defaultEnabled?: boolean;
+  /** Permukaan pemutar, untuk memilih satu sumber musik per perangkat. */
+  surface?: MusicSurface;
+  /** Kunci sesi; tab dengan kunci sama berbagi satu sumber musik. */
+  channelKey?: string | null;
+}
+
+/** Fase permainan yang diiringi musik kompetitif. */
+export function isMusicPhase(phase: string | undefined): boolean {
+  return phase === "question" || phase === "closed" || phase === "discussion";
+}
+
+/** Ambang intensitas musik berdasarkan sisa waktu. */
+export function musicIntensityFor(remainingMs: number | null | undefined): MusicIntensity {
+  if (remainingMs === null || remainingMs === undefined) return 0;
+  if (remainingMs <= 60_000) return 2;
+  if (remainingMs <= 180_000) return 1;
+  return 0;
 }
 
 type Cue =
@@ -372,16 +402,22 @@ function scheduleCue(context: AudioContext, cue: Cue) {
   }
 }
 
-export function useMainBersamaSound(snapshot: SoundSnapshot) {
+export function useMainBersamaSound(snapshot: SoundSnapshot, options: SoundOptions = {}) {
   const {
     participantCount,
     phase,
     gameMode,
     kotaUnlockedCount = 0,
     teamProgress,
+    musicActive = false,
+    remainingMs = null,
   } = snapshot;
+  const storageKey = options.storageKey ?? STORAGE_KEY;
+  const defaultEnabled = options.defaultEnabled ?? true;
+  const surface = options.surface ?? "guru";
+  const channelKey = options.channelKey ?? null;
 
-  const [enabled, setEnabled] = useState(true);
+  const [enabled, setEnabled] = useState(defaultEnabled);
   const [unlocked, setUnlocked] = useState(false);
   const prevRef = useRef<SoundSnapshot | null>(null);
   const lastCueAtRef = useRef<Partial<Record<Cue, number>>>({});
@@ -392,23 +428,33 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
 
   useEffect(() => {
     try {
-      setEnabled(window.localStorage.getItem(STORAGE_KEY) !== "1");
+      const stored = window.localStorage.getItem(storageKey);
+      setEnabled(stored === null ? defaultEnabled : stored !== "1");
     } catch {
-      setEnabled(true);
+      setEnabled(defaultEnabled);
     }
     syncUnlocked();
 
+    // Bisu/aktif di satu tab ikut berlaku di tab lain pada perangkat yang sama.
+    const onStorage = (event: StorageEvent) => {
+      if (event.key !== storageKey) return;
+      setEnabled(event.newValue === null ? defaultEnabled : event.newValue !== "1");
+    };
+    window.addEventListener("storage", onStorage);
+
     const context = sharedAudioContext;
-    if (!context) return;
     const onState = () => syncUnlocked();
-    context.addEventListener("statechange", onState);
-    return () => context.removeEventListener("statechange", onState);
-  }, [syncUnlocked]);
+    context?.addEventListener("statechange", onState);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      context?.removeEventListener("statechange", onState);
+    };
+  }, [syncUnlocked, storageKey, defaultEnabled]);
 
   const activate = useCallback(async (options?: { preview?: boolean }) => {
     setEnabled(true);
     try {
-      window.localStorage.setItem(STORAGE_KEY, "0");
+      window.localStorage.setItem(storageKey, "0");
     } catch {
       // Preference persistence is optional.
     }
@@ -422,7 +468,7 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
       if (options?.preview !== false) scheduleCue(context, "ready");
     }
     return ready;
-  }, []);
+  }, [storageKey]);
 
   const play = useCallback(
     async (cue: Cue) => {
@@ -451,11 +497,11 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
     }
     setEnabled(false);
     try {
-      window.localStorage.setItem(STORAGE_KEY, "1");
+      window.localStorage.setItem(storageKey, "1");
     } catch {
       // Preference persistence is optional.
     }
-  }, [activate, enabled, unlocked]);
+  }, [activate, enabled, unlocked, storageKey]);
 
   useEffect(() => {
     if (!enabled || unlocked) return;
@@ -519,5 +565,57 @@ export function useMainBersamaSound(snapshot: SoundSnapshot) {
     play,
   ]);
 
-  return { enabled, unlocked, toggle, activate, play };
+  // ── Musik kompetitif + efek waktu ─────────────────────────
+  // Satu tombol suara mengendalikan semuanya: mute → musik berhenti dan
+  // bip/bel waktu tidak dibunyikan. Bila beberapa tab sesi yang sama
+  // terbuka di satu perangkat, hanya tab pemimpin (ruang guru lebih dulu)
+  // yang memutar musik dan efek waktu.
+  const musicRef = useRef<CompetitiveMusic | null>(null);
+  const soundOn = enabled && unlocked;
+  const isLeader = useMusicLeadership({ channelKey, surface, wants: soundOn && musicActive });
+  // Diingat setelah musik berhenti agar bel "waktu habis" tetap dibunyikan
+  // oleh tab yang tadi memimpin.
+  const leaderRef = useRef(false);
+  useEffect(() => {
+    if (soundOn && musicActive) leaderRef.current = isLeader;
+    else if (!soundOn) leaderRef.current = false;
+  }, [soundOn, musicActive, isLeader]);
+
+  useEffect(() => {
+    const context = sharedAudioContext;
+    if (!soundOn || !musicActive || !isLeader || !context || context.state !== "running") {
+      musicRef.current?.stop();
+      return;
+    }
+    if (!musicRef.current) {
+      musicRef.current = new CompetitiveMusic(context, ensureMixer(context).master);
+    }
+    musicRef.current.start();
+  }, [soundOn, musicActive, isLeader]);
+
+  useEffect(() => {
+    musicRef.current?.setIntensity(musicIntensityFor(remainingMs));
+  }, [remainingMs]);
+
+  useEffect(() => () => {
+    musicRef.current?.dispose();
+    musicRef.current = null;
+  }, []);
+
+  const lastSecondRef = useRef<number | null>(null);
+  useEffect(() => {
+    const prev = lastSecondRef.current;
+    const secs = remainingMs === null ? null : Math.ceil(remainingMs / 1000);
+    lastSecondRef.current = secs;
+    if (prev === null || secs === null || secs === prev || !soundOn || !leaderRef.current) return;
+    const context = sharedAudioContext;
+    if (!context || context.state !== "running") return;
+    const music = musicRef.current ?? new CompetitiveMusic(context, ensureMixer(context).master);
+    musicRef.current = music;
+    if (prev > 60 && secs <= 60 && secs > 50) music.oneMinuteSting();
+    else if (secs >= 1 && secs <= 10 && secs < prev) music.countdownBeep(secs);
+    else if (secs === 0 && prev > 0) music.timeUpBuzzer();
+  }, [remainingMs, soundOn]);
+
+  return { enabled, unlocked, toggle, activate, play, musicLeader: isLeader };
 }

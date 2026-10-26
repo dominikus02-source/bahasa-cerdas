@@ -48,3 +48,17 @@
   .card { transition: none; }
   .card:hover { transform: none; }
 }
+/* Mode gelap: hanya menimpa warna terang di atas. */
+:global(.dark) .card {
+  --mode-accent: var(--clr-success);
+  --mode-soft: var(--clr-success-soft);
+  border-color: var(--clr-border);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+}
+:global(.dark) .kota { --mode-accent: var(--clr-violet); --mode-soft: var(--clr-violet-soft); }
+:global(.dark) .card:hover { box-shadow: 0 8px 22px var(--clr-scrim); }
+:global(.dark) .title,
+:global(.dark) .kota .title { color: var(--clr-text); }
+:global(.dark) .description { color: var(--clr-text-2); }
+:global(.dark) .footer { border-top-color: var(--clr-border); color: var(--clr-text-2); }
