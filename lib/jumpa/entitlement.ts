@@ -11,11 +11,14 @@ import type { JumpaKind } from "./caps";
 import type { JumpaTier } from "./tiers";
 
 /**
- * Tier ruang GURU/KELAS/webinar: PRO (termasuk trial guru) & FOUNDER → PREMIUM.
- * Lainnya → FREE. MURID_PREMIUM sengaja TIDAK membuka batas ruang guru.
+ * Tier ruang GURU/KELAS/webinar: PRO (termasuk trial guru), UMUM_PREMIUM
+ * (bayar atau uji coba Umum) & FOUNDER → PREMIUM. Lainnya → FREE.
+ * MURID_PREMIUM sengaja TIDAK membuka batas ruang guru (lihat tierForRoomKind).
+ * Keputusan pendiri: JUMPA UMUM premium = batas guru premium. Ruang UMUM
+ * memakai tabel tier sendiri (feat/jumpa-umum).
  */
 export function tierForPlan(plan: PlanCode | null | undefined): JumpaTier {
-  return plan === "PRO" || plan === "FOUNDER" ? "PREMIUM" : "FREE";
+  return plan === "PRO" || plan === "UMUM_PREMIUM" || plan === "FOUNDER" ? "PREMIUM" : "FREE";
 }
 
 /**

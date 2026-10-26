@@ -9,6 +9,8 @@ const PLAN_LABELS: Record<string, string> = {
   GURU_PRO_YEARLY: "Guru Pro Tahunan",
   MURID_PREMIUM_MONTHLY: "Premium Bulanan",
   MURID_PREMIUM_YEARLY: "Premium Tahunan",
+  UMUM_PREMIUM_MONTHLY: "Premium Umum Bulanan",
+  UMUM_PREMIUM_YEARLY: "Premium Umum Tahunan",
 };
 
 /** GET /api/billing/riwayat — 20 pembayaran paket terakhir milik pengguna. */
@@ -17,7 +19,7 @@ export async function GET() {
   if (!user) return NextResponse.json({ ok: false, error: "AUTH_REQUIRED" }, { status: 401 });
 
   const rows = await db.transaksi.findMany({
-    where: { userId: user.id, type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM"] }, orderId: { not: null } },
+    where: { userId: user.id, type: { in: ["PREMIUM_UPGRADE", "MURID_PREMIUM", "UMUM_PREMIUM"] }, orderId: { not: null } },
     orderBy: { createdAt: "desc" },
     take: 20,
     select: { orderId: true, amount: true, status: true, createdAt: true, metadata: true, reference: true },

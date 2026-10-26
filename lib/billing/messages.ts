@@ -21,6 +21,12 @@ export const PAYMENT_ERROR_MESSAGES: Record<string, string> = {
   NETWORK: "Tidak tersambung. Periksa internet lalu coba lagi.",
   SNAP_FAILED: "Pembayaran gagal. Coba lagi atau pilih metode lain.",
   SNAP_UNAVAILABLE: "Halaman pembayaran belum termuat. Muat ulang halaman ini.",
+  UMUM_PREMIUM_REQUIRED: "Fitur ini khusus Premium Umum. Coba gratis 1 bulan atau pilih paket.",
+  TRIAL_DISABLED: "Uji coba Premium Umum belum dibuka.",
+  TRIAL_FORBIDDEN_ROLE: "Uji coba ini khusus akun Umum.",
+  TRIAL_ALREADY_USED: "Uji coba gratis sudah pernah dipakai. Kamu tetap bisa pilih paket.",
+  ALREADY_PREMIUM: "Premium Umum-mu sudah aktif.",
+  NO_ACTIVE_TRIAL: "Tidak ada uji coba yang sedang berjalan.",
 };
 
 /** Kode yang sebaiknya disertai tautan bantuan (bukan kesalahan pengguna). */

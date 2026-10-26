@@ -26,6 +26,8 @@ import { UMUM_PRODUCTS, type UmumProductKey } from "@/lib/umum/products";
 import { loadAktivitas } from "@/lib/umum/aktivitas";
 import { UmumShell } from "@/components/umum/UmumShell";
 import { AktivitasList } from "@/components/umum/AktivitasList";
+import { UmumTrialOffer } from "@/components/umum/UmumTrialOffer";
+import { umumTrialView } from "@/lib/umum/trial";
 import { buttonClass } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
@@ -161,6 +163,9 @@ export default async function UmumDashboardPage({
             </p>
           </section>
         </div>
+
+        {/* Premium Umum: tawaran lunak uji coba (tidak otomatis) */}
+        <UmumTrialOffer view={umumTrialView(user)} />
 
         {/* Ruang Jelajahmu */}
         <section

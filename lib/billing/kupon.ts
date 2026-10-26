@@ -1,4 +1,5 @@
 import { db } from "@/lib/db";
+import { isUmumPlanId } from "@/lib/billing/plans";
 
 export interface KuponData {
   id: string;
@@ -35,6 +36,16 @@ export function hitungHargaDiskon(kupon: {
 }
 
 /**
+ * Paket Premium Umum hanya menerima kupon KHUSUS Umum: untukRole "UMUM" atau
+ * kupon yang dikunci ke paket UMUM_PREMIUM_*. Kupon umum ("*") / guru /
+ * murid tidak pernah memotong harga Premium Umum.
+ */
+export function kuponBolehUntukPaket(kupon: { untukRole: string; planId: string | null }, planId: string): boolean {
+  if (!isUmumPlanId(planId)) return true;
+  return kupon.untukRole === "UMUM" || isUmumPlanId(kupon.planId);
+}
+
+/**
  * Validasi kupon untuk seorang user + paket.
  * - Tidak ditemukan / nonaktif / kedaluwarsa / belum berlaku / habis → error
  * - Role tidak cocok → error (program khusus GURU, ADMIN/founder boleh untuk uji)
@@ -67,6 +78,10 @@ export async function validasiKupon(
 
   if (kupon.planId && kupon.planId !== plan.planId) {
     throw new Error("Kupon ini hanya berlaku untuk paket tertentu. Ganti paket dulu.");
+  }
+
+  if (!kuponBolehUntukPaket(kupon, plan.planId)) {
+    throw new Error("Kupon ini tidak berlaku untuk Premium Umum.");
   }
 
   const roleOk =

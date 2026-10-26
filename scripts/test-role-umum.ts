@@ -248,20 +248,31 @@ async function main() {
       }
     }
   }
-  assert(/const allowedRoles = \["GURU", "ADMIN", "MURID"\]/.test(src("app/api/billing/checkout/route.ts")), "gerbang peran checkout tidak berubah (GURU/ADMIN/MURID)");
+  // Premium Umum (feat/umum-premium): UMUM masuk allowlist, tetapi hanya untuk
+  // paket targetRole UMUM (dicek per paket) dan di balik ENABLE_UMUM_PREMIUM.
+  const checkoutSrc = src("app/api/billing/checkout/route.ts");
+  assert(/const allowedRoles = \["GURU", "ADMIN", "MURID", "UMUM"\]/.test(checkoutSrc) && /plan\.targetRole !== user\.role/.test(checkoutSrc), "gerbang peran checkout: UMUM hanya paket UMUM (targetRole harus cocok)");
 
   // ═══ 6. Premium / identitas ═══
   console.log("\n6. Premium & identitas");
   const { resolveIdentity } = R("lib/account/identity.ts");
   const future = new Date(Date.now() + 864e5);
   const umumId = resolveIdentity({ role: "UMUM", isFounder: false, isPremium: true, premiumPlan: "PRO", premiumUntil: future, subscriptions: [{ status: "ACTIVE", currentPeriodStart: new Date(0), currentPeriodEnd: future }] });
-  assert(umumId.plan === "FREE" && umumId.isPremium === false, "resolveIdentity UMUM premium/subscription → FREE");
+  // Premium Umum: UMUM berbayar → UMUM_PREMIUM (tidak pernah PRO/MURID_PREMIUM);
+  // Subscription legacy saja (tanpa isPremium) tetap FREE.
+  assert(umumId.plan === "UMUM_PREMIUM" && umumId.plan !== "PRO", "resolveIdentity UMUM premium → UMUM_PREMIUM (bukan PRO)");
+  const umumSubOnly = resolveIdentity({ role: "UMUM", isFounder: false, isPremium: false, premiumPlan: "FREE", premiumUntil: null, subscriptions: [{ status: "ACTIVE", currentPeriodStart: new Date(0), currentPeriodEnd: future }] });
+  assert(umumSubOnly.plan === "FREE" && umumSubOnly.isPremium === false, "resolveIdentity UMUM subscription legacy saja → FREE");
   const muridId = resolveIdentity({ role: "MURID", isFounder: false, isPremium: true, premiumPlan: "PRO", premiumUntil: future });
   assert(muridId.plan === "MURID_PREMIUM", "resolveIdentity MURID premium tetap MURID_PREMIUM");
   const { resolvePlan } = R("lib/premium-economy/plans.ts");
   findUniqueResult = { role: "UMUM", isFounder: false, isPremium: true, premiumPlan: "PRO", premiumUntil: future, trialEndsAt: null, subscriptions: [{ id: "s1", status: "ACTIVE", currentPeriodStart: new Date(0), currentPeriodEnd: future }] };
   const rp = await resolvePlan("umum-sub-1");
-  assert(rp.plan === "FREE", `resolvePlan UMUM dengan subscription aktif → FREE (dapat ${rp.plan})`);
+  assert(rp.plan !== "PRO" && rp.plan !== "MURID_PREMIUM", `resolvePlan UMUM dengan subscription aktif → bukan PRO/MURID_PREMIUM (dapat ${rp.plan})`);
+  findUniqueResult = { ...findUniqueResult, isPremium: false, premiumPlan: "FREE", premiumUntil: null };
+  const rpSub = await resolvePlan("umum-sub-2");
+  assert(rpSub.plan === "FREE", `resolvePlan UMUM hanya subscription legacy → FREE (dapat ${rpSub.plan})`);
+  findUniqueResult = { ...findUniqueResult, isPremium: true, premiumPlan: "PRO", premiumUntil: future };
   findUniqueResult = { ...findUniqueResult, role: "MURID" };
   const rpm = await resolvePlan("murid-sub-1");
   assert(rpm.plan === "MURID_PREMIUM", `resolvePlan MURID dengan subscription aktif tetap MURID_PREMIUM (dapat ${rpm.plan})`);

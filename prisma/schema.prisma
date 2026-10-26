@@ -4471,3 +4471,30 @@ model JumpaNotice {
 
   @@index([roomId, createdAt])
 }
+
+/// Klaim uji coba sekali per orang (Premium Umum). SENGAJA tanpa relasi ke
+/// User: baris ini bertahan saat akun dihapus/dianonimkan
+/// (lib/account/deletion.ts), sehingga daftar ulang dengan email/akun Google
+/// yang sama tidak bisa mengklaim lagi. Hanya HASH (HMAC-SHA256) — tidak ada
+/// email/IP mentah. ipPrefixHash = sinyal lunak (log/tunda), BUKAN blokir.
+model TrialClaim {
+  id            String   @id @default(cuid())
+  /// "UMUM_PREMIUM_TRIAL"
+  kind          String
+  /// HMAC email ternormalisasi (huruf kecil; Gmail tanpa titik & +tag).
+  emailHash     String
+  /// HMAC id akun Google (identity sub) bila akun ditautkan Google.
+  googleSubHash String?
+  /// HMAC prefiks IP (/24 IPv4, /48 IPv6) — sinyal lunak saja.
+  ipPrefixHash  String?
+  /// id User saat klaim (tanpa FK — tetap ada setelah akun dihapus).
+  userId        String
+  /// Ditandai sinyal lunak (mis. banyak klaim dari prefiks IP yang sama).
+  flagged       Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@unique([kind, emailHash])
+  @@unique([kind, googleSubHash])
+  @@index([kind, ipPrefixHash, createdAt])
+  @@index([userId])
+}
