@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, useRef } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import { resolveMediaUrl } from "@/lib/media/resolve-media-url";
 import { FileText, Play, ImageIcon } from "lucide-react";
 import GeneratedCover, { type GeneratedCoverProps } from "@/components/shared/GeneratedCover";
@@ -90,6 +90,15 @@ export default function SafeMediaImage({
   const handleLoad = useCallback(() => {
     setImgLoaded(true);
   }, []);
+
+  // Gambar yang di-render server bisa sudah gagal/selesai dimuat sebelum React
+  // hydrate, sehingga event onError/onLoad terlewat. Cek status awalnya sekali.
+  useEffect(() => {
+    const img = imgRef.current;
+    if (!img || !img.complete) return;
+    if (img.naturalWidth === 0) handleError();
+    else handleLoad();
+  }, [resolvedSrc, handleError, handleLoad]);
 
   const containerClasses = containerClassName || className;
   const fallback = cover ? <GeneratedCover {...cover} /> : <FallbackInner type={fallbackType} />;
