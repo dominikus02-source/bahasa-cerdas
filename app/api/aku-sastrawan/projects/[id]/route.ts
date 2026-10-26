@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
 
 type Context = { params: Promise<{ id: string }> };
 async function authorizedProject(id: string) {
   const user = await getUser();
   if (!user) return { error: NextResponse.json({ error: "Silakan masuk terlebih dahulu." }, { status: 401 }) };
-  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
-  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
+  const hasPremium = await hasAkuSastrawanAccess(user.id);
   if (!hasPremium) {
     return { error: NextResponse.json({ error: "AKU SASTRAWAN memerlukan akses Premium." }, { status: 403 }) };
   }
