@@ -30,8 +30,9 @@ export async function PATCH(request: NextRequest, context: Context) {
   if (typeof body?.title === "string") data.title = body.title.trim().slice(0, 120) || "Tanpa judul";
   if (typeof body?.synopsis === "string" || body?.synopsis === null) data.synopsis = typeof body.synopsis === "string" ? body.synopsis.slice(0, 10000) : null;
   if (typeof body?.content === "string") {
-    data.content = body.content.slice(0, 1000000);
-    data.wordCount = data.content.trim() ? data.content.trim().split(/\s+/).length : 0;
+    const content = body.content.slice(0, 1000000);
+    data.content = content;
+    data.wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
   }
   if (body?.status === "DRAFT" || body?.status === "REVISION" || body?.status === "COMPLETED") data.status = body.status;
   const project = await db.writingProject.update({ where: { id: result.project!.id }, data });
