@@ -6,7 +6,9 @@ type Context = { params: Promise<{ id: string }> };
 async function authorizedProject(id: string) {
   const user = await getUser();
   if (!user) return { error: NextResponse.json({ error: "Silakan masuk terlebih dahulu." }, { status: 401 }) };
-  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") {
+  const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
+  const hasPremium = user.isPremium === true || user.isFounder === true || user.role === "ADMIN" || premiumUntil > Date.now();
+  if (!hasPremium) {
     return { error: NextResponse.json({ error: "AKU SASTRAWAN memerlukan akses Premium." }, { status: 403 }) };
   }
   const project = await db.writingProject.findFirst({ where: { id, userId: user.id } });
