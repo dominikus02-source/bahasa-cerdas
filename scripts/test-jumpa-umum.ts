@@ -1,7 +1,8 @@
 /**
  * JUMPA UMUM — uji ruang akun umum (murni, tanpa DB/jaringan) + pagar sumber.
- * Cakupan: buat/masuk, isolasi dua arah (MURID↔UMUM, GURU/founder↔UMUM),
- * flag mati, satu ruang aktif, batas global, kuota harian, paket, moderasi,
+ * Cakupan: buat/masuk, akun sekolah (guru/founder/murid) ikut ruang UMUM
+ * lewat tautan/kode sebagai peserta biasa, isolasi satu arah (UMUM ✕ ruang
+ * sekolah), flag mati, satu ruang aktif, batas global, kuota harian, paket, moderasi,
  * undangan, publish source. Jalankan: npm run test:jumpa-umum
  */
 import { readFileSync } from "fs"
@@ -14,6 +15,7 @@ import {
   evaluateJoin,
   publishSourcesFor,
   reportRecipients,
+  JUMPA_UMUM_ALLOW_JUNIOR,
   JUMPA_UMUM_CODE_JOIN,
   type JoinInput,
   type JoinRelation,
@@ -56,6 +58,9 @@ const guru: JumpaActor = { role: "GURU", isFounder: false, isJunior: false, umum
 const founder: JumpaActor = { role: "GURU", isFounder: true, isJunior: false, umumEnabled: true }
 const murid: JumpaActor = { role: "MURID", isFounder: false, isJunior: false, umumEnabled: true }
 const admin: JumpaActor = { role: "ADMIN", isFounder: false, isJunior: false, umumEnabled: true }
+const muridJunior: JumpaActor = { role: "MURID", isFounder: false, isJunior: true, umumEnabled: true }
+const guruFlagOff: JumpaActor = { role: "GURU", isFounder: false, isJunior: false, umumEnabled: false }
+const muridFlagOff: JumpaActor = { role: "MURID", isFounder: false, isJunior: false }
 
 const NOW = new Date("2026-10-26T03:00:00Z")
 const noRel: JoinRelation = { isCreator: false, isGroupOwner: false, isGroupMember: false, groupActive: true, isExistingParticipant: false, isRemoved: false }
@@ -92,6 +97,8 @@ const offCreate = canCreateRoom({ actor: umumOff, kind: "UMUM", group: null })
 check("Flag mati: UMUM tidak bisa buat ruang (pesan lama)", !offCreate.ok && offCreate.code === "ROLE_NOT_ALLOWED" && offCreate.message === "Akun ini belum bisa memakai JUMPA.")
 const offJoin = join(umumOff, "UMUM", allRel)
 check("Flag mati: UMUM tidak bisa masuk ruang UMUM", !offJoin.ok && offJoin.code === "ROLE_NOT_ALLOWED")
+check("Flag mati: GURU tidak bisa masuk ruang UMUM (ruang UMUM tertutup)", (() => { const d = join(guruFlagOff, "UMUM", { hasValidLink: true }); return !d.ok && d.code === "ROLE_NOT_ALLOWED" })())
+check("Flag mati / tidak diisi: MURID tidak bisa masuk ruang UMUM", !join(muridFlagOff, "UMUM", { hasValidLink: true }).ok)
 
 console.log("\n2. Buat ruang UMUM")
 check("UMUM boleh buat ruang UMUM tanpa kelas", canCreateRoom({ actor: umum, kind: "UMUM", group: null }).ok)
@@ -128,15 +135,27 @@ check("Ruang UMUM penuh (10) menolak peserta ke-11", !full.ok)
 const juniorJoin = join(umumJunior, "UMUM")
 check("UMUM Junior tidak bisa masuk", !juniorJoin.ok && juniorJoin.code === "JUNIOR_NOT_ALLOWED")
 
-console.log("\n4. Isolasi: MURID / GURU / founder ✕ ruang UMUM")
-for (const [label, a] of [["MURID", murid], ["GURU", guru], ["Founder", founder], ["ADMIN", admin]] as const) {
-  const d = join(a, "UMUM", allRel)
-  check(`${label} ditolak masuk ruang UMUM (meski semua relasi menyala)`, !d.ok)
+console.log("\n4. Akun sekolah ikut ruang UMUM lewat tautan/kode (keputusan founder)")
+for (const [label, a, eff] of [["MURID", murid, "MURID"], ["GURU", guru, "GURU"], ["Founder", founder, "GURU"]] as const) {
+  const viaLink = join(a, "UMUM", { hasValidLink: true })
+  check(`${label} masuk ruang UMUM lewat tautan → MEMBER/LINK (peran ${eff})`, viaLink.ok && viaLink.roomRole === "MEMBER" && viaLink.accessVia === "LINK" && viaLink.effective === eff)
+  const viaCode = join(a, "UMUM")
+  check(`${label} masuk ruang UMUM lewat kode → MEMBER`, viaCode.ok && viaCode.roomRole === "MEMBER")
+  // Tidak pernah kuasa pemandu, walau semua relasi lain (kelas, undangan,
+  // COHOST tersimpan) menyala — kecuali benar-benar pembuat (mustahil: hanya UMUM yang bisa membuat).
+  const noHost = join(a, "UMUM", { ...allRel, isCreator: false })
+  check(`${label} di ruang UMUM tidak pernah HOST/COHOST (COHOST tersimpan diabaikan)`, noHost.ok && noHost.roomRole === "MEMBER")
+  const removedSchool = join(a, "UMUM", { hasValidLink: true, isRemoved: true })
+  check(`${label} yang dikeluarkan pemandu tidak bisa masuk lagi`, !removedSchool.ok && removedSchool.code === "REMOVED")
+  const lockedSchool = evaluateJoin({ actor: a, room: { ...roomOf("UMUM"), isLocked: true }, activeOthers: 1, now: NOW, relation: { ...noRel, hasValidLink: true } })
+  check(`${label} ditolak saat ruang UMUM dikunci`, !lockedSchool.ok && lockedSchool.code === "ROOM_LOCKED")
+  check(`${label} ditolak saat ruang UMUM penuh (10)`, (() => { const d = join(a, "UMUM", { hasValidLink: true }, { activeOthers: 10 }); return !d.ok && d.code === "ROOM_FULL" })())
 }
-const muridDeny = join(murid, "UMUM", allRel)
-check("Pesan ke MURID: 'Ruang ini khusus akun umum.'", !muridDeny.ok && muridDeny.message === "Ruang ini khusus akun umum.")
-const guruDeny = join(guru, "UMUM", allRel)
-check("GURU default TIDAK bisa masuk ruang UMUM (ROLE_NOT_ALLOWED)", !guruDeny.ok && guruDeny.code === "ROLE_NOT_ALLOWED")
+const muridJr = join(muridJunior, "UMUM", { hasValidLink: true })
+check("Murid Junior (TK–SD) tetap ditolak di ruang UMUM", JUMPA_UMUM_ALLOW_JUNIOR === false && !muridJr.ok && muridJr.code === "JUNIOR_NOT_ALLOWED")
+check("ADMIN non-founder tetap tanpa JUMPA (tidak berubah)", (() => { const d = join(admin, "UMUM", { hasValidLink: true }); return !d.ok && d.code === "ROLE_NOT_ALLOWED" })())
+check("Murid Junior tetap boleh masuk KELAS-nya (tidak berubah)", (() => { const d = join(muridJunior, "KELAS", { isGroupMember: true }); return d.ok && d.roomRole === "MEMBER" })())
+check("Guru: COHOST tersimpan tetap berlaku di ruang GURU (tidak berubah)", (() => { const d = join(guru, "GURU", { storedRoomRole: "COHOST", hasValidLink: true }); return d.ok && d.roomRole === "COHOST" })())
 
 console.log("\n5. Isolasi: UMUM ✕ ruang KELAS/GURU/MURID")
 for (const k of ["KELAS", "GURU", "MURID"] as const) {
@@ -151,9 +170,13 @@ check("Murid tanpa relasi tetap ditolak di KELAS", !join(murid, "KELAS").ok)
 console.log("\n6. Publish source, moderasi, undangan")
 check("UMUM di ruang UMUM boleh berbagi layar", publishSourcesFor("MEMBER", "UMUM", { kind: "UMUM", allowMuridScreenShare: false }).includes("screen_share"))
 check("UMUM di ruang lain tidak dapat layar", !publishSourcesFor("MEMBER", "UMUM", { kind: "KELAS", allowMuridScreenShare: true }).includes("screen_share"))
+check("Murid di ruang UMUM: kamera + mik saja", (() => { const s = publishSourcesFor("MEMBER", "MURID", { kind: "UMUM", allowMuridScreenShare: true }); return s.length === 2 && s.includes("camera") && s.includes("microphone") })())
+check("Guru peserta di ruang UMUM: kamera, mik, layar (seperti peserta umum)", publishSourcesFor("MEMBER", "GURU", { kind: "UMUM", allowMuridScreenShare: false }).includes("screen_share"))
 const umumHost = { userId: "h", roomRole: "HOST" as const, effective: "UMUM" as const }
 const umumMember = { userId: "m", roomRole: "MEMBER" as const, effective: "UMUM" as const }
 const guruHost = { userId: "g", roomRole: "HOST" as const, effective: "GURU" as const }
+const guruMemberInUmum = { userId: "g2", roomRole: "MEMBER" as const, effective: "GURU" as const }
+const muridMemberInUmum = { userId: "c", roomRole: "MEMBER" as const, effective: "MURID" as const }
 check("Host UMUM boleh LOCK ruang UMUM", canModerate({ actor: umumHost, action: "LOCK", roomKind: "UMUM" }).ok)
 check("Host UMUM boleh END ruang UMUM", canModerate({ actor: umumHost, action: "END", roomKind: "UMUM" }).ok)
 check("Host UMUM boleh REMOVE peserta UMUM", canModerate({ actor: umumHost, action: "REMOVE", roomKind: "UMUM", target: { userId: "m", roomRole: "MEMBER", effective: "UMUM" } }).ok)
@@ -161,17 +184,34 @@ check("Host UMUM boleh SET_COHOST peserta UMUM", canModerate({ actor: umumHost, 
 check("Peserta UMUM (MEMBER) tidak bisa REMOVE", !canModerate({ actor: umumMember, action: "REMOVE", roomKind: "UMUM", target: { userId: "x", roomRole: "MEMBER", effective: "UMUM" } }).ok)
 check("Guru host tidak punya kuasa di ruang UMUM", !canModerate({ actor: guruHost, action: "END", roomKind: "UMUM" }).ok)
 check("Host UMUM tidak punya kuasa di ruang KELAS", !canModerate({ actor: umumHost, action: "END", roomKind: "KELAS" }).ok)
-check("Target non-UMUM di ruang UMUM → BAD_TARGET", (() => { const d = canModerate({ actor: umumHost, action: "REMOVE", roomKind: "UMUM", target: { userId: "g", roomRole: "MEMBER", effective: "GURU" } }); return !d.ok && d.code === "BAD_TARGET" })())
+for (const action of ["REMOVE", "MUTE_AUDIO", "MUTE_VIDEO", "STOP_SCREEN"] as const) {
+  check(`Host UMUM boleh ${action} peserta MURID`, canModerate({ actor: umumHost, action, roomKind: "UMUM", target: muridMemberInUmum }).ok)
+  check(`Host UMUM boleh ${action} peserta GURU`, canModerate({ actor: umumHost, action, roomKind: "UMUM", target: guruMemberInUmum }).ok)
+}
+check("Wakil pemandu UMUM boleh REMOVE peserta MURID", canModerate({ actor: { userId: "co", roomRole: "COHOST", effective: "UMUM" }, action: "REMOVE", roomKind: "UMUM", target: muridMemberInUmum }).ok)
+check("Host UMUM tidak bisa jadikan GURU wakil pemandu (BAD_TARGET)", (() => { const d = canModerate({ actor: umumHost, action: "SET_COHOST", roomKind: "UMUM", target: guruMemberInUmum }); return !d.ok && d.code === "BAD_TARGET" })())
+check("Host UMUM tidak bisa jadikan MURID wakil pemandu (BAD_TARGET)", (() => { const d = canModerate({ actor: umumHost, action: "SET_COHOST", roomKind: "UMUM", target: muridMemberInUmum }); return !d.ok && d.code === "BAD_TARGET" })())
+for (const action of ["REMOVE", "MUTE_AUDIO", "LOCK", "UNLOCK", "END", "DELETE_CHAT", "SET_COHOST"] as const) {
+  check(`Guru peserta di ruang UMUM tidak bisa ${action}`, !canModerate({ actor: guruMemberInUmum, action, roomKind: "UMUM", target: muridMemberInUmum }).ok)
+  check(`Murid peserta di ruang UMUM tidak bisa ${action}`, !canModerate({ actor: muridMemberInUmum, action, roomKind: "UMUM", target: guruMemberInUmum }).ok)
+}
+check("Guru 'COHOST' (andai tersimpan) tetap tanpa kuasa di ruang UMUM", !canModerate({ actor: { userId: "g3", roomRole: "COHOST", effective: "GURU" }, action: "REMOVE", roomKind: "UMUM", target: muridMemberInUmum }).ok)
 check("Guru host masih boleh END ruang GURU", canModerate({ actor: guruHost, action: "END", roomKind: "GURU" }).ok)
 check("Host UMUM boleh membuat tautan undangan", canInvite({ actor: umumHost, roomKind: "UMUM", invite: { kind: "LINK" } }).ok)
 check("Host UMUM tidak bisa undang perorangan (tanpa direktori)", !canInvite({ actor: umumHost, roomKind: "UMUM", invite: { kind: "USER", targetEffective: "UMUM" } }).ok)
 check("Host UMUM tidak bisa undang kelas", !canInvite({ actor: umumHost, roomKind: "UMUM", invite: { kind: "GROUP", ownsGroup: true, groupActive: true } }).ok)
 check("Peserta UMUM tidak bisa membuat tautan", !canInvite({ actor: umumMember, roomKind: "UMUM", invite: { kind: "LINK" } }).ok)
 check("Guru tidak bisa mengundang ke ruang UMUM", !canInvite({ actor: guruHost, roomKind: "UMUM", invite: { kind: "LINK" } }).ok)
+for (const kind of ["USER", "GROUP", "COMMUNITY", "LINK"] as const) {
+  check(`Guru peserta ruang UMUM tidak bisa undang (${kind})`, !canInvite({ actor: guruMemberInUmum, roomKind: "UMUM", invite: { kind, targetEffective: "MURID", targetInActorGroups: true, ownsGroup: true, groupActive: true, isCommunityMember: true, communityApproved: true } }).ok)
+  check(`Murid peserta ruang UMUM tidak bisa undang (${kind})`, !canInvite({ actor: muridMemberInUmum, roomKind: "UMUM", invite: { kind, targetEffective: "MURID" } }).ok)
+}
+check("Host UMUM tidak bisa undang murid/guru lewat direktori", !canInvite({ actor: umumHost, roomKind: "UMUM", invite: { kind: "USER", targetEffective: "MURID" } }).ok && !canInvite({ actor: umumHost, roomKind: "UMUM", invite: { kind: "USER", targetEffective: "GURU" } }).ok)
 check("Guru tidak bisa mengundang akun UMUM ke ruang GURU", !canInvite({ actor: guruHost, roomKind: "GURU", invite: { kind: "USER", targetEffective: "UMUM" } }).ok)
 check("Guru masih bisa membuat tautan ruang GURU", canInvite({ actor: guruHost, roomKind: "GURU", invite: { kind: "LINK" } }).ok)
 check("Ruang UMUM tidak menyiarkan notifikasi", noticeAudience({ roomKind: "UMUM", creatorId: "h", groupMemberIds: ["a"], communityMemberIds: ["b"], invitedUserIds: ["c"] }).length === 0)
 check("Laporan ruang UMUM hanya ke admin", (() => { const r = reportRecipients({ groupTeacherId: null, creatorId: "h", creatorEffective: "UMUM", adminIds: ["adm"], reporterId: "m" }); return r.length === 1 && r[0] === "adm" })())
+check("Laporan murid peserta ruang UMUM → admin (bukan pemandu UMUM)", (() => { const r = reportRecipients({ groupTeacherId: null, creatorId: "h", creatorEffective: "UMUM", adminIds: ["adm", "fdr"], reporterId: "c" }); return r.length === 2 && !r.includes("h") })())
 check("UMUM tidak bisa menjadwalkan", !canSchedule(umum, "UMUM").ok)
 
 console.log("\n7. Paket Gratis UMUM (10 orang · 45 menit · 720p · 3 ruang/hari)")
@@ -214,12 +254,13 @@ const service = src("lib/jumpa/service.ts")
 check("createRoom UMUM memakai advisory lock (serialisasi pagar)", /advisoryXactLock\(tx, UMUM_CREATE_LOCK_KEY\)/.test(service) && /createUmumRoom/.test(service) && /pg_advisory_xact_lock/.test(readFileSync("lib/db/advisory-lock.ts", "utf8")))
 check("createUmumRoom membaca JUMPA_UMUM_MAX_CONCURRENT_ROOMS", /JUMPA_UMUM_MAX_CONCURRENT_ROOMS/.test(service) && /umumConcurrentCap\(/.test(service))
 check("createUmumRoom menolak webinar", /WEBINAR_NOT_AVAILABLE/.test(service))
-check("loadActor menggerbangi UMUM dengan isRoleUmumEnabled()", /umumEnabled:\s*user\.role === "UMUM" && isRoleUmumEnabled\(\)/.test(service))
+check("loadActor menggerbangi UMUM dengan isRoleUmumEnabled() (semua akun)", /umumEnabled:\s*isRoleUmumEnabled\(\)/.test(service))
 const route = src("app/api/jumpa/rooms/route.ts")
 check("POST /rooms menerima kind UMUM tanpa groupId", /"UMUM"\]\)/.test(route) && /b\.kind === "UMUM"/.test(route))
 check("POST /rooms tetap rate-limit 10/menit", /maxRequests: 10, windowSeconds: 60/.test(route))
 const token = src("app/api/jumpa/rooms/[code]/token/route.ts")
 check("Token: tidak ada notifikasi live untuk ruang UMUM", /ctx\.room\.kind !== "UMUM"/.test(token))
+check("Token: murid di ruang UMUM tanpa foto profil (nama tampilan saja)", /ctx\.room\.kind === "UMUM" && effective === "MURID" \? null/.test(token))
 const home = src("components/jumpa/JumpaHome.tsx")
 check("Beranda UMUM: kartu 'Mulai ruang baru'", /Mulai ruang baru/.test(home) && /create\(\{ kind: "UMUM" \}\)/.test(home))
 check("Beranda UMUM: ketentuan kelas disembunyikan", /isUmum && data\.umum \? <UmumTerms/.test(home))
@@ -227,6 +268,19 @@ const page = src("app/jumpa/page.tsx")
 check("Dasbor UMUM → /umum", /isUmum\(user\.role\) \? UMUM_HOME/.test(page))
 const roomPage = src("app/jumpa/[code]/page.tsx")
 check("Halaman ruang: judul disembunyikan untuk penonton lintas sisi", /crossed \? "Ruang JUMPA"/.test(roomPage))
+check("Halaman ruang: pengingat murid di ruang UMUM", /ctx\.effective === "MURID"/.test(roomPage) && /bukan kelasmu/.test(roomPage) && /umumNotice=\{umumNotice\}/.test(roomPage))
+check("Halaman ruang: lembar bagikan ruang UMUM hanya untuk akun UMUM", /isUmumRoom && ctx\.effective !== "UMUM"/.test(roomPage))
+const app = src("components/jumpa/JumpaApp.tsx")
+check("Tautan undangan tidak auto-join bila ada pengingat murid", /!props\.umumNotice/.test(app))
+const lobby = src("components/jumpa/JumpaLobby.tsx")
+check("Lobi menampilkan pengingat (token merek)", /jumpa-umum-notice/.test(lobby) && /var\(--clr-warning\)/.test(lobby))
+const roomView = src("components/jumpa/JumpaRoomView.tsx")
+check("Ruang: kuasa pemandu ruang UMUM hanya untuk akun UMUM (UI)", /info\.kind === "UMUM" \? self\.bcRole === "UMUM" : self\.bcRole === "GURU"/.test(roomView))
+const actions = src("lib/jumpa/room-actions.ts")
+check("Server: pencarian undangan ruang UMUM selalu kosong", /h\.room\.kind === "UMUM" \|\| h\.actor\.effective === "UMUM"\) return \{ ok: true, users: \[\] \}/.test(actions))
+check("Server: bypass obrolan pemandu ruang UMUM hanya akun UMUM", /room\.kind === "UMUM" \? me\.actor\.effective === "UMUM"/.test(actions))
+const sched = src("lib/jumpa/scheduling.ts")
+check("Riwayat guru/murid tidak memuat ruang UMUM", /effective === "GURU" \? \["KELAS", "GURU", "MURID"\] : actor\.isJunior \? \["KELAS"\] : \["KELAS", "MURID"\]/.test(sched))
 const mig = src("prisma/migrations/20261026000000_jumpa_room_kind_umum/migration.sql")
 check("Migrasi aditif: ADD VALUE 'UMUM'", /ALTER TYPE "JumpaRoomKind" ADD VALUE IF NOT EXISTS 'UMUM'/.test(mig) && !/DROP|DELETE|UPDATE /i.test(mig.replace(/--.*$/gm, "")))
 
