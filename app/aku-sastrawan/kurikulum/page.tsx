@@ -128,9 +128,12 @@ export default async function AkuSastrawanCurriculumPage({
                 <p className="mt-1 text-sm leading-6 text-muted-foreground">Tahap-tahap di atas adalah rancangan kurikulum. Materi pelajaran interaktif, penyimpanan draf, pelacakan progres, dan AI Writing Coach akan diaktifkan setelah integrasi backend dan hak akses premium selesai.</p>
               </div>
             </div>
-            <Link href={user ? "/aku-sastrawan" : "/login?next=%2Faku-sastrawan%2Fkurikulum"} className="mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:opacity-90">
-              {user ? "Kembali ke AKU SASTRAWAN" : "Masuk ke BahasaCerdas"} <ArrowRight size={16} />
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link href={user ? "/aku-sastrawan/ruang-menulis" : "/login?next=%2Faku-sastrawan%2Fruang-menulis"} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:opacity-90">
+                Mulai menulis <ArrowRight size={16} />
+              </Link>
+              <Link href="/aku-sastrawan" className="inline-flex min-h-11 items-center justify-center rounded-full border border-border px-5 text-sm font-semibold hover:bg-muted">Kembali ke produk</Link>
+            </div>
           </div>
         </div>
       </section>
