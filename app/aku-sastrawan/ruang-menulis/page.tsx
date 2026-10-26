@@ -75,7 +75,7 @@ export default function RuangMenulisPage() {
     if (!active || saving) return;
     setSaving(true); setNotice("");
     try {
-      const isNew = active.id.startsWith("local-") || active.id === "draft-awal";
+      const isNew = !active.saved || active.id.startsWith("local-") || active.id === "draft-awal";
       const res = await fetch("/api/aku-sastrawan/drafts", {
         method: isNew ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
