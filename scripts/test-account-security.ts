@@ -28,8 +28,11 @@ const sdkAuth = { auth: {
  verifyOtp: async () => {events.push("otp-verify");return {error:null,data:{user:{id:authId},session:{access_token:"reauth-jwt"}}};},
  signInWithOtp: async () => ({error:null}),
  signOut: async () => {events.push("verifier-cleanup");return {error:null};},
- admin:{getUserById:async()=>({data:{user:adminAllowed?{id:"auth-owner"}:null},error:adminAllowed?null:{message:"forbidden"}}),signOut:async()=>{events.push("revoke");return {error:null};},deleteUser:async(id:string)=>{events.push(`delete-auth:${id}`);return {error:null};}},
- }, storage:{from:()=>({remove:async()=>{events.push("storage-remove");return {error:storageFails?{message:"outage"}:null};}})}};
+ admin:{getUserById:async()=>({data:{user:adminAllowed?{id:"auth-owner"}:null},error:adminAllowed?null:{message:"forbidden"}}),signOut:async()=>{events.push("revoke");return {error:null};},deleteUser:async(id:string)=>{events.push(`delete-auth:${id}`);return {error:null};}}, },storage:{from:(bucket:string)=>({
+ upload:async(path:string,_file:File,options:{upsert:boolean})=>{assert.equal(bucket,"avatars");assert.equal(options.upsert,false);uploadPath=path;return {error:uploadFails?{statusCode:"403"}:null};},
+ getPublicUrl:(path:string)=>({data:{publicUrl:`https://example.test/avatars/${path}`}}),
+ remove:async()=>{events.push("storage-remove");return {error:storageFails?{message:"outage"}:null};},
+})}};
 const tx: Record<string, unknown> = {
  user:{findUniqueOrThrow:async()=>({id:"app-owner",saldo,isFounder:false}),update:async({data}:{data:Record<string,unknown>})=>{updatedData=data;events.push("tombstone");},count:async()=>2},
  teacherWallet:{findUnique:async()=>null},withdrawal:{count:async()=>0},

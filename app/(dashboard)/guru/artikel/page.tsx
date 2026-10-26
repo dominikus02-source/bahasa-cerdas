@@ -127,7 +127,7 @@ export default function GuruArtikelPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Karya Saya</h1>
+          <h1 className="text-2xl font-bold text-gray-900">AKSARA</h1>
           <p className="text-sm text-gray-500 mt-1">Tulis dan kelola artikel atau puisi untuk dibaca publik</p>
         </div>
         <Button onClick={() => showForm ? resetForm() : setShowForm(true)}>
@@ -184,7 +184,7 @@ export default function GuruArtikelPage() {
                   <input
                     type="file"
                     ref={fileRef}
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                     onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])}
                     className="hidden"
                   />

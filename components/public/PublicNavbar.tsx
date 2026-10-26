@@ -18,7 +18,7 @@ export default function PublicNavbar() {
             Video
           </Link>
           <Link href="/artikel" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
-            Artikel
+            AKSARA
           </Link>
           <Link href="/kamus" className="px-3 py-2 text-sm text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium">
             Kamus

@@ -5,7 +5,10 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ slug
   const { slug } = await params;
   try {
     const artikel = await db.artikel.findUnique({
-      where: { slug },
+      // Hanya karya terbit yang boleh terbaca publik; draft/tak-terbit = 404
+      // (bukan 403) supaya keberadaannya tidak bocor — sama dengan halaman
+      // /artikel/[slug] yang memfilter isPublished: true.
+      where: { slug, isPublished: true },
       select: {
         id: true, title: true, slug: true, content: true, excerpt: true,
         coverImage: true, tags: true, readCount: true, createdAt: true, updatedAt: true,
