@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
-import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
 
 type Context = { params: Promise<{ id: string }> };
 async function authorizedProject(id: string) {
