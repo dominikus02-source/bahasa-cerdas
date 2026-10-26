@@ -76,6 +76,7 @@ export class PrismaMainSessionCreationStore implements MainSessionCreationStore 
             currentRoundIndex: input.session.currentRoundIndex,
             totalRounds: input.session.totalRounds,
             roundDurationMs: input.session.roundDurationMs ?? 60000,
+            gameDurationMs: input.session.gameDurationMs ?? null,
             kotaTargetCorrect: input.kotaTargetCorrect,
             createdAt: input.session.createdAt,
           },

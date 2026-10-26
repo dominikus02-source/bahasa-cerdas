@@ -19,10 +19,8 @@ export async function POST(req: NextRequest) {
     try {
       user = await getUser();
     } catch {}
-    if (!user) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) user = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
+    // SECURITY: identitas hanya dari sesi; body.supabaseId tidak dipakai lagi
+    // (dulu bisa memakai kuota AI / menyimpan soal atas nama user lain).
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     const umumBlocked = umumGuruToolForbidden(user);
     if (umumBlocked) return umumBlocked;

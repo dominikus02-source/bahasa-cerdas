@@ -22,6 +22,7 @@ import type { PlayerId, RoundId, TeamId } from '../domain/types/ids';
 import type { GameEngineState } from '../games/game-router';
 import type { JelajahKataState } from '../games/jelajah-kata/jelajah-kata-engine';
 import type { KotaCahayaState } from '../games/kota-cahaya/kota-cahaya-engine';
+import type { GameClockView } from '../contracts/views/common';
 
 /** Ambil sub-state per mode dari union game state. */
 export function jelajahOf(gs: GameEngineState | null): JelajahKataState | null {
@@ -61,6 +62,25 @@ export function toPublicQuestionView(q: MainQuestionSnapshot): PublicQuestionVie
  */
 function contentTitleOf(engine: SessionEngine): string {
   return engine.state.session.contentTitle?.trim() || DEFAULT_CONTENT_TITLE;
+}
+
+/** Jam permainan public-safe (durasi + batas waktu server). */
+export function gameClockOf(engine: SessionEngine, now: Date): GameClockView | null {
+  const session = engine.state.session;
+  if (!session.gameDurationMs) return null;
+  const endsAt = session.gameEndsAt ?? null;
+  const paused = session.phase === 'paused' && endsAt !== null;
+  let pausedRemainingMs: number | null = null;
+  if (paused && endsAt) {
+    const frozenAt = session.pausedAt ?? now;
+    pausedRemainingMs = Math.max(0, endsAt.getTime() - frozenAt.getTime());
+  }
+  return {
+    durationMs: session.gameDurationMs,
+    endsAt: endsAt ? endsAt.toISOString() : null,
+    paused,
+    pausedRemainingMs,
+  };
 }
 
 function revisionOf(engine: SessionEngine): number {
@@ -142,6 +162,7 @@ export function buildStudentView(
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
+    gameClock: gameClockOf(engine, now),
     gameMode: session.gameMode as GameMode,
     contentTitle: contentTitleOf(engine),
     displayName: player.displayName,
@@ -408,6 +429,7 @@ export function buildTeacherView(
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
+    gameClock: gameClockOf(engine, now),
     contentTitle: contentTitleOf(engine),
     gameMode: session.gameMode as GameMode,
     phase,
@@ -492,6 +514,7 @@ export function buildProjectorView(
     sessionId: session.id,
     serverTime: now.toISOString(),
     revision: revisionOf(engine),
+    gameClock: gameClockOf(engine, now),
     contentTitle: contentTitleOf(engine),
     gameMode: session.gameMode as GameMode,
     phase,

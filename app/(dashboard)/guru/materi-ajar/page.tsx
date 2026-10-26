@@ -77,17 +77,11 @@ export default function MateriAjarPage() {
     return () => clearTimeout(t)
   }, [search])
 
-  const getSid = () => {
-    try { const stored = localStorage.getItem("bc-user"); if (stored) return JSON.parse(stored).state?.supabaseId || "" } catch {}
-    return ""
-  }
-
   const fetchMateris = useCallback(async () => {
     setLoading(true)
     try {
-      const sid = getSid()
+      // Identitas dari cookie sesi; supabaseId tidak dikirim lagi (server mengabaikannya).
       const params = new URLSearchParams({ page: String(page), limit: "24", sort })
-      if (sid) params.set("supabaseId", sid)
       if (debouncedSearch) params.set("q", debouncedSearch)
       if (kelasFilter) params.set("grade", kelasFilter)
       else if (activeTab) params.set("level", activeTab)
@@ -303,7 +297,6 @@ export default function MateriAjarPage() {
         <MateriDetailModal
           materi={detailMateri}
           quota={quota}
-          getSid={getSid}
           onClose={() => setDetailMateri(null)}
           onQuota={(q) => setQuota(q)}
           onPresent={() => { const m = detailMateri; setDetailMateri(null); if (m) handlePresent(m) }}
@@ -430,8 +423,6 @@ export default function MateriAjarPage() {
                   const supabase = createClient()
                   const { data: { user } } = await supabase.auth.getUser()
                   const userId = user?.id || "anonymous"
-                  let sid = ""
-                  try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
                   let ok = 0, failed = 0, rlsBlocked = false
                   for (const f of uploadFiles) {
                     try {
@@ -455,7 +446,6 @@ export default function MateriAjarPage() {
                         fd.set("fileUrl", urlData.publicUrl)
                         fd.set("fileKey", uploadData.path)
                         fd.set("fileType", fileExt.toUpperCase())
-                        if (sid) fd.set("supabaseId", sid)
                         const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
                         if (res.ok) ok++; else failed++
                       }
@@ -528,8 +518,8 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
 
 type Quota = { used: number; limit: number | null; unlimited: boolean }
 
-function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent, onKirim }: {
-  materi: Materi; quota: Quota | null; getSid: () => string; onClose: () => void; onQuota: (q: Quota) => void; onPresent: () => void; onKirim: () => void
+function MateriDetailModal({ materi, quota, onClose, onQuota, onPresent, onKirim }: {
+  materi: Materi; quota: Quota | null; onClose: () => void; onQuota: (q: Quota) => void; onPresent: () => void; onKirim: () => void
 }) {
   const [downloading, setDownloading] = useState(false)
   const [limitReached, setLimitReached] = useState(false)
@@ -550,7 +540,7 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
     try {
       const res = await fetch(`/api/guru/materi/${materi.id}/download`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ supabaseId: getSid() }),
+        body: JSON.stringify({}),
       })
       const data = await res.json()
       if (res.status === 403 && data.limitReached) { setLimitReached(true); setMsg(data.error); return }

@@ -28,3 +28,18 @@ export interface KotaPodiumEntry {
   correctAnswers: number;
   rank: number;
 }
+
+/**
+ * Jam permainan (durasi total pilihan guru). Server-authoritative:
+ * client menghitung sisa waktu dari `endsAt` + offset `serverTime`.
+ */
+export interface GameClockView {
+  /** Total durasi pilihan guru (ms). */
+  durationMs: number;
+  /** Batas waktu ISO-8601 UTC; null sebelum permainan dimulai. */
+  endsAt: IsoTimestamp | null;
+  /** True saat sesi dijeda — tampilkan `pausedRemainingMs` beku. */
+  paused: boolean;
+  /** Sisa waktu beku saat jeda (ms); null bila tidak dijeda. */
+  pausedRemainingMs: number | null;
+}
