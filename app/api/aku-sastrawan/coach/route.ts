@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
 
     const premiumUntil = "premiumUntil" in user && user.premiumUntil ? new Date(user.premiumUntil as string | Date).getTime() : 0;
-    const premium = ("isPremium" in user && user.isPremium === true) || premiumUntil > Date.now();
+    const premium = ("isPremium" in user && user.isPremium === true) || ("isFounder" in user && user.isFounder === true) || ("role" in user && user.role === "ADMIN") || premiumUntil > Date.now();
     if (!premium) return NextResponse.json({ error: "AI Writing Coach termasuk fitur premium AKU SASTRAWAN. Aktifkan paket premium BahasaCerdas untuk menggunakannya." }, { status: 403 });
 
     const body = await req.json();
