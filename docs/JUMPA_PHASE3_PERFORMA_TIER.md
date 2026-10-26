@@ -136,7 +136,7 @@ Sekitar 900 KB dari JS awal adalah layout root situs (dipakai semua halaman), bu
 | Berbagi layar maks | 720p / 5 fps | 1080p / 5 fps |
 | Rekaman | tidak | **Segera** (Premium, Fase 4; belum dibangun) |
 | Latar blur | tidak | **Segera** (Premium, Fase 4, khusus laptop; di Pengaturan tampil terkunci "Segera hadir") |
-| Ruang **MURID** (belajar bareng) | **8 peserta · 60 menit, selalu gratis, sama di kedua paket, tidak pernah ada ajakan upgrade** | sama |
+| Ruang **MURID** (belajar bareng) | **8 peserta · 60 menit**, tanpa ajakan upgrade | **15 peserta · 60 menit** (Murid Premium, Guru Pro, Founder) |
 
 Alasan angka Gratis: 45 menit = 1 JP SMA (SMP 40, SD 35), jadi satu jam pelajaran muat utuh.
 30 peserta (keputusan CEO, 18-10-2026): cukup untuk kelas kecil/menengah; rombel penuh
@@ -145,7 +145,9 @@ lebih ketat dari Meet (60 menit).
 
 **Hak paket:** `resolveJumpaTier(userId)` memakai `resolvePlan()` yang sudah ada
 (`lib/premium-economy/plans.ts`): PRO (termasuk trial guru) dan FOUNDER → Premium;
-FREE/MURID_PREMIUM → Gratis. Kalau DB gagal dibaca, hasilnya Gratis (fail-closed).
+FREE/MURID_PREMIUM → Gratis untuk ruang KELAS/GURU/webinar. Khusus ruang MURID,
+`tierForRoomKind()` juga memetakan MURID_PREMIUM → Premium (15 peserta; perbaikan
+2026-10-26, sebelumnya murid Premium jatuh ke 8). Kalau DB gagal dibaca, hasilnya Gratis (fail-closed).
 
 **Penegakan server:**
 - `POST /api/jumpa/rooms` → paket ditentukan saat ruang dibuat dari paket pembuat, lalu
