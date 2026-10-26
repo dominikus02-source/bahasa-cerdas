@@ -1,5 +1,6 @@
 "use client";
 
+import { FOUNDER_PREMIUM_LABEL } from "@/lib/account/identity";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { AlertCircle, Check, ChevronDown, Crown, Info, Loader2, Minus } from "lucide-react";
 import { loadMidtransSnap } from "@/lib/midtrans-client";
@@ -31,7 +32,7 @@ const COMPARE: Array<[string, string, string]> = [
   ["Bantuan prioritas", "", "Ya"],
 ];
 
-interface UserInfo { isPremium: boolean; premiumPlan: string; premiumUntil: string | null }
+interface UserInfo { isPremium: boolean; premiumPlan: string; premiumUntil: string | null; isFounder: boolean }
 interface PlanInfo { isTrial: boolean; daysRemaining: number }
 
 export default function BerlanggananPage() {
@@ -55,6 +56,7 @@ export default function BerlanggananPage() {
         isPremium: d.isPremium || d.user?.isPremium || false,
         premiumPlan: d.premiumPlan || d.user?.premiumPlan || "FREE",
         premiumUntil: d.premiumUntil || d.user?.premiumUntil || null,
+        isFounder: Boolean(d.isFounder || d.user?.isFounder),
       };
       setUser(next);
       return next;
@@ -139,8 +141,10 @@ export default function BerlanggananPage() {
 
   const until = user?.premiumUntil ?? null;
   const daysLeft = sisaHari(until);
-  const active = Boolean(user?.isPremium) && (!until || daysLeft > 0);
-  const expired = Boolean(until) && daysLeft === 0;
+  // Founder: Premium seumur hidup (premiumUntil null dari resolveIdentity).
+  const founder = Boolean(user?.isFounder);
+  const active = founder || (Boolean(user?.isPremium) && (!until || daysLeft > 0));
+  const expired = !founder && Boolean(until) && daysLeft === 0;
   const current = PLANS[plan];
   const total = coupon ? coupon.hargaDiskon : current.price;
   const choose = (id: string) => {
@@ -165,8 +169,8 @@ export default function BerlanggananPage() {
         <div className="bp-badges" style={{ marginTop: 14 }}>
           {active ? (
             <>
-              <ProBadge label="Guru Pro" />
-              <span className="bp-badge bp-badge--ok">{until ? `Aktif sampai ${formatTanggal(until, { short: true })}` : "Aktif"}</span>
+              <ProBadge label={founder ? FOUNDER_PREMIUM_LABEL : "Guru Pro"} />
+              <span className="bp-badge bp-badge--ok">{founder ? "Seumur hidup" : until ? `Aktif sampai ${formatTanggal(until, { short: true })}` : "Aktif"}</span>
             </>
           ) : expired ? (
             <span className="bp-badge bp-badge--bad">Masa Pro habis</span>
@@ -176,7 +180,7 @@ export default function BerlanggananPage() {
             <span className="bp-badge bp-badge--mute">Paket Gratis</span>
           )}
         </div>
-        {active && until && (
+        {active && until && !founder && (
           <p className="bp-small" style={{ margin: "8px 0 0" }}>
             Tersisa {daysLeft} hari. Bayar lagi untuk menambah masa aktif.
           </p>

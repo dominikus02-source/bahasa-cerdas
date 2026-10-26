@@ -59,3 +59,19 @@ export const POST = withAdmin(adminPOST, { route: "/api/admin/contoh", method: "
 Jika aksinya menyangkut uang atau massal, tambahkan aturan di `lib/admin/confirm.ts`
 dan kirim `adminConfirmHeaders()` dari UI setelah `useTypedConfirm()`.
 `npm run test:founder-access` gagal jika ada route admin yang tidak dibungkus.
+
+## 2. Founder = Premium seumur hidup
+
+`resolveIdentity()` (`lib/account/identity.ts`) adalah satu-satunya sumber:
+
+| Field | Founder | Guru/Murid/Umum berbayar | Gratis |
+|---|---|---|---|
+| `isPremium` | **true** (semua peran) | true | false |
+| `isPaying` | true hanya bila benar-benar membayar | true | false |
+| `isLifetimePremium` | true | false | false |
+| `plan` | `FOUNDER` | `PRO` / `MURID_PREMIUM` / `UMUM_PREMIUM` | `FREE` |
+| `premiumUntil` | `null` (seumur hidup) | tanggal habis | — |
+
+- Status founder **tidak** disimpan sebagai `premiumUntil = 2099`. Flag `isFounder` = sakelar seumur hidup; mencabut founder langsung mencabut Premium.
+- **Pendapatan/MRR/analitik**: pakai `isPaying` atau kolom DB + `isFounder: false` (laporan admin yang ada sudah membaca kolom DB, bukan `isPremium` hasil resolver).
+- Label resmi: `FOUNDER_PREMIUM_LABEL = "Premium Founder"`.
