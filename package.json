@@ -258,6 +258,7 @@
     "test:main-bersama-game-duration": "npx tsx scripts/test-main-bersama-game-duration.ts",
     "test:main-bersama-music-leader": "npx tsx scripts/test-main-bersama-music-leader.ts",
     "test:artikel-indentasi": "npx tsx scripts/test-artikel-indentasi.ts",
+    "test:cover-fallback": "npx tsx scripts/test-cover-fallback.ts",
     "test:main-bersama-mascot-assets": "npx tsx scripts/test-main-bersama-mascot-assets.ts",
     "test:main-bersama-jelajah-motion": "npx tsx scripts/test-main-bersama-jelajah-motion.ts",
     "test:main-bersama-kota-motion": "npx tsx scripts/test-main-bersama-kota-motion.ts",

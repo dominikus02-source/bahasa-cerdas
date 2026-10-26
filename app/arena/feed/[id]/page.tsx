@@ -12,6 +12,7 @@ import KaryaRewardToast from "@/components/arena/KaryaRewardToast"
 import { getDisplayName } from "@/lib/nickname"
 import UserAvatar from "@/components/arena/UserAvatar"
 import UserName from "@/components/arena/UserName"
+import SafeMediaImage from "@/components/shared/safe-media-image"
 
 const typeIcon: Record<string, { icon: React.ReactNode }> = {
   PUISI: { icon: <Sparkles className="w-5 h-5" /> },
@@ -125,11 +126,15 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         <h1 className="text-xl font-extrabold text-gray-900 dark:text-slate-100 mb-4 arena-balance">{karya.title}</h1>
 
         {karya.coverImage && (
-          <img
-            src={karya.coverImage}
-            alt={karya.title}
-            className="w-full rounded-2xl border border-gray-100 dark:border-slate-800 mb-5 object-cover max-h-96"
-          />
+          // URL lama Supabase Cloud / gagal dimuat → sampul buatan bermerek.
+          <div className="relative mb-5 aspect-[16/10] w-full overflow-hidden rounded-2xl border border-bc-line">
+            <SafeMediaImage
+              src={karya.coverImage}
+              alt={karya.title}
+              containerClassName="h-full w-full"
+              cover={{ title: karya.title, author: authorName, type: karya.type, fallback: "karya" }}
+            />
+          </div>
         )}
 
         <div className="text-base text-gray-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap mb-6">
@@ -139,7 +144,9 @@ export default async function FeedDetailPage({ params }: { params: Promise<{ id:
         {karya.photos.length > 0 && (
           <div className="grid grid-cols-2 gap-2 mb-6">
             {karya.photos.map((url) => (
-              <img key={url} src={url} alt={karya.title} className="w-full aspect-square rounded-xl border border-gray-100 dark:border-slate-800 object-cover" />
+              <div key={url} className="relative aspect-square w-full overflow-hidden rounded-xl border border-bc-line">
+                <SafeMediaImage src={url} alt={karya.title} containerClassName="h-full w-full" />
+              </div>
             ))}
           </div>
         )}

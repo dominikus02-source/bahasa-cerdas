@@ -14,6 +14,7 @@ type Article = {
   excerpt: string | null;
   coverImage: string | null;
   coverImageUrl: string | null;
+  articleType?: string | null;
   tags: string[];
   readCount: number;
   createdAt: string;
@@ -148,6 +149,7 @@ export default function ArtikelPage() {
                             fallbackType="article"
                             className="hover:scale-105 transition-transform duration-500"
                             containerClassName="w-full h-full"
+                            cover={{ title: a.title, author: authorName, type: a.articleType, tags: a.tags }}
                           />
                         </div>
                       ) : (
@@ -157,6 +159,7 @@ export default function ArtikelPage() {
                             alt={a.title}
                             fallbackType="article"
                             containerClassName="w-full h-full"
+                            cover={{ title: a.title, author: authorName, type: a.articleType, tags: a.tags }}
                           />
                         </div>
                       )}

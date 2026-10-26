@@ -78,6 +78,9 @@ jobs:
       - name: Artikel/puisi indentation + sanitization gate
         run: npm run test:artikel-indentasi
 
+      - name: Cover fallback (sampul buatan + URL Supabase Cloud lama)
+        run: npm run test:cover-fallback
+
       - name: Main Bersama game duration gate
         run: npm run test:main-bersama-game-duration
 

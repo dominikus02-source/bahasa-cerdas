@@ -1369,3 +1369,121 @@
 }
 .bc-media-cta:hover { background: var(--bc-media-cta-hover); }
 .bc-media--flush { border: 0; border-radius: 0; }
+
+/* ── Sampul buatan artikel/karya (.bc-cover) ───────────────────────────
+   Dipakai bila sampul kosong, URL lama Supabase Cloud (sudah mati), atau
+   gambar gagal dimuat. Semua warna dari token bc: gradien dihitung di elemen
+   ini sendiri sehingga ikut mode gelap dan aksen audiens (guru = biru).
+   Teks memakai --clr-on-brand (terang: putih, gelap: gelap di atas gradien
+   terang). Ukuran teks mengikuti kartu lewat container query. */
+.bc-cover {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  container-type: size;
+  color: var(--clr-on-brand);
+  background-color: var(--clr-violet);
+  background-image: var(--bc-grad-brand);
+  text-align: left;
+}
+.bc-cover--puisi {
+  background-image: linear-gradient(135deg, var(--clr-violet), color-mix(in srgb, var(--clr-violet) 55%, var(--clr-info)) 60%, color-mix(in srgb, var(--clr-violet) 70%, var(--clr-danger)));
+}
+.bc-cover--sastra {
+  background-image: linear-gradient(135deg, var(--clr-accent-strong), color-mix(in srgb, var(--clr-accent-strong) 55%, var(--clr-info)));
+}
+.bc-cover--prosa {
+  background-image: linear-gradient(135deg, var(--clr-warning-strong), color-mix(in srgb, var(--clr-warning-strong) 50%, var(--clr-danger)));
+}
+.bc-cover--opini {
+  background-image: linear-gradient(140deg, var(--clr-danger), color-mix(in srgb, var(--clr-danger) 60%, var(--clr-violet)));
+}
+.bc-cover--artikel {
+  background-image: linear-gradient(120deg, var(--clr-accent-strong), var(--clr-info) 55%, var(--clr-violet));
+}
+.bc-cover--karya {
+  background-image: linear-gradient(125deg, var(--clr-warning-strong), color-mix(in srgb, var(--clr-accent-strong) 70%, var(--clr-warning-strong)) 50%, var(--clr-violet));
+}
+/* Scrim di bawah teks: --clr-text gelap di mode terang, terang di mode gelap,
+   jadi selalu menambah kontras dengan --clr-on-brand. */
+.bc-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: linear-gradient(to top, color-mix(in srgb, var(--clr-text) 34%, transparent), transparent 72%);
+}
+.bc-cover__art {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  opacity: 0.26;
+}
+.bc-cover__brand {
+  position: absolute;
+  top: clamp(0.5rem, 4cqh, 1.25rem);
+  right: clamp(0.6rem, 3cqw, 1.5rem);
+  font-size: clamp(0.55rem, 2.2cqw, 0.8rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  opacity: 0.8;
+}
+.bc-cover__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: clamp(0.2rem, 2cqh, 0.6rem);
+  width: 100%;
+  min-width: 0;
+  padding: clamp(0.6rem, min(5cqw, 9cqh), 2.25rem);
+}
+.bc-cover__chip {
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 0.25em 0.8em;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--clr-on-brand) 40%, transparent);
+  background-color: color-mix(in srgb, var(--clr-on-brand) 16%, transparent);
+  font-size: clamp(0.55rem, min(2.4cqw, 6cqh), 0.8rem);
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.bc-cover__title {
+  margin: 0;
+  font-family: Georgia, Cambria, "Times New Roman", serif;
+  font-weight: 700;
+  line-height: 1.15;
+  font-size: clamp(0.8rem, min(6.4cqw, 13cqh), 2.75rem);
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+.bc-cover__author {
+  margin: 0;
+  font-size: clamp(0.6rem, min(2.8cqw, 7cqh), 1rem);
+  font-weight: 600;
+  opacity: 0.88;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@container (max-height: 150px) {
+  .bc-cover__title { -webkit-line-clamp: 2; }
+  .bc-cover__brand { display: none; }
+}
+@container (max-height: 90px) {
+  .bc-cover__chip, .bc-cover__author { display: none; }
+}

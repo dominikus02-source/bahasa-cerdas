@@ -86,20 +86,16 @@ function KaryaCard({ a }: { a: KaryaItem }) {
   return (
     <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all hover:border-violet-200 hover:shadow-md">
       <Link href={`/artikel/${a.slug}`} className="block">
-        {a.coverImage ? (
-          <div className="h-28 overflow-hidden">
-            <SafeMediaImage
-              src={a.coverImage}
-              alt={a.title}
-              fallbackType="article"
-              containerClassName="w-full h-28"
-            />
-          </div>
-        ) : (
-          <div className="h-10 flex items-center justify-center bg-gradient-to-br from-violet-50 to-purple-50">
-            {isPuisi ? <Feather size={16} className="text-violet-300" /> : <BookOpen size={16} className="text-violet-300" />}
-          </div>
-        )}
+        {/* Sampul kosong, URL lama mati, atau gagal dimuat → sampul buatan bermerek. */}
+        <div className="h-28 overflow-hidden">
+          <SafeMediaImage
+            src={a.coverImage}
+            alt={a.title}
+            fallbackType="article"
+            containerClassName="w-full h-28"
+            cover={{ title: a.title, author: penulis, type: a.articleType }}
+          />
+        </div>
       </Link>
 
       <div className="p-4">
