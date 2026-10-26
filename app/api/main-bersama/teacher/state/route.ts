@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { resolveVerifiedTeacherActor } from '@/src/main-bersama/adapters/auth/teacher-actor';
 import { getOrchestratorDeps } from '@/src/main-bersama/infrastructure/orchestrator-composition';
 import {
+  expireSessionIfTimeUp,
   loadEngineWithGameState,
 } from '@/src/main-bersama/application/services/session-commands';
 import { buildTeacherView } from '@/src/main-bersama/presentation/view-mappers';
@@ -43,7 +44,10 @@ export async function GET(req: NextRequest) {
   // GET state adalah boundary authoritative untuk UI realtime.
   // Resolver process-local bisa basi terhadap join/jawaban dari instance lain.
   deps.resolver.discard?.(sessionId as never);
-  const loaded = await loadEngineWithGameState(deps, sessionId as never);
+  const initial = await loadEngineWithGameState(deps, sessionId as never);
+  if (!initial) return errorResponse('SESSION_NOT_FOUND');
+  // Waktu permainan habis → server menutup sesi sebelum membangun view.
+  const loaded = await expireSessionIfTimeUp(deps, sessionId as never, initial);
   if (!loaded) return errorResponse('SESSION_NOT_FOUND');
 
   const view = buildTeacherView(loaded.engine, deps.clock.now(), loaded.gameState);

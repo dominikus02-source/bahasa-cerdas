@@ -4074,6 +4074,12 @@ model MainSession {
   totalRounds       Int
   /// Durasi standar setiap soal dalam milidetik. Dipilih guru saat sesi dibuat.
   roundDurationMs   Int              @default(60000)
+  /// Total durasi permainan pilihan guru (ms): 10/15/25/30/45 menit.
+  /// Null = sesi lama tanpa batas waktu permainan.
+  gameDurationMs    Int?
+  /// Batas waktu permainan (server clock) — diisi saat permainan dimulai,
+  /// digeser saat jeda. Server mengakhiri sesi setelah lewat batas ini.
+  gameEndsAt        DateTime?
 
   // Konfigurasi game eksplisit (bukan implicit scatter).
   /// Kota Cahaya: target jawaban benar. Null untuk Jelajah Kata.

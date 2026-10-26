@@ -8,7 +8,7 @@ import type { GameMode } from '../../domain/types/session';
 import type { ConnectionStatus } from '../../domain/types/participant';
 import type { PublicQuestionView } from '../../domain/entities/question';
 import type { RoundId, SessionId, TeamId } from '../../domain/types/ids';
-import type { TeamPublicInfo } from './common';
+import type { GameClockView, TeamPublicInfo } from './common';
 
 interface StudentViewBase {
   role: 'student';
@@ -28,6 +28,8 @@ interface StudentViewBase {
   avatarUrl?: string;
   team?: TeamPublicInfo;
   connectionStatus: ConnectionStatus;
+  /** Jam permainan bersama; null untuk sesi lama tanpa durasi. */
+  gameClock: GameClockView | null;
 }
 
 /**

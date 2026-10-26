@@ -5,7 +5,7 @@
 
 import type { GameMode, SessionPhase } from '../../domain/types/session';
 import type { PublicQuestionView } from '../../domain/entities/question';
-import type { KotaPodiumEntry, TeamPublicInfo } from './common';
+import type { GameClockView, KotaPodiumEntry, TeamPublicInfo } from './common';
 import type { SessionId, TeamId } from '../../domain/types/ids';
 
 /** Data join untuk QR code di layar — tanpa secret. */
@@ -47,6 +47,8 @@ export interface ProjectorSessionView {
   totalRounds: number;
   /** Deadline round aktif ISO-8601; public-safe untuk countdown layar kelas. */
   currentRoundClosesAt: string | null;
+  /** Jam permainan bersama; null untuk sesi lama tanpa durasi. */
+  gameClock: GameClockView | null;
   /** Soal aktif versi publik — tanpa answer key. */
   currentQuestion: PublicQuestionView | null;
 

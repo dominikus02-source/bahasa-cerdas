@@ -19,3 +19,11 @@ Files in BahasaCerdas:
 
 These samples are intentionally used as layers inside the Main Bersama WebAudio mix.
 The application may add synthesis, envelopes, filtering, dynamics and generated reverb on top of the source samples.
+
+## Musik kompetitif (game-show)
+
+- Source: `components/main-bersama/sound/competitive-music.ts`. It is synthesized in real time with the Web Audio API: kick, hi-hat, clap, sawtooth bass, square-wave arpeggio, ticks, and the countdown beep/buzzer.
+- No sample files and no third-party recordings. The pattern and progression (Am–F–C–E, 124/138/150 BPM) were written for BahasaCerdas.
+- License: original BahasaCerdas work. No external license or attribution obligations.
+- Size: 0 bytes of audio assets (code only).
+- Behaviour: it plays only while the game runs. The tempo rises at ≤3 minutes and again at ≤60 seconds, with a tick on every beat. A sting plays at 1 minute, beeps cover the last 10 seconds, and a buzzer sounds when time runs out. The same mute toggle stops everything.

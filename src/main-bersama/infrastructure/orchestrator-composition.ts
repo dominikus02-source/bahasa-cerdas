@@ -135,6 +135,12 @@ const sessionsStore = {
       pausedAt,
     );
   },
+  async saveGameEndsAt(sessionId: string, gameEndsAt: Date | null) {
+    await db.mainSession.update({
+      where: { id: sessionId },
+      data: { gameEndsAt },
+    });
+  },
   async findByPin(pin: string) {
     return sessionRepo.findActiveByPin(pin);
   },

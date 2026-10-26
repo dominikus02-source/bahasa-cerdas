@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "@/components/main-bersama/main-bersama.css";
 import "@/components/main-bersama/premium-layout.css";
+import "@/components/main-bersama/guru-dark.css";
 
 export const metadata: Metadata = {
   title: "Main Bersama — BahasaCerdas",
