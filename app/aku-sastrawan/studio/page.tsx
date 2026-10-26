@@ -25,7 +25,7 @@ export default function WritingStudioPage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [message, setMessage] = useState("Perubahan tersimpan di perangkatmu setelah disimpan ke server.");
+  const [message, setMessage] = useState("Draf tersimpan di server setelah menekan Simpan.");
   const [coachPrompt, setCoachPrompt] = useState("Berikan umpan balik tentang kekuatan naskah ini dan tiga hal paling penting untuk diperbaiki.");
   const [coachReply, setCoachReply] = useState("");
   const [coachBusy, setCoachBusy] = useState(false);
