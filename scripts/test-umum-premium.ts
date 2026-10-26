@@ -494,7 +494,7 @@ async function main() {
   const manual = R("app/api/admin/payments/manual-activate/route.ts");
   const adminPost = async (body: Row) => {
     currentUser = { ...getRow("user", "adm") };
-    const rr = await manual.POST(new NextRequest("http://localhost/api/admin/payments/manual-activate", { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json" } }));
+    const rr = await manual.POST(new NextRequest("http://localhost/api/admin/payments/manual-activate", { method: "POST", body: JSON.stringify(body), headers: { "content-type": "application/json", "x-admin-confirm": "KONFIRMASI" } }));
     return { status: rr.status as number, body: await rr.json().catch(() => ({})) };
   };
   let ar = await adminPost({ transactionId: txId, reason: "Metadata hilang, cek mutasi bank", planId: "GURU_PRO_YEARLY" });

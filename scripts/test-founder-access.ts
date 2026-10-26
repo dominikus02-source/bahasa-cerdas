@@ -107,7 +107,7 @@ const GURU: MockUser = { id: "g1", email: "guru@contoh.com", role: "GURU", isFou
 function jsonReq(url: string, method: string, body?: unknown) {
   return new Request(`https://www.bahasacerdas.com${url}`, {
     method,
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", ...headerMap },
     body: body === undefined ? undefined : JSON.stringify(body),
   });
 }

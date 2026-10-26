@@ -73,7 +73,9 @@ function pickTargetUserId(...sources: unknown[]): string | null {
 export function withAdmin<H extends AnyHandler>(handler: H, opts: WithAdminOptions = {}): H {
   const wrapped = async (...args: Parameters<H>): Promise<Response> => {
     const req = args[0] instanceof Request ? (args[0] as Request) : null;
-    const h = await headers();
+    // Header dari Request bila ada (juga aman di luar konteks request Next,
+    // mis. tes); handler tanpa argumen memakai next/headers.
+    const h: Headers = req ? req.headers : await headers();
     const method = (req?.method || opts.method || "GET").toUpperCase();
     let path = opts.route || "/api/admin";
     if (req) {
