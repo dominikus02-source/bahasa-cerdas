@@ -10,6 +10,7 @@ type Context = { params: Promise<{ projectId: string }> };
 export async function GET(_req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
+  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId } = await params;
     const project = await db.writingProject.findFirst({ where: { id: projectId, userId: user.id }, select: { id: true } });
@@ -25,6 +26,7 @@ export async function GET(_req: NextRequest, { params }: Context) {
 export async function POST(req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
+  if (!user.isPremium && !user.isFounder && user.role !== "ADMIN") return NextResponse.json({ error: "Pengelolaan novel memerlukan akses Premium AKU SASTRAWAN." }, { status: 403 });
   try {
     const { projectId } = await params;
     const project = await db.writingProject.findFirst({ where: { id: projectId, userId: user.id }, select: { id: true, genre: true } });
