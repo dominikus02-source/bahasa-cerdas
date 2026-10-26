@@ -7,6 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getOrchestratorDeps } from '@/src/main-bersama/infrastructure/orchestrator-composition';
 import {
+  expireSessionIfTimeUp,
   loadEngineWithGameState,
 } from '@/src/main-bersama/application/services/session-commands';
 import { buildProjectorView } from '@/src/main-bersama/presentation/view-mappers';
@@ -40,7 +41,10 @@ export async function GET(req: NextRequest) {
   // Layar kelas harus selalu melihat state durable terbaru lintas instance.
   // Buang cache process-local sebelum membangun view publik.
   deps.resolver.discard?.(sessionId as never);
-  const loaded = await loadEngineWithGameState(deps, sessionId as never);
+  const initial = await loadEngineWithGameState(deps, sessionId as never);
+  if (!initial) return errorResponse('SESSION_NOT_FOUND');
+  // Waktu permainan habis → server menutup sesi sebelum membangun view.
+  const loaded = await expireSessionIfTimeUp(deps, sessionId as never, initial);
   if (!loaded) return errorResponse('SESSION_NOT_FOUND');
 
   const view = buildProjectorView(loaded.engine, deps.clock.now(), loaded.gameState);

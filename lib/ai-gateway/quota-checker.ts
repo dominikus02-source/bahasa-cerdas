@@ -13,6 +13,26 @@ function getPeriod(): string {
 }
 
 /**
+ * UMUM_FREE (UMUM & peran tak dikenal): selalu ditolak — di mode soft maupun
+ * hard — tanpa membuat ledger. Alat AI gateway (grading/eyd/feedback/
+ * text-analysis/agents/export) adalah fitur guru/murid sekolah.
+ */
+function noPlanDenied(plan: AiPlan, creditsRequired: number, period: string): QuotaCheckResult {
+  return {
+    allowed: false,
+    mode: isHardMode() ? "hard" : "soft",
+    wouldBlock: true,
+    reason: "Plan UMUM_FREE — AI gateway tidak tersedia untuk peran ini",
+    creditsRequired,
+    creditsUsed: 0,
+    creditsTotal: 0,
+    creditsRemaining: 0,
+    plan,
+    period,
+  };
+}
+
+/**
  * Get or create the credit ledger for a user's current plan/period.
  * Creates the ledger record if it doesn't exist.
  * Fire-and-forget on create errors — never blocks the calling flow.
@@ -59,6 +79,7 @@ export async function getOrCreateCreditLedger(
 export async function ensureMonthlyLedger(user: UserLikeWithId): Promise<void> {
   const planInfo = resolveUserAiPlan(user);
   if (planInfo.unlimited) return;
+  if (planInfo.plan === "UMUM_FREE") return; // tanpa ledger untuk UMUM / tak dikenal
   const period = planInfo.isTrial ? "trial" : getPeriod();
   await getOrCreateCreditLedger(
     user.id,
@@ -106,6 +127,10 @@ export async function checkQuota(
   const cost = calculateAgentCost(agentId, input);
   const limits = getQuotaLimits(planInfo.plan);
   const period = planInfo.isTrial ? "trial" : getPeriod();
+  if (planInfo.plan === "UMUM_FREE") {
+    console.warn(`[Quota Deny] user=${user.id} agent=${agentId} plan=UMUM_FREE role=${user.role}`);
+    return noPlanDenied(planInfo.plan, cost.credits, period);
+  }
   const ledger = await getCreditUsage(user.id, period);
 
   const adjustedTotal = planInfo.unlimited ? 999999 : planInfo.creditsTotal;
@@ -171,6 +196,7 @@ export async function checkExportQuota(
   const planInfo = resolveUserAiPlan(user);
   const cost = getExportCost(format);
   const period = planInfo.isTrial ? "trial" : getPeriod();
+  if (planInfo.plan === "UMUM_FREE") return noPlanDenied(planInfo.plan, cost.credits, period);
   const ledger = await getCreditUsage(user.id, period);
 
   const adjustedTotal = planInfo.unlimited ? 999999 : planInfo.creditsTotal;

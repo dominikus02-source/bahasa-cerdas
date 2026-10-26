@@ -109,7 +109,7 @@ export function noticeAudience(input: {
  * Jam tenang Web Push untuk murid: 21.00–05.59 WIB push tidak dikirim
  * (notifikasi in-app tetap tersimpan). Guru tidak dibatasi.
  */
-export function pushAllowedNow(role: "GURU" | "MURID" | "ADMIN", now: Date): boolean {
+export function pushAllowedNow(role: "GURU" | "MURID" | "ADMIN" | "UMUM", now: Date): boolean {
   if (role !== "MURID") return true;
   const jam = (now.getUTCHours() + 7) % 24;
   return jam >= 6 && jam < 21;

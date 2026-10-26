@@ -98,7 +98,9 @@ export function resolvePlan(userId: string): Promise<ResolvedPlan> {
     }
 
     const activeSub = user.subscriptions?.find(s => s.status === "ACTIVE" && s.currentPeriodStart <= new Date() && s.currentPeriodEnd > new Date());
-    if (activeSub && activeSub.currentPeriodEnd && activeSub.currentPeriodEnd > new Date()) {
+    // Allowlist eksplisit: hanya MURID/GURU yang bisa punya plan berbayar
+    // (selaras resolveIdentity). UMUM / peran tak dikenal → fallback FREE.
+    if ((user.role === "MURID" || user.role === "GURU") && activeSub && activeSub.currentPeriodEnd && activeSub.currentPeriodEnd > new Date()) {
       return {
         plan: user.role === "MURID" ? "MURID_PREMIUM" : "PRO",
         subscriptionStatus: "ACTIVE",

@@ -184,22 +184,9 @@ export default function RegisterPage() {
         return;
       }
 
-      const formData = new FormData();
-      formData.set("email", normalizedEmail);
-      formData.set("supabaseId", createData.userId);
-      formData.set("fullName", fullName);
-      formData.set("role", role);
-      if (school) formData.set("school", school);
-      if (city) formData.set("city", city);
-      if (province) formData.set("province", province);
-
-      const result = await registerUser(formData);
-      if (result?.error) {
-        setError(result.error);
-        setLoading(false);
-        return;
-      }
-
+      // Sign in first: registerUser derives the account identity from the
+      // verified server session (never from form data), so the session must
+      // exist before the optional profile fields are saved.
       const loginResult = await loginWithBrowserPassword({
         email: normalizedEmail,
         password,
@@ -208,6 +195,19 @@ export default function RegisterPage() {
         setError(loginResult.error || "Akun berhasil dibuat. Silakan masuk.");
         setLoading(false);
         return;
+      }
+
+      const formData = new FormData();
+      formData.set("role", role);
+      if (school) formData.set("school", school);
+      if (city) formData.set("city", city);
+      if (province) formData.set("province", province);
+
+      const result = await registerUser(formData);
+      if (result?.error) {
+        // The account and session already exist; profile fields are
+        // supplementary and can be completed later in Pengaturan.
+        console.warn("[register] profil sekolah belum tersimpan:", result.error);
       }
 
       const redirectUrl = next || (role === "MURID" ? "/arena" : "/guru/beranda");

@@ -41,6 +41,12 @@ export interface MainSession {
   totalRounds: number;
   /** Durasi setiap soal dalam milidetik; dikunci saat sesi dibuat. */
   roundDurationMs?: number;
+  /** Total durasi permainan pilihan guru (ms); dikunci saat sesi dibuat. */
+  gameDurationMs?: number;
+  /** Batas waktu permainan (server clock); terisi saat permainan dimulai. */
+  gameEndsAt?: Date;
+  /** Saat jeda dimulai — dipakai untuk menggeser `gameEndsAt` saat lanjut. */
+  pausedAt?: Date;
 
   createdAt: Date;
   startedAt?: Date;

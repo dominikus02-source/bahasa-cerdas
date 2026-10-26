@@ -1,14 +1,25 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { createClient } from "@/lib/supabase/server";
 import { registerSchema, sanitize } from "@/lib/validations";
+
+// SECURITY: a Server Action is a public endpoint — anyone can invoke it with
+// arbitrary form data. Identity (Supabase ID + email) therefore comes ONLY
+// from the verified server session, never from the submitted form. The role
+// is still validated against the GURU/MURID allowlist, but it can no longer
+// create or re-bind an account: the application User row is provisioned by
+// /api/auth/create-user (email) or the role-selection flow (Google).
+const registerProfileSchema = registerSchema.pick({
+  role: true,
+  school: true,
+  city: true,
+  province: true,
+});
 
 export async function registerUser(formData: FormData) {
   try {
-    const parsed = registerSchema.safeParse({
-      email: formData.get("email"),
-      supabaseId: formData.get("supabaseId"),
-      fullName: formData.get("fullName"),
+    const parsed = registerProfileSchema.safeParse({
       role: formData.get("role"),
       school: formData.get("school") || null,
       city: formData.get("city") || null,
@@ -20,68 +31,49 @@ export async function registerUser(formData: FormData) {
       return { error: firstError };
     }
 
-    const { email, supabaseId, fullName, role, school, city, province } = parsed.data;
-    const normalizedEmail = email.toLowerCase();
-    const sanitizedName = sanitize(fullName);
+    const { school, city, province } = parsed.data;
 
-    const existingUser = await db.user.findFirst({
-      where: { email: normalizedEmail },
-    });
+    const supabase = await createClient();
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser();
 
-    if (existingUser) {
-      if (existingUser.supabaseId === supabaseId) {
-        // The Auth + User rows were already provisioned by /api/auth/create-user.
-        // Registration now only enriches the optional profile fields, making
-        // the flow idempotent instead of failing after Auth succeeds.
-        try {
-          await db.profile.upsert({
-            where: { userId: existingUser.id },
-            update: {
-              ...(school ? { school: sanitize(school) } : {}),
-              ...(city ? { city: sanitize(city) } : {}),
-              ...(province ? { province: sanitize(province) } : {}),
-            },
-            create: {
-              userId: existingUser.id,
-              ...(school ? { school: sanitize(school) } : {}),
-              ...(city ? { city: sanitize(city) } : {}),
-              ...(province ? { province: sanitize(province) } : {}),
-            },
-          });
-        } catch {
-          // Profile fields are supplementary; don't block account creation.
-        }
-
-        return { ok: true, role: existingUser.role.toLowerCase() };
-      }
-
-      return { error: "Email sudah terdaftar dengan akun lain" };
+    if (!authUser) {
+      return { error: "Sesi tidak ditemukan. Silakan masuk terlebih dahulu." };
     }
 
-    // Legacy fallback for callers that still reach this action without the
-    // new create-user provisioning step.
-    const newUser = await db.user.create({
-      data: {
-        supabaseId,
-        email: normalizedEmail,
-        fullName: sanitizedName,
-        role,
-      },
+    const existingUser = await db.user.findUnique({
+      where: { supabaseId: authUser.id },
     });
 
+    if (!existingUser) {
+      // No legacy fallback: this action never creates accounts.
+      return { error: "Akun belum siap. Silakan pilih peran terlebih dahulu.", code: "ROLE_REQUIRED" };
+    }
+
+    // Registration only enriches the optional profile fields, keeping the
+    // flow idempotent. The stored role always wins over the submitted one.
     try {
-      await db.profile.create({
-        data: {
-          userId: newUser.id,
+      await db.profile.upsert({
+        where: { userId: existingUser.id },
+        update: {
+          ...(school ? { school: sanitize(school) } : {}),
+          ...(city ? { city: sanitize(city) } : {}),
+          ...(province ? { province: sanitize(province) } : {}),
+        },
+        create: {
+          userId: existingUser.id,
           ...(school ? { school: sanitize(school) } : {}),
           ...(city ? { city: sanitize(city) } : {}),
           ...(province ? { province: sanitize(province) } : {}),
         },
       });
-    } catch {}
+    } catch {
+      // Profile fields are supplementary; don't block account creation.
+    }
 
-    return { ok: true, role: role.toLowerCase() };
-  } catch (err: any) {
-    return { error: err?.message || "Internal server error" };
+    return { ok: true, role: existingUser.role.toLowerCase() };
+  } catch {
+    return { error: "Profil belum berhasil disimpan. Silakan coba lagi." };
   }
 }

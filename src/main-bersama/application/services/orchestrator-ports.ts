@@ -39,6 +39,11 @@ export interface SessionStore {
     pause: MainPauseStatePort | null,
     pausedAt: Date,
   ): Promise<void>;
+  /**
+   * Simpan batas waktu permainan (server clock). Opsional agar fake
+   * test lama tetap valid; implementasi produksi WAJIB ada.
+   */
+  saveGameEndsAt?(sessionId: SessionId, gameEndsAt: Date | null): Promise<void>;
   findByPin(pin: string): Promise<MainSession | null>;
   /**
    * Lookup DISPLAY read-only (proyektor) — termasuk sesi final

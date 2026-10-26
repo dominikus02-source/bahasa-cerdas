@@ -2,6 +2,7 @@ import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
+import { roleLabel } from "@/lib/auth/roles";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
 import { ThemeSettingsCard } from "@/components/murid/ThemeSettingsCard";
 
@@ -75,7 +76,7 @@ export default async function MuridPengaturanPage() {
         }
       >
         <Row label="Nama" value={user.fullName || user.nickname || "—"} />
-        <Row label="Peran" value={user.role === "MURID" ? "Murid" : "Founder"} accent="text-emerald-600 dark:text-emerald-400" />
+        <Row label="Peran" value={user.role === "MURID" ? "Murid" : roleLabel(user.role, user.isFounder)} accent="text-emerald-600 dark:text-emerald-400" />
         <Row label="Edit Profil & Identitas" href="/murid/profile" />
         <Row label="Toko Koin" href="/arena/toko-koin" value="Koin saya" />
       </SectionCard>

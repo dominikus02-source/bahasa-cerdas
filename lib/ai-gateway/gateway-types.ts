@@ -5,6 +5,9 @@ export type AiPlan =
   | "GURU_PRO"
   | "GURU_PRO_TRIAL"
   | "GURU_FREE"
+  // UMUM (pengguna umum) & peran tak dikenal: 0 kredit, alat AI gateway ditolak.
+  // NARA chat (/api/ai/bc/chat) tidak lewat gateway kredit → tetap tersedia.
+  | "UMUM_FREE"
   | "SCHOOL";
 
 export type CreditWeight = "light" | "medium" | "heavy";

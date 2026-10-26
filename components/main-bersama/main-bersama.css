@@ -1453,8 +1453,10 @@
 :has(.mb-room.game-fullscreen) .shell-topbar {
   display: none !important;
 }
+/* Sidebar dasbor (.shell-aside) tetap tampil di layar lebar, jadi margin
+   kiri .shell-main (md:ml-64 / 4rem saat diciutkan) TIDAK boleh dinolkan —
+   dulu ruang guru tertutup sidebar di 1440px. */
 :has(.mb-room.game-fullscreen) .shell-main {
-  margin-left: 0 !important;
   padding-top: 0 !important;
   max-width: 100% !important;
 }

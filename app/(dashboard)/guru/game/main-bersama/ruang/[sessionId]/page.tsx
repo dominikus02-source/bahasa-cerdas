@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { TeacherRoomClient } from "@/components/main-bersama/teacher/room-client";
 import "@/components/main-bersama/main-bersama.css";
 import "@/components/main-bersama/premium-layout.css";
+import "@/components/main-bersama/guru-dark.css";
 
 /**
  * Ruang guru Main Bersama (Tahap 7 §6/§13) — route final

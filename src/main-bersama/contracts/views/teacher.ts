@@ -9,6 +9,7 @@ import type { MainQuestionSnapshot } from '../../domain/entities/question';
 import type { MainGameState } from '../../domain/types/game-state';
 import type { MainTeam } from '../../domain/entities/team';
 import type { RoundId, SessionId, TeamId } from '../../domain/types/ids';
+import type { GameClockView } from './common';
 
 /** Koneksi operator/pengamat non-peserta (teacher/projector). */
 export interface OperatorConnectionInfo {
@@ -76,6 +77,8 @@ export interface TeacherSessionView {
   currentRoundId: RoundId | null;
   /** Deadline round aktif ISO-8601, null bila tidak ada round terbuka. */
   currentRoundClosesAt: string | null;
+  /** Jam permainan bersama; null untuk sesi lama tanpa durasi. */
+  gameClock: GameClockView | null;
 
   /** Snapshot soal penuh (termasuk answer key) untuk round aktif. */
   currentQuestion: MainQuestionSnapshot | null;

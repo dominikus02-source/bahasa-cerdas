@@ -1,5 +1,6 @@
 import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { dashboardForUser } from "@/lib/auth/redirect";
 import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
@@ -40,8 +41,12 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect("/login");
   }
 
+  // Allowlist: hanya GURU/founder. Peran lain ke dasbor kanoniknya sendiri
+  // (MURID → /murid/beranda seperti sebelumnya; ADMIN → /admin — sebelumnya
+  // /murid/beranda yang memantul balik ke sini = loop; UMUM → beranda UMUM;
+  // tak dikenal → halaman akses ditolak).
   if (user.role !== "GURU" && !user.isFounder) {
-    redirect("/murid/beranda");
+    redirect(dashboardForUser(user.role, user.isFounder));
   }
 
   if (!user.onboarded) {

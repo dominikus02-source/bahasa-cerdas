@@ -1,6 +1,7 @@
 import { getUser } from "@/lib/supabase/server";
 import { getBcHints } from "@/lib/ai-bc/context";
-import { STUDENT_PERSONA } from "@/src/ai/bc/personas";
+import { NEUTRAL_PERSONA, STUDENT_PERSONA } from "@/src/ai/bc/personas";
+import { isUmum } from "@/lib/auth/roles";
 import AiBcArenaWorkspace from "@/components/ai-bc/AiBcArenaWorkspace";
 
 export const metadata = {
@@ -22,12 +23,31 @@ export const metadata = {
  * permukaan murid; permukaan guru ada di /guru/ai-bc ("Teman Guru").
  * Peran tetap ditentukan server-side dari sesi — klien tidak pernah
  * mengirim/memilih peran.
+ *
+ * Pengecualian: UMUM (pengguna umum, bukan warga sekolah) memakai persona
+ * netral + saran umum — sama dengan persona yang dipilih server untuk chat
+ * (getPersonaForUser → NEUTRAL_PERSONA), tanpa konteks kelas/sekolah.
  */
 export default async function ArenaAiPage() {
   const user = await getUser();
+  const umum = user ? isUmum(user.role) : false;
   // roleOverride="student": hints murid dipaksa, walau user-nya guru.
-  const hints = user ? await getBcHints(user, "student").catch(() => []) : [];
+  // UMUM → saran umum ("general").
+  const hints = user
+    ? await (umum ? getBcHints(user, "general") : getBcHints(user, "student")).catch(() => [])
+    : [];
   const userName = user ? user.nickname || user.fullName || "" : "";
+
+  if (umum) {
+    return (
+      <AiBcArenaWorkspace
+        userName={userName}
+        personaTitle={NEUTRAL_PERSONA.title}
+        greeting={NEUTRAL_PERSONA.greeting}
+        hints={hints}
+      />
+    );
+  }
 
   return (
     <AiBcArenaWorkspace

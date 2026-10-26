@@ -1,0 +1,22 @@
+-- =============================================================================
+-- Role UMUM (pengguna umum: mahasiswa / umum / investor / tamu)
+-- ADDITIVE: 1 nilai enum baru pada "Role". Tidak ada DROP/RENAME, tidak
+-- mengubah kolom, TIDAK memigrasi user lama (semua user tetap GURU/MURID/ADMIN).
+--
+-- Sengaja dipisah dari migrasi lain: nilai enum baru TIDAK boleh dipakai di
+-- transaksi yang sama dengan ADD VALUE (batasan PostgreSQL). Migrasi ini tidak
+-- memakai 'UMUM' sama sekali; aplikasi baru memakainya setelah commit.
+-- Idempoten (IF NOT EXISTS) — aman dijalankan ulang.
+--
+-- Prasyarat: 20261019000000_jumpa_flow.
+-- Urutan deploy: migrasi ini → 20261025000100_profile_kategori_umum → kode app.
+--   (Kode app lama tetap aman membaca DB setelah migrasi: belum ada baris UMUM.)
+--
+-- Rollback: PostgreSQL tidak mendukung DROP VALUE. Nilai yang tidak dipakai
+-- tidak berbahaya — cukup rollback kode aplikasi. Bila benar-benar perlu
+-- dibuang: pastikan `SELECT count(*) FROM "User" WHERE role='UMUM'` = 0 lalu
+-- buat ulang tipe (rename type lama, CREATE TYPE baru, ALTER COLUMN ... USING).
+-- =============================================================================
+
+-- AlterEnum
+ALTER TYPE "Role" ADD VALUE IF NOT EXISTS 'UMUM';

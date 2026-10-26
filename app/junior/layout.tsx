@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation"
 import { getUser } from "@/lib/supabase/server"
+import { dashboardForUser } from "@/lib/auth/redirect"
 
 export const metadata = {
   title: "Arena Junior — BahasaCerdas",
@@ -15,7 +16,9 @@ export default async function ArenaJuniorLayout({ children }: { children: React.
   const user = await getUser()
   if (!user) redirect("/auth/arena-login")
   // Guru boleh mengintip dasbor murid (mode pratinjau), sama seperti di Arena.
-  if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect("/guru/beranda")
+  // Peran lain → dasbor kanoniknya (ADMIN → /admin, UMUM → beranda UMUM,
+  // tak dikenal → akses ditolak); tidak lagi dianggap guru.
+  if (user.role !== "MURID" && user.role !== "GURU" && !user.isFounder) redirect(dashboardForUser(user.role, user.isFounder))
 
   return <div className="min-h-screen bg-[#FFF8E6] text-slate-800 font-junior-body">{children}</div>
 }

@@ -46,6 +46,12 @@ const QUOTA_LIMITS: Record<AiPlan, QuotaLimits> = {
     dailyVelocityCap: 20,
     savedResultLimit: 50,
   },
+  UMUM_FREE: {
+    creditsPerMonth: 0,
+    maxPerRequest: 0,
+    dailyVelocityCap: 0,
+    savedResultLimit: 0,
+  },
   SCHOOL: {
     creditsPerMonth: 5000,
     maxPerRequest: 50,
