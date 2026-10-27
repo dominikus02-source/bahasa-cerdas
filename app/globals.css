@@ -1371,10 +1371,28 @@
 .bc-media--flush { border: 0; border-radius: 0; }
 
 
-/* BahasaCerdas — CTA seragam khusus seluruh dasbor murid.
-   Scope sengaja dibatasi agar dasbor guru/admin dan kontrol non-CTA tidak berubah.
-   Menormalkan CTA bermerek lama maupun primitif ui-btn; tidak mengubah href/handler. */
-.bc-murid-dashboard :is(.px-btn-gold, .px-btn-primary, .px-btn-royal, .px-btn-ghost, .ui-btn--primary, .ui-btn--murid, .ui-btn--accent, .ui-btn--secondary, .ui-btn--soft, .ui-btn--premium, .bg-gradient-to-r) {
+/* BahasaCerdas — CTA utama seragam khusus seluruh dasbor murid.
+   Scope dibatasi ke shell murid. Varian secondary/ghost/soft/premium tetap
+   mempertahankan makna visualnya; hanya CTA utama dan tombol gradient lama
+   yang dinormalisasi. Tidak mengubah href, handler, atau alur formulir. */
+.bc-murid-dashboard :is(
+  .px-btn-gold,
+  .px-btn-primary,
+  .px-btn-royal,
+  .ui-btn--primary,
+  .ui-btn--murid,
+  .ui-btn--accent
+),
+.bc-murid-dashboard a:is(
+  [class*="bg-gradient-to-"],
+  [class*="from-teal-"][class*="to-blue-"],
+  [class*="from-cyan-"][class*="to-violet-"]
+),
+.bc-murid-dashboard button:is(
+  [class*="bg-gradient-to-"],
+  [class*="from-teal-"][class*="to-blue-"],
+  [class*="from-cyan-"][class*="to-violet-"]
+) {
   background: linear-gradient(120deg, #0f9f9a 0%, #48b8e9 52%, #8b5cf6 100%) !important;
   color: #fff !important;
   border: 1px solid rgb(255 255 255 / 22%);
@@ -1384,41 +1402,58 @@
   box-shadow: 0 6px 16px -9px rgb(59 130 246 / 70%);
   transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
-.bc-murid-dashboard :is(.px-btn-gold, .px-btn-primary, .px-btn-royal, .px-btn-ghost, .ui-btn--primary, .ui-btn--murid, .ui-btn--accent, .ui-btn--secondary, .ui-btn--soft, .ui-btn--premium, .bg-gradient-to-r):hover:not(:disabled):not([aria-disabled="true"]) {
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
+  a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
+  a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+):hover:not(:disabled):not([aria-disabled="true"]) {
   filter: saturate(1.08) brightness(1.04);
   box-shadow: 0 10px 22px -10px rgb(99 102 241 / 70%);
   transform: translateY(-1px);
 }
-.bc-murid-dashboard :is(.px-btn-gold, .px-btn-primary, .px-btn-royal, .px-btn-ghost, .ui-btn--primary, .ui-btn--murid, .ui-btn--accent, .ui-btn--secondary, .ui-btn--soft, .ui-btn--premium, .bg-gradient-to-r):active:not(:disabled):not([aria-disabled="true"]) {
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
+  a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
+  a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+):active:not(:disabled):not([aria-disabled="true"]) {
   transform: translateY(0) scale(.98);
 }
-.bc-murid-dashboard :is(.px-btn-gold, .px-btn-primary, .px-btn-royal, .px-btn-ghost, .ui-btn--primary, .ui-btn--murid, .ui-btn--accent, .ui-btn--secondary, .ui-btn--soft, .ui-btn--premium, .bg-gradient-to-r):focus-visible {
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
+  a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
+  a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+):focus-visible {
   outline: 3px solid rgb(72 184 233 / 55%);
   outline-offset: 3px;
 }
-.bc-murid-dashboard :is(.px-btn-gold, .px-btn-primary, .px-btn-royal, .px-btn-ghost, .ui-btn--primary, .ui-btn--murid, .ui-btn--accent, .ui-btn--secondary, .ui-btn--soft, .ui-btn--premium, .bg-gradient-to-r):is(:disabled, [aria-disabled="true"]) {
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  button[class*="bg-gradient-to-"]
+):is(:disabled, [aria-disabled="true"]) {
   opacity: .55;
   cursor: not-allowed;
   transform: none;
 }
+
 @media (prefers-reduced-motion: reduce) {
-  .bc-murid-dashboard :is(.px-btn-gold, .px-btn-primary, .px-btn-royal, .px-btn-ghost, .ui-btn--primary, .ui-btn--murid, .ui-btn--accent, .ui-btn--secondary, .ui-btn--soft, .ui-btn--premium, .bg-gradient-to-r) {
+  .bc-murid-dashboard :is(
+    .px-btn-gold, .px-btn-primary, .px-btn-royal,
+    .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+    a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
+    a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
+    a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+  ) {
     transition: none;
   }
-}
-
-
-/* CTA fallback untuk halaman murid lama yang belum memakai Button primitive.
-   Tidak menyentuh tombol kontrol, ikon, navigasi, atau tombol berbahaya. */
-.bc-murid-dashboard a:is([class*="bg-gradient-to-"], [class*="from-teal-"][class*="to-blue-"], [class*="from-cyan-"][class*="to-violet-"]),
-.bc-murid-dashboard button:is([class*="bg-gradient-to-"], [class*="from-teal-"][class*="to-blue-"], [class*="from-cyan-"][class*="to-violet-"]) {
-  border-radius: 14px;
-  font-weight: 700;
-  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
-}
-.bc-murid-dashboard a:is([class*="bg-gradient-to-"], [class*="from-teal-"][class*="to-blue-"], [class*="from-cyan-"][class*="to-violet-"]):hover,
-.bc-murid-dashboard button:is([class*="bg-gradient-to-"], [class*="from-teal-"][class*="to-blue-"], [class*="from-cyan-"][class*="to-violet-"]):hover:not(:disabled) {
-  filter: saturate(1.08) brightness(1.04);
-  box-shadow: 0 10px 22px -10px rgb(99 102 241 / 70%);
-  transform: translateY(-1px);
 }
