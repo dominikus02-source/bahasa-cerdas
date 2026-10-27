@@ -39,7 +39,7 @@ export function MuridShellFrame({
   children: ReactNode;
 }) {
   return (
- <div className="flex min-h-screen ui-app-bg">
+ <div className="bc-murid-dashboard flex min-h-screen ui-app-bg">
  <aside className="shell-aside w-64 h-screen bg-bc-surface border-r border-bc-line hidden md:flex md:flex-col fixed left-0 top-0 shadow-bc-1">
  <div className="p-5 bg-bc-murid">
           <Link href="/murid/beranda" className="flex items-center gap-3 min-w-0">
