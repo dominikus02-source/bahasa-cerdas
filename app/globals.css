@@ -1375,24 +1375,22 @@
    Scope dibatasi ke shell murid. Varian secondary/ghost/soft/premium tetap
    mempertahankan makna visualnya; hanya CTA utama dan tombol gradient lama
    yang dinormalisasi. Tidak mengubah href, handler, atau alur formulir. */
+/* BahasaCerdas — CTA utama seragam khusus seluruh dasbor murid.
+   Scope sengaja dibatasi: kartu/link navigasi bergradasi yang bukan tombol tidak
+   ikut berubah. Fungsi, href, type, dan state React tidak disentuh. */
 .bc-murid-dashboard :is(
-  .px-btn-gold,
-  .px-btn-primary,
-  .px-btn-royal,
-  .ui-btn--primary,
-  .ui-btn--murid,
-  .ui-btn--accent
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent
 ),
-.bc-murid-dashboard a:is(
-  [class*="bg-gradient-to-"],
-  [class*="from-teal-"][class*="to-blue-"],
-  [class*="from-cyan-"][class*="to-violet-"]
-),
-.bc-murid-dashboard button:is(
-  [class*="bg-gradient-to-"],
-  [class*="from-teal-"][class*="to-blue-"],
-  [class*="from-cyan-"][class*="to-violet-"]
-) {
+.bc-murid-dashboard a[class*="ui-btn--primary"],
+.bc-murid-dashboard a[class*="ui-btn--murid"],
+.bc-murid-dashboard a[class*="ui-btn--accent"],
+.bc-murid-dashboard a[class*="inline-flex"][class*="bg-gradient-to-"],
+.bc-murid-dashboard a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+.bc-murid-dashboard a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+.bc-murid-dashboard button[class*="bg-gradient-to-"],
+.bc-murid-dashboard button[class*="from-teal-"][class*="to-blue-"],
+.bc-murid-dashboard button[class*="from-cyan-"][class*="to-violet-"] {
   background: linear-gradient(120deg, #0f9f9a 0%, #48b8e9 52%, #8b5cf6 100%) !important;
   color: #fff !important;
   border: 1px solid rgb(255 255 255 / 22%);
@@ -1406,9 +1404,12 @@
 .bc-murid-dashboard :is(
   .px-btn-gold, .px-btn-primary, .px-btn-royal,
   .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
-  a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
-  a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
-  a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+  a[class*="inline-flex"][class*="bg-gradient-to-"],
+  a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+  a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+  button[class*="bg-gradient-to-"],
+  button[class*="from-teal-"][class*="to-blue-"],
+  button[class*="from-cyan-"][class*="to-violet-"]
 ):hover:not(:disabled):not([aria-disabled="true"]) {
   filter: saturate(1.08) brightness(1.04);
   box-shadow: 0 10px 22px -10px rgb(99 102 241 / 70%);
@@ -1418,9 +1419,12 @@
 .bc-murid-dashboard :is(
   .px-btn-gold, .px-btn-primary, .px-btn-royal,
   .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
-  a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
-  a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
-  a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+  a[class*="inline-flex"][class*="bg-gradient-to-"],
+  a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+  a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+  button[class*="bg-gradient-to-"],
+  button[class*="from-teal-"][class*="to-blue-"],
+  button[class*="from-cyan-"][class*="to-violet-"]
 ):active:not(:disabled):not([aria-disabled="true"]) {
   transform: translateY(0) scale(.98);
 }
@@ -1428,9 +1432,12 @@
 .bc-murid-dashboard :is(
   .px-btn-gold, .px-btn-primary, .px-btn-royal,
   .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
-  a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
-  a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
-  a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+  a[class*="inline-flex"][class*="bg-gradient-to-"],
+  a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+  a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+  button[class*="bg-gradient-to-"],
+  button[class*="from-teal-"][class*="to-blue-"],
+  button[class*="from-cyan-"][class*="to-violet-"]
 ):focus-visible {
   outline: 3px solid rgb(72 184 233 / 55%);
   outline-offset: 3px;
@@ -1450,9 +1457,12 @@
   .bc-murid-dashboard :is(
     .px-btn-gold, .px-btn-primary, .px-btn-royal,
     .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
-    a[class*="bg-gradient-to-"], button[class*="bg-gradient-to-"],
-    a[class*="from-teal-"][class*="to-blue-"], button[class*="from-teal-"][class*="to-blue-"],
-    a[class*="from-cyan-"][class*="to-violet-"], button[class*="from-cyan-"][class*="to-violet-"]
+    a[class*="inline-flex"][class*="bg-gradient-to-"],
+    a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+    a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+    button[class*="bg-gradient-to-"],
+    button[class*="from-teal-"][class*="to-blue-"],
+    button[class*="from-cyan-"][class*="to-violet-"]
   ) {
     transition: none;
   }
