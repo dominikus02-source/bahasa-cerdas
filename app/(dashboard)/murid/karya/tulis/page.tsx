@@ -341,7 +341,7 @@ function TulisKaryaForm() {
                   onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); setCoverFromLink(); } }}
                 />
                 <button type="button" onClick={setCoverFromLink} disabled={!coverLinkUrl.trim()}
-                  className="px-4 py-2.5 bg-violet-600 text-white rounded-xl text-sm font-semibold hover:bg-violet-700 disabled:opacity-50 transition-all"
+                  className="ui-btn ui-btn--primary ui-btn--sm px-4 py-2.5 disabled:opacity-50"
                 >Pakai</button>
               </div>
             )}
@@ -432,7 +432,7 @@ function TulisKaryaForm() {
       <button
         onClick={handleSubmit}
         disabled={submitting || uploading || uploadingPhotos}
-        className={`w-full flex items-center justify-center gap-2 py-3.5 bg-gradient-to-r ${TYPE_STYLES[type]?.gradient || TYPE_STYLES.OPINI.gradient} text-white rounded-2xl font-semibold text-sm hover:opacity-90 transition-all shadow-lg disabled:opacity-50`}
+        className="ui-btn ui-btn--primary ui-btn--block w-full py-3.5 disabled:opacity-50"
       >
         {submitting ? <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" /> : <Send size={18} />}
         {submitting ? "Menyimpan..." : "Terbitkan Karya"}
