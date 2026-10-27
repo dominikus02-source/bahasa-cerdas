@@ -245,7 +245,7 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
           <p className="mt-3 text-sm font-semibold text-bc-text">Belum ada karya terbaru.</p>
           <p className="mt-1 text-xs text-bc-text-2">Jadilah guru pertama yang berkarya hari ini.</p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            <TombolKarya href="/guru/artikel" icon={<BookOpen size={13} />} label="Buat Artikel" xp={xpArtikel} />
+            <TombolKarya href="/guru/artikel" icon={<BookOpen size={13} />} label="Tulis di AKSARA" xp={xpArtikel} />
             <TombolKarya href="/guru/artikel?type=puisi" icon={<Feather size={13} />} label="Buat Puisi" xp={xpPuisi} />
           </div>
         </div>
@@ -383,12 +383,12 @@ export function GuruBerkarya({ misiStatus, compact = false }: GuruBerkaryaProps)
                 <p className="mt-0.5 text-[11px] text-bc-text-2">
                   {sudahBerkarya
                     ? "Terbitkan satu lagi supaya misi mingguan & XP Anda terus naik."
-                    : "Misi mingguan Artikel/Puisi memberi XP untuk karya pertama Anda."}
+                    : "Misi mingguan berkarya memberi XP untuk karya pertama Anda."}
                 </p>
               </div>
             </div>
             <div className="mt-3 flex flex-wrap gap-2">
-              <TombolKarya href="/guru/artikel" icon={<BookOpen size={13} />} label="Buat Artikel" xp={xpArtikel} />
+              <TombolKarya href="/guru/artikel" icon={<BookOpen size={13} />} label="Tulis di AKSARA" xp={xpArtikel} />
               <TombolKarya href="/guru/artikel?type=puisi" icon={<Feather size={13} />} label="Buat Puisi" xp={xpPuisi} />
             </div>
           </div>}

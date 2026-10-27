@@ -131,7 +131,7 @@ export default function GuruArtikelPage() {
           <p className="text-sm text-gray-500 mt-1">Tulis dan kelola artikel atau puisi untuk dibaca publik</p>
         </div>
         <Button onClick={() => showForm ? resetForm() : setShowForm(true)}>
-          <Plus size={16} /> {showForm ? "Batal" : "Tulis Artikel"}
+          <Plus size={16} /> {showForm ? "Batal" : "Tulis Karya"}
         </Button>
       </div>
 

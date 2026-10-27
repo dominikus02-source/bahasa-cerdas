@@ -63,7 +63,7 @@ ok("next-action.ts murni (tanpa fetch/DB)", !/fetch\(|db\.|prisma\.|import.meta/
   const status = statusDengan(["mgmp", "artikel", "materi", "kelas", "kirim-materi", "toko-karya", "latihan"], []);
   const aksi = hitungNextActionGuru(status);
   ok("Semua misi selesai → fallback CTA artikel", aksi.type === "artikel");
-  ok("Fallback CTA pertama = Tulis Artikel", aksi.label === "Tulis Artikel");
+  ok("Fallback CTA pertama = Tulis di AKSARA", aksi.label === "Tulis di AKSARA");
   ok("Fallback CTA semuaSelesai=true", aksi.semuaSelesai === true);
 }
 
