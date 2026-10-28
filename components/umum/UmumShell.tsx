@@ -10,6 +10,7 @@ import {
 } from "@/components/umum/UmumDashboardNav";
 import { UmumAvatar } from "@/components/umum/UmumAvatar";
 import { UmumAccountMenu, UmumSearch } from "@/components/umum/UmumTopBar";
+import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
 
 export { UmumAvatar };
 
@@ -18,6 +19,8 @@ export interface UmumShellUser {
   fullName: string;
   nickname?: string | null;
   avatar?: string | null;
+  email?: string | null;
+  isFounder?: boolean | null;
 }
 
 function Logo({ className = "" }: { className?: string }) {
@@ -159,6 +162,7 @@ export async function UmumShell({
                 <UmumSearch defaultValue={searchQuery} />
               </div>
               <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-3">
+                <FounderDashboardSwitcher user={user} compact />
                 <BellLink unread={unread} />
                 <UmumAccountMenu
                   user={{
