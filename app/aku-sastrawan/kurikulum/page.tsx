@@ -69,7 +69,7 @@ export default async function AkuSastrawanCurriculumPage({
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Feather size={23} /></div>
           <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-primary">Kurikulum bertahap</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Pilih jalur menulismu.</h1>
-          <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Dua jalur yang berbeda, satu tujuan: membantumu bergerak dari gagasan menuju naskah yang selesai. Ikuti tahap demi tahap, tanpa harus menguasai semuanya sejak awal.</p>
+          <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Dua jalur yang berbeda untuk membantumu bergerak dari gagasan menuju naskah yang selesai. Halaman ini menampilkan peta kurikulum; materi interaktifnya belum tersedia.</p>
         </div>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -83,7 +83,7 @@ export default async function AkuSastrawanCurriculumPage({
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-background border border-border"><ItemIcon size={19} /></span>
                   <span className="flex-1">
                     <span className="block font-bold">{item.title}</span>
-                    <span className="mt-0.5 block text-sm text-muted-foreground">{item.stages.length} tahap pembelajaran</span>
+                    <span className="mt-0.5 block text-sm text-muted-foreground">{item.stages.length} tahap rancangan</span>
                   </span>
                   {active ? <CheckCircle2 className="text-primary" size={19} /> : <ArrowRight size={17} className="text-muted-foreground" />}
                 </div>
@@ -108,7 +108,7 @@ export default async function AkuSastrawanCurriculumPage({
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="font-bold">{stage.title}</h3>
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">Rancangan kurikulum</span>
+                      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">Tahap rancangan</span>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">{stage.detail}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
@@ -125,7 +125,7 @@ export default async function AkuSastrawanCurriculumPage({
               <Target size={20} className="mt-0.5 shrink-0 text-primary" />
               <div>
                 <h3 className="font-bold">Belajar sampai naskah selesai</h3>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">Tahap-tahap di atas adalah rancangan kurikulum. Materi pelajaran interaktif, penyimpanan draf, pelacakan progres, dan AI Writing Coach akan diaktifkan setelah integrasi backend dan hak akses premium selesai.</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">Halaman ini adalah peta belajar, bukan modul pelajaran interaktif. Kamu sudah dapat memakai Writing Studio untuk menyimpan naskah dan AI Writing Coach jika kunci layanan AI tersedia. Materi bertahap dan pelacakan progres belum tersedia.</p>
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
