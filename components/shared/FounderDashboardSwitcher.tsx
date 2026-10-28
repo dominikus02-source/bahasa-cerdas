@@ -20,7 +20,7 @@ export function FounderDashboardSwitcher({
   ];
 
   return (
-    <details className={compact ? "relative" : "relative z-20 mb-4"} data-founder-dashboard-switcher>
+    <details className={compact ? "relative z-[100]" : "relative z-[100] mb-4"} data-founder-dashboard-switcher>
       <summary className="inline-flex min-h-9 cursor-pointer list-none items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-bold text-violet-900 shadow-sm transition hover:bg-violet-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:border-violet-800 dark:bg-violet-950/60 dark:text-violet-100 dark:hover:bg-violet-900/60">
         <ShieldCheck size={16} aria-hidden="true" />
         <span>Pindah Dasbor Founder</span>
