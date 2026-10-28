@@ -44,7 +44,7 @@ const pillars = [
   {
     icon: BookOpen,
     title: "Kurikulum terarah",
-    description: "Materi berurutan, contoh, dan latihan yang membawa pengguna dari dasar menuju proyek karya.",
+    description: "Peta belajar cerpen dan novel sudah tersedia; modul, contoh, dan latihan interaktif sedang disiapkan.",
   },
   {
     icon: PenLine,
@@ -59,15 +59,15 @@ const pillars = [
   {
     icon: Target,
     title: "Progres yang nyata",
-    description: "Pantau pelajaran, target menulis, dan langkah berikutnya sampai karya selesai.",
+    description: "Lanjutkan naskah melalui Writing Studio. Pelacakan progres belajar belum tersedia.",
   },
 ];
 
 const process = [
   ["01", "Pilih jalur", "Mulai dari cerpen atau novel sesuai tujuanmu."],
-  ["02", "Pelajari teknik", "Ikuti modul pendek, contoh, dan latihan terarah."],
+  ["02", "Pelajari teknik", "Gunakan peta tahapan sebagai panduan; modul interaktif belum tersedia."],
   ["03", "Tulis karyamu", "Bangun ide menjadi draf dalam ruang menulis pribadi."],
-  ["04", "Evaluasi & revisi", "Gunakan rubrik dan AI Coach untuk menemukan langkah perbaikan."],
+  ["04", "Evaluasi & revisi", "Minta masukan AI Coach jika layanan AI tersedia, lalu revisi naskahmu sendiri."],
 ];
 
 export default async function AkuSastrawanPage() {
