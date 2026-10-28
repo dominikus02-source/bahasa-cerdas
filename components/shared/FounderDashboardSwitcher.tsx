@@ -26,7 +26,7 @@ export function FounderDashboardSwitcher({
         <span>Pindah Dasbor Founder</span>
         <ChevronDown size={14} aria-hidden="true" />
       </summary>
-      <nav aria-label="Pilihan dasbor founder" className="absolute right-0 top-full z-50 mt-2 min-w-52 rounded-xl border border-bc-line bg-bc-surface p-1.5 shadow-xl">
+      <nav aria-label="Pilihan dasbor founder" className="absolute right-0 top-full z-[110] mt-2 max-h-[min(70vh,22rem)] min-w-52 overflow-y-auto overscroll-contain rounded-xl border border-bc-line bg-bc-surface p-1.5 shadow-xl">
         {links.map(({ href, label, Icon }) => (
           <Link key={href} href={href} prefetch={false} className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-semibold text-bc-text transition-colors hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-bc-focus">
             <Icon size={17} aria-hidden="true" />
