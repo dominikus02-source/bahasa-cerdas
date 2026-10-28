@@ -43,7 +43,7 @@ const tracks = [
 const pillars = [
   {
     icon: BookOpen,
-    title: "Kurikulum terarah",
+    title: "Peta kurikulum",
     description: "Peta belajar cerpen dan novel sudah tersedia; modul, contoh, dan latihan interaktif sedang disiapkan.",
   },
   {
@@ -113,7 +113,7 @@ export default async function AkuSastrawanPage() {
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Akademi menulis kreatif premium untuk kamu yang ingin belajar menulis cerpen atau novel dengan kurikulum terarah, ruang menulis pribadi, dan AI Writing Coach.
+            Ruang menulis premium untuk mengembangkan cerpen dan novel, menyimpan naskah pribadi, serta meminta masukan AI Writing Coach saat layanan tersedia. Peta kurikulum tersedia; modul pembelajaran interaktif sedang disiapkan.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
@@ -131,7 +131,7 @@ export default async function AkuSastrawanPage() {
           </div>
           <div className="mt-8 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-2"><Check size={15} className="text-violet-600" /> Jalur cerpen & novel</span>
-            <span className="inline-flex items-center gap-2"><Check size={15} className="text-violet-600" /> Belajar bertahap</span>
+            <span className="inline-flex items-center gap-2"><Check size={15} className="text-violet-600" /> Peta belajar cerpen & novel</span>
             <span className="inline-flex items-center gap-2"><Check size={15} className="text-violet-600" /> AI sebagai pendamping</span>
           </div>
         </div>
