@@ -30,7 +30,7 @@ export default async function MuridLayout({ children }: { children: React.ReactN
   const rank = rankFromLevel(levelFromXp(user.xp || 0))
 
   return (
-    <MuridShellFrame user={{ fullName: user.fullName, avatar: user.avatar, role: user.role, isFounder: user.isFounder }} rank={rank}>
+    <MuridShellFrame user={{ fullName: user.fullName, avatar: user.avatar, role: user.role, isFounder: user.isFounder, email: user.email }} rank={rank}>
       {children}
     </MuridShellFrame>
   );
