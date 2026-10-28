@@ -59,3 +59,7 @@ export const POST = withAdmin(adminPOST, { route: "/api/admin/contoh", method: "
 Jika aksinya menyangkut uang atau massal, tambahkan aturan di `lib/admin/confirm.ts`
 dan kirim `adminConfirmHeaders()` dari UI setelah `useTypedConfirm()`.
 `npm run test:founder-access` gagal jika ada route admin yang tidak dibungkus.
+
+## 2. Pemilih dasbor founder
+
+`lib/auth/founder-access.ts` menjadi allowlist eksplisit untuk lima akun founder aktif. `components/shared/FounderDashboardSwitcher.tsx` menampilkan menu **Pindah Dasbor Founder** hanya jika sesi memiliki `isFounder=true` dan email cocok dengan allowlist. Menu tersedia di shell Dasbor Umum, Guru, Murid, dan Panel Admin; tujuannya `/umum`, `/guru/beranda`, `/murid/beranda`, dan `/admin`. Guard halaman UMUM mengizinkan founder yang terdaftar agar dapat memeriksa dasbor tersebut tanpa mengubah role utama akun.
