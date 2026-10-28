@@ -127,9 +127,7 @@ const NAV: NavEntry[] = [
     ],
   },
 
-  { type: "divider" },
-  { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
-  { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },
+  // Dashboard switching is handled by the founder switcher in the top navbar.
 ];
 
 /* ── Helper: does this group contain the active route? ──────────── */
