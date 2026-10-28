@@ -61,19 +61,23 @@ export default function WritingStudioPage() {
 
   const openProject = async (project: Project) => {
     if (project.id !== active?.id && !confirmDiscard()) return;
-    setActive(project);
-    setTitle(project.title);
-    setSynopsis(project.synopsis || "");
-    setContent(project.content || "");
     setMessage("Memuat naskah…");
     try {
       const response = await fetch(`/api/aku-sastrawan/projects/${project.id}`, { cache: "no-store" });
       const data = await response.json();
-      if (!response.ok) { setMessage(data.error || "Naskah tidak dapat dibuka."); return; }
+      if (!response.ok) { setMessage(data.error || "Naskah tidak dapat dibuka. Draf yang sedang terbuka tetap dipertahankan."); return; }
       const p = data.project as Project;
-      setTitle(p.title); setSynopsis(p.synopsis || ""); setContent(p.content || ""); setActive(p);
+      // Replace the editor only after the full manuscript loads successfully.
+      // The project-list response omits content; setting state early could blank the editor
+      // on a network error and risk saving an empty manuscript over the original.
+      setTitle(p.title);
+      setSynopsis(p.synopsis || "");
+      setContent(p.content || "");
+      setActive(p);
       setMessage("Naskah terbuka. Simpan perubahan secara berkala.");
-    } catch { setMessage("Gagal memuat naskah. Periksa koneksi."); }
+    } catch {
+      setMessage("Gagal memuat naskah. Draf yang sedang terbuka tetap dipertahankan; periksa koneksi lalu coba lagi.");
+    }
   };
 
   const createProject = async (genre: "CERPEN" | "NOVEL") => {
