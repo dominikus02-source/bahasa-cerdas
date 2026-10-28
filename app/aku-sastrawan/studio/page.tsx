@@ -29,6 +29,8 @@ export default function WritingStudioPage() {
   const [coachPrompt, setCoachPrompt] = useState("Berikan umpan balik tentang kekuatan naskah ini dan tiga hal paling penting untuk diperbaiki.");
   const [coachReply, setCoachReply] = useState("");
   const [coachBusy, setCoachBusy] = useState(false);
+  const dirty = Boolean(active && (title !== active.title || synopsis !== (active.synopsis || "") || content !== (active.content || "")));
+  const confirmDiscard = () => !dirty || window.confirm("Ada perubahan yang belum disimpan. Buang perubahan ini?");
 
   const loadProjects = useCallback(async () => {
     setLoading(true);
@@ -50,7 +52,15 @@ export default function WritingStudioPage() {
 
   useEffect(() => { void loadProjects(); }, [loadProjects]);
 
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+
   const openProject = async (project: Project) => {
+    if (project.id !== active?.id && !confirmDiscard()) return;
     setActive(project);
     setTitle(project.title);
     setSynopsis(project.synopsis || "");
@@ -67,6 +77,7 @@ export default function WritingStudioPage() {
   };
 
   const createProject = async (genre: "CERPEN" | "NOVEL") => {
+    if (!confirmDiscard()) return;
     const name = window.prompt(`Beri judul awal untuk proyek ${label(genre).toLowerCase()}:`, genre === "NOVEL" ? "Novel tanpa judul" : "Cerpen tanpa judul");
     if (name === null) return;
     try {
@@ -99,7 +110,7 @@ export default function WritingStudioPage() {
   }, [active, title, synopsis, content]);
 
   const deleteProject = async () => {
-    if (!active || !window.confirm("Hapus karya ini secara permanen?")) return;
+    if (!active || !window.confirm(dirty ? "Karya ini memiliki perubahan yang belum disimpan. Hapus karya beserta seluruh isinya secara permanen?" : "Hapus karya ini secara permanen?")) return;
     const response = await fetch(`/api/aku-sastrawan/projects/${active.id}`, { method: "DELETE" });
     if (response.ok) { setActive(null); setTitle(""); setSynopsis(""); setContent(""); await loadProjects(); }
     else setMessage("Karya belum dapat dihapus.");
@@ -150,7 +161,7 @@ export default function WritingStudioPage() {
             <div className="flex items-center justify-between"><h2 className="text-sm font-bold">Proyekmu</h2><span className="text-xs text-muted-foreground">{projects.length} karya</span></div>
             {loading ? <p className="rounded-xl border border-border p-4 text-sm text-muted-foreground">Memuat karya…</p> : projects.length === 0 ? <div className="rounded-2xl border border-dashed border-border p-5 text-center"><Feather size={22} className="mx-auto text-muted-foreground" /><p className="mt-3 text-sm font-semibold">Mulai dari satu ide</p><p className="mt-1 text-xs leading-5 text-muted-foreground">Buat proyek cerpen atau novel pertamamu.</p></div> : projects.map((p) => (
               <button key={p.id} onClick={() => void openProject(p)} className={`w-full rounded-xl border p-3 text-left transition ${active?.id === p.id ? "border-primary/40 bg-primary/5" : "border-border bg-card hover:border-primary/30"}`}>
-                <span className="block truncate text-sm font-bold">{p.title}</span><span className="mt-1 flex items-center justify-between gap-2 text-xs text-muted-foreground"><span>{label(p.genre)}</span><span>{p.wordCount} kata</span></span>
+                <span className="block truncate text-sm font-bold">{p.title}</span><span className="mt-1 flex items-center justify-between gap-2 text-xs text-muted-foreground"><span>{label(p.genre)}{active?.id === p.id && dirty ? " · Belum disimpan" : ""}</span><span>{p.wordCount} kata</span></span>
               </button>
             ))}
           </div>
@@ -172,7 +183,7 @@ export default function WritingStudioPage() {
               <button onClick={() => void askCoach()} disabled={coachBusy} className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60"><Sparkles size={15}/>{coachBusy ? "Coach sedang membaca…" : "Minta masukan"}</button>
               {coachReply && <div className="mt-4 whitespace-pre-wrap rounded-2xl border border-border bg-muted/30 p-4 text-sm leading-7">{coachReply}</div>}
             </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/30 px-4 py-3 sm:px-6"><p className="flex items-center gap-2 text-xs text-muted-foreground"><Check size={14} /> {message}</p><button onClick={() => void deleteProject()} className="inline-flex items-center gap-1.5 text-xs font-semibold text-destructive hover:opacity-80"><Trash2 size={14} /> Hapus karya</button></div>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-muted/30 px-4 py-3 sm:px-6"><p className="flex items-center gap-2 text-xs text-muted-foreground"><Check size={14} /> {dirty ? "Ada perubahan yang belum disimpan." : message}</p><button onClick={() => void deleteProject()} className="inline-flex items-center gap-1.5 text-xs font-semibold text-destructive hover:opacity-80"><Trash2 size={14} /> Hapus karya</button></div>
           </>}
         </section>
       </div>
