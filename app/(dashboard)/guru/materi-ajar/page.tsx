@@ -374,12 +374,12 @@ export default function MateriAjarPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">File * <span className="font-normal text-gray-400">(bisa pilih banyak)</span></label>
-                <input type="file" multiple accept=".pdf,.pptx"
+                <input type="file" multiple accept=".pdf,.pptx,.docx"
                   onChange={e => {
                     const picked = Array.from(e.target.files || [])
-                    const allowed = ["pdf", "pptx"]
+                    const allowed = ["pdf", "pptx", "docx"]
                     const valid = picked.filter(f => allowed.includes(f.name.split(".").pop()?.toLowerCase() || ""))
-                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF dan PPTX yang diterima.")
+                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF, PPTX, dan DOCX yang diterima.")
                     setUploadFiles(valid)
                   }}
                   className="hidden" id="materi-file-input" />
@@ -402,7 +402,7 @@ export default function MateriAjarPage() {
                     ))}
                   </div>
                 )}
-                <p className="text-[10px] text-gray-400 mt-1">PPTX atau PDF — Maks 50MB per file</p>
+                <p className="text-[10px] text-gray-400 mt-1">PDF maks. 20MB, DOCX maks. 15MB, PPTX maks. 50MB per file</p>
               </div>
               {uploadProgress && (
                 <div className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
@@ -425,7 +425,7 @@ export default function MateriAjarPage() {
                     try {
                       const fileExt = f.name.split(".").pop()?.toLowerCase() || "";
                       const fd = new FormData();
-                      fd.set("title", (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : f.name.replace(/\\.[^.]+$/, ""));
+                      fd.set("title", (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : f.name.replace(/\.[^.]+$/, ""));
                       fd.set("description", uploadForm.description);
                       fd.set("grade", uploadForm.grade);
                       fd.set("tema", uploadForm.tema.trim());
