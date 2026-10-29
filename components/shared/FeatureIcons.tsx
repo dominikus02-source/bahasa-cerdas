@@ -91,12 +91,15 @@ export const NaraGuruIcon = ({ size = 40, className }: IconProps) => {
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
       <Gradient id={gradientId} />
       <rect width="48" height="48" rx="14" fill={`url(#${gradientId})`} />
-      <path d="M15 19a9 9 0 0 1 18 0v5a9 9 0 0 1-18 0v-5z" fill="white" />
-      <circle cx="20.5" cy="20.5" r="1.6" fill={`url(#${gradientId})`} />
-      <circle cx="27.5" cy="20.5" r="1.6" fill={`url(#${gradientId})`} />
-      <path d="M20.5 25q3.5 2 7 0" stroke={`url(#${gradientId})`} strokeWidth="1.6" strokeLinecap="round" fill="none" />
-      <path d="M33 15l2-2m0 0l2 2m-2-2v3" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-      <rect x="14" y="31" width="20" height="2.5" rx="1.25" fill="white" opacity="0.95" />
+      {/* wajah NARA */}
+      <path d="M14 20a10 10 0 0 1 20 0v5a10 10 0 0 1-20 0v-5z" fill="white" />
+      <circle cx="20" cy="21.5" r="1.7" fill={`url(#${gradientId})`} />
+      <circle cx="28" cy="21.5" r="1.7" fill={`url(#${gradientId})`} />
+      <path d="M20 26q4 2.2 8 0" stroke={`url(#${gradientId})`} strokeWidth="1.7" strokeLinecap="round" fill="none" />
+      {/* sparkle guru */}
+      <path d="M34 12l1.2 2.4 2.6.4-1.9 1.8.4 2.6L34 18.2l-2.3 1.2.4-2.6-1.9-1.8 2.6-.4L34 12z" fill="white" />
+      {/* garis buku/materi */}
+      <rect x="16" y="32" width="16" height="2.2" rx="1.1" fill="white" opacity="0.95" />
     </svg>
   );
 };
