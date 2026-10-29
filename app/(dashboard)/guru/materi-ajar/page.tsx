@@ -33,7 +33,7 @@ interface Materi {
 }
 
 type LevelTab = "SD" | "SMP" | "SMA"
-type Folder = "" | "PPT" | "PDF"
+type Folder = "" | "PPT" | "PDF" | "DOCX"
 
 const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
   SD: ["SD Kelas 1", "SD Kelas 2", "SD Kelas 3", "SD Kelas 4", "SD Kelas 5", "SD Kelas 6"],
@@ -44,6 +44,7 @@ const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
 const FOLDERS: { value: Folder; label: string; hint: string }[] = [
   { value: "PPT", label: "PPT", hint: "Presentasi" },
   { value: "PDF", label: "PDF", hint: "Dokumen PDF" },
+  { value: "DOCX", label: "Word", hint: "Dokumen Microsoft Word" },
 ]
 
 export default function MateriAjarPage() {
@@ -65,7 +66,7 @@ export default function MateriAjarPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [kelasFilter, setKelasFilter] = useState<string>("") // grade spesifik, "" = semua di jenjang
   const [folder, setFolder] = useState<Folder>("")
-  const [folderCounts, setFolderCounts] = useState<{ PPT: number; PDF: number }>({ PPT: 0, PDF: 0 })
+  const [folderCounts, setFolderCounts] = useState<{ PPT: number; PDF: number; DOCX: number }>({ PPT: 0, PDF: 0, DOCX: 0 })
   const [quota, setQuota] = useState<{ used: number; limit: number | null; unlimited: boolean } | null>(null)
   const [detailMateri, setDetailMateri] = useState<Materi | null>(null)
   const [kirimMateri, setKirimMateri] = useState<Materi | null>(null)
@@ -231,7 +232,7 @@ export default function MateriAjarPage() {
             >
               <Folder size={13} /> {f.label}
               <span className={`ml-0.5 px-1.5 rounded-full text-[10px] ${folder === f.value ? "bg-white/20" : "bg-gray-200 text-gray-500"}`}>
-                {folderCounts[f.value as "PPT" | "PDF"] ?? 0}
+                {folderCounts[f.value as "PPT" | "PDF" | "DOCX"] ?? 0}
               </span>
             </button>
           ))}
