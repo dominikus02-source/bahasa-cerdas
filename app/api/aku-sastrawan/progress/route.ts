@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
-import { prisma } from "@/lib/prisma";
+import { db } from "@/lib/db";
 import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
 
 export const runtime = "nodejs";
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const track = req.nextUrl.searchParams.get("track") || "cerpen";
     if (!["cerpen", "novel"].includes(track)) return NextResponse.json({ error: "Jalur tidak valid." }, { status: 400 });
 
-    const progress = await prisma.curriculumProgress.findMany({
+    const progress = await db.curriculumProgress.findMany({
       where: { userId: user.id, track },
       orderBy: { stageIndex: "asc" },
     });
@@ -39,7 +39,7 @@ export async function POST(req: NextRequest) {
 
     if (stageIndex < 0 || stageIndex > 10) return NextResponse.json({ error: "Tahap tidak valid." }, { status: 400 });
 
-    const progress = await prisma.curriculumProgress.upsert({
+    const progress = await db.curriculumProgress.upsert({
       where: { userId_track_stageIndex: { userId: user.id, track, stageIndex } },
       update: { completed, completedAt: completed ? new Date() : null, notes },
       create: { userId: user.id, track, stageIndex, completed, completedAt: completed ? new Date() : null, notes },
