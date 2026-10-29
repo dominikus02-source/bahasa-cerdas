@@ -14,5 +14,7 @@ export interface UserLike {
   premiumUntil: Date | null;
   trialEndsAt: Date | null;
   trialStartedAt?: Date | null;
+  /** "GURU_PRO_TRIAL" | "UMUM_PREMIUM_TRIAL" — membedakan uji coba guru vs Umum. */
+  trialPlan?: string | null;
   premiumPlan?: string;
 }

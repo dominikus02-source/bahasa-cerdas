@@ -35,10 +35,10 @@ export function VerifiedBadge({ isFounder, badgeKind, size = 20, className = "" 
   const kind = isFounder ? "founder" : badgeKind;
   if (!kind) return null;
   const iconSize = Math.max(20, size);
-  const label = { founder: "Pendiri BahasaCerdas", teacher: "Guru berlangganan", trial: "Guru dalam masa uji coba", student: "Murid berlangganan" }[kind];
+  const label = { founder: "Pendiri BahasaCerdas", teacher: "Guru berlangganan", trial: "Guru dalam masa uji coba", student: "Murid berlangganan", umum: "Premium Umum" }[kind];
   return <span role="img" title={label} aria-label={label} tabIndex={0}
     className={`inline-flex shrink-0 items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500 ${className}`}
-    style={{ width: iconSize, height: iconSize }}><IdentityIcon kind={kind} size={iconSize} /></span>;
+    style={{ width: iconSize, height: iconSize }}><IdentityIcon kind={kind === "umum" ? "student" : kind} size={iconSize} /></span>;
 }
 
 interface UserNameProps {

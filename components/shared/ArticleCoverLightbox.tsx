@@ -40,7 +40,7 @@ export default function ArticleCoverLightbox({ src, title }: ArticleCoverLightbo
 
   if (!resolvedSrc) {
     return (
-      <div className="mb-2 aspect-video overflow-hidden rounded-2xl shadow-lg">
+      <div className="mb-2 aspect-video w-full overflow-hidden rounded-2xl shadow-lg">
         <SafeMediaImage
           src={null}
           alt={title}

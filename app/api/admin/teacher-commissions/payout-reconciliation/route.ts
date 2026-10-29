@@ -5,6 +5,7 @@ import {
   reconcilePendingTeacherPayouts,
 } from "@/lib/commission/payout/orchestrator";
 import { auditCommission } from "@/lib/commission/audit";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions/payout-reconciliation
@@ -12,7 +13,7 @@ import { auditCommission } from "@/lib/commission/audit";
  * Anomali DILAPORKAN + diaudit, tidak pernah di-repair diam-diam.
  * ?run=true → juga menjalankan rekonsiliasi payout terbuka.
  */
-export async function GET(req: Request) {
+async function adminGET(req: Request) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -46,3 +47,5 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Gagal menjalankan rekonsiliasi" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/payout-reconciliation", method: "GET" });

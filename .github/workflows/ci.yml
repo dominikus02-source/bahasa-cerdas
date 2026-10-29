@@ -75,10 +75,26 @@ jobs:
           npm run test:jumpa-flow
           npm run test:jumpa-input
 
+      - name: Artikel/puisi indentation + sanitization gate
+        run: npm run test:artikel-indentasi
+
+      - name: Main Bersama game duration gate
+        run: npm run test:main-bersama-game-duration
+
+      - name: Main Bersama single music source gate
+        run: npm run test:main-bersama-music-leader
+
       - name: Midtrans payment activation gate
         run: npm run test:midtrans-activation
       - name: Payment pages gate
         run: npm run test:payment-pages
+      - name: Premium Umum gate (paket, checkout, webhook, uji coba, kupon)
+        run: |
+          npm run test:umum-premium
+          npm run test:role-umum
+
+      - name: Founder access gate (pengaman admin, super founder, komisi)
+        run: npm run test:founder-access
 
       - name: Lint
         run: npm run lint

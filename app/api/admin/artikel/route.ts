@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import homepageContent from "@/prisma/seed-data/homepage-content.json";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const supabase = await createClient();
     const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
@@ -55,7 +56,7 @@ export async function GET(req: NextRequest) {
 
 const EDITOR_EMAIL = "guru@demo.com";
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function DELETE(req: NextRequest) {
+async function adminDELETE(req: NextRequest) {
   try {
     const supabase = await createClient();
     const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -145,3 +146,7 @@ export async function DELETE(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/artikel", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/artikel", method: "POST" });
+export const DELETE = withAdmin(adminDELETE, { route: "/api/admin/artikel", method: "DELETE" });

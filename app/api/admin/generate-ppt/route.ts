@@ -2,8 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import pptxgen from "pptxgenjs";
+import { withAdmin } from "@/lib/admin/guard";
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     console.log("PPT Generation: Starting...");
     
@@ -807,3 +808,5 @@ async function uploadToSupabase(buffer: Buffer | ArrayBuffer, fileName: string, 
   const publicUrl = `${supabaseUrl}/storage/v1/object/public/documents/${fileName}`;
   return { url: publicUrl, key: fileName };
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/generate-ppt", method: "POST" });

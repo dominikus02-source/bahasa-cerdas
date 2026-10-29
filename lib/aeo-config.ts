@@ -35,12 +35,12 @@ export const aeoPages: Record<string, AeoMeta> = {
     ogDescription: "Dibangun oleh guru, untuk guru. Misi, visi, dan tim di balik BahasaCerdas.",
   },
   artikel: {
-    title: "Artikel & Tips Mengajar Bahasa Indonesia — BahasaCerdas",
+    title: "AKSARA — Ruang Baca & Artikel Tips Mengajar Bahasa Indonesia | BahasaCerdas",
     description:
-      "Kumpulan artikel dan tips mengajar Bahasa Indonesia untuk guru. Strategi pembelajaran, media ajar, metode asesmen, dan wawasan pendidikan terkini.",
+      "AKSARA, ruang baca dan karya BahasaCerdas: kumpulan artikel dan tips mengajar Bahasa Indonesia untuk guru. Strategi pembelajaran, media ajar, metode asesmen, dan wawasan pendidikan terkini.",
     path: "/artikel",
-    ogTitle: "Artikel & Tips Mengajar | BahasaCerdas",
-    ogDescription: "Tips mengajar, strategi pembelajaran, dan wawasan pendidikan Bahasa Indonesia.",
+    ogTitle: "AKSARA — Ruang Baca | BahasaCerdas",
+    ogDescription: "Ruang baca dan karya: tips mengajar, strategi pembelajaran, dan wawasan pendidikan Bahasa Indonesia.",
   },
   kebijakanPrivasi: {
     title: "Kebijakan Privasi — BahasaCerdas",

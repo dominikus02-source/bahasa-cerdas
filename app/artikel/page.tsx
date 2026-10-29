@@ -74,11 +74,11 @@ export default function ArtikelPage() {
       <div className="max-w-5xl mx-auto px-4 py-16">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-red-100 dark:bg-red-500/15 rounded-full text-red-700 dark:text-red-300 text-sm font-medium mb-4">
-            <BookOpen size={14} /> Artikel & Wawasan
+            <BookOpen size={14} /> AKSARA — Ruang Baca
           </div>
-          <h1 className="text-4xl font-extrabold text-bc-text">Artikel dan Wawasan BahasaCerdas</h1>
+          <h1 className="text-4xl font-extrabold text-bc-text">AKSARA</h1>
           <p className="mt-2 text-bc-text-3 text-lg max-w-2xl mx-auto">
-            Baca gagasan, panduan, dan catatan founder tentang literasi, pembelajaran, komunitas guru, dan masa depan Bahasa Indonesia.
+            Ruang baca dan karya untuk menjelajahi bacaan dan tulisan — baca gagasan, panduan, dan catatan founder tentang literasi, pembelajaran, komunitas guru, dan masa depan Bahasa Indonesia.
           </p>
         </div>
 

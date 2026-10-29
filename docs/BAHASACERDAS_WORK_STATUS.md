@@ -1,8 +1,16 @@
 # BahasaCerdas Work Status
 
 > **Project Ledger** — track completed, in-progress, pending, and blocked work.
-> **Last updated:** 2026-06-29 (Phase 2C — UKBI/TKA Per-Attempt Snapshot)
+> **Last updated:** 2026-10-26 (Koreksi infra: pindah ke VPS idCloudHost + Supabase self-hosted)
 > **Branch:** `main` (GitHub: `dominikus02-source/bahasa-cerdas`)
+>
+> ⚠️ **Koreksi infra 26 Okt 2026.** Produksi berjalan di **VPS idCloudHost `103.242.10.81`**
+> (Next.js di Docker + Caddy, DNS Cloudflare), **bukan Vercel**; database & auth memakai
+> **Supabase self-hosted di VPS yang sama**, **bukan Supabase cloud**; **game server hidup**.
+> Deploy = push ke `main` → GitHub Actions → `ops/vps/deploy.sh`. Env produksi ada di
+> `/opt/bahasacerdas/config/web.env`. Tabel/baris di bawah yang menyebut Vercel, Supabase cloud,
+> `72.60.78.65`, atau "game server dead" adalah **arsip sebelum migrasi**. Sumber kebenaran:
+> `README §CI dan Deployment` + bagian **Critical Context** di `AGENTS.md`.
 
 ---
 
@@ -13,17 +21,19 @@
 | Active branch | `main` |
 | Remote | `origin` → `https://github.com/dominikus02-source/bahasa-cerdas.git` |
 | Local vs origin | **Up to date** |
-| Last commit | `feat: seed homepage v2 + AEO Phase 6-10 + DB migration fixes` |
-| Uncommitted changes | `.env.backup-vps` (in `.gitignore`), `backups/` (gitignored), new scripts + audit doc |
+| Last commit / uncommitted | _snapshot lama per 29 Jun 2026 — jangan diandalkan; jalankan `git log` / `git status`_ |
 
-## 2. Infrastructure
+## 2. Infrastructure (diperbarui 26 Okt 2026)
 
 | Service | Status | URL / Detail |
 |---------|--------|-------------|
-| **Vercel (Frontend)** | ✅ Live | `https://bahasacerdas.com` + `www.bahasacerdas.com` |
-| **Supabase (DB + Auth)** | ✅ Live | [set in .env / Vercel env vars] |
-| **Game Server** | ❌ Dead | VPS `72.60.78.65` unreachable — Hostinger expired Jun 26. Fly.io blocked (payment info). Railway token invalid. |
-| **DNS** | ✅ Live | `bahasacerdas.com` → Vercel (ns1/ns2.vercel-dns.com); `game.bahasacerdas.com` → dead VPS A record |
+| **VPS produksi (idCloudHost)** | ✅ Aktif | `103.242.10.81`, repo `/opt/bahasacerdas/apps/bahasa-cerdas`, config `/opt/bahasacerdas/config/*.env`, user SSH `bcadmin` |
+| **Frontend (Next.js)** | ✅ Live | `https://bahasacerdas.com` + `www` — diserve **Caddy** di VPS, di depannya **Cloudflare** (bukan Vercel) |
+| **Supabase (DB + Auth)** | ✅ Live | **Self-hosted di VPS yang sama** (`ops/supabase-selfhost/`). Supabase cloud `ibtlhoocaoopgtcsnvzr` sudah tidak aktif |
+| **Game Server** | ✅ Hidup | Service `game` di `ops/vps/docker-compose.yml` → `https://game.bahasacerdas.com` (A `103.242.10.81`, dicek HTTP 200) |
+| **Deploy** | ✅ Otomatis | Push `main` → GitHub Actions `CI` → `Deploy Production VPS` → `ops/vps/deploy.sh` → cek `/api/health` (`status=ok`, `db=up`) |
+| **DNS** | ✅ Live | `bahasacerdas.com`/`www` → Cloudflare (proxy) → VPS; `game.bahasacerdas.com` → `103.242.10.81` |
+| ~~VPS Hostinger `72.60.78.65`~~ | ❌ Mati | Mati sejak 26 Jun 2026, tanpa backup — **digantikan** VPS idCloudHost (riwayat saja) |
 
 ## 3. Completed Phases
 
@@ -85,13 +95,14 @@
 
 | Item | Status |
 |------|--------|
-| Production login (bahasacerdas.com) | ✅ Bekerja — DATABASE_URL/DIRECT_URL di Vercel sudah mengarah ke Supabase |
-| Data source | Supabase (PostgreSQL via pooler) — **source of truth** |
-| Old VPS data | ❌ Dianggap hilang — Hostinger expired Jun 26, 2026. Tidak ada backup. |
-| Data recovery phase | ✅ Phase Data Recovery 1 sedang berjalan — backup + audit sebelum seed/migrate ulang |
+| Production login (bahasacerdas.com) | ✅ Bekerja — `DATABASE_URL`/`DIRECT_URL` ada di `/opt/bahasacerdas/config/web.env` (VPS) dan mengarah ke Supabase **self-hosted** |
+| Data source | PostgreSQL Supabase **self-hosted** di VPS `103.242.10.81` — **source of truth** |
+| Old VPS data (Hostinger `72.60.78.65`) | ❌ Arsip: hilang sejak Jun 26, 2026, tanpa backup. Tidak relevan dengan VPS produksi sekarang |
+| Data recovery phase | ✅ Selesai untuk era itu — kini data ada di Supabase self-hosted (jalankan `npm run backup:daily` untuk tetap aman) |
 | Current backup | `backups/current/<timestamp>/` — backup JSON per tabel (read-only) |
-| Supabase project | `https://ibtlhoocaoopgtcsnvzr.supabase.co` |
-| Game server | ❌ Masih mati — VPS unreachable |
+| Supabase project (cloud, lama) | ~~`https://ibtlhoocaoopgtcsnvzr.supabase.co`~~ — sudah tidak aktif; yang dipakai instance **self-hosted** |
+| Supabase self-hosted | ✅ Aktif di VPS — prosedur `ops/supabase-selfhost/README.md` (shadow → cutover) |
+| Game server | ✅ **Hidup** — service `game` (compose) → `game.bahasacerdas.com`, dicek HTTP 200 per 26 Okt 2026 |
 | Exam engine dev | ⏸️ Ditunda sampai backup/audit selesai |
 
 ## 5. Files by Category
@@ -157,10 +168,11 @@
 - `app/(dashboard)/guru/ai-tools/` — 6 form components + orchestrator
 - `app/api/ai/agents/` — Central runner, saved results, export routes
 
-### Game Server (Dead)
-- `game-server/Dockerfile` — Ready but no host
-- `game-server/fly.toml` — Fly.io config (blocked by payment)
+### Game Server (HIDUP di VPS idCloudHost)
+- Service `game` di `ops/vps/docker-compose.yml` (env `game.env`) → `https://game.bahasacerdas.com`
 - `game-server/src/server.ts` — Socket.io game server source
+- `game-server/Dockerfile` — dipakai build image saat deploy
+- `game-server/fly.toml` — **arsip** (rencana Fly.io lama, tidak dipakai)
 
 ## 6. Key Decisions
 
@@ -180,7 +192,7 @@
 
 | Blocker | Impact | Notes |
 |---------|--------|-------|
-| **Game server dead** | All multiplayer games broken (Kuis Battle, Tebak Kata, Adu Cepat, Katastra) | VPS Hostinger expired Jun 26. Code at `game-server/`. Fly.io requires billing. Railway token invalid. |
+| ~~**Game server dead**~~ | ✅ **Selesai** — game server jalan di VPS idCloudHost | Riwayat: VPS Hostinger mati Jun 26; kini service `game` di compose VPS baru. Fly.io/Railway tidak dipakai. |
 | **YouTube video IDs** | Some videos in seed data use fake IDs → 404 | `VIDEO_ID_CERPEN`, `VIDEO_ID_PERSUASI`, `VIDEO_ID_BACACEPAT`, `VIDEO_ID_EJAAN` need replacement |
 | **Supabase Storage files** | Karya items reference files that don't exist in storage | `storage/v1/object/public/documents/seed/materi/*` — all will 404 on download |
 | **Author display name** | seed items use `guru@demo.com`'s `fullName` as author, not editorial persona | Need to update guru@demo.com's fullName to "Tim Redaksi BahasaCerdas" |
@@ -188,8 +200,13 @@
 
 ## 8. Environment Variables
 
-| Variable | Set in Vercel? | Notes |
-|----------|----------------|-------|
+**Lokasi nilai (per 26 Okt 2026):** VPS idCloudHost `/opt/bahasacerdas/config/web.env`, lalu
+diturunkan ke `game.env` / `worker.env` / `cron.env` oleh `ops/vps/prepare-runtime-envs.sh`.
+Bukan di Vercel dan bukan di Supabase cloud. Template lokal: `.env.example`.
+Nilai rahasia tidak bisa diverifikasi dari repo — baca file di VPS, jangan menebak.
+
+| Variable | Status di produksi | Notes |
+|----------|--------------------|-------|
 | `DATABASE_URL` | ✅ | Supabase pooler with `pgbouncer=true` |
 | `DIRECT_URL` | ✅ | Supabase direct (port 5432) for migrations |
 | `NEXT_PUBLIC_SUPABASE_URL` | ✅ | Supabase project URL |
@@ -266,8 +283,8 @@ Deleted 48 items owned by demo user `guru@demo.com`:
 
 1. **Structural Validator for UKBI/TKA question bank** — validate answer-in-options, ID format, correctAnswer matches one of option IDs, no orphan PaketKompetensi references
 2. **Build attempt review UI** — read sanitized answerDetails to show per-attempt question review with student answers
-3. **Set up daily backup cron** — Add Vercel Cron Job (`POST /api/cron/backup`) or external cron for automated daily backup
-4. **Game server revival** — find new hosting for game.bahasacerdas.com (VPS or alternative)
+3. **Backup cron** — pastikan jadwal harian jalan: service `cron` di `ops/vps/docker-compose.yml` (profil `scheduler`, `ENABLE_CRON=1`) atau crontab VPS yang memanggil `scripts/backup-supabase-daily.ts`. Cek dengan `docker compose ps cron` — **bukan** Vercel Cron
+4. ~~Game server revival~~ — **SELESAI** (service `game` di VPS idCloudHost, `game.bahasacerdas.com` HTTP 200)
 5. **More JALUR questions** — expand question count per unit (target 10+ per unit, currently 3-6)
 6. **Push notifications** — browser push API for notif when tab not open
 7. **Fix author display name** — update guru@demo.com's `fullName` to "Tim Redaksi BahasaCerdas"
@@ -283,7 +300,7 @@ Deleted 48 items owned by demo user `guru@demo.com`:
 | Backup validation | ✅ SHA256 + row count verification |
 | Learning content validation | ✅ `scripts/validate-learning-content.ts` |
 | Restore safety | ✅ Dry-run default, protected tables, requires --execute |
-| Cron | ⏳ Not set — needs Vercel Cron or external cron |
+| Cron | ⚠️ Pakai service `cron` di compose (profil `scheduler`, `ENABLE_CRON=1`) atau crontab VPS — cek `docker compose ps cron`; **bukan** Vercel Cron |
 | Stale backup warning | ✅ Data Center shows warning if >24h |
 
 ---

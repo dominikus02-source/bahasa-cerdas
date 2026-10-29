@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { dashboardForUser } from "@/lib/auth/redirect";
+import { isUmum, UMUM_HOME } from "@/lib/auth/roles";
 import { loadRoomHistory } from "@/lib/jumpa/scheduling";
 import RoomHistory from "@/components/jumpa/RoomHistory";
 
@@ -12,5 +13,5 @@ export default async function JumpaRiwayatPage() {
   if (!user) redirect("/login?next=/jumpa/riwayat");
   if (user.role === "ADMIN" && !user.isFounder) redirect("/jumpa/pantau");
   const data = await loadRoomHistory(user);
-  return <RoomHistory data={data} canSchedule={data.effective === "GURU"} backHref={dashboardForUser(user.role, user.isFounder)} />;
+  return <RoomHistory data={data} canSchedule={data.effective === "GURU"} backHref={isUmum(user.role) ? UMUM_HOME : dashboardForUser(user.role, user.isFounder)} />;
 }

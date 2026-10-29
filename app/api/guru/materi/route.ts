@@ -2,14 +2,80 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
+import {
+  MATERI_CONTENT_TYPE,
+  MATERI_FOLDER_TYPES,
+  MATERI_MAX_BYTES,
+  MATERI_SEMUA_TIPE,
+  MATERI_TYPE_ERROR,
+  MATERI_TYPE_LABEL,
+  materiExtFromName,
+  materiFileTypeFromExt,
+} from "@/lib/materi/file-types";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
-// Folder guru: PPT / PDF — dikelompokkan dari fileType.
-const FOLDER_TYPES: Record<string, string[]> = {
-  PPT: ["PPTX"],
-  PDF: ["PDF"],
-};
+// Folder guru: PowerPoint / Word / PDF — dikelompokkan dari fileType.
+const FOLDER_TYPES: Record<string, string[]> = MATERI_FOLDER_TYPES;
+
+// SECURITY (M2b): identitas HANYA dari sesi Supabase (cookie). supabaseId dari
+// query/formData/body TIDAK dipakai lagi — dulu siapa pun yang tahu supabaseId
+// seorang guru bisa membaca/menulis/mengedit/menghapus materi atas namanya.
+// Klien lama yang masih mengirim supabaseId tetap jalan: nilainya diabaikan.
+async function resolveSessionGuru(): Promise<{ dbUser: any; authId: string } | { res: NextResponse }> {
+  let authId: string | null = null;
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    authId = user?.id ?? null;
+  } catch {}
+  if (!authId) {
+    return { res: NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 }) };
+  }
+  const dbUser = await db.user.findUnique({ where: { supabaseId: authId } });
+  if (!dbUser || dbUser.email?.endsWith("@account.invalid")) {
+    return { res: NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 }) };
+  }
+  if (!isTeacherOrStudent(dbUser)) {
+    return { res: NextResponse.json({ error: "Khusus guru." }, { status: 403 }) };
+  }
+  return { dbUser, authId };
+}
+
+// SECURITY: metadata file yang diunggah dari klien (Supabase Storage langsung)
+// harus menunjuk ke berkas milik pengunggah sendiri di bucket "documents".
+// Mencegah (a) fileKey milik orang lain — yang nanti ikut dihapus saat DELETE —
+// dan (b) fileUrl sembarang (mis. javascript:) yang dibuka guru lain via preview.
+function validatePreUploadedFile(opts: { fileUrl: string | null; fileKey: string | null; fileType: string | null; authId: string; dbUserId: string }): string | null {
+  const { fileUrl, fileKey, fileType, authId, dbUserId } = opts;
+  if (fileType && !MATERI_SEMUA_TIPE.includes(fileType.toUpperCase() as (typeof MATERI_SEMUA_TIPE)[number])) {
+    return MATERI_TYPE_ERROR;
+  }
+  if (fileKey) {
+    if (fileKey.includes("..") || fileKey.startsWith("/")) return "Lokasi file tidak valid";
+    if (!fileKey.startsWith(`${authId}/`) && !fileKey.startsWith(`${dbUserId}/`)) return "Lokasi file tidak valid";
+  }
+  if (fileUrl) {
+    let parsed: URL;
+    try { parsed = new URL(fileUrl); } catch { return "URL file tidak valid"; }
+    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (base) {
+      let origin = "";
+      try { origin = new URL(base).origin; } catch {}
+      if (!origin || parsed.origin !== origin || !parsed.pathname.startsWith("/storage/v1/object/public/documents/")) return "URL file tidak valid";
+    } else if (parsed.protocol !== "https:") {
+      return "URL file tidak valid";
+    }
+  }
+  return null;
+}
+
+// Field Materi yang boleh diubah lewat PUT. uploaderId/downloads/id/createdAt
+// tidak boleh dioper dari body (mass-assignment).
+const PUT_EDITABLE_FIELDS = [
+  "title", "description", "content", "grade", "semester", "tahunAjaran",
+  "tema", "subtema", "subject", "isPublished", "isPremium", "price",
+] as const;
 
 export async function GET(req: NextRequest) {
   try {
@@ -23,28 +89,9 @@ export async function GET(req: NextRequest) {
     const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
     const folder = (searchParams.get("folder") || "").trim().toUpperCase(); // "PPT" | "PDF"
 
-    let dbUser: any = null
-
-    // Try Supabase auth first
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-      }
-    } catch {}
-
-    // Fallback: supabaseId query param (for Next.js 16 Route Handler cookie bug)
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) {
-        dbUser = await db.user.findUnique({ where: { supabaseId: sid } });
-      }
-    }
-
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
 
     // Basis: materi yang dipublikasikan (bank bersama) atau milik sendiri.
     // Ditambah filter pencarian tema/kata kunci/kelas/mapel (AND).
@@ -74,8 +121,8 @@ export async function GET(req: NextRequest) {
     if (folder && FOLDER_TYPES[folder]) {
       and.push({ fileType: { in: FOLDER_TYPES[folder] } });
     } else {
-      // Tanpa filter folder spesifik: hanya tampilkan PPT + PDF.
-      and.push({ fileType: { in: ["PPTX", "PDF"] } });
+      // Tanpa filter folder spesifik: tampilkan semua tipe materi ajar.
+      and.push({ fileType: { in: MATERI_SEMUA_TIPE } });
     }
 
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
@@ -85,14 +132,15 @@ export async function GET(req: NextRequest) {
       ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-    const [materis, total, downloadsUsed, pptCount, pdfCount] = await Promise.all([
+    const [materis, total, downloadsUsed, pptCount, pdfCount, docCount] = await Promise.all([
       db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
       db.materi.count({ where }),
       db.materiDownload.count({ where: { userId: dbUser.id } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PPT } }] } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PDF } }] } }),
+      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.DOC } }] } }),
     ]);
-    const folderCounts = { PPT: pptCount, PDF: pdfCount };
+    const folderCounts = { PPT: pptCount, PDF: pdfCount, DOC: docCount };
 
     // Kuota unduh: gratis 10 modul, premium/founder/admin tak terbatas.
     const unlimited = dbUser.isPremium || dbUser.isFounder || dbUser.role === "ADMIN";
@@ -110,22 +158,9 @@ export async function POST(req: NextRequest) {
     console.log("Materi POST request received");
     const formData = await req.formData();
 
-    // Try Supabase auth first, then fallback to formData supabaseId
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
-      }
-    } catch {}
-    if (!dbUser) {
-      const sid = formData.get("supabaseId") as string
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
     const file = formData.get("file") as File | null;
 
     const title = formData.get("title") as string;
@@ -153,18 +188,25 @@ export async function POST(req: NextRequest) {
     if (file && file.size > 0) {
       console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
       
-      const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
-      if (!["pdf", "pptx"].includes(fileExt)) {
-        return NextResponse.json({ error: "File harus PDF atau PPTX" }, { status: 400 });
+      const fileExt = materiExtFromName(file.name);
+      const materiType = fileExt ? materiFileTypeFromExt(fileExt) : null;
+      if (!fileExt || !materiType) {
+        return NextResponse.json({ error: MATERI_TYPE_ERROR }, { status: 400 });
       }
 
-      const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;
+      const maxSize = MATERI_MAX_BYTES[materiType];
       if (file.size > maxSize) {
-        return NextResponse.json({ error: `Ukuran file maksimal ${maxSize / (1024 * 1024)}MB` }, { status: 400 });
+        return NextResponse.json(
+          { error: `Ukuran file maksimal ${Math.round(maxSize / (1024 * 1024))}MB untuk ${MATERI_TYPE_LABEL[materiType]}` },
+          { status: 400 }
+        );
       }
-      
+
       const fileName = `${dbUser.id}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      const uploadResult = await uploadFileServer(file, fileName, "documents", file.type);
+      // Content-Type diturunkan dari ekstensi: browser mengirim "" atau
+      // application/octet-stream untuk .doc/.ppt, yang membuat berkas tidak
+      // bisa dipratinjau setelah tersimpan.
+      const uploadResult = await uploadFileServer(file, fileName, "documents", MATERI_CONTENT_TYPE[materiType]);
       
       if ("error" in uploadResult) {
         console.error("Upload failed:", uploadResult.error);
@@ -173,12 +215,15 @@ export async function POST(req: NextRequest) {
 
       fileUrl = uploadResult.url;
       fileKey = uploadResult.key;
-      fileType = fileExt.toUpperCase();
+      fileType = materiType;
     } else {
       // Client-side pre-uploaded — use provided metadata
-      fileUrl = formData.get("fileUrl") as string | null;
-      fileKey = formData.get("fileKey") as string | null;
-      fileType = formData.get("fileType") as string | null;
+      fileUrl = (formData.get("fileUrl") as string | null) || null;
+      fileKey = (formData.get("fileKey") as string | null) || null;
+      fileType = (formData.get("fileType") as string | null) || null;
+      const invalid = validatePreUploadedFile({ fileUrl, fileKey, fileType, authId: auth.authId, dbUserId: dbUser.id });
+      if (invalid) return NextResponse.json({ error: invalid }, { status: 400 });
+      if (fileType) fileType = fileType.toUpperCase();
     }
 
     const materi = await db.materi.create({
@@ -251,21 +296,15 @@ export async function PUT(req: NextRequest) {
   try {
     const body = await req.json();
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = body.supabaseId as string | undefined
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
 
-    const { id, ...data } = body;
+    const id = body?.id;
+    const data: Record<string, unknown> = {};
+    for (const key of PUT_EDITABLE_FIELDS) {
+      if (body && Object.prototype.hasOwnProperty.call(body, key)) data[key] = body[key];
+    }
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -289,19 +328,9 @@ export async function DELETE(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    let dbUser: any = null
-    try {
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) dbUser = await db.user.findUnique({ where: { supabaseId: user.id } })
-    } catch {}
-    if (!dbUser) {
-      const sid = searchParams.get("supabaseId")
-      if (sid) dbUser = await db.user.findUnique({ where: { supabaseId: sid } })
-    }
-    if (!dbUser || !isTeacherOrStudent(dbUser)) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const auth = await resolveSessionGuru();
+    if ("res" in auth) return auth.res;
+    const dbUser = auth.dbUser;
 
     if (!id) {
       return NextResponse.json({ error: "ID required" }, { status: 400 });
@@ -330,8 +359,25 @@ export async function DELETE(req: NextRequest) {
 }
 
 // Increment penghitung unduhan (fire-and-forget dari kartu modul).
+// SECURITY: wajib sesi (L2) — tanpa ini statistik unduhan bisa dimanipulasi
+// anonim. Identitas hanya dari sesi server.
 export async function PATCH(req: NextRequest) {
   try {
+    let dbUser: { id: string; email: string } | null = null;
+    try {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        dbUser = await db.user.findUnique({
+          where: { supabaseId: user.id },
+          select: { id: true, email: true },
+        });
+      }
+    } catch {}
+    if (!dbUser || dbUser.email.endsWith("@account.invalid")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { id } = await req.json();
     if (!id) return NextResponse.json({ error: "id wajib" }, { status: 400 });
     await db.materi.update({ where: { id }, data: { downloads: { increment: 1 } } });

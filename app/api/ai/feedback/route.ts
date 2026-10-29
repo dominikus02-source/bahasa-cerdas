@@ -7,6 +7,7 @@ import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { logLegacyUsage } from "@/src/ai/core/usage-logger";
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
+import { umumGuruToolForbidden } from "@/lib/auth/umum-guard";
 
 const AI_TIMEOUT = 15000;
 const SAFE_ERROR = "AI sedang sibuk. Silakan coba lagi beberapa saat.";
@@ -19,6 +20,8 @@ export async function POST(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const umumBlocked = umumGuruToolForbidden(user);
+    if (umumBlocked) return umumBlocked;
 
     // Phase 9D — gateway quota check
     await ensureMonthlyLedger(user);

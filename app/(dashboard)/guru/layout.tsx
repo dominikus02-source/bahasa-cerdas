@@ -1,5 +1,6 @@
 import { getUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { dashboardForUser } from "@/lib/auth/redirect";
 import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,6 +11,7 @@ import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ShellLayout } from "@/components/shell/ShellLayout";
 import { RoleSections } from "@/components/shell/RoleSections";
+import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
 import { ShellSidebarFooter } from "@/components/shell/ShellSidebarFooter";
 import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
@@ -40,11 +42,15 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect("/login");
   }
 
+  // Allowlist: hanya GURU/founder. Peran lain ke dasbor kanoniknya sendiri
+  // (MURID → /murid/beranda seperti sebelumnya; ADMIN → /admin — sebelumnya
+  // /murid/beranda yang memantul balik ke sini = loop; UMUM → beranda UMUM;
+  // tak dikenal → halaman akses ditolak).
   if (user.role !== "GURU" && !user.isFounder) {
-    redirect("/murid/beranda");
+    redirect(dashboardForUser(user.role, user.isFounder));
   }
 
-  if (!user.onboarded) {
+  if (!user.onboarded && !user.isFounder) {
     redirect("/guru/onboarding");
   }
 
@@ -156,6 +162,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           </div>
 
           <div className="flex min-w-0 items-center gap-1.5 md:gap-2">
+            <FounderDashboardSwitcher user={user} compact />
             <Link
               href="/guru/profile"
               className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"

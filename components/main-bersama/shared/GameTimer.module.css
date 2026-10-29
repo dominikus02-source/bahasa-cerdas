@@ -1,0 +1,81 @@
+/* Jam permainan Main Bersama. Warna hanya dari app/theme/tokens.css.
+   Pasangan latar+teks selalu dari token yang sama (surface/text,
+   warning-soft/warning-strong) sehingga kontras AA terjaga di latar
+   terang, gelap, maupun layar proyektor. */
+.timer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 7px 12px 9px;
+  overflow: hidden;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--bc-r-ctl, 12px);
+  background: var(--clr-surface);
+  color: var(--clr-text);
+  font-family: var(--bc-font-sans, inherit);
+  line-height: 1.15;
+  white-space: nowrap;
+  transition: background var(--bc-dur-fast, 160ms) ease, border-color var(--bc-dur-fast, 160ms) ease;
+}
+.icon { display: inline-flex; flex: none; color: var(--clr-aud); }
+.text { display: flex; flex-direction: column; min-width: 0; }
+.label { color: var(--clr-text-2); font-size: 10px; font-weight: 700; letter-spacing: 0.02em; }
+.value { font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.track {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: var(--clr-line);
+}
+.bar {
+  display: block;
+  height: 100%;
+  background: var(--bc-grad-aud);
+  transform-origin: left center;
+  transition: transform 250ms linear;
+}
+.compact { gap: 6px; padding: 5px 10px 7px; }
+.compact .label { font-size: 9px; }
+.compact .value { font-size: 15px; }
+
+.paused .icon { color: var(--clr-text-2); }
+
+.urgent {
+  border-color: var(--clr-warning);
+  background: var(--clr-warning-soft);
+  color: var(--clr-warning-strong);
+}
+.urgent .icon,
+.urgent .label { color: var(--clr-warning-strong); }
+.urgent .bar { background: var(--clr-warning); }
+.final { animation: game-timer-pulse 1s ease-in-out infinite; }
+.final .value { font-size: 1.25em; }
+.compact.final .value { font-size: 17px; }
+.timeUp { border-color: var(--clr-border-strong); }
+.timeUp .icon { color: var(--clr-text-2); }
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@keyframes game-timer-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .final { animation: none; }
+  .bar { transition: none; }
+}

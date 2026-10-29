@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkBreaks from "remark-breaks";
+import { preserveLeadingIndentation } from "@/lib/artikel/preserve-indentation";
 import SafeMediaImage from "@/components/shared/safe-media-image";
 
 export default function GuruArtikelPage() {
@@ -126,11 +127,11 @@ export default function GuruArtikelPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Karya Saya</h1>
+          <h1 className="text-2xl font-bold text-gray-900">AKSARA</h1>
           <p className="text-sm text-gray-500 mt-1">Tulis dan kelola artikel atau puisi untuk dibaca publik</p>
         </div>
         <Button onClick={() => showForm ? resetForm() : setShowForm(true)}>
-          <Plus size={16} /> {showForm ? "Batal" : "Tulis Artikel"}
+          <Plus size={16} /> {showForm ? "Batal" : "Tulis Karya"}
         </Button>
       </div>
 
@@ -183,7 +184,7 @@ export default function GuruArtikelPage() {
                   <input
                     type="file"
                     ref={fileRef}
-                    accept="image/*"
+                    accept="image/jpeg,image/png,image/webp"
                     onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])}
                     className="hidden"
                   />
@@ -264,7 +265,7 @@ export default function GuruArtikelPage() {
               ) : (
                 <div className="border-2 border-gray-200 rounded-xl p-6 min-h-[400px] prose prose-sm max-w-none bg-white">
                   {form.content ? (
-                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{form.content}</ReactMarkdown>
+                    <ReactMarkdown remarkPlugins={[remarkGfm, remarkBreaks]}>{preserveLeadingIndentation(form.content)}</ReactMarkdown>
                   ) : (
                     <p className="text-gray-400 italic">Belum ada konten</p>
                   )}

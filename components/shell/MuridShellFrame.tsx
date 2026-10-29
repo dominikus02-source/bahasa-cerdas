@@ -15,6 +15,7 @@ import { IconTarget } from "@/lib/icons";
 import UserAvatar from "@/components/arena/UserAvatar";
 import { ShellNavList } from "@/components/shell/ShellNavList";
 import { RoleSections } from "@/components/shell/RoleSections";
+import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
 
 /**
  * Kerangka Student Shell (/murid/*): sidebar, header global, nav bawah.
@@ -27,6 +28,7 @@ export interface MuridShellUser {
   avatar?: string | null;
   role: string;
   isFounder: boolean;
+  email?: string | null;
 }
 
 export function MuridShellFrame({
@@ -39,7 +41,7 @@ export function MuridShellFrame({
   children: ReactNode;
 }) {
   return (
- <div className="flex min-h-screen ui-app-bg">
+ <div className="bc-murid-dashboard flex min-h-screen ui-app-bg">
  <aside className="shell-aside w-64 h-screen bg-bc-surface border-r border-bc-line hidden md:flex md:flex-col fixed left-0 top-0 shadow-bc-1">
  <div className="p-5 bg-bc-murid">
           <Link href="/murid/beranda" className="flex items-center gap-3 min-w-0">
@@ -79,6 +81,7 @@ export function MuridShellFrame({
  <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
           <BackHome />
           <div className="flex items-center gap-1 md:gap-2">
+            <FounderDashboardSwitcher user={user} compact />
             <UserAvatar
               size={36}
               avatar={user.avatar}

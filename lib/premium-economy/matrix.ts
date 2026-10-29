@@ -49,6 +49,18 @@ export const DEFAULT_ENTITLEMENT_MATRIX: Record<
     ADVANCED_STATS: true,
     STREAK_FREEZE_MONTHLY: 1,
   },
+  UMUM_PREMIUM: {
+    // Premium Umum — TANPA kredit AI, bukan paket belajar murid. Hak Umum
+    // (JUMPA, Aku Sastrawan, jual karya) dibaca lewat hasUmumPremium()
+    // (lib/umum/premium.ts). Batas di layer ini sengaja = FREE.
+    SIMULATION_MONTHLY_LIMIT: 3,
+    AI_MENTOR_DAILY_LIMIT: "unlimited",
+    AI_PRACTICE_MONTHLY_LIMIT: "unlimited",
+    PREMIUM_PROFILE: false,
+    PREMIUM_COSMETICS: false,
+    ADVANCED_STATS: false,
+    STREAK_FREEZE_MONTHLY: 0,
+  },
   FOUNDER: {
     SIMULATION_MONTHLY_LIMIT: "unlimited",
     AI_MENTOR_DAILY_LIMIT: "unlimited",

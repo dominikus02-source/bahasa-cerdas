@@ -96,7 +96,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       apiSecret: config.apiSecret,
       identity: user.id,
       name: (profile?.nickname || profile?.fullName || "Pengguna BC").slice(0, 60),
-      metadata: { v: 1, bcRole: effective, roomRole, avatar: profile?.avatar ?? null },
+      // Murid di ruang UMUM: hanya nama tampilan (tanpa foto profil) untuk peserta lain.
+      metadata: { v: 1, bcRole: effective, roomRole, avatar: ctx.room.kind === "UMUM" && effective === "MURID" ? null : profile?.avatar ?? null },
       grant: buildJoinGrant(
         ctx.room.livekitRoomName,
         publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare }),
@@ -106,7 +107,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     const { startedAt } = await recordJoinGranted({ room: ctx.room, userId: user.id, roomRole, accessVia });
     // Alur: pemandu masuk = rapat dimulai → "Kelas X sedang JUMPA" ke kelas/undangan
     // (sekali per ruang, lib/jumpa/notify-server.ts). Setelah respons, tidak menahan token.
-    if (roomRole === "HOST" && ctx.room.kind !== "MURID") {
+    // Ruang UMUM tidak punya kelas/komunitas untuk diberi tahu.
+    if (roomRole === "HOST" && ctx.room.kind !== "MURID" && ctx.room.kind !== "UMUM") {
       after(() => notifyRoomLive(ctx.room.id).then(() => undefined).catch(() => undefined));
     }
     const endsAt = startedAt ? new Date(startedAt.getTime() + ctx.room.maxDurationMin * 60_000).toISOString() : ctx.view.endsAt;

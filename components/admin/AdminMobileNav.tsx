@@ -7,7 +7,7 @@ import {
   FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
   Target, Presentation, ShoppingBag, Film, Briefcase, MessageCircle,
   BarChart3, LineChart, TrendingUp, Trophy, Activity, Coins,
-  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings,
+  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, ScrollText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -61,6 +61,7 @@ const ALL_ITEMS: FlatItem[] = [
   { label: "Lowongan", href: "/admin/loker", icon: Briefcase, group: "System & Operations" },
   { label: "Pusat Data", href: "/admin/data-center", icon: Database, group: "System & Operations" },
   { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, group: "System & Operations" },
+  { label: "Founder & Audit", href: "/admin/founder", icon: ScrollText, group: "System & Operations" },
 ];
 
 const GROUPS = ["Premium & Revenue", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"];

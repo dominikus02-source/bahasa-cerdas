@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { withAdmin } from "@/lib/admin/guard";
 
 type GrowthBucket = {
   key: string;
@@ -36,7 +37,7 @@ function buildGrowthBuckets(now: Date, months = 6): GrowthBucket[] {
   return buckets;
 }
 
-export async function GET() {
+async function adminGET() {
   try {
     const user = await getUser();
     if (!user || !user.isFounder) {
@@ -165,3 +166,5 @@ export async function GET() {
     return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/users/analytics", method: "GET" });

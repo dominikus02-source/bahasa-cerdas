@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { isUmum, UMUM_FORBIDDEN_MESSAGE } from "@/lib/auth/roles";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
@@ -10,6 +11,8 @@ export async function POST(req: NextRequest) {
   try {
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    // UMUM: fitur multipemain/kelas khusus guru & murid sekolah (lib/auth/roles.ts).
+    if (isUmum(user.role)) return NextResponse.json({ error: UMUM_FORBIDDEN_MESSAGE }, { status: 403 });
 
     const body = await req.json().catch(() => ({}));
     const opponentId = String(body.opponentId || "");

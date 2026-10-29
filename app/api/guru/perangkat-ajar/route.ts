@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { readFile } from "fs/promises";
 import path from "path";
+import { createClient } from "@/lib/supabase/server";
+import { db } from "@/lib/db";
+import { isTeacherOrStudent } from "@/lib/teacher/students";
 
 const INVENTORY_PATH = path.resolve("data/alat-ajar-import/inventory.json");
 
@@ -20,6 +23,26 @@ interface InventoryEntry {
 }
 
 export async function GET() {
+  // SECURITY (L1): inventori perangkat ajar hanya untuk GURU/ADMIN/founder
+  // (isTeacherOrStudent = GURU || ADMIN || isFounder), sama seperti route guru lain.
+  let dbUser: { role: string; isFounder: boolean; email: string } | null = null;
+  try {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      dbUser = await db.user.findUnique({
+        where: { supabaseId: user.id },
+        select: { role: true, isFounder: true, email: true },
+      });
+    }
+  } catch {}
+  if (!dbUser || dbUser.email.endsWith("@account.invalid")) {
+    return NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 });
+  }
+  if (!isTeacherOrStudent(dbUser)) {
+    return NextResponse.json({ error: "Khusus guru." }, { status: 403 });
+  }
+
   try {
     const raw = await readFile(INVENTORY_PATH, "utf-8");
     const all: InventoryEntry[] = JSON.parse(raw);

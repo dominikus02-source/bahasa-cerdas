@@ -27,7 +27,8 @@ import { validateDisplayName } from './display-name';
 import { buildStudentView } from '../../presentation/view-mappers';
 import { findAvatarById } from '@/lib/avatar/katalog';
 import type { GameEngineState } from '../../games/game-router';
-import { autoAdvanceJelajahIfRoundComplete } from './session-commands';
+import { autoAdvanceJelajahIfRoundComplete, expireSessionIfTimeUp } from './session-commands';
+import { isGameTimeUp } from '../../domain/rules/game-duration';
 
 // ─── Typed results ──────────────────────────────────────────
 
@@ -242,7 +243,19 @@ export async function reconnectPlayer(
   deps.resolver.discard?.(resolved.sessionId);
   const loaded = await deps.resolver.resolve(resolved.sessionId);
   if (!loaded.ok) return { ok: false, code: 'SESSION_NOT_FOUND' };
-  const engine = loaded.engine;
+  let engine = loaded.engine;
+  let expiredGameState: GameEngineState | null | undefined;
+  const s = engine.state.session;
+  if (isGameTimeUp({ phase: s.phase, gameEndsAt: s.gameEndsAt, now: deps.clock.now() })) {
+    const persistedBefore = await deps.gameStates.loadGameState(resolved.sessionId);
+    const fresh = await expireSessionIfTimeUp(deps, resolved.sessionId, {
+      engine,
+      gameState: persistedBefore ? (persistedBefore.state as GameEngineState) : null,
+    });
+    if (!fresh) return { ok: false, code: 'SESSION_NOT_FOUND' };
+    engine = fresh.engine;
+    expiredGameState = fresh.gameState;
+  }
   const player = engine.state.players.get(resolved.playerId);
   if (!player) return { ok: false, code: 'PLAYER_NOT_FOUND' };
 
@@ -253,14 +266,20 @@ export async function reconnectPlayer(
     await deps.players.setConnected(resolved.sessionId, resolved.playerId, true);
   }
 
-  const persisted = await deps.gameStates.loadGameState(resolved.sessionId);
+  let gameState: GameEngineState | null;
+  if (expiredGameState !== undefined) {
+    gameState = expiredGameState;
+  } else {
+    const persisted = await deps.gameStates.loadGameState(resolved.sessionId);
+    gameState = persisted ? (persisted.state as GameEngineState) : null;
+  }
   return {
     ok: true,
     value: {
       engine,
       playerId: resolved.playerId,
       sessionId: resolved.sessionId,
-      gameState: persisted ? (persisted.state as GameEngineState) : null,
+      gameState,
     },
   };
 }
@@ -300,6 +319,17 @@ export async function submitAnswer(
   const engine = loaded.engine;
   const player = engine.state.players.get(resolved.playerId);
   if (!player) return { ok: false, code: 'PLAYER_NOT_FOUND' };
+
+  // Waktu permainan habis: tolak jawaban dan tutup sesi (server clock).
+  const sessionNow = engine.state.session;
+  if (isGameTimeUp({ phase: sessionNow.phase, gameEndsAt: sessionNow.gameEndsAt, now: deps.clock.now() })) {
+    const persistedBefore = await deps.gameStates.loadGameState(resolved.sessionId);
+    await expireSessionIfTimeUp(deps, resolved.sessionId, {
+      engine,
+      gameState: persistedBefore ? (persistedBefore.state as GameEngineState) : null,
+    });
+    return { ok: false, code: 'DEADLINE_PASSED', reason: 'Waktu permainan habis.' };
+  }
 
   // Cross-session guard: roundId wajib milik sesi player (§39.38).
   const round = engine.state.rounds.find((r) => r.id === input.roundId);

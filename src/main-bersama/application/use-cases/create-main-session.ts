@@ -44,7 +44,7 @@ export interface CreateMainSessionInput {
   /** Kelas KelasKu opsional (demo/acara tanpa kelas tetap valid). */
   classId?: string;
   /** Default diisi bila tidak diberikan (lihat session-defaults.ts). */
-  config?: { roundDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number };
+  config?: { roundDurationMs?: number; gameDurationMs?: number; kotaTargetCorrect?: number; teamCount?: number; maxMembersPerTeam?: number };
   /**
    * Pilihan EKSPLISIT caller (fix review Tahap 5 §1): pakai hanya
    * soal kompatibel dari paket campuran (mis. 30 → 27 + 3
@@ -227,6 +227,7 @@ export async function createMainSession(
     currentRoundIndex: null,
     totalRounds,
     roundDurationMs: resolved.config.roundDurationMs,
+    gameDurationMs: resolved.config.gameDurationMs,
     createdAt: now,
   };
 

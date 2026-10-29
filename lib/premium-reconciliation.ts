@@ -17,13 +17,18 @@ import { db } from "@/lib/db";
 //   NOT safe to auto-repair. Return as manual_review_required.
 //   Cannot distinguish activation failure from legitimate expiration.
 //
+// Premium Umum (UMUM_PREMIUM):
+//   NEVER auto-repaired. Always manual_review_required — paket hanya boleh
+//   dari metadata, dan founder memakai manual-activate.
+//
 // Dry-run: reads only, no writes.
 // Idempotent: running twice changes nothing.
 // ════════════════════════════════════════════════════════════════════
 
 const MURID_PREMIUM_TYPES = ["MURID_PREMIUM"] as const;
 const GURU_PREMIUM_TYPES = ["PREMIUM_UPGRADE"] as const;
-const ALL_PREMIUM_TYPES = [...MURID_PREMIUM_TYPES, ...GURU_PREMIUM_TYPES];
+const UMUM_PREMIUM_TYPES = ["UMUM_PREMIUM"] as const;
+const ALL_PREMIUM_TYPES = [...MURID_PREMIUM_TYPES, ...GURU_PREMIUM_TYPES, ...UMUM_PREMIUM_TYPES];
 
 export interface ReconciliationCandidate {
   userId: string;
@@ -108,6 +113,7 @@ export async function scanForMismatches(): Promise<ReconciliationCandidate[]> {
     const tx = u.transaksi[0];
     const isMurid = tx?.type === "MURID_PREMIUM";
     const isGuru = tx?.type === "PREMIUM_UPGRADE";
+    const isUmum = tx?.type === "UMUM_PREMIUM";
 
     // Student Premium: safe to repair if never activated
     // (isPremium=false, premiumPlan=FREE/null, premiumUntil=null)
@@ -135,7 +141,9 @@ export async function scanForMismatches(): Promise<ReconciliationCandidate[]> {
         premiumUntil: u.premiumUntil,
       },
       safeToRepair,
-      reason: isGuru
+      reason: isUmum
+        ? "Premium Umum — tinjau manual (aktifkan lewat manual-activate)"
+        : isGuru
         ? "Guru Premium — manual review required (cannot distinguish activation failure from legitimate expiration)"
         : neverActivated
           ? "Student Premium — never activated, safe to repair"

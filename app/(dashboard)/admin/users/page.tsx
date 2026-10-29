@@ -1,11 +1,13 @@
 "use client";
 
+import { useTypedConfirm, adminConfirmHeaders } from "@/components/admin/TypedConfirm";
 import { useState, useEffect, useCallback } from "react";
 import { Crown, Search, Users, X, Loader2, ToggleRight } from "lucide-react";
 import { UserAnalytics, type UserAnalyticsData } from "./_components/user-analytics";
 
 export default function AdminUsersPage() {
   const [users, setUsers] = useState<any[]>([]);
+  const { confirm: konfirmasi, dialog: dialogKonfirmasi } = useTypedConfirm();
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
@@ -56,11 +58,12 @@ export default function AdminUsersPage() {
 
   const handleBulkAction = async (action: string) => {
     if (selected.size === 0) return;
+    if (!(await konfirmasi({ title: action === "deactivate" ? `Nonaktifkan premium ${selected.size} pengguna?` : `Ubah premium ${selected.size} pengguna?` }))) return;
     setActing(true);
     try {
       await fetch("/api/admin/users", {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ userIds: Array.from(selected), action }),
       });
       setSelected(new Set());
@@ -90,6 +93,7 @@ export default function AdminUsersPage() {
 
   return (
     <div>
+      {dialogKonfirmasi}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Pengguna</h1>

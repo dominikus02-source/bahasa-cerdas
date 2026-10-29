@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
 import { getWorkerHealthView } from "@/src/agent/persistence/queries";
+import { withAdmin } from "@/lib/admin/guard";
 
 export const dynamic = "force-dynamic";
 
@@ -24,7 +25,7 @@ export const dynamic = "force-dynamic";
  * (for container liveness probes / uptime checks). No secrets, no keys, no
  * internal identifiers beyond bounded worker metadata in the response.
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   const token = process.env.BC_AGENT_HEALTH_TOKEN;
   const auth = req.headers.get("authorization");
   const bearerOk = Boolean(token) && auth === `Bearer ${token}`;
@@ -73,3 +74,5 @@ export async function GET(req: NextRequest) {
     },
   });
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/agent/health", method: "GET", bearerEnv: "BC_AGENT_HEALTH_TOKEN" });

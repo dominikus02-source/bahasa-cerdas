@@ -22,6 +22,7 @@ import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
 import { runAgentStream, type StreamEvent } from "@/src/ai/core/agent-stream-runner";
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import type { AgentRunContext } from "@/src/ai/core/agent-types";
+import { umumGuruToolForbidden } from "@/lib/auth/umum-guard";
 
 // Streaming generasi panjang — jangan diputus default timeout serverless
 export const maxDuration = 300;
@@ -38,6 +39,8 @@ export async function POST(req: NextRequest) {
     if (!user) {
       return new Response("Unauthorized", { status: 401 });
     }
+    const umumBlocked = umumGuruToolForbidden(user);
+    if (umumBlocked) return umumBlocked;
 
     const body = await req.json();
     const { agentId, input, options } = body as {

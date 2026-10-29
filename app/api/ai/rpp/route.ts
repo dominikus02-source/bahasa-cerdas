@@ -8,6 +8,7 @@ import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { createJob, completeJob, failJob, getJob } from "@/lib/ai-queue";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { umumGuruToolForbidden } from "@/lib/auth/umum-guard";
 
 const AI_TIMEOUT = 15000;
 
@@ -164,6 +165,8 @@ export async function POST(req: NextRequest) {
 
     const user = await getUser();
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    const umumBlocked = umumGuruToolForbidden(user);
+    if (umumBlocked) return umumBlocked;
 
     const quota = await checkAIQuota(user, "rpp");
     if (!quota.allowed) {

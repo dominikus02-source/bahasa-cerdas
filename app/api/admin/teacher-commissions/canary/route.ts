@@ -10,13 +10,14 @@ import {
   stopCanaryRun,
   evaluateCanaryPreFlight,
 } from "@/lib/commission/payout/canary";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET/POST /api/admin/teacher-commissions/canary
  * P8G — Canary execution (founder-only, semua transisi teraudit).
  * Run TIDAK menciptakan uang — hanya mereferensikan withdrawal existing.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -36,7 +37,7 @@ export async function GET() {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const founder = await getUser();
     if (!founder || !founder.isFounder) {
@@ -125,3 +126,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Gagal memproses aksi canary" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/canary", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/canary", method: "POST" });

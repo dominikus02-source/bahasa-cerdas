@@ -24,7 +24,8 @@ function fallbackFor(pathname: string): string {
   return "/arena";
 }
 
-export function ArenaBackButton({ iconOnly = false, className = "" }: { iconOnly?: boolean; className?: string }) {
+/** `homeHref` (opsional) menggantikan fallback "/arena" — UMUM memakai beranda UMUM. Tanpa prop: perilaku lama. */
+export function ArenaBackButton({ iconOnly = false, className = "", homeHref }: { iconOnly?: boolean; className?: string; homeHref?: string }) {
   const router = useRouter();
   const pathname = usePathname();
 
@@ -35,8 +36,9 @@ export function ArenaBackButton({ iconOnly = false, className = "" }: { iconOnly
       router.back();
       return;
     }
-    router.push(fallbackFor(pathname ?? ""));
-  }, [pathname, router]);
+    const fallback = fallbackFor(pathname ?? "");
+    router.push(homeHref && fallback === "/arena" ? homeHref : fallback);
+  }, [pathname, router, homeHref]);
 
   return (
     <button

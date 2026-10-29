@@ -3,6 +3,7 @@ import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { Role } from "@prisma/client";
 import { calculateMRR } from "@/lib/admin/executive";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/premium/report
@@ -30,7 +31,7 @@ type Audience = (typeof VALID_AUDIENCES)[number];
 type Status = (typeof VALID_STATUSES)[number];
 type PlanFilter = (typeof VALID_PLANS)[number];
 
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -242,7 +243,10 @@ export async function GET(req: NextRequest) {
       }
 
       // Map audience from role
-      const rowAudience = user.role === "MURID" ? "MURID" : "GURU";
+      // Eksplisit: hanya GURU yang dilabeli GURU. UMUM (atau peran lain bila
+      // filter berubah) TIDAK pernah dihitung sebagai GURU.
+      const rowAudience =
+        user.role === "MURID" ? "MURID" : user.role === "GURU" ? "GURU" : user.role === "UMUM" ? "UMUM" : String(user.role);
 
       // Compute days until expiry
       let daysUntilExpiry: number | null = null;
@@ -337,8 +341,23 @@ export async function GET(req: NextRequest) {
       db.user.count({ where: { ...roleFilter, isPremium: true, premiumUntil: { gt: now, lte: thirtyDaysFromNow } } }),
     ]);
 
+    // --- PREMIUM UMUM (bagian terpisah; tidak masuk MRR/aktif murid+guru) ---
+    const [umumPaidActive, umumTrialActive, umumCash, umumManualReview] = await Promise.all([
+      db.user.count({ where: { role: "UMUM", isPremium: true, premiumUntil: { gt: now } } }),
+      db.user.count({ where: { role: "UMUM", trialPlan: "UMUM_PREMIUM_TRIAL", trialEndsAt: { gt: now } } }),
+      db.transaksi.aggregate({ _sum: { amount: true }, _count: { id: true }, where: { type: "UMUM_PREMIUM", status: "SUCCESS" } }),
+      db.transaksi.count({ where: { type: "UMUM_PREMIUM", status: "SUCCESS", metadata: { path: ["needsManualReview"], equals: true } } }),
+    ]);
+
     return NextResponse.json({
       success: true,
+      umum: {
+        paidActive: umumPaidActive,
+        trialActive: umumTrialActive,
+        cashCollected: umumCash._sum.amount || 0,
+        successfulPayments: umumCash._count.id,
+        needsManualReview: umumManualReview,
+      },
       summary: {
         totalActive: activeCount,
         muridActive: muridActiveCount,
@@ -390,3 +409,5 @@ export async function GET(req: NextRequest) {
     );
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/premium/report", method: "GET" });

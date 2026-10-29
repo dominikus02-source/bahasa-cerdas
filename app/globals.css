@@ -180,20 +180,41 @@
   }
 }
 
-.artikel-content h1, .artikel-content h2, .artikel-content h3 {
-  @apply font-bold text-slate-900 mt-8 mb-4 break-words;
+/* Konten artikel/karya tidak boleh melebarkan halaman di ponsel (360–390px):
+   kata/URL panjang dibungkus, blok kode berpagar membungkus alih-alih melebar,
+   gambar & tabel dibatasi lebar kartu. */
+.artikel-content {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
-.artikel-content h1 { @apply text-2xl border-b-2 border-red-100 pb-2; }
-.artikel-content h2 { @apply text-xl border-l-4 border-red-500 pl-3; }
-.artikel-content h3 { @apply text-lg text-slate-800; }
+.artikel-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  @apply mb-4 rounded-lg bg-bc-surface-2 p-3 text-sm;
+}
+.artikel-content code { overflow-wrap: anywhere; }
+.artikel-content img { max-width: 100%; height: auto; }
+.artikel-content table { display: block; max-width: 100%; overflow-x: auto; }
+/* Puisi/pantun/syair: rata kiri — rata kanan-kiri meregangkan spasi antarkata
+   di baris pendek ("Cintamu    akan    laut"). */
+.artikel-content.artikel-content--berbaris p { text-align: left; }
+.artikel-content h1, .artikel-content h2, .artikel-content h3 {
+  @apply font-bold text-bc-text mt-8 mb-4 break-words;
+}
+.artikel-content h1 { @apply text-2xl border-b-2 border-bc-danger-soft pb-2; }
+.artikel-content h2 { @apply text-xl border-l-4 border-bc-danger pl-3; }
+.artikel-content h3 { @apply text-lg text-bc-text; }
 .artikel-content p {
-  @apply text-slate-700 leading-relaxed mb-4 text-justify;
+  @apply text-bc-text-2 leading-relaxed mb-4 text-justify;
 }
 /* Tailwind preflight sets list-style: none on every ul/ol, and this block only
    restored the indentation — so a teacher's bulleted list published as
    indented text with no bullets or numbers at all. */
 .artikel-content ul, .artikel-content ol {
-  @apply pl-6 mb-4 text-slate-700;
+  @apply pl-6 mb-4 text-bc-text-2;
 }
 .artikel-content ul { list-style: disc outside; }
 .artikel-content ol { list-style: decimal outside; }
@@ -203,31 +224,31 @@
   @apply mb-2;
 }
 .artikel-content a {
-  @apply text-red-600 hover:underline;
+  @apply text-bc-danger hover:underline;
 }
 .artikel-content blockquote {
-  @apply border-l-4 border-emerald-400 bg-emerald-50/50 pl-5 pr-4 py-4 text-slate-700 my-6 rounded-r-lg;
+  @apply border-l-4 border-bc-success bg-bc-success-soft pl-5 pr-4 py-4 text-bc-text-2 my-6 rounded-r-lg;
 }
 .artikel-content blockquote p {
   @apply mb-0;
 }
 .artikel-content blockquote strong:first-child {
-  @apply text-emerald-700;
+  @apply text-bc-success;
 }
 .artikel-content table {
   @apply w-full border-collapse my-6 text-sm;
 }
 .artikel-content th {
-  @apply bg-emerald-50 text-left font-semibold text-slate-700 px-4 py-2 border border-slate-200;
+  @apply bg-bc-success-soft text-left font-semibold text-bc-text-2 px-4 py-2 border border-bc-line;
 }
 .artikel-content td {
-  @apply px-4 py-2 border border-slate-200 text-slate-600;
+  @apply px-4 py-2 border border-bc-line text-bc-text-2;
 }
 .artikel-content img {
   @apply rounded-xl my-6 max-w-full;
 }
 .artikel-content hr {
-  @apply my-8 border-slate-200;
+  @apply my-8 border-bc-line;
 }
 
 @media print {
@@ -1300,4 +1321,159 @@
 .dark .bc-guru-shell .bc-guru .bg-white.rounded-2xl,
 .dark .bc-guru-shell .bc-guru .bg-white.rounded-xl {
   border-color: color-mix(in srgb, #2563eb 30%, var(--clr-border));
+}
+
+/* ── Kartu bergambar beranda guru (.bc-media) ──────────────────────────
+   Nilai dari app/theme/tokens.css §4. Foto + scrim navy + teks terang di
+   kedua mode; mode gelap menambah peredup. Tanpa hex/dark: di komponen. */
+.bc-media {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--bc-media-base);
+  border: 1px solid var(--bc-media-line);
+  color: var(--bc-media-ink);
+}
+.bc-media-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-hero);
+}
+.bc-media-scrim--side { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-side); }
+.bc-media-scrim--banner { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-banner); }
+.bc-media-scrim--quote { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-quote); }
+.bc-media-scrim--1 { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-1); }
+.bc-media-scrim--2 { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-2); }
+.bc-media-scrim--3 { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-3); }
+.bc-media-scrim--4 { background: linear-gradient(var(--bc-media-dim), var(--bc-media-dim)), var(--bc-media-scrim-4); }
+.bc-media-ink { color: var(--bc-media-ink); }
+.bc-media-ink-2 { color: var(--bc-media-ink-2); }
+.bc-media-chip {
+  background: var(--bc-media-chip);
+  border: 1px solid var(--bc-media-chip-line);
+  color: var(--bc-media-ink);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.bc-media-glass {
+  background: var(--bc-media-glass);
+  border: 1px solid var(--bc-media-chip-line);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+.bc-media-cta {
+  background: var(--bc-media-cta);
+  color: var(--bc-media-cta-ink);
+  transition: background-color var(--bc-dur-fast, .15s) ease;
+}
+.bc-media-cta:hover { background: var(--bc-media-cta-hover); }
+.bc-media--flush { border: 0; border-radius: 0; }
+
+
+/* BahasaCerdas — CTA utama seragam khusus seluruh dasbor murid.
+   Scope dibatasi ke shell murid. Varian secondary/ghost/soft/premium tetap
+   mempertahankan makna visualnya; hanya CTA utama dan tombol gradient lama
+   yang dinormalisasi. Tidak mengubah href, handler, atau alur formulir. */
+/* BahasaCerdas — CTA utama seragam khusus seluruh dasbor murid.
+   Scope sengaja dibatasi: kartu/link navigasi bergradasi yang bukan tombol tidak
+   ikut berubah. Fungsi, href, type, dan state React tidak disentuh. */
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent
+),
+.bc-murid-dashboard a[class*="ui-btn--primary"],
+.bc-murid-dashboard a[class*="ui-btn--murid"],
+.bc-murid-dashboard a[class*="ui-btn--accent"],
+.bc-murid-dashboard a[class*="inline-flex"][class*="bg-gradient-to-"],
+  .bc-murid-dashboard a[class*="inline-flex"][class*="bg-violet-600"][class*="text-white"],
+  .bc-murid-dashboard a[class*="inline-flex"][class*="bg-purple-600"][class*="text-white"],
+  .bc-murid-dashboard a[class*="inline-flex"][class*="bg-blue-600"][class*="text-white"],
+  .bc-murid-dashboard a[class*="inline-flex"][class*="bg-rose-600"][class*="text-white"],
+  .bc-murid-dashboard a[class*="inline-flex"][class*="bg-indigo-600"][class*="text-white"],
+  .bc-murid-dashboard button[class*="bg-violet-600"][class*="text-white"],
+  .bc-murid-dashboard button[class*="bg-purple-600"][class*="text-white"],
+  .bc-murid-dashboard button[class*="bg-blue-600"][class*="text-white"],
+  .bc-murid-dashboard button[class*="bg-rose-600"][class*="text-white"],
+  .bc-murid-dashboard button[class*="bg-indigo-600"][class*="text-white"],
+.bc-murid-dashboard a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+.bc-murid-dashboard a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+.bc-murid-dashboard button[class*="bg-gradient-to-"],
+.bc-murid-dashboard button[class*="from-teal-"][class*="to-blue-"],
+.bc-murid-dashboard button[class*="from-cyan-"][class*="to-violet-"] {
+  background: linear-gradient(120deg, #0f9f9a 0%, #48b8e9 52%, #8b5cf6 100%) !important;
+  color: #fff !important;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 14px;
+  font-family: var(--bc-font-sans, Inter, ui-sans-serif, system-ui, sans-serif);
+  font-weight: 700;
+  box-shadow: 0 6px 16px -9px rgb(59 130 246 / 70%);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  a[class*="inline-flex"][class*="bg-gradient-to-"],
+  a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+  a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+  button[class*="bg-gradient-to-"],
+  button[class*="from-teal-"][class*="to-blue-"],
+  button[class*="from-cyan-"][class*="to-violet-"]
+):hover:not(:disabled):not([aria-disabled="true"]) {
+  filter: saturate(1.08) brightness(1.04);
+  box-shadow: 0 10px 22px -10px rgb(99 102 241 / 70%);
+  transform: translateY(-1px);
+}
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  a[class*="inline-flex"][class*="bg-gradient-to-"],
+  a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+  a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+  button[class*="bg-gradient-to-"],
+  button[class*="from-teal-"][class*="to-blue-"],
+  button[class*="from-cyan-"][class*="to-violet-"]
+):active:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(0) scale(.98);
+}
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  a[class*="inline-flex"][class*="bg-gradient-to-"],
+  a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+  a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+  button[class*="bg-gradient-to-"],
+  button[class*="from-teal-"][class*="to-blue-"],
+  button[class*="from-cyan-"][class*="to-violet-"]
+):focus-visible {
+  outline: 3px solid rgb(72 184 233 / 55%);
+  outline-offset: 3px;
+}
+
+.bc-murid-dashboard :is(
+  .px-btn-gold, .px-btn-primary, .px-btn-royal,
+  .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+  button[class*="bg-gradient-to-"]
+):is(:disabled, [aria-disabled="true"]) {
+  opacity: .55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bc-murid-dashboard :is(
+    .px-btn-gold, .px-btn-primary, .px-btn-royal,
+    .ui-btn--primary, .ui-btn--murid, .ui-btn--accent,
+    a[class*="inline-flex"][class*="bg-gradient-to-"],
+    a[class*="inline-flex"][class*="from-teal-"][class*="to-blue-"],
+    a[class*="inline-flex"][class*="from-cyan-"][class*="to-violet-"],
+    button[class*="bg-gradient-to-"],
+    button[class*="from-teal-"][class*="to-blue-"],
+    button[class*="from-cyan-"][class*="to-violet-"]
+  ) {
+    transition: none;
+  }
 }

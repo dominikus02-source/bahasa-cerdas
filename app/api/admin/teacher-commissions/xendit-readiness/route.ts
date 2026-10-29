@@ -11,6 +11,7 @@ import {
   recordFounderConfirmation,
   XENDIT_EVIDENCE_CATEGORIES,
 } from "@/lib/commission/payout/xendit-readiness";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET/POST /api/admin/teacher-commissions/xendit-readiness
@@ -18,7 +19,7 @@ import {
  * TIDAK pernah menampilkan nilai secret. Evidence tidak boleh mengandung
  * secret. TIDAK mengaktifkan real money.
  */
-export async function GET(req: NextRequest) {
+async function adminGET(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -52,7 +53,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const founder = await getUser();
     if (!founder || !founder.isFounder) {
@@ -119,3 +120,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/xendit-readiness", method: "GET" });
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/xendit-readiness", method: "POST" });

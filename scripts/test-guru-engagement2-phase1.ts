@@ -63,7 +63,7 @@ ok("next-action.ts murni (tanpa fetch/DB)", !/fetch\(|db\.|prisma\.|import.meta/
   const status = statusDengan(["mgmp", "artikel", "materi", "kelas", "kirim-materi", "toko-karya", "latihan"], []);
   const aksi = hitungNextActionGuru(status);
   ok("Semua misi selesai → fallback CTA artikel", aksi.type === "artikel");
-  ok("Fallback CTA pertama = Tulis Artikel", aksi.label === "Tulis Artikel");
+  ok("Fallback CTA pertama = Tulis di AKSARA", aksi.label === "Tulis di AKSARA");
   ok("Fallback CTA semuaSelesai=true", aksi.semuaSelesai === true);
 }
 
@@ -122,10 +122,11 @@ ok("Beranda fetch /api/guru/misi satu kali", (beranda.match(/fetch\("\/api\/guru
 ok("Home V3 punya hero fokus", /<TeacherHero/.test(homeV3));
 ok("Home V3 punya Misi Hari Ini ringkas", /<DailyMissionCard/.test(homeV3) && /Misi Hari Ini/.test(homeV3));
 ok("Home V3 punya empat quick action utama", /Main Bersama/.test(homeV3) && /Buat Karya/.test(homeV3) && /label: "NARA"/.test(homeV3) && /Dasbor Murid/.test(homeV3));
-// Pengumuman "Kenalkan Main Bersama" dihapus saat penyederhanaan beranda (duplikat quick action
-// yang menuju tujuan sama). Yang dijaga: Main Bersama tetap satu klik dari beranda, tanpa kartu ganda.
+// Pengumuman bergambar "Kenalkan Main Bersama" sempat dihapus di #171 (penyederhanaan), lalu
+// DIPULIHKAN atas keputusan founder 2026-10-26 ("kembalikan semua gambar beranda"). Yang dijaga:
+// quick action tetap ada, dan pengumuman dipasang tepat SATU kali.
 ok("Home V3: Main Bersama tetap satu klik (quick action ke /guru/game/main-bersama)", /href: "\/guru\/game\/main-bersama"/.test(homeV3));
-ok("Home V3: tanpa kartu pengumuman Main Bersama duplikat", !/<MainBersamaAnnouncement/.test(homeV3));
+ok("Home V3: pengumuman Main Bersama bergambar dipasang tepat satu kali", (homeV3.match(/<MainBersamaAnnouncement \/>/g) || []).length === 1);
 ok("Home V3 punya Kompetisi Guru ringkas", /<CompetitionCard/.test(homeV3) && /Kompetisi Guru/.test(homeV3));
 ok("Home V3 memasang Guru Berkarya compact", /<GuruBerkarya misiStatus=\{misiStatus\} compact \/>/.test(homeV3));
 ok("Home V3 memasang Lencana Guru compact", /<GuruBadgeGrid compact \/>/.test(homeV3));

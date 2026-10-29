@@ -28,7 +28,8 @@ export function MateriViewer({ materi, onClose }: Props) {
   const blobUrlRef = useRef<string | null>(null)
 
   const isPDF = materi.fileType === "PDF"
-  const isPPTX = materi.fileType === "PPTX"
+  // Word + PowerPoint (format baru maupun lama) dipratinjau lewat Office viewer.
+  const isOffice = ["PPTX", "PPT", "DOCX", "DOC"].includes(materi.fileType || "")
 
   useEffect(() => {
     document.body.style.overflow = "hidden"
@@ -174,7 +175,7 @@ export function MateriViewer({ materi, onClose }: Props) {
           <iframe src={blobUrl} className="w-full h-full border-0" title={materi.title} />
         )}
 
-        {isPPTX && (
+        {isOffice && (
           <iframe
             src={getPptxViewerUrl()}
             className="w-full h-full border-0"
@@ -183,7 +184,7 @@ export function MateriViewer({ materi, onClose }: Props) {
           />
         )}
 
-        {!isPDF && !isPPTX && (
+        {!isPDF && !isOffice && (
           <div className="text-center p-8">
             <p className="text-gray-400 mb-4">Pratinjau tidak tersedia untuk {materi.fileType}</p>
             <button onClick={handleDownload}

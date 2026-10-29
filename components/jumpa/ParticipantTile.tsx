@@ -15,7 +15,7 @@ interface Props {
   screen?: boolean;
 }
 
-const ROLE_LABEL = { HOST: "Pemandu", GURU: "Guru", MURID: "Murid" } as const;
+const ROLE_LABEL = { HOST: "Pemandu", GURU: "Guru", MURID: "Murid", UMUM: "Umum" } as const;
 
 function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;

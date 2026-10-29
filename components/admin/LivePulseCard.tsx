@@ -6,7 +6,7 @@
  * Fetches GET /api/analytics/live every 15 seconds.
  * Displays:
  *  - Online users count with pulsing green dot (when presenceAvailable)
- *  - Role breakdown (Guru / Murid / Admin)
+ *  - Role breakdown (Guru / Murid / Umum / Admin)
  *  - Total Karya count (canonical from DB)
  *  - Near-real-time indicator
  *
@@ -25,6 +25,8 @@ interface LivePulseData {
   onlineGuru: number
   onlineMurid: number
   onlineAdmin: number
+  /** Aditif — respons lama tanpa field ini dibaca sebagai 0. */
+  onlineUmum?: number
   onlineLocations: Array<{
     key: string
     label: string
@@ -138,7 +140,7 @@ export function LivePulseCard() {
           </div>
 
           {/* Role breakdown */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
             <div className="bg-emerald-50 dark:bg-emerald-950/30 rounded-xl p-3 text-center">
               <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
                 {data.onlineGuru}
@@ -150,6 +152,12 @@ export function LivePulseCard() {
                 {data.onlineMurid}
               </p>
               <p className="text-[10px] text-violet-600 dark:text-violet-400">Murid</p>
+            </div>
+            <div className="bg-sky-50 dark:bg-sky-950/30 rounded-xl p-3 text-center">
+              <p className="text-lg font-bold text-sky-700 dark:text-sky-300">
+                {data.onlineUmum ?? 0}
+              </p>
+              <p className="text-[10px] text-sky-600 dark:text-sky-400">Umum</p>
             </div>
             <div className="bg-blue-50 dark:bg-blue-950/30 rounded-xl p-3 text-center">
               <p className="text-lg font-bold text-blue-700 dark:text-blue-300">

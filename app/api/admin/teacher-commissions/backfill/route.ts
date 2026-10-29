@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { backfillTeacherCommissions } from "@/lib/commission/backfill";
 import { auditCommission } from "@/lib/commission/audit";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * POST /api/admin/teacher-commissions/backfill
@@ -15,7 +16,7 @@ import { auditCommission } from "@/lib/commission/audit";
  *      membabi buta — respect launch date, eligibleFrom, attribution,
  *      status SUCCESS, ADMIN exclusion, first-valid-wins.
  */
-export async function POST(req: NextRequest) {
+async function adminPOST(req: NextRequest) {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -52,3 +53,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Gagal menjalankan backfill" }, { status: 500 });
   }
 }
+
+export const POST = withAdmin(adminPOST, { route: "/api/admin/teacher-commissions/backfill", method: "POST" });

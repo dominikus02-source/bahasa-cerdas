@@ -1,5 +1,6 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
 import { Monitor, Moon, Sun } from "lucide-react";
 
@@ -9,9 +10,14 @@ const OPTIONS = [
   { value: "system", label: "Sistem", icon: Monitor },
 ] as const;
 
+const subscribeNoop = () => () => {};
+
 export function ThemeSettingsCard() {
   const { theme, setTheme } = useTheme();
-  const active = theme ?? "system";
+  // Tema tersimpan baru diketahui di klien; sebelum hidrasi tidak ada opsi yang
+  // ditandai aktif agar HTML server & klien sama (tanpa hydration mismatch).
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const active = mounted ? theme ?? "system" : null;
 
   return (
     <section className="bg-white dark:bg-slate-900 rounded-2xl border border-gray-100 dark:border-slate-800 shadow-sm p-5">

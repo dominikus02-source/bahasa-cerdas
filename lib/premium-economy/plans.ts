@@ -14,7 +14,7 @@ import { resolveIdentity } from "@/lib/account/identity";
 import { db } from "@/lib/db";
 import type { UserLike } from "@/lib/types/user";
 
-export type PlanCode = "FREE" | "PRO" | "MURID_PREMIUM" | "FOUNDER" | (string & {});
+export type PlanCode = "FREE" | "PRO" | "MURID_PREMIUM" | "UMUM_PREMIUM" | "FOUNDER" | (string & {});
 
 export type SubscriptionStatusLabel = "ACTIVE" | "TRIALING" | "FOUNDER" | null;
 
@@ -33,6 +33,7 @@ export type { UserLike };
  * Role-based:
  *   MURID + isPremium  → MURID_PREMIUM (feature-tiered, NOT credit-based)
  *   GURU + isPremium   → PRO (credit-based via AI Gateway)
+ *   UMUM + isPremium / uji coba Umum → UMUM_PREMIUM (tanpa kredit AI)
  */
 export function resolvePlanForUser(user: UserLike): {
   plan: PlanCode;
@@ -76,6 +77,7 @@ export function resolvePlan(userId: string): Promise<ResolvedPlan> {
         premiumPlan: true,
         premiumUntil: true,
         trialEndsAt: true,
+        trialPlan: true,
         subscriptions: {
           orderBy: { currentPeriodEnd: "desc" },
           select: { id: true, status: true, currentPeriodStart: true, currentPeriodEnd: true },
@@ -98,7 +100,10 @@ export function resolvePlan(userId: string): Promise<ResolvedPlan> {
     }
 
     const activeSub = user.subscriptions?.find(s => s.status === "ACTIVE" && s.currentPeriodStart <= new Date() && s.currentPeriodEnd > new Date());
-    if (activeSub && activeSub.currentPeriodEnd && activeSub.currentPeriodEnd > new Date()) {
+    // Allowlist eksplisit: hanya MURID/GURU yang bisa punya plan berbayar
+    // (selaras resolveIdentity). UMUM tidak memakai Subscription — Premium
+    // Umum dibaca resolveIdentity dari flag sekali-bayar / uji coba Umum.
+    if ((user.role === "MURID" || user.role === "GURU") && activeSub && activeSub.currentPeriodEnd && activeSub.currentPeriodEnd > new Date()) {
       return {
         plan: user.role === "MURID" ? "MURID_PREMIUM" : "PRO",
         subscriptionStatus: "ACTIVE",

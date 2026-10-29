@@ -19,7 +19,7 @@ import { parseParticipantMeta } from "./format";
 export interface JumpaRoomInfo {
   code: string;
   title: string;
-  kind: "KELAS" | "GURU" | "MURID";
+  kind: "KELAS" | "GURU" | "MURID" | "UMUM";
   isLocked: boolean;
   chatEnabled: boolean;
   allowMuridScreenShare: boolean;
@@ -30,7 +30,7 @@ export interface JumpaRoomInfo {
 
 export interface JumpaSelf {
   userId: string;
-  bcRole: "GURU" | "MURID";
+  bcRole: "GURU" | "MURID" | "UMUM";
   /** Peran dari respons token; dipakai sampai metadata LiveKit tiba. */
   roomRole?: "HOST" | "COHOST" | "MEMBER";
 }

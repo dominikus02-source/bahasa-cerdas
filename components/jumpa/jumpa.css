@@ -226,6 +226,7 @@
 .jumpa-badge[data-role="GURU"] { color: var(--clr-accent); background: var(--clr-accent-soft); }
 .jumpa-badge[data-role="MURID"] { color: var(--clr-violet); background: var(--clr-violet-soft); }
 .jumpa-badge[data-role="HOST"] { color: var(--clr-warning); background: var(--clr-warning-soft); }
+.jumpa-badge[data-role="UMUM"] { color: var(--clr-info); background: var(--clr-info-soft); }
 /* Nama diprioritaskan; badge tidak pernah menekan nama sampai 3 huruf. */
 .jumpa-nameplate > .truncate { min-width: 0; flex: 0 1 auto; }
 .jumpa-nameplate > .jumpa-badge { flex-shrink: 0; }
@@ -1309,6 +1310,7 @@ select.jumpa-input { text-overflow: ellipsis; padding-right: 36px; }
 }
 .jumpa-icon-chip[data-kind="GURU"] { background: linear-gradient(140deg, var(--clr-info), color-mix(in srgb, var(--clr-info) 70%, var(--clr-text))); }
 .jumpa-icon-chip[data-kind="MURID"] { background: linear-gradient(140deg, var(--clr-warning), var(--clr-accent)); }
+.jumpa-icon-chip[data-kind="UMUM"] { background: linear-gradient(140deg, var(--clr-accent), var(--clr-info)); }
 
 /* Kartu aksi (Ruang guru / Ruang kelas) dengan aksen gradien di tepi atas. */
 .jumpa-action-card { position: relative; overflow: hidden; padding: 18px; }

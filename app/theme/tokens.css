@@ -212,6 +212,90 @@
   --clr-focus: #93c5fd;
 }
 
+/* ── 4. Dasbor Umum (§4) (/umum, [data-audience="umum"]) ───────────────────
+   Desain pendiri 2026-10-26: aksen biru, tombol navy, latar navy di mode
+   gelap, dan satu gradien per produk untuk ubin ikon "Ruang Jelajahmu".
+   Kontras: ikon putih di atas tiap gradien ≥ 3:1 (non-teks); teks putih di
+   atas --clr-navy ≥ 9:1; aksen #1d4ed8 di atas #e8f0fe ≥ 5.6:1, #93c5fd di
+   atas #15264a ≥ 7:1. Teks di atas gambar hero/jelajahi = putih di atas
+   area biru tua gambar + --bc-umum-scrim (≥ 4.5:1). */
+[data-audience="umum"] {
+  --clr-bg: #f5f7fb;
+  --clr-surface-2: #f7f9fd;
+  --clr-aud: #1d4ed8;
+  --clr-aud-strong: #1e3a8a;
+  --clr-aud-soft: #e8f0fe;
+  --clr-on-aud: #ffffff;
+  --clr-navy: #0b3a75;
+  --clr-on-navy: #ffffff;
+  --clr-focus: #1d4ed8;
+  --bc-umum-scrim: linear-gradient(90deg, color-mix(in srgb, #083a8c 42%, transparent) 0%, color-mix(in srgb, #083a8c 18%, transparent) 40%, transparent 60%);
+  --bc-umum-quote-shadow: 0 1px 2px color-mix(in srgb, #06275e 70%, transparent), 0 0 14px color-mix(in srgb, #06275e 45%, transparent);
+  --bc-umum-promo: linear-gradient(160deg, #eaf2ff, #dbe8fd);
+  --bc-tile-nara: linear-gradient(140deg, #6366f1, #2563eb);
+  --bc-tile-jumpa: linear-gradient(140deg, #0d9488, #0f766e);
+  --bc-tile-main: linear-gradient(140deg, #f43f5e, #ea580c);
+  --bc-tile-jalur: linear-gradient(140deg, #a855f7, #7c3aed);
+  --bc-tile-bigt: linear-gradient(140deg, #3b82f6, #1d4ed8);
+  --bc-tile-aksara: linear-gradient(140deg, #0891b2, #0e7490);
+  --bc-tile-toko: linear-gradient(140deg, #f43f5e, #be123c);
+  --bc-tile-aku: linear-gradient(140deg, #d97706, #b45309);
+}
+.dark [data-audience="umum"],
+.dark[data-audience="umum"] {
+  --clr-bg: #0a1228;
+  --clr-surface: #0f1a35;
+  --clr-surface-2: #13203f;
+  --clr-border: #1d2b4f;
+  --clr-border-strong: #283a64;
+  --clr-aud: #93c5fd;
+  --clr-aud-strong: #bfdbfe;
+  --clr-aud-soft: #15264a;
+  --clr-on-aud: #0a1228;
+  --clr-navy: #0c2c5e;
+  --clr-on-navy: #ffffff;
+  --clr-focus: #93c5fd;
+  --bc-umum-promo: linear-gradient(160deg, #13244a, #0f1d3d);
+}
+
+/* ── 5. Kartu bergambar beranda guru (keputusan founder 2026-10-26) ──
+   Foto dipulihkan di hero, pintasan, promo, pengumuman & quote. Teks di atas
+   foto selalu terang, jadi scrim navy dipakai di KEDUA mode; mode gelap hanya
+   menambah lapisan peredup (--bc-media-dim) agar foto tidak "menyala" di
+   tengah UI gelap. Pakai lewat kelas .bc-media* di globals.css. */
+.bc-guru-shell,
+[data-audience="guru"] {
+  --bc-media-base: #0b3674;
+  --bc-media-ink: #ffffff;
+  --bc-media-ink-2: color-mix(in srgb, #ffffff 82%, transparent);
+  --bc-media-chip: color-mix(in srgb, #ffffff 12%, transparent);
+  --bc-media-chip-line: color-mix(in srgb, #ffffff 18%, transparent);
+  --bc-media-glass: color-mix(in srgb, #020617 28%, transparent);
+  --bc-media-cta: #ffffff;
+  --bc-media-cta-hover: #eff6ff;
+  --bc-media-cta-ink: #1d4ed8;
+  --bc-media-line: color-mix(in srgb, #93c5fd 30%, transparent);
+  --bc-media-dim: transparent;
+  --bc-media-scrim-hero: radial-gradient(circle at 78% 18%, color-mix(in srgb, #60a5fa 22%, transparent), transparent 32%),
+    linear-gradient(90deg, color-mix(in srgb, #061a39 98%, transparent) 0%, color-mix(in srgb, #0b3265 90%, transparent) 54%, color-mix(in srgb, #0b3b77 52%, transparent) 100%);
+  --bc-media-scrim-side: linear-gradient(90deg, color-mix(in srgb, #061b3a 98%, transparent) 0%, color-mix(in srgb, #0a3f84 88%, transparent) 58%, color-mix(in srgb, #1769c7 30%, transparent) 100%);
+  --bc-media-scrim-banner: linear-gradient(90deg, color-mix(in srgb, #071c3f 99%, transparent) 0%, color-mix(in srgb, #0c438f 94%, transparent) 43%, color-mix(in srgb, #125dbe 66%, transparent) 72%, color-mix(in srgb, #125dbe 30%, transparent) 100%);
+  --bc-media-scrim-quote: linear-gradient(135deg, color-mix(in srgb, #061a39 99%, transparent) 0%, color-mix(in srgb, #0c3974 92%, transparent) 56%, color-mix(in srgb, #0e5ca8 66%, transparent) 100%);
+  --bc-media-scrim-1: linear-gradient(135deg, color-mix(in srgb, #1352b5 95%, transparent), color-mix(in srgb, #2563eb 88%, transparent) 52%, color-mix(in srgb, #0ea5e9 70%, transparent));
+  --bc-media-scrim-2: linear-gradient(135deg, color-mix(in srgb, #1548a0 96%, transparent), color-mix(in srgb, #285ec0 88%, transparent) 55%, color-mix(in srgb, #5d82d9 72%, transparent));
+  --bc-media-scrim-3: linear-gradient(135deg, color-mix(in srgb, #123778 97%, transparent), color-mix(in srgb, #2556aa 88%, transparent) 54%, color-mix(in srgb, #4e7ed3 70%, transparent));
+  --bc-media-scrim-4: linear-gradient(135deg, color-mix(in srgb, #054a70 97%, transparent), color-mix(in srgb, #08749e 88%, transparent) 52%, color-mix(in srgb, #22b4bc 66%, transparent));
+}
+.dark .bc-guru-shell,
+.dark [data-audience="guru"],
+.dark.bc-guru-shell {
+  --bc-media-base: #061427;
+  --bc-media-cta: #e8f1ff;
+  --bc-media-cta-hover: #ffffff;
+  --bc-media-line: color-mix(in srgb, #60a5fa 22%, transparent);
+  --bc-media-dim: color-mix(in srgb, #020617 26%, transparent);
+}
+
 @media (prefers-reduced-motion: reduce) {
   :root { --bc-dur-fast: 0s; --bc-dur: 0s; --bc-dur-slow: 0s; }
 }

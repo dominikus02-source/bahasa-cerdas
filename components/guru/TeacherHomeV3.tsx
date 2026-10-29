@@ -3,6 +3,7 @@
 import JumpaLaunchBanner from "@/components/jumpa/JumpaLaunchBanner";
 import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -13,6 +14,7 @@ import {
   FilePenLine,
   GraduationCap,
   Lightbulb,
+  MonitorPlay,
   Quote,
   Sparkles,
   Trophy,
@@ -26,11 +28,28 @@ import { MISI_GURU } from "@/lib/guru/misi-guru";
 import type { MisiGuruStatus } from "@/lib/guru/misi-guru-status";
 import { getDailyTeacherTip, getWeeklyTeacherQuote } from "@/lib/guru/home-content";
 
+/**
+ * Foto beranda guru — dipulihkan atas keputusan founder (2026-10-26) setelah
+ * #171 meratakan beranda menjadi kartu polos. Host images.unsplash.com sudah
+ * diizinkan di next.config.ts (remotePatterns) & CSP img-src (middleware.ts).
+ */
+const PHOTO = {
+  hero: "https://images.unsplash.com/photo-1654356709115-3f68998bead4?auto=format&fit=crop&w=1800&q=82",
+  classroom: "https://images.unsplash.com/photo-1778489769184-45868633c527?auto=format&fit=crop&w=1600&q=82",
+  writing: "https://images.unsplash.com/photo-1743385779312-73ea241025d8?auto=format&fit=crop&w=1200&q=80",
+  aiWorkspace: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1400&q=82",
+  studentLearning: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=1400&q=82",
+} as const;
+
 type QuickAction = {
   label: string;
   desc: string;
   href: string;
   icon: LucideIcon;
+  image: string;
+  /** Kelas scrim token (tokens.css §4) — sama di terang & gelap, gelap + peredup. */
+  scrim: string;
+  imagePosition?: string;
 };
 
 const QUICK_ACTIONS: QuickAction[] = [
@@ -39,24 +58,34 @@ const QUICK_ACTIONS: QuickAction[] = [
     desc: "Ajak kelas belajar secara interaktif.",
     href: "/guru/game/main-bersama",
     icon: Users,
+    image: PHOTO.classroom,
+    scrim: "bc-media-scrim--1",
   },
   {
     label: "Buat Karya",
-    desc: "Tulis artikel, puisi, atau karya pembelajaran.",
+    desc: "Tulis artikel, puisi, atau karya pembelajaran di AKSARA.",
     href: "/guru/artikel",
     icon: FilePenLine,
+    image: PHOTO.writing,
+    scrim: "bc-media-scrim--2",
   },
   {
     label: "NARA",
     desc: "Rekan Anda untuk ide dan persiapan mengajar.",
     href: "/guru/ai-bc",
     icon: Bot,
+    image: PHOTO.aiWorkspace,
+    scrim: "bc-media-scrim--3",
+    imagePosition: "center 52%",
   },
   {
     label: "Dasbor Murid",
     desc: "Lihat pengalaman BahasaCerdas dari sisi murid.",
     href: "/murid/beranda",
     icon: GraduationCap,
+    image: PHOTO.studentLearning,
+    scrim: "bc-media-scrim--4",
+    imagePosition: "center 42%",
   },
 ];
 
@@ -76,28 +105,30 @@ function TeacherHero({
   greeting: string;
   fullName: string;
 }) {
-  const quote = getWeeklyTeacherQuote();
   return (
-    <section className="relative overflow-hidden rounded-bc-hero border border-bc-border bg-bc-aud-soft px-5 py-6 shadow-bc-1 sm:px-8 sm:py-8">
-      <span className="inline-flex w-fit items-center gap-2 rounded-full bg-bc-surface px-3 py-1 text-[11px] font-bold tracking-[.12em] text-bc-aud">
-        <Sparkles className="h-3.5 w-3.5" />
-        RUANG KERJA GURU
-      </span>
-      <h1 className="mt-3 break-words text-[1.7rem] font-extrabold leading-tight tracking-tight text-bc-text sm:text-[2.3rem]">
-        {greeting}, {fullName}
-      </h1>
-      <p className="mt-2 max-w-[560px] text-sm leading-relaxed text-bc-text-2 sm:text-base">
-        Mulai dari hal yang paling penting hari ini. BahasaCerdas membantu pekerjaan mengajar tetap ringkas dan terarah.
-      </p>
-      <figure className="mt-5 hidden max-w-[560px] border-l-[3px] border-bc-aud pl-4 sm:block">
-        <figcaption className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.1em] text-bc-aud">
-          <Quote className="h-3.5 w-3.5" /> Quote Minggu Ini
-        </figcaption>
-        <blockquote className="mt-1.5 text-sm font-medium leading-relaxed text-bc-text">
-          “{quote.text}”
-        </blockquote>
-        <p className="mt-1 text-xs text-bc-text-3">— {quote.source}</p>
-      </figure>
+    <section className="bc-media min-h-[238px] rounded-bc-hero shadow-bc-2 sm:min-h-[286px]">
+      <Image
+        src={PHOTO.hero}
+        alt=""
+        fill
+        priority
+        sizes="(max-width: 1280px) 100vw, 850px"
+        className="object-cover object-center"
+      />
+      <div className="bc-media-scrim" />
+
+      <div className="relative z-10 flex min-h-[238px] max-w-[680px] flex-col justify-center px-5 py-6 sm:min-h-[286px] sm:px-9 sm:py-8">
+        <span className="bc-media-chip mb-3 inline-flex w-fit items-center gap-2 rounded-full px-3 py-1.5 text-[11px] font-bold tracking-[.12em]">
+          <Sparkles className="h-3.5 w-3.5" />
+          RUANG KERJA GURU
+        </span>
+        <h1 className="bc-media-ink break-words text-[1.75rem] font-extrabold leading-[1.08] tracking-tight sm:text-[2.55rem] sm:leading-[1.06]">
+          {greeting}, {fullName}
+        </h1>
+        <p className="bc-media-ink-2 mt-3 max-w-[510px] text-sm leading-relaxed sm:text-base">
+          Mulai dari hal yang paling penting hari ini. BahasaCerdas membantu pekerjaan mengajar tetap ringkas dan terarah.
+        </p>
+      </div>
     </section>
   );
 }
@@ -187,19 +218,74 @@ function QuickActions() {
             <Link
               key={action.label}
               href={action.href}
-              className={`${CARD} group flex min-h-[112px] flex-col p-3.5 transition-colors hover:border-bc-aud/50 sm:p-4`}
+              className="bc-media group min-h-[142px] rounded-bc-card shadow-bc-1 transition-transform duration-200 hover:-translate-y-0.5 sm:min-h-[168px]"
             >
-              <span className="grid h-10 w-10 place-items-center rounded-bc-icon bg-bc-aud-soft text-bc-aud">
-                <Icon className="h-5 w-5" />
-              </span>
-              <span className="mt-auto flex items-center justify-between gap-2 pt-3">
-                <span className="min-w-0 text-sm font-bold leading-tight text-bc-text sm:text-base">{action.label}</span>
-                <ArrowRight className="h-4 w-4 shrink-0 text-bc-text-3 transition-transform group-hover:translate-x-0.5 group-hover:text-bc-aud" />
-              </span>
-              <span className="mt-1 hidden text-xs leading-relaxed text-bc-text-2 sm:block">{action.desc}</span>
+              <Image
+                src={action.image}
+                alt=""
+                fill
+                sizes="(max-width: 640px) 50vw, (max-width: 1280px) 50vw, 25vw"
+                className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                style={{ objectPosition: action.imagePosition ?? "center" }}
+              />
+              <div className={`bc-media-scrim ${action.scrim}`} />
+              <div className="relative z-10 flex h-full min-h-[142px] flex-col p-3 sm:min-h-[168px] sm:p-4">
+                <span className="bc-media-chip grid h-9 w-9 place-items-center rounded-bc-icon sm:h-10 sm:w-10">
+                  <Icon className="h-5 w-5" />
+                </span>
+                <div className="mt-auto pt-3 sm:pt-5">
+                  <div className="flex items-end justify-between gap-2 sm:gap-3">
+                    <div className="min-w-0">
+                      <h3 className="bc-media-ink text-sm font-extrabold leading-tight sm:text-base">{action.label}</h3>
+                      <p className="bc-media-ink-2 mt-1 hidden max-w-[220px] text-xs leading-relaxed sm:block">
+                        {action.desc}
+                      </p>
+                    </div>
+                    <span className="bc-media-cta grid h-7 w-7 shrink-0 place-items-center rounded-full transition-transform group-hover:translate-x-0.5 sm:h-8 sm:w-8">
+                      <ArrowRight className="h-4 w-4" />
+                    </span>
+                  </div>
+                </div>
+              </div>
             </Link>
           );
         })}
+      </div>
+    </section>
+  );
+}
+
+/** Pengumuman bergambar Main Bersama (foto kelas) — dipulihkan atas keputusan founder. */
+function MainBersamaAnnouncement() {
+  return (
+    <section className="overflow-hidden rounded-bc-card border border-bc-border bg-bc-surface shadow-bc-1">
+      <div className="border-b border-bc-border px-5 py-3.5">
+        <p className="text-sm font-bold text-bc-text">Pengumuman Terbaru</p>
+      </div>
+      <div className="bc-media bc-media--flush min-h-[240px] sm:min-h-[260px]">
+        <Image
+          src={PHOTO.classroom}
+          alt="Suasana kelas dengan pembelajaran digital"
+          fill
+          sizes="(max-width: 1280px) 100vw, 760px"
+          className="object-cover object-center"
+        />
+        <div className="bc-media-scrim bc-media-scrim--side" />
+        <div className="relative z-10 flex min-h-[240px] max-w-[560px] flex-col justify-center p-5 sm:min-h-[260px] sm:p-7">
+          <span className="bc-media-chip mb-3 inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-extrabold tracking-[.12em]">
+            <MonitorPlay className="h-3.5 w-3.5" /> FITUR UNGGULAN
+          </span>
+          <h2 className="bc-media-ink text-2xl font-extrabold sm:text-3xl">Kenalkan Main Bersama</h2>
+          <p className="bc-media-ink-2 mt-2 max-w-[470px] text-sm leading-relaxed">
+            Gunakan kuis interaktif untuk membuat seluruh kelas belajar, bergerak, dan merespons bersama.
+          </p>
+          <Link
+            href="/guru/game/main-bersama"
+            className="bc-media-cta mt-5 inline-flex min-h-11 w-fit items-center gap-2 rounded-bc-ctl px-4 py-2.5 text-sm font-bold shadow-bc-2"
+          >
+            Jelajahi Main Bersama <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -266,6 +352,34 @@ function CompetitionCard() {
   );
 }
 
+/** Quote mingguan di atas foto hero (dipulihkan; tampil sm+ seperti sebelum #171). */
+function QuoteCard() {
+  const quote = getWeeklyTeacherQuote();
+  return (
+    <section className="bc-media min-h-[220px] rounded-bc-card p-5 shadow-bc-1">
+      <Image
+        src={PHOTO.hero}
+        alt=""
+        fill
+        sizes="(max-width: 1280px) 100vw, 420px"
+        className="object-cover"
+        style={{ objectPosition: "center 42%" }}
+      />
+      <div className="bc-media-scrim bc-media-scrim--quote" />
+      <div className="relative z-10">
+        <div className="flex items-center gap-2">
+          <Quote className="bc-media-ink-2 h-5 w-5" />
+          <h2 className="bc-media-ink text-sm font-bold">Quote Minggu Ini</h2>
+        </div>
+        <blockquote className="bc-media-ink mt-5 text-base font-semibold leading-relaxed">
+          “{quote.text}”
+        </blockquote>
+        <p className="bc-media-ink-2 mt-4 text-xs font-medium">— {quote.source}</p>
+      </div>
+    </section>
+  );
+}
+
 function TipCard() {
   const tip = getDailyTeacherTip();
   return (
@@ -297,7 +411,7 @@ export default function TeacherHomeV3({
   /** Kunci per pengguna untuk mengingat banner JUMPA yang ditutup. */
   userKey?: string | null;
 }) {
-  // Urutan: sapaan + misi → JUMPA → pintasan → promo → karya → lencana/kompetisi/tips.
+  // Urutan: sapaan + misi → JUMPA → pintasan → promo → pengumuman/kompetisi → karya → lencana/quote/tips.
   return (
     <div className="mx-auto w-full max-w-[1320px] space-y-5 sm:space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,.7fr)]">
@@ -313,12 +427,19 @@ export default function TeacherHomeV3({
 
       <BannerProgramGuruCerdas />
 
+      <div className="grid grid-cols-1 items-start gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.52fr)_minmax(310px,.58fr)]">
+        <MainBersamaAnnouncement />
+        <CompetitionCard />
+      </div>
+
       <GuruBerkarya misiStatus={misiStatus} compact />
 
       <div className="grid grid-cols-1 items-start gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.4fr)_minmax(300px,.6fr)]">
         <GuruBadgeGrid compact />
         <div className="space-y-4 sm:space-y-5">
-          <CompetitionCard />
+          <div className="hidden sm:block">
+            <QuoteCard />
+          </div>
           <TipCard />
         </div>
       </div>

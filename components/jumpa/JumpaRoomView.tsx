@@ -463,7 +463,7 @@ function AloneCard() {
 
 /** Data bagikan dari ruang; tautan 24 jam hanya untuk pemandu ruang guru. */
 function shareTargetOf(info: JumpaRoomInfo, self: JumpaSelf & { roomRole: "HOST" | "COHOST" | "MEMBER" }): ShareTarget {
-  return { code: info.code, title: info.title, kind: info.kind, canLink: info.kind === "GURU" && self.bcRole === "GURU" && self.roomRole !== "MEMBER" };
+  return { code: info.code, title: info.title, kind: info.kind, canLink: ((info.kind === "GURU" && self.bcRole === "GURU") || (info.kind === "UMUM" && self.bcRole === "UMUM")) && self.roomRole !== "MEMBER" };
 }
 
 const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeople }: { layout: Layout; wide: boolean; pageSize: number; stripMax: number; onShowPeople: () => void }) {
@@ -611,10 +611,13 @@ function ControlBar({
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
-  const isGuruHost = self.bcRole === "GURU" && self.roomRole !== "MEMBER";
+  // Pemandu dewasa: guru di ruang sekolah, atau akun UMUM di ruang UMUM. Guru/murid
+  // yang ikut ruang UMUM lewat tautan = peserta biasa (server tetap menegakkan izin).
+  const adult = info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU";
+  const isGuruHost = adult && self.roomRole !== "MEMBER";
   const canInvite = isGuruHost && info.kind !== "MURID";
-  const canLock = (self.bcRole === "GURU" && self.roomRole !== "MEMBER") || (info.kind === "MURID" && self.roomRole === "HOST");
-  const canEnd = (self.bcRole === "GURU" && self.roomRole === "HOST") || (info.kind === "MURID" && self.roomRole === "HOST");
+  const canLock = (adult && self.roomRole !== "MEMBER") || (info.kind === "MURID" && self.roomRole === "HOST");
+  const canEnd = (adult && self.roomRole === "HOST") || (info.kind === "MURID" && self.roomRole === "HOST");
 
   const toggleMic = async () => {
     setBusy("mic");

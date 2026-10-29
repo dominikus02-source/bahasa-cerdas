@@ -5,22 +5,23 @@ import { db } from "@/lib/db";
 // Batas unduh modul untuk user gratis. Premium/founder/admin tak terbatas.
 export const FREE_DOWNLOAD_LIMIT = 10;
 
-async function resolveUser(req: NextRequest, body: any) {
+// SECURITY: identitas HANYA dari sesi server. `supabaseId` di body (masih
+// dikirim oleh klien lama) diabaikan agar tidak bisa dipakai untuk bertindak
+// atas nama user lain.
+async function resolveUser() {
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) return db.user.findUnique({ where: { supabaseId: user.id } });
   } catch {}
-  if (body?.supabaseId) return db.user.findUnique({ where: { supabaseId: body.supabaseId } });
   return null;
 }
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const body = await req.json().catch(() => ({}));
-    const dbUser = await resolveUser(req, body);
-    if (!dbUser) return NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 });
+    const dbUser = await resolveUser();
+    if (!dbUser || dbUser.email.endsWith("@account.invalid")) return NextResponse.json({ error: "Sesi Anda berakhir. Silakan login ulang." }, { status: 401 });
 
     const materi = await db.materi.findFirst({
       where: { id, OR: [{ isPublished: true }, { uploaderId: dbUser.id }] },

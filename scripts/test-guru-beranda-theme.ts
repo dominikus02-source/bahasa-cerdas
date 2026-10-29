@@ -253,6 +253,38 @@ const css = fs.readFileSync(GLOBALS_CSS, "utf8");
     !tc.includes("FontAwesome") && !tc.includes("lucide-react'"));
 }
 
+// ── G. Foto beranda guru dipulihkan (keputusan founder 2026-10-26) ──
+// #171 (d1e15a9) menghapus seluruh foto beranda guru saat merapikan mode gelap.
+// Founder meminta semua gambar kembali; mode gelap tetap murni token (B/C di atas).
+{
+  const home = fs.readFileSync(path.join(ROOT, "components/guru/TeacherHomeV3.tsx"), "utf8");
+  const promo = fs.readFileSync(path.join(ROOT, "components/public/BannerProgramGuruCerdas.tsx"), "utf8");
+  const tokens = fs.readFileSync(path.join(ROOT, "app/theme/tokens.css"), "utf8");
+  const nextConfig = fs.readFileSync(path.join(ROOT, "next.config.ts"), "utf8");
+  const mw = fs.readFileSync(path.join(ROOT, "middleware.ts"), "utf8");
+
+  const photos = [
+    "photo-1654356709115-3f68998bead4", // hero + quote
+    "photo-1778489769184-45868633c527", // kelas (Main Bersama)
+    "photo-1743385779312-73ea241025d8", // menulis (Buat Karya)
+    "photo-1516321318423-f06f85e504b3", // NARA
+    "photo-1503676260728-1c00da094a0b", // Dasbor Murid
+  ];
+  check("G1. TeacherHomeV3 memakai next/image", home.includes('import Image from "next/image"'));
+  check("G2. Kelima foto beranda kembali", photos.every((id) => home.includes(id)), photos.filter((id) => !home.includes(id)).join(", "));
+  check("G3. Hero bergambar (priority) + scrim token", /function TeacherHero[\s\S]*?<Image[\s\S]*?src=\{PHOTO\.hero\}[\s\S]*?priority[\s\S]*?bc-media-scrim/.test(home));
+  check("G4. Empat pintasan bergambar", (home.match(/image: PHOTO\./g) || []).length === 4 && /src=\{action\.image\}/.test(home));
+  check("G5. Pengumuman Main Bersama bergambar dipasang", /<MainBersamaAnnouncement \/>/.test(home) && /src=\{PHOTO\.classroom\}/.test(home));
+  check("G6. Quote Minggu Ini bergambar dipasang", /<QuoteCard \/>/.test(home) && /function QuoteCard[\s\S]*?<Image/.test(home));
+  check("G7. Promo Guru Cerdas memakai /landing/banner-1.webp", promo.includes('src="/landing/banner-1.webp"') && promo.includes('import Image from "next/image"'));
+  check("G8. Aset promo ada di public/", fs.existsSync(path.join(ROOT, "public/landing/banner-1.webp")));
+  check("G9. Unsplash diizinkan next/image & CSP img-src", nextConfig.includes("images.unsplash.com") && /"img-src"[^\n]*images\.unsplash\.com/.test(mw));
+  check("G10. Token media terang + gelap (peredup) tersedia",
+    tokens.includes("--bc-media-scrim-hero") && /\.dark \.bc-guru-shell[\s\S]*--bc-media-dim:/.test(tokens));
+  check("G11. Gambar dekoratif ber-alt kosong (tidak dibacakan pembaca layar)",
+    (home.match(/alt=""/g) || []).length >= 3 && promo.includes('alt=""'));
+}
+
 // ── E. Protected zones: git status hanya file izin ──
 {
   const dirty = execSync("git status --porcelain", { cwd: ROOT, encoding: "utf8" })

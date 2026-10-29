@@ -3,6 +3,8 @@ import { createCommissionFromTransaction, reverseCommissionForTransaction } from
 import { evaluateRapidPremiumSignal, evaluateRefundPatternSignal } from "@/lib/guru/risk/events";
 import cache from "@/lib/redis";
 import { parseMidtransAmount } from "@/lib/payments/midtrans-server";
+import { getPlan, isUmumPlanId } from "@/lib/billing/plans";
+import { UMUM_TRIAL_PLAN } from "@/lib/account/identity";
 
 /**
  * Canonical Midtrans -> entitlement processor.
@@ -299,6 +301,89 @@ export async function processVerifiedMidtransNotification(
           return { planId, aiCreditsMonthly, isMurid };
         }
 
+        // ── PREMIUM UMUM ─────────────────────────────────────────────
+        // Paket HANYA dari metadata.planId yang tervalidasi (UMUM_PREMIUM_*).
+        // TIDAK pernah ditebak dari nominal (Rp79.000 dsb.). Metadata hilang /
+        // asing, atau akun bukan UMUM → uang tercatat SUCCESS (dana sudah
+        // masuk), hak TIDAK diberikan, ditandai needsManualReview untuk
+        // founder (POST /api/admin/payments/manual-activate). Tanpa kredit AI,
+        // tanpa komisi guru.
+        if (transaksi.type === "UMUM_PREMIUM") {
+          const meta = (transaksi.metadata || {}) as Record<string, any>;
+          const plan = isUmumPlanId(meta.planId) ? getPlan(meta.planId) : null;
+          const user = await tx.user.findUnique({
+            where: { id: transaksi.userId },
+            select: { premiumUntil: true, role: true, trialPlan: true, trialEndsAt: true },
+          });
+          const reviewReason = !plan ? "missing_or_invalid_plan_metadata" : user?.role !== "UMUM" ? "role_mismatch" : null;
+          if (!plan || reviewReason) {
+            await tx.transaksi.update({
+              where: { id: transaksi.id },
+              data: { metadata: { ...meta, needsManualReview: true, manualReviewReason: reviewReason, manualReviewAt: new Date().toISOString() } },
+            });
+            await tx.notifikasi.create({
+              data: {
+                userId: transaksi.userId,
+                title: "Pembayaran diterima",
+                body: "Pembayaranmu sudah kami terima dan sedang diverifikasi tim BahasaCerdas. Premium Umum aktif setelah verifikasi.",
+                type: "PREMIUM",
+              },
+            });
+            console.error("[premium.umum.manual_review]", { order_id, userId: transaksi.userId, reason: reviewReason, role: user?.role ?? null });
+            return { umumManualReview: true as const };
+          }
+
+          const now = new Date();
+          const DAY_MS = 24 * 60 * 60 * 1000;
+          // Bayar saat uji coba Umum berjalan → sisa uji coba DITAMBAHKAN.
+          // Uji coba dihentikan atomik (trialEndsAt = now, hanya bila nilainya
+          // masih sama) supaya sisa hari tidak terhitung dua kali.
+          let trialBonusMs = 0;
+          if (user?.trialPlan === UMUM_TRIAL_PLAN && user.trialEndsAt && user.trialEndsAt > now) {
+            const consumed = await tx.user.updateMany({
+              where: { id: transaksi.userId, trialPlan: UMUM_TRIAL_PLAN, trialEndsAt: user.trialEndsAt },
+              data: { trialEndsAt: now },
+            });
+            if (consumed.count === 1) trialBonusMs = user.trialEndsAt.getTime() - now.getTime();
+          }
+          const base = user?.premiumUntil && user.premiumUntil > now ? user.premiumUntil.getTime() : now.getTime();
+          const premiumUntil = new Date(base + plan.durationDays * DAY_MS + trialBonusMs);
+
+          await tx.user.update({
+            where: { id: transaksi.userId },
+            data: { isPremium: true, premiumPlan: "PRO", premiumUntil },
+          });
+
+          if (typeof meta.kuponId === "string" && meta.kuponId) {
+            const already = await tx.kuponPemakaian.findFirst({ where: { transaksiId: transaksi.id }, select: { id: true } });
+            if (!already) {
+              await tx.kuponPemakaian.create({
+                data: {
+                  kuponId: meta.kuponId,
+                  userId: transaksi.userId,
+                  transaksiId: transaksi.id,
+                  hargaAsli: typeof meta.hargaAsli === "number" ? meta.hargaAsli : transaksi.amount,
+                  hargaDiskon: typeof meta.hargaDiskon === "number" ? meta.hargaDiskon : transaksi.amount,
+                },
+              });
+              await tx.kupon.updateMany({ where: { id: meta.kuponId }, data: { jumlahTerpakai: { increment: 1 } } });
+            }
+          }
+          await tx.notifikasi.create({
+            data: {
+              userId: transaksi.userId,
+              title: "Premium Umum aktif",
+              body: `Terima kasih! Premium Umum aktif sampai ${premiumUntil.toLocaleDateString("id-ID")}. Tidak ada perpanjangan otomatis.`,
+              type: "PREMIUM",
+            },
+          });
+          console.log("[premium.activated]", {
+            userId: transaksi.userId, order_id, planId: plan.planId, durationDays: plan.durationDays,
+            kind: "UMUM", trialBonusDays: Math.round(trialBonusMs / DAY_MS), premiumUntil: premiumUntil.toISOString(),
+          });
+          return { umum: true as const, umumPlanId: plan.planId };
+        }
+
         if (transaksi.type === "KARYA_PURCHASE") {
           const meta = (transaksi.metadata || {}) as any;
           const items: any[] = meta.items || [];
@@ -374,7 +459,9 @@ export async function processVerifiedMidtransNotification(
 
       // Entitlement sudah committed. Invalidate /api/user/me agar UI tidak
       // membaca profil FREE yang masih tersimpan di Redis.
-      await cache.del(`user:me:id:${(await db.user.findUnique({ where: { id: transaksi.userId }, select: { supabaseId: true } }))?.supabaseId || ""}`).catch(() => {});
+      const sbId = (await db.user.findUnique({ where: { id: transaksi.userId }, select: { supabaseId: true } }))?.supabaseId || "";
+      await cache.del(`user:me:id:${sbId}`).catch(() => {});
+      if (transaksi.type === "UMUM_PREMIUM") await cache.del(`user:me:v2:id:${sbId}`).catch(() => {});
 
       // Ledger kredit AI (di luar transaksi klaim — best-effort, aman dobel
       // karena syncPremiumCreditLedger idempotent: hanya menaikkan ke target).
@@ -382,7 +469,9 @@ export async function processVerifiedMidtransNotification(
       if (
         processed && typeof processed === "object" &&
         "planId" in processed &&
+        typeof processed.planId === "string" &&
         !processed.isMurid &&
+        typeof processed.aiCreditsMonthly === "number" &&
         processed.aiCreditsMonthly > 0
       ) {
         await syncPremiumCreditLedger(transaksi.userId, processed.planId, processed.aiCreditsMonthly);

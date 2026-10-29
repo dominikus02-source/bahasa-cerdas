@@ -27,7 +27,8 @@ import { QuestionCard } from '@/components/main-bersama/shared/QuestionCard';
 import { ConnectionBanner } from '@/components/main-bersama/shared/ConnectionBanner';
 import { RoundCountdown } from '@/components/main-bersama/shared/RoundCountdown';
 import { LobbyRoster } from '@/components/main-bersama/shared/LobbyRoster';
-import { useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
+import { isMusicPhase, useMainBersamaSound } from '@/components/main-bersama/sound/useMainBersamaSound';
+import { GameTimer, useGameClock } from '@/components/main-bersama/shared/GameTimer';
 import { SoundToggle } from '@/components/main-bersama/sound/SoundToggle';
 import { JelajahTrail } from '@/components/main-bersama/art/jelajah/JelajahTrail';
 import { KotaScene } from '@/components/main-bersama/art/kota/KotaScene';
@@ -123,13 +124,16 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
       : [];
   const kotaMotion = useKotaMotion(kotaProgressPercent, kotaUnlocked, phase);
 
+  const gameClock = useGameClock(view?.gameClock, view?.serverTime);
   const gameSound = useMainBersamaSound({
+    musicActive: isMusicPhase(view?.phase) && (gameClock.running || !view?.gameClock),
+    remainingMs: gameClock.remainingMs,
     participantCount: view?.participation.playerCount ?? 0,
     phase: view?.phase ?? 'preparing',
     gameMode: view?.gameMode ?? 'jelajah-kata',
     kotaUnlockedCount: kotaUnlocked.length,
     teamProgress: gameMode === 'jelajah-kata' ? teamProgress : undefined,
-  });
+  }, { surface: 'layar', channelKey: sessionId });
 
   const run = useCallback(
     async (action: DockCommand) => {
@@ -194,6 +198,7 @@ export function ClassroomClient({ sessionId, roomHref }: { sessionId: string; ro
           <span className="mb-pj-mode">{MODE_LABEL[view.gameMode]}</span>
           {view.className ? <span className="mb-pj-class">Kelas {view.className}</span> : null}
         </div>
+        <GameTimer clock={view.gameClock} serverTime={view.serverTime} onTimeUp={() => void refresh()} />
       </header>
 
       {(phase === 'lobby' || phase === 'preparing') && (

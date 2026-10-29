@@ -9,7 +9,7 @@ import {
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
-import { createClient } from "@/lib/supabase/client"
+import { MATERI_ACCEPT, isMateriFileNameAllowed } from "@/lib/materi/file-types"
 
 interface Materi {
   id: string
@@ -34,7 +34,7 @@ interface Materi {
 }
 
 type LevelTab = "SD" | "SMP" | "SMA"
-type Folder = "" | "PPT" | "PDF"
+type Folder = "" | "PPT" | "PDF" | "DOC"
 
 const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
   SD: ["SD Kelas 1", "SD Kelas 2", "SD Kelas 3", "SD Kelas 4", "SD Kelas 5", "SD Kelas 6"],
@@ -44,6 +44,7 @@ const GRADES_BY_LEVEL: Record<LevelTab, string[]> = {
 
 const FOLDERS: { value: Folder; label: string; hint: string }[] = [
   { value: "PPT", label: "PPT", hint: "Presentasi" },
+  { value: "DOC", label: "Word", hint: "Dokumen Word" },
   { value: "PDF", label: "PDF", hint: "Dokumen PDF" },
 ]
 
@@ -66,7 +67,7 @@ export default function MateriAjarPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("")
   const [kelasFilter, setKelasFilter] = useState<string>("") // grade spesifik, "" = semua di jenjang
   const [folder, setFolder] = useState<Folder>("")
-  const [folderCounts, setFolderCounts] = useState<{ PPT: number; PDF: number }>({ PPT: 0, PDF: 0 })
+  const [folderCounts, setFolderCounts] = useState<Record<"PPT" | "PDF" | "DOC", number>>({ PPT: 0, PDF: 0, DOC: 0 })
   const [quota, setQuota] = useState<{ used: number; limit: number | null; unlimited: boolean } | null>(null)
   const [detailMateri, setDetailMateri] = useState<Materi | null>(null)
   const [kirimMateri, setKirimMateri] = useState<Materi | null>(null)
@@ -77,17 +78,11 @@ export default function MateriAjarPage() {
     return () => clearTimeout(t)
   }, [search])
 
-  const getSid = () => {
-    try { const stored = localStorage.getItem("bc-user"); if (stored) return JSON.parse(stored).state?.supabaseId || "" } catch {}
-    return ""
-  }
-
   const fetchMateris = useCallback(async () => {
     setLoading(true)
     try {
-      const sid = getSid()
+      // Identitas dari cookie sesi; supabaseId tidak dikirim lagi (server mengabaikannya).
       const params = new URLSearchParams({ page: String(page), limit: "24", sort })
-      if (sid) params.set("supabaseId", sid)
       if (debouncedSearch) params.set("q", debouncedSearch)
       if (kelasFilter) params.set("grade", kelasFilter)
       else if (activeTab) params.set("level", activeTab)
@@ -238,7 +233,7 @@ export default function MateriAjarPage() {
             >
               <Folder size={13} /> {f.label}
               <span className={`ml-0.5 px-1.5 rounded-full text-[10px] ${folder === f.value ? "bg-white/20" : "bg-gray-200 text-gray-500"}`}>
-                {folderCounts[f.value as "PPT" | "PDF"] ?? 0}
+                {folderCounts[f.value as "PPT" | "PDF" | "DOC"] ?? 0}
               </span>
             </button>
           ))}
@@ -303,7 +298,6 @@ export default function MateriAjarPage() {
         <MateriDetailModal
           materi={detailMateri}
           quota={quota}
-          getSid={getSid}
           onClose={() => setDetailMateri(null)}
           onQuota={(q) => setQuota(q)}
           onPresent={() => { const m = detailMateri; setDetailMateri(null); if (m) handlePresent(m) }}
@@ -382,12 +376,11 @@ export default function MateriAjarPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-600 mb-1">File * <span className="font-normal text-gray-400">(bisa pilih banyak)</span></label>
-                <input type="file" multiple accept=".pdf,.pptx"
+                <input type="file" multiple accept={MATERI_ACCEPT}
                   onChange={e => {
                     const picked = Array.from(e.target.files || [])
-                    const allowed = ["pdf", "pptx"]
-                    const valid = picked.filter(f => allowed.includes(f.name.split(".").pop()?.toLowerCase() || ""))
-                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF dan PPTX yang diterima.")
+                    const valid = picked.filter(f => isMateriFileNameAllowed(f.name))
+                    if (valid.length < picked.length) alert("Sebagian file dilewati — hanya PDF, Word (DOC/DOCX), dan PowerPoint (PPT/PPTX) yang diterima.")
                     setUploadFiles(valid)
                   }}
                   className="hidden" id="materi-file-input" />
@@ -410,7 +403,7 @@ export default function MateriAjarPage() {
                     ))}
                   </div>
                 )}
-                <p className="text-[10px] text-gray-400 mt-1">PPTX atau PDF — Maks 50MB per file</p>
+                <p className="text-[10px] text-gray-400 mt-1">Word (DOC/DOCX), PowerPoint (PPT/PPTX), atau PDF — maks 50MB per file</p>
               </div>
               {uploadProgress && (
                 <div className="text-xs text-emerald-700 bg-emerald-50 rounded-lg px-3 py-2">
@@ -427,44 +420,41 @@ export default function MateriAjarPage() {
                   if (uploadFiles.length === 0 || !uploadForm.tema.trim()) return
                   setUploading(true)
                   setUploadProgress({ done: 0, total: uploadFiles.length })
-                  const supabase = createClient()
-                  const { data: { user } } = await supabase.auth.getUser()
-                  const userId = user?.id || "anonymous"
-                  let sid = ""
-                  try { const stored = localStorage.getItem("bc-user"); if (stored) sid = JSON.parse(stored).state?.supabaseId || "" } catch {}
-                  let ok = 0, failed = 0, rlsBlocked = false
+                  let ok = 0
+                  const errors: string[] = []
                   for (const f of uploadFiles) {
                     try {
-                      const fileExt = f.name.split(".").pop()?.toLowerCase() || "pdf"
-                      const fileName = `${userId}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
-                      const { data: uploadData, error: uploadError } = await supabase.storage
-                        .from("documents").upload(fileName, f, { cacheControl: "31536000", upsert: false })
-                      if (uploadError || !uploadData) {
-                        if (uploadError?.message?.toLowerCase().includes("row-level security") || uploadError?.message?.includes("policy")) rlsBlocked = true
-                        failed++
+                      const baseName = f.name.replace(/\.[^.]+$/, "")
+                      const title = (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : baseName
+                      const fd = new FormData()
+                      fd.set("title", title)
+                      fd.set("description", uploadForm.description)
+                      fd.set("grade", uploadForm.grade)
+                      fd.set("tema", uploadForm.tema.trim())
+                      fd.set("isPublished", "true")
+                      // Berkas dikirim ke API dan disimpan server-side. Dulu browser
+                      // mengunggah langsung ke Supabase Storage, sehingga kegagalan
+                      // (izin storage / CSP) tidak pernah sampai ke guru sebagai pesan.
+                      fd.set("file", f)
+                      const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
+                      if (res.ok) {
+                        ok++
                       } else {
-                        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path)
-                        const baseName = f.name.replace(/\.[^.]+$/, "")
-                        const title = (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : baseName
-                        const fd = new FormData()
-                        fd.set("title", title)
-                        fd.set("description", uploadForm.description)
-                        fd.set("grade", uploadForm.grade)
-                        fd.set("tema", uploadForm.tema.trim())
-                        fd.set("isPublished", "true")
-                        fd.set("fileUrl", urlData.publicUrl)
-                        fd.set("fileKey", uploadData.path)
-                        fd.set("fileType", fileExt.toUpperCase())
-                        if (sid) fd.set("supabaseId", sid)
-                        const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
-                        if (res.ok) ok++; else failed++
+                        const data = await res.json().catch(() => ({} as { error?: string }))
+                        errors.push(`${f.name}: ${data.error || `gagal (HTTP ${res.status})`}`)
                       }
-                    } catch { failed++ }
+                    } catch (err) {
+                      errors.push(`${f.name}: ${err instanceof Error ? err.message : "gagal terkirim"}`)
+                    }
                     setUploadProgress(p => ({ done: (p?.done || 0) + 1, total: uploadFiles.length }))
                   }
                   setUploading(false); setUploadProgress(null)
-                  if (rlsBlocked) alert("Izin upload ditolak. Hubungi admin untuk mengaktifkan izin storage.")
-                  else if (failed > 0) alert(`${ok} berhasil diunggah, ${failed} gagal.`)
+                  if (errors.length > 0) {
+                    alert(
+                      `${ok} berhasil, ${errors.length} gagal:\n- ${errors.slice(0, 5).join("\n- ")}` +
+                        (errors.length > 5 ? "\n…" : "")
+                    )
+                  }
                   if (ok > 0) {
                     setShowUpload(false); setUploadFiles([])
                     setUploadForm({ title: "", description: "", grade: "SMP Kelas 7", tema: "" })
@@ -484,7 +474,7 @@ export default function MateriAjarPage() {
 }
 
 function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () => void; onKirim: () => void }) {
-  const isPPT = materi.fileType === "PPTX"
+  const isPPT = materi.fileType === "PPTX" || materi.fileType === "PPT"
   const isPDF = materi.fileType === "PDF"
 
   return (
@@ -528,14 +518,14 @@ function MateriCard({ materi, onView, onKirim }: { materi: Materi; onView: () =>
 
 type Quota = { used: number; limit: number | null; unlimited: boolean }
 
-function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent, onKirim }: {
-  materi: Materi; quota: Quota | null; getSid: () => string; onClose: () => void; onQuota: (q: Quota) => void; onPresent: () => void; onKirim: () => void
+function MateriDetailModal({ materi, quota, onClose, onQuota, onPresent, onKirim }: {
+  materi: Materi; quota: Quota | null; onClose: () => void; onQuota: (q: Quota) => void; onPresent: () => void; onKirim: () => void
 }) {
   const [downloading, setDownloading] = useState(false)
   const [limitReached, setLimitReached] = useState(false)
   const [msg, setMsg] = useState("")
   const [done, setDone] = useState(false)
-  const isPPT = materi.fileType === "PPTX"
+  const isPPT = materi.fileType === "PPTX" || materi.fileType === "PPT"
   const isPDF = materi.fileType === "PDF"
 
   const preview = () => {
@@ -550,7 +540,7 @@ function MateriDetailModal({ materi, quota, getSid, onClose, onQuota, onPresent,
     try {
       const res = await fetch(`/api/guru/materi/${materi.id}/download`, {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ supabaseId: getSid() }),
+        body: JSON.stringify({}),
       })
       const data = await res.json()
       if (res.status === 403 && data.limitReached) { setLimitReached(true); setMsg(data.error); return }

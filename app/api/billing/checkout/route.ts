@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { getPlan } from "@/lib/billing/plans";
+import { getPlan, transactionTypeForPlan } from "@/lib/billing/plans";
+import { isUmumPremiumEnabled } from "@/lib/umum/premium-flag";
 import { validasiKupon } from "@/lib/billing/kupon";
 import { withTimeout } from "@/lib/db-timeout";
 import {
@@ -31,6 +32,9 @@ function ok(data: Record<string, unknown>) {
   return NextResponse.json({ ok: true, ...data });
 }
 
+/** Pesanan UMUM yang masih menunggu dalam jendela ini dilanjutkan (bukan dibuat baru). */
+const UMUM_RESUME_WINDOW_MS = 15 * 60 * 1000;
+
 function generateOrderId(userId: string): string {
   const ts = Date.now().toString(36).slice(-6).toUpperCase();
   const shortId = userId.slice(0, 8);
@@ -53,8 +57,9 @@ export async function POST(req: NextRequest) {
       return err("CHECKOUT_AUTH_REQUIRED", "Silakan login terlebih dahulu.", 401);
     }
 
-    // Role gate: GURU/ADMIN/founder can buy GURU plans, MURID can buy MURID plans.
-    const allowedRoles = ["GURU", "ADMIN", "MURID"];
+    // Role gate: GURU/ADMIN/founder can buy GURU plans, MURID can buy MURID
+    // plans, UMUM can buy UMUM plans (dicek per paket di bawah).
+    const allowedRoles = ["GURU", "ADMIN", "MURID", "UMUM"];
     if (!allowedRoles.includes(user.role) && !user.isFounder) {
       return err("CHECKOUT_FORBIDDEN_ROLE", "Role anda tidak dapat membeli paket ini.", 403);
     }
@@ -73,6 +78,18 @@ export async function POST(req: NextRequest) {
       return err("CHECKOUT_INVALID_PLAN", "Paket tidak tersedia.", 400);
     }
 
+    // Tipe transaksi dari allowlist eksplisit — targetRole asing ditolak.
+    const transaksiType = transactionTypeForPlan(plan);
+    if (!transaksiType) {
+      return err("CHECKOUT_FORBIDDEN_ROLE", "Paket ini tidak tersedia untuk akunmu.", 403);
+    }
+
+    // Premium Umum di balik flag ENABLE_UMUM_PREMIUM (default mati). Dicek
+    // sebelum bypass founder dan sebelum DB/Midtrans disentuh.
+    if (plan.targetRole === "UMUM" && !isUmumPremiumEnabled()) {
+      return err("CHECKOUT_FORBIDDEN_ROLE", "Premium Umum belum dibuka.", 403);
+    }
+
     // Validate plan targetRole matches user role (skip for founder/admin)
     if (!user.isFounder && user.role !== "ADMIN") {
       if (plan.targetRole === "GURU" && user.role !== "GURU") {
@@ -80,6 +97,13 @@ export async function POST(req: NextRequest) {
       }
       if (plan.targetRole === "MURID" && user.role !== "MURID") {
         return err("CHECKOUT_FORBIDDEN_ROLE", "Paket ini hanya untuk murid.", 403);
+      }
+      if (plan.targetRole === "UMUM" && user.role !== "UMUM") {
+        return err("CHECKOUT_FORBIDDEN_ROLE", "Paket ini hanya untuk akun Umum.", 403);
+      }
+      // Pengaman: peran apa pun yang tidak cocok persis dengan targetRole ditolak.
+      if (plan.targetRole !== user.role) {
+        return err("CHECKOUT_FORBIDDEN_ROLE", "Paket ini bukan untuk jenis akunmu.", 403);
       }
     }
 
@@ -135,8 +159,44 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Determine transaction type based on plan targetRole
-    const transaksiType = plan.targetRole === "MURID" ? "MURID_PREMIUM" : "PREMIUM_UPGRADE";
+    // Determine transaction type: sudah ditetapkan di atas lewat allowlist
+    // transactionTypeForPlan (GURU→PREMIUM_UPGRADE, MURID→MURID_PREMIUM,
+    // UMUM→UMUM_PREMIUM).
+
+    // Step 4b — Premium Umum: lanjutkan pesanan yang masih menunggu (≤ 15
+    // menit, paket + nominal + kupon sama) agar klik ganda / kembali dari
+    // Snap tidak membuat pesanan baru. Guru/murid tidak berubah.
+    if (transaksiType === "UMUM_PREMIUM") {
+      try {
+        const pending = await db.transaksi.findFirst({
+          where: {
+            userId: user.id,
+            type: "UMUM_PREMIUM",
+            status: "PENDING",
+            reference: plan.planId,
+            amount: hargaDiskon,
+            createdAt: { gt: new Date(Date.now() - UMUM_RESUME_WINDOW_MS) },
+          },
+          orderBy: { createdAt: "desc" },
+          select: { id: true, orderId: true, metadata: true },
+        });
+        const meta = (pending?.metadata || {}) as Record<string, unknown>;
+        const sameCoupon = (meta.kuponKode ?? null) === (kuponInfo?.kode ?? null);
+        if (pending?.orderId && sameCoupon && typeof meta.snapToken === "string" && typeof meta.redirectUrl === "string") {
+          return ok({
+            resumed: true,
+            transactionId: pending.id,
+            orderId: pending.orderId,
+            token: meta.snapToken,
+            redirectUrl: meta.redirectUrl,
+            plan: { planId: plan.planId, label: plan.label, price: plan.price, hargaDiskon, durationDays: plan.durationDays },
+            ...(kuponInfo ? { kupon: { kode: kuponInfo.kode, hargaAsli, hargaDiskon } } : {}),
+          });
+        }
+      } catch (resumeError: any) {
+        console.warn(`[Checkout:${requestId}] UMUM resume lookup failed`, { message: resumeError?.message });
+      }
+    }
 
     const orderId = generateOrderId(user.id);
 
@@ -263,6 +323,26 @@ export async function POST(req: NextRequest) {
       }
       const mapped = mapMidtransError(midtransError);
       return err(mapped.error as ErrorCode, mapped.message, mapped.httpStatus);
+    }
+
+    if (transaksiType === "UMUM_PREMIUM") {
+      // Simpan token Snap agar pesanan bisa dilanjutkan (Step 4b).
+      await db.transaksi
+        .update({
+          where: { id: transaksiId },
+          data: {
+            metadata: {
+              planId,
+              durationDays: plan.durationDays,
+              aiCreditsMonthly: plan.aiCreditsMonthly,
+              requestId,
+              ...(kuponInfo ? { kuponId: kuponInfo.id, kuponKode: kuponInfo.kode, hargaAsli, hargaDiskon } : {}),
+              snapToken: snapResult.token,
+              redirectUrl: snapResult.redirectUrl,
+            },
+          },
+        })
+        .catch((e: any) => console.warn(`[Checkout:${requestId}] snap token save failed`, { message: e?.message }));
     }
 
     return ok({

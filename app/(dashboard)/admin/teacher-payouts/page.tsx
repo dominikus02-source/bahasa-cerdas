@@ -6,6 +6,7 @@
  * Aksi pilot membutuhkan alasan dan diaudit.
  */
 
+import { useTypedConfirm, adminConfirmHeaders } from "@/components/admin/TypedConfirm";
 import { useCallback, useEffect, useState } from "react";
 import { ShieldCheck, ShieldAlert, Pause, Play, Plus, X } from "lucide-react";
 
@@ -114,6 +115,7 @@ export default function TeacherPayoutsPage() {
   const [canaryNotes, setCanaryNotes] = useState("");
   const [canaryPrepare, setCanaryPrepare] = useState({ teacherId: "", withdrawalId: "", evidence: "" });
   const [busy, setBusy] = useState(false);
+  const { confirm: konfirmasi, dialog: dialogKonfirmasi } = useTypedConfirm();
   const [message, setMessage] = useState<string | null>(null);
 
   const loadXendit = useCallback(async () => {
@@ -151,12 +153,13 @@ export default function TeacherPayoutsPage() {
       setMessage("Alasan wajib diisi.");
       return;
     }
+    if (!(await konfirmasi({ title: `Jalankan ${action}?` }))) return;
     setBusy(true);
     setMessage(null);
     try {
       const res = await fetch("/api/admin/teacher-commissions/payout-control", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ action, reason, ...extra }),
       });
       const d = await res.json().catch(() => ({}));
@@ -180,12 +183,13 @@ export default function TeacherPayoutsPage() {
       setMessage("Catatan keputusan wajib diisi.");
       return;
     }
+    if (!(await konfirmasi({ title: `Catat keputusan ${state}?` }))) return;
     setBusy(true);
     setMessage(null);
     try {
       const res = await fetch("/api/admin/teacher-commissions/pre-canary/decision", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ state, notes: decisionNotes }),
       });
       const d = await res.json().catch(() => ({}));
@@ -204,12 +208,13 @@ export default function TeacherPayoutsPage() {
   };
 
   const canaryAct = async (action: string, extra?: Record<string, unknown>) => {
+    if (!(await konfirmasi({ title: `Jalankan canary ${action}?` }))) return;
     setBusy(true);
     setMessage(null);
     try {
       const res = await fetch("/api/admin/teacher-commissions/canary", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ action, notes: canaryNotes, ...extra }),
       });
       const d = await res.json().catch(() => ({}));
@@ -254,6 +259,7 @@ export default function TeacherPayoutsPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
+      {dialogKonfirmasi}
       <header>
         <h1 className="text-2xl font-bold text-foreground">Payout Kontrol</h1>
         <p className="mt-1 text-sm text-muted-foreground">

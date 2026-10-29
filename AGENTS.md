@@ -55,66 +55,91 @@ Kamu adalah **Senior Full-Stack Engineer** yang sangat autonomous, teliti, dan b
 ---
 
 # BahasaCerdas Project Status
-## Last Updated: June 30, 2026 (Phase UKBI DATA LEAN COMPLETION 1)
+## Last Updated: October 26, 2026 (Migrasi infra: VPS idCloudHost + Supabase self-hosted)
+
+> **BACA INI DULU — status infra per 26 Okt 2026.**
+> Produksi jalan di **VPS idCloudHost `103.242.10.81`**, **bukan Vercel**. Database & auth pakai
+> **Supabase self-hosted di VPS yang sama**, **bukan Supabase cloud**. Game server **hidup**.
+> Deploy: push ke `main` → GitHub Actions `CI` → `Deploy Production VPS` → `ops/vps/deploy.sh`
+> → cek `https://www.bahasacerdas.com/api/health` (`status=ok`, `db=up`).
+> Blok "Phase ..." di bawah adalah **riwayat per tanggalnya**. Kalau ada pertentangan soal hosting,
+> database, DNS, deploy, atau status game server, yang menang: **Critical Context** di file ini
+> + **README §CI dan Deployment**. Tanda respons produksi: `via: 1.1 Caddy` (bukan Vercel).
 
 ## Goal
 Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia where students write daily (puisi, cerpen, artikel, anekdot, pantun), showcase works in social-style portfolios, earn Coin Cerdas, and compete in weekly leagues — UKBI/TKA as supporting features, not core.
 
 ## Tech Stack
 - Next.js 16.2.6 with TypeScript, App Router, Tailwind CSS
-- Supabase for auth + PostgreSQL (cloud, NOT self-hosted — VPS dead)
-- Game server: Socket.io — currently DEAD (was on VPS, Hostinger expired)
+- Hosting: **VPS idCloudHost `103.242.10.81`** — Next.js jalan di Docker (`Dockerfile.web`) di belakang **Caddy**, DNS di depannya **Cloudflare**
+- Supabase **self-hosted** (Docker Compose di VPS yang sama) untuk auth + PostgreSQL — `ops/supabase-selfhost/`
+- Game server: **Socket.io HIDUP**, service `game` di `ops/vps/docker-compose.yml` → `game.bahasacerdas.com`
+- Deploy: **GitHub Actions** → SSH `bcadmin@103.242.10.81` → `ops/vps/deploy.sh` (README §CI dan Deployment)
 - Midtrans for payment
-- Prisma ORM with PostgreSQL (via Supabase pooler)
-- Vercel for frontend (live at bahasacerdas.com)
+- Prisma ORM with PostgreSQL (self-hosted — `DATABASE_URL`/`DIRECT_URL` ada di `web.env` VPS)
 - Guru color: emerald/green, Murid color: violet/purple
 
 ## Critical Context
 
-### VPS (Hostinger) — DEAD since June 26, 2026
-- IP: 72.60.78.65 — completely unreachable (port 22, 5432, 3001 all timeout)
-- Hostinger subscription not renewed
-- All services on VPS are down: PostgreSQL, game server, NGINX
-- No database backup was taken before it went down
+### VPS produksi — AKTIF (idCloudHost)
+- IP `103.242.10.81`, user SSH `bcadmin`, repo `/opt/bahasacerdas/apps/bahasa-cerdas` (branch `main`).
+- Runtime config (RAHASIA, `chmod 600`): `/opt/bahasacerdas/config/` → `stack.env` + `web.env`, lalu
+  diturunkan ke `game.env`, `worker.env`, `cron.env`, `livekit.env` oleh `ops/vps/prepare-runtime-envs.sh`.
+  **Semua env produksi ada di sini — bukan di Vercel.**
+- Stack Compose (`ops/vps/docker-compose.yml`): `redis`, `web`, `game`, `agent`, `cron` (profil `scheduler`),
+  `livekit` (profil `jumpa`), `caddy` (reverse proxy + TLS).
+- Deploy: `.github/workflows/deploy-production.yml` — otomatis setelah `CI` sukses di `main`
+  (atau `workflow_dispatch`): SSH → `git pull --ff-only` → `ops/vps/deploy.sh` → tunggu `/api/health`
+  `status=ok` + `db=up`.
+- Frontend diserve **Next.js dalam Docker** lewat **Caddy**; **Cloudflare** di depannya (DNS/proxy).
+- **Vercel tidak dipakai lagi.** Tanda respons produksi: `via: 1.1 Caddy`, `server: cloudflare`,
+  dan **tidak ada** `x-vercel-id`.
+- Rujukan: **README §CI dan Deployment**, `ops/vps/deploy.sh`, `ops/supabase-selfhost/README.md`,
+  `docs/JUMPA_PHASE1.md`.
 
-### Supabase (Cloud — Live)
-- URL: [set in .env / Vercel env vars]
-- Database: PostgreSQL via Supabase pooler (pooler URL: [set in .env / Vercel env vars])
-- DATABASE_URL uses pooler port 6543 (PgBouncer) — actual value: [set in .env / Vercel env vars]
-- DIRECT_URL uses port 5432 (direct connection for migrations) — actual value: [set in .env / Vercel env vars]
-- SERVICE_ROLE_KEY: [set in Supabase dashboard — never commit]
-- Password: [rotated — see Supabase dashboard]
-- Prisma schema pushed via psql (83 tables — prisma db push timed out on pooler)
-- Auth: 50 existing users preserved + 2 demo accounts
+### VPS lama (Hostinger `72.60.78.65`) — MATI, RIWAYAT SAJA
+- Mati sejak 26 Juni 2026 (langganan tidak diperpanjang); data di dalamnya hilang tanpa backup.
+- Semua entri "VPS dead" / "Hostinger" di log phase merujuk ke mesin **ini**, bukan VPS produksi sekarang.
+
+### Supabase — SELF-HOSTED di VPS produksi (bukan cloud)
+- Supabase **cloud** sudah **tidak aktif** (info pemilik, Okt 2026); produksi memakai instance
+  self-hosted di VPS yang sama. Shadow -> cutover: `ops/supabase-selfhost/README.md`.
+- `ops/vps/jumpa-setup.sh` **menolak** migrasi kalau `DATABASE_URL`/`DIRECT_URL` di `web.env` masih
+  menunjuk host cloud (`managed`) — guard anti-salah-target, jangan dihapus.
+- **Nama variabel tidak berubah**, hanya lokasinya: `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `DATABASE_URL`, `DIRECT_URL`
+  -> semua di `/opt/bahasacerdas/config/web.env`.
+- Prisma schema dipasang lewat `psql` (83+ tabel; `prisma db push` dulu timeout di pooler).
+- Auth: 50 user lama dipertahankan + 2 akun demo (`guru@demo.com`/`guru123`, `murid@demo.com`/`murid123`).
+- Cek kesehatan: `GET /api/health` -> `db: up`.
 
 ### Environment Variables
-- DATABASE_URL: [set in .env / Vercel env vars — uses pooler port 6543 with pgBouncer]
-- DIRECT_URL: [set in .env / Vercel env vars — uses direct port 5432 for migrations]
-- NEXT_PUBLIC_SUPABASE_URL: [lihat Supabase dashboard]
-- NEXT_PUBLIC_SUPABASE_ANON_KEY: [lihat Supabase dashboard]
-- NEXT_PUBLIC_SITE_URL: https://bahasacerdas.com
-- NEXT_PUBLIC_GAME_SERVER_URL: https://game.bahasacerdas.com (DEAD)
-- MIDTRANS_SERVER_KEY: [lihat Midtrans dashboard]
-- NEXT_PUBLIC_MIDTRANS_CLIENT_KEY: [lihat Midtrans dashboard]
-- NEXT_PUBLIC_MIDTRANS_MERCHANT_ID: [lihat Midtrans dashboard]
-- ANTHROPIC_API_KEY: [belum diset]
-- DEEPSEEK_API_KEY: [belum diset]
-- GROQ_API_KEY: [belum diset]
-- GEMINI_API_KEY: [diset untuk Vercel, lihat vault]
-- SUPABASE_SERVICE_ROLE_KEY: [lihat Supabase dashboard — simpan aman]
+- **Produksi:** semua di VPS `/opt/bahasacerdas/config/web.env` (turun ke `game.env`/`worker.env`/`cron.env`).
+- **Lokal:** template di root **`.env.example`** (sudah di-commit; `.gitignore` punya rule `!.env.example`).
+- Jangan cari var ini di dashboard Vercel / Supabase cloud — dua-duanya sudah tidak dipakai.
+- `DATABASE_URL` / `DIRECT_URL`: PostgreSQL self-hosted; `DIRECT_URL` untuk migrasi.
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: instance Supabase self-hosted.
+- `SUPABASE_SERVICE_ROLE_KEY` (fallback: `SERVICE_ROLE_KEY`, `SUPABASE_SECRET_KEY`): kunci admin
+  Auth/Storage, **hanya server** — dipakai `/api/upload/avatar`, `/api/upload/image`, `/api/ai/ilustrasi`,
+  `/api/audio-proxy`, `lib/upload.ts`, `scripts/backup-supabase-daily.ts`.
+- `NEXT_PUBLIC_SITE_URL`: `https://bahasacerdas.com`.
+- `NEXT_PUBLIC_GAME_SERVER_URL`: `https://game.bahasacerdas.com` (**AKTIF**).
+- `MIDTRANS_*`, `GEMINI_API_KEY`, `GROQ_API_KEY`, dll: lihat `web.env`.
+- Rahasia tidak pernah di-commit; kalau butuh nilai, pemilik yang mengisi `web.env` di VPS.
 
-### DNS
-- Main site: bahasacerdas.com → Vercel (live, nameservers ns1/ns2.vercel-dns.com), www.bahasacerdas.com also aliased
-- Game subdomain: game.bahasacerdas.com → 72.60.78.65 (A record, points to dead VPS)
-- Old: game.bahasacerdas.site → deprecated, NGINX config disabled
+### DNS (dicek 26 Okt 2026)
+- `bahasacerdas.com` + `www` -> **Cloudflare** (di-proxy: `server: cloudflare`, `cf-ray`) -> origin VPS `103.242.10.81` (Caddy).
+- `game.bahasacerdas.com` -> **A `103.242.10.81`** (langsung ke VPS) — dicek: HTTP 200.
+- `jumpa.bahasacerdas.com` -> media LiveKit di VPS yang sama; firewall panel idCloudHost harus buka
+  `7881/tcp` + `7882/udp` (`ops/vps/jumpa-setup.sh`, `docs/JUMPA_PHASE1.md`).
+- NS bukan lagi `ns1/ns2.vercel-dns.com`; `game.bahasacerdas.site` lama sudah deprecated.
 
-### Game Server — DEAD (VPS Hostinger expired)
-- Previously: Socket.io on port 3001, PM2, NGINX reverse proxy
-- All multiplayer game features broken: Kuis Battle, Tebak Kata, Adu Cepat, dll.
-- game.bahasacerdas.com unreachable
-- Code still exists at game-server/ directory in project root
-- No backup of compiled dist/server.js
-- Need new hosting to bring back (VPS or alternative)
+### Game Server — HIDUP di VPS produksi
+- Service `game` di `ops/vps/docker-compose.yml` (env `game.env`, diturunkan dari `web.env`).
+- `https://game.bahasacerdas.com` -> `103.242.10.81`, dicek 26 Okt 2026: **HTTP 200**.
+- Sumber: `game-server/` di root project.
+- Kalau game bermasalah: `docker compose ps game` + log container di VPS — **bukan** cari hosting baru.
+- Multiplayer (Kuis Battle, Tebak Kata, Adu Cepat, Katastra) seharusnya jalan; kalau rusak itu bug, bukan infra.
 
 ### Auth Users (Supabase)
 - 50 existing users from previous registrations
@@ -123,20 +148,28 @@ Transform BahasaCerdas into a social-creative platform for Bahasa Indonesia wher
 - Prisma User supabaseId matches Auth user id
 - GET /api/user/me now auto-creates User record if missing (fix deployed)
 
+### Founder & Admin (Okt 2026) — WAJIB BACA sebelum menyentuh peran/admin
+- Founder = `User.isFounder=true` (bukan role). Founder punya akses admin PENUH, termasuk uang.
+- Super founder (hanya `dominikus.02@gmail.com`, `lib/auth/super-founder.ts`) satu-satunya yang boleh menambah/mencabut founder (`/api/admin/make-founder`, `/api/admin/revoke-founder`, halaman `/admin/founder`).
+- Setiap route `app/api/admin/**` WAJIB diekspor lewat `withAdmin()` (`lib/admin/guard.ts`): cek sesi + founder/ADMIN, konfirmasi ketik `KONFIRMASI` (header `x-admin-confirm`) untuk aksi uang/massal (`lib/admin/confirm.ts`), dan log `AdminAuditLog` untuk setiap aksi non-GET. Dijaga oleh `npm run test:founder-access` (CI).
+- Founder tidak bisa memproses penarikan/pencairan miliknya sendiri (`lib/admin/self-action.ts`).
+- Founder GURU tetap dapat komisi guru (`isEligibleForCommission`). Pilot payout canary/pre-canary tetap mengecualikan founder.
+- Detail lengkap: `docs/FOUNDER_ACCESS.md`.
+
 ## Build Config
 - `next.config.ts`: `typescript.ignoreBuildErrors: false` (build fails on real TS errors)
 - Build command: `prisma generate && next build`
 - Uses npm (NOT pnpm — pnpm workspace caused build failures)
-- `vercel.json`: `"regions": ["sin1"]` — DO NOT remove. Supabase lives in `ap-southeast-1` (Singapore) and users are Indonesian schools. Functions defaulted to `iad1` (Washington), which put a ~230ms Pacific crossing on every DB roundtrip AND on every user request. Functions must stay co-located with the database.
+- `vercel.json`: **WARISAN, TIDAK AKTIF.** Vercel tidak lagi melayani traffic (deploy = VPS + Caddy), jadi `regions`, `redirects`, dan `headers` di dalamnya **tidak dieksekusi siapa pun**. Masih ada isinya (`regions: ["sin1"]`, redirect apex→`www`, `/arena-junior`→`/junior`) dan **jangan dihapus tanpa keputusan eksplisit pemilik repo** — tapi **jangan diandalkan**; kalau mau redirect itu berlaku, pindahkan ke `next.config.ts` atau `ops/vps/Caddyfile`. (Riwayat: `sin1` dipilih agar functions dekat Supabase `ap-southeast-1`.)
 
 ## Completed Features
 
 ### Core
-- Next.js deployed to Vercel (live at bahasacerdas.com)
+- Next.js live di bahasacerdas.com — sejak Okt 2026 di-host di **VPS idCloudHost (Docker + Caddy + Cloudflare)**; sebelumnya sempat di Vercel (riwayat)
 - Supabase auth integration (middleware + supabase SSR)
 - Role-based routing (guru/murid dashboard)
 - Tailwind theme with emerald/violet color system
-- 413 Payload Too Large fix: Supabase Storage bucket `file_size_limit` set to 50MB via Management API; `configureBucket()` in `lib/upload.ts` auto-configures buckets on every upload; admin page uses client-side upload (bypasses Vercel 4.5MB limit) + server action for metadata only
+- 413 Payload Too Large fix: Supabase Storage bucket `file_size_limit` set to 50MB via Management API; `configureBucket()` in `lib/upload.ts` auto-configures buckets on every upload; admin page uses client-side upload (aslinya mem-bypass body limit 4.5MB era Vercel) + server action for metadata only
 - RLS fix needed: admin page shows error message instructing user to run SQL in Supabase dashboard to create INSERT policy on storage.objects for documents bucket
 
 ### Game System (Kuis Battle)
@@ -336,11 +369,11 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - **GET /api/user/me auto-create**: Now calls findOrCreateUser if no Prisma record exists (like POST handler).
 - **Content seeded**: `scripts/seed-homepage-content.ts` created — 6 Artikel, 6 Video, 6 Karya (marketplace) items using guru user as author/seller.
 - **Homepage now shows content**: KaryaPopulerSection, Artikel, and Video sections populated with realistic Indonesian educational content.
-- **Vercel deployed & aliased**: bahasacerdas.com + www.bahasacerdas.com both live.
+- **Vercel deployed & aliased**: bahasacerdas.com + www.bahasacerdas.com both live. _(era Vercel — sejak Okt 2026 pindah ke VPS idCloudHost)_
 
 ### Remaining
 1. User must clear browser cookies for bahasacerdas.com to break 429 loop (or wait for rate limit reset).
-2. Game server completely dead — all multiplayer features broken. Need new VPS or alternative hosting.
+2. Game server completely dead — all multiplayer features broken. Need new VPS or alternative hosting. _(klaim fase ini; status terkini: game server HIDUP di VPS idCloudHost — lihat **Critical Context**)_
 3. Homepage content is sample data — may need to be curated or enriched further.
 
 ## Phase 9 — Backup & Restore Policy (June 29, 2026)
@@ -374,10 +407,10 @@ The Belajar page auto-detects content types in `isi[]` strings:
 ## Next Steps (Priority Order)
 1. **UKBI Guru → 150** — tambah menulis (8) + berbicara (7) constructed response
 2. **TKA Minimum Simulation Bank** — 30 soal UTBK + Guru (sudah ada), enrichment ke 150
-3. **Game server revival** — cari hosting baru untuk game.bahasacerdas.com (VPS or alternative)
+3. ~~Game server revival~~ — **SELESAI**. Game server jalan lagi sebagai service `game` di VPS idCloudHost; `game.bahasacerdas.com` dicek 26 Okt 2026 → HTTP 200.
 
 ## Blockers
-- Game server dead (VPS Hostinger expired) — all multiplayer games broken
+- **Tidak ada blocker hosting/database/game** per 26 Okt 2026 (VPS idCloudHost + Supabase self-hosted + game server aktif). Riwayat blocker lama (VPS Hostinger mati, Juni 2026) ada di `docs/BAHASACERDAS_WORK_STATUS.md` §7 sebagai arsip.
 
 ## GitHub
 - Repo: https://github.com/dominikus02-source/bahasa-cerdas
@@ -390,8 +423,10 @@ The Belajar page auto-detects content types in `isi[]` strings:
 - Premium badge: gold/yellow accent
 
 ## Key File Locations
-- Main project: ~/Documents/bahasa-cerdas
-- VPS game server: /var/www/game-server/game-server on [lihat Hostinger VPS dashboard] (DEAD)
+- Main project (lokal): ~/Documents/bahasa-cerdas
+- Produksi: /opt/bahasacerdas/apps/bahasa-cerdas @ VPS 103.242.10.81 (idCloudHost)
+- Config produksi: /opt/bahasacerdas/config/{stack,web,game,worker,cron,livekit}.env
+- Game server: `game-server/` di root project, jalan sebagai service `game` (compose) di VPS yang sama
 - Prisma schema: prisma/schema.prisma (main project)
 - Game server schema: /var/www/game-server/prisma/schema.prisma
 - Social/coins utility: lib/coins.ts
@@ -907,7 +942,7 @@ Created 250 original UKBI SMP questions across 5 sections + seeded to DB via cre
 4. **SMP MARGINAL band low**: Only 7 questions (target 20). Content may feel repetitive for struggling students.
 5. **Old redirect pages still exist**: `/guru/ukbi` and `/murid/ukbi` still in repo as redirect stubs.
 6. **Guru unused routes**: `/guru/buat-tka` and `/guru/hasil-tka` still exist without sidebar links.
-7. **Game server dead** (VPS Hostinger expired) — semua multiplayer games rusak.
+7. **Game server dead** (VPS Hostinger expired) — semua multiplayer games rusak. _(klaim fase ini; status terkini: game server HIDUP di VPS idCloudHost — lihat **Critical Context**)_
 
 ### Next Phase
 1. **UKBI SMA enrichment**: 250 soal full (replaces 25 legacy)
@@ -1220,7 +1255,7 @@ Sempurnakan sistem penilaian existing: auto-score dari Quiz/Game/Jalur Cerdas/UK
 ### Known Issues
 1. **GameRoom.groupId not in DB**: Schema has fields but `prisma db push` failed (cross-schema auth.users). Need psql migration or Supabase SQL editor.
 2. **Nilai/ProgresKompetensi records = 0**: No user activity in current DB (fresh Supabase).
-3. **Game server dead**: Multiplayer game → Nilai flow untestable until GameRoom revived.
+3. **Game server dead**: Multiplayer game → Nilai flow untestable until GameRoom revived. _(klaim fase ini; status terkini: game server HIDUP di VPS idCloudHost — lihat **Critical Context**)_
 4. **TKA UTBK/Guru only 30 soal**: Need enrichment to 150.
 
 ## Phase UKBI TKA TEST SCREEN HOTFIX 1 — Complete (July 1, 2026)
@@ -1285,7 +1320,7 @@ Modernisasi UX test screen UKBI/TKA: hapus label A/B/C/D, perbaiki timer reliabi
 ### Known Issues
 1. **0 audioUrl**: 191 listening questions but no audio files produced yet — section MENDENGARKAN akan skip (0 questions) sampai audio siap.
 2. **GameRoom.groupId not in DB**: need SQL via Supabase dashboard.
-3. **Game server dead**: VPS Hostinger expired.
+3. **Game server dead**: VPS Hostinger expired. _(klaim fase ini; status terkini: game server HIDUP di VPS idCloudHost — lihat **Critical Context**)_
 
 ## Phase AI TOOLS VALIDATION FIX — Complete (July 8, 2026)
 
@@ -1370,7 +1405,7 @@ Fix AI Tools (RPP, Soal, PPT, EYD, Feedback, dll.) at `/guru/ai-tools` — stop 
 ### Remaining
 1. **UKBI Guru → 150**: masih kurang 15 (menulis + berbicara constructed response)
 2. **TKA UTBK/Guru**: baru 30 soal each — perlu 120+ untuk 150 target
-3. **Game server dead**: semua multiplayer games rusak
+3. **Game server dead**: semua multiplayer games rusak _(klaim fase ini; status terkini: game server HIDUP di VPS idCloudHost — lihat **Critical Context**)_
 4. **GameRoom migration**: perlu SQL via Supabase dashboard
 
 ---
@@ -3387,7 +3422,7 @@ Gate approval manusia untuk 75 kandidat enrichment AI_SUGGESTED (manifest `data/
 3. **Satu transaksi per batch** — CONFLICT/error → seluruh batch rollback, audit tidak di-append.
 4. **Audit append-only** `data/question-metadata/enrichment-approval-audit-001.jsonl`: manifestId/batch/action/questionId/performedByEmail/performedById/timestamp/before/after/reason — tanpa secret, tanpa correctAnswer/options.
 5. **Coverage tetap YELLOW** (15 sel × 5 terisi; 13 sel INSUFFICIENT jujur dicatat) — bukan GREEN.
-6. Konvensi: founder/admin emails = `dominikus.02@gmail.com`, `hdsastra47@gmail.com`, `alexsurya1968@gmail.com`.
+6. Konvensi (historis, Agu 2026): reviewer founder/admin = `dominikus.02@gmail.com`, `alexsurya1968@gmail.com`. Washadi (`hdsastra47@gmail.com`) bukan founder lagi sejak Okt 2026 — lihat `docs/FOUNDER_ACCESS.md`.
 
 ### Verifikasi (Aug 15, post-execution)
 | Check | Hasil |

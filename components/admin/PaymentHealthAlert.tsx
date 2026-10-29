@@ -1,5 +1,6 @@
 "use client";
 
+import { useTypedConfirm, adminConfirmHeaders } from "@/components/admin/TypedConfirm";
 import { useState } from "react";
 import { ShieldAlert, ArrowRight, Loader2, CheckCircle2, X } from "lucide-react";
 
@@ -36,6 +37,7 @@ function formatRp(v: number): string {
 
 export function PaymentHealthAlert({ data }: { data: PaymentHealthData }) {
   const [expanded, setExpanded] = useState(false);
+  const { confirm: konfirmasi, dialog: dialogKonfirmasi } = useTypedConfirm();
   const [fixingUser, setFixingUser] = useState<string | null>(null);
   const [fixResult, setFixResult] = useState<{ userId: string; status: string; message: string } | null>(null);
   const [confirmUser, setConfirmUser] = useState<AffectedUser | null>(null);
@@ -54,12 +56,13 @@ export function PaymentHealthAlert({ data }: { data: PaymentHealthData }) {
 
   async function executeFix() {
     if (!confirmUser || !confirmTx || !reason.trim()) return;
+    if (!(await konfirmasi({ title: "Perbaiki akses premium?", detail: "Langganan diaktifkan untuk transaksi ini dan tercatat di audit pembayaran." }))) return;
     setLoading(true);
     setFixingUser(confirmUser.userId);
     try {
       const res = await fetch("/api/admin/analytics/payment-health/fix", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
         body: JSON.stringify({ transactionId: confirmTx.id, reason: reason.trim() }),
       });
       const result = await res.json();
@@ -82,6 +85,7 @@ export function PaymentHealthAlert({ data }: { data: PaymentHealthData }) {
 
   return (
     <div className="bg-gradient-to-r from-red-50 via-red-50/50 to-white dark:from-red-950/40 dark:via-red-950/20 dark:to-slate-800/90 rounded-2xl border-2 border-red-300 dark:border-red-700 p-5">
+      {dialogKonfirmasi}
       <div className="flex items-start gap-4">
         <div className="w-12 h-12 rounded-xl bg-red-100 dark:bg-red-900/60 flex items-center justify-center shrink-0">
           <ShieldAlert size={24} className="text-red-600 dark:text-red-400" />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTypedConfirm, adminConfirmHeaders } from "@/components/admin/TypedConfirm";
 import { useState, useEffect, useCallback } from "react";
 import {
   Search, RefreshCw, Loader2, ChevronLeft, ChevronRight,
@@ -55,6 +56,7 @@ const STATUS_BADGE: Record<string, string> = {
 
 export default function AdminPaymentsPage() {
   const [data, setData] = useState<{ transactions: PaymentTransaction[]; stats: Stats; pagination: any } | null>(null);
+  const { confirm: konfirmasi, dialog: dialogKonfirmasi } = useTypedConfirm();
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -96,11 +98,12 @@ export default function AdminPaymentsPage() {
 
   const handleManualActivate = async () => {
     if (!manualActivateId) return;
+    if (!(await konfirmasi({ title: "Aktifkan langganan manual?", detail: "Langganan aktif tanpa menunggu gateway. Pastikan pembayaran sudah diterima." }))) return;
     setManualLoading(true);
     setManualError("");
     const res = await fetch("/api/admin/payments/manual-activate", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...adminConfirmHeaders() },
       body: JSON.stringify({ transactionId: manualActivateId, reason: manualReason }),
     });
     const result = await res.json();
@@ -119,6 +122,7 @@ export default function AdminPaymentsPage() {
 
   return (
     <div className="space-y-6">
+      {dialogKonfirmasi}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Pembayaran</h1>

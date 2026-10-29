@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { evaluatePreCanaryChecklist } from "@/lib/commission/payout/pre-canary";
+import { withAdmin } from "@/lib/admin/guard";
 
 /**
  * GET /api/admin/teacher-commissions/pre-canary
@@ -8,7 +9,7 @@ import { evaluatePreCanaryChecklist } from "@/lib/commission/payout/pre-canary";
  * Status diturunkan dari sistem — tidak ada PASS palsu; item provider
  * tanpa bukti = MANUAL_VERIFICATION_REQUIRED.
  */
-export async function GET() {
+async function adminGET() {
   try {
     const admin = await getUser();
     if (!admin || !admin.isFounder) {
@@ -22,3 +23,5 @@ export async function GET() {
     return NextResponse.json({ error: "Gagal mengevaluasi kesiapan pra-canary" }, { status: 500 });
   }
 }
+
+export const GET = withAdmin(adminGET, { route: "/api/admin/teacher-commissions/pre-canary", method: "GET" });

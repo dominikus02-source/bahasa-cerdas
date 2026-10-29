@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
-  Crown, Target, ChevronDown, Bot,
+  Crown, Target, ChevronDown, Bot, ScrollText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -123,12 +123,11 @@ const NAV: NavEntry[] = [
       { label: "Lowongan", href: "/admin/loker", icon: Briefcase },
       { label: "Pusat Data", href: "/admin/data-center", icon: Database },
       { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
+      { label: "Founder & Audit", href: "/admin/founder", icon: ScrollText },
     ],
   },
 
-  { type: "divider" },
-  { label: "Dasbor Guru", href: "/guru/beranda", icon: ChevronRight },
-  { label: "Dasbor Murid", href: "/murid/beranda", icon: ChevronRight },
+  // Dashboard switching is handled by the founder switcher in the top navbar.
 ];
 
 /* ── Helper: does this group contain the active route? ──────────── */

@@ -1,4 +1,5 @@
 import { createPrivateKey, sign } from "crypto";
+import { isUmum, UMUM_FORBIDDEN_MESSAGE } from "@/lib/auth/roles";
 import { NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -8,6 +9,8 @@ export const dynamic = "force-dynamic";
 export async function GET() {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // UMUM: fitur multipemain/kelas khusus guru & murid sekolah (lib/auth/roles.ts).
+  if (isUmum(user.role)) return NextResponse.json({ error: UMUM_FORBIDDEN_MESSAGE }, { status: 403 });
 
   const signingKeyB64 = process.env.GAME_SERVER_SIGNING_PRIVATE_KEY_B64;
   if (!signingKeyB64) {
