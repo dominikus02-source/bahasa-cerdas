@@ -2,7 +2,8 @@
 
 import { buttonClass } from "@/components/ui/button";
 import Link from "next/link";
-import { ArrowRight, BookOpenCheck, CheckCircle2, Sparkles, Target, Zap } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles, Target, Zap } from "lucide-react";
+import { JalurCerdasIcon } from "@/components/shared/FeatureIcons";
 
 export function JalurCerdasHomeCard() {
   return (
@@ -12,8 +13,8 @@ export function JalurCerdasHomeCard() {
         className="group px-card bc-tint-blue flex h-full flex-col p-5 transition-transform duration-200 hover:-translate-y-0.5 sm:p-6"
       >
         <div className="flex min-w-0 items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-bc-icon bg-bc-info-soft text-bc-info">
-            <BookOpenCheck size={24} strokeWidth={2.2} />
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center">
+            <JalurCerdasIcon size={48} />
           </div>
 
           <div className="min-w-0">
