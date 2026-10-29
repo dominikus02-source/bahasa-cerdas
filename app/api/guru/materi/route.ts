@@ -41,7 +41,7 @@ async function resolveSessionGuru(): Promise<{ dbUser: any; authId: string } | {
 // dan (b) fileUrl sembarang (mis. javascript:) yang dibuka guru lain via preview.
 function validatePreUploadedFile(opts: { fileUrl: string | null; fileKey: string | null; fileType: string | null; authId: string; dbUserId: string }): string | null {
   const { fileUrl, fileKey, fileType, authId, dbUserId } = opts;
-  if (fileType && !["PDF", "PPTX"].includes(fileType.toUpperCase())) return "File harus PDF atau PPTX";
+  if (fileType && !["PDF", "PPTX", "DOCX"].includes(fileType.toUpperCase())) return "File harus PDF, PPTX, atau DOCX";
   if (fileKey) {
     if (fileKey.includes("..") || fileKey.startsWith("/")) return "Lokasi file tidak valid";
     if (!fileKey.startsWith(`${authId}/`) && !fileKey.startsWith(`${dbUserId}/`)) return "Lokasi file tidak valid";
@@ -179,11 +179,11 @@ export async function POST(req: NextRequest) {
       console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
       
       const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
-      if (!["pdf", "pptx"].includes(fileExt)) {
-        return NextResponse.json({ error: "File harus PDF atau PPTX" }, { status: 400 });
+      if (!["pdf", "pptx", "docx"].includes(fileExt)) {
+        return NextResponse.json({ error: "File harus PDF, PPTX, atau DOCX" }, { status: 400 });
       }
 
-      const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;
+      const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : fileExt === "docx" ? 15 * 1024 * 1024 : 20 * 1024 * 1024;
       if (file.size > maxSize) {
         return NextResponse.json({ error: `Ukuran file maksimal ${maxSize / (1024 * 1024)}MB` }, { status: 400 });
       }
