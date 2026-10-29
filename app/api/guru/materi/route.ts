@@ -9,6 +9,7 @@ import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 const FOLDER_TYPES: Record<string, string[]> = {
   PPT: ["PPTX"],
   PDF: ["PDF"],
+  DOCX: ["DOCX"],
 };
 
 // SECURITY (M2b): identitas HANYA dari sesi Supabase (cookie). supabaseId dari
@@ -112,8 +113,8 @@ export async function GET(req: NextRequest) {
     if (folder && FOLDER_TYPES[folder]) {
       and.push({ fileType: { in: FOLDER_TYPES[folder] } });
     } else {
-      // Tanpa filter folder spesifik: hanya tampilkan PPT + PDF.
-      and.push({ fileType: { in: ["PPTX", "PDF"] } });
+      // Tanpa filter folder spesifik: tampilkan PPT, PDF, dan dokumen Word.
+      and.push({ fileType: { in: ["PPTX", "PDF", "DOCX"] } });
     }
 
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
@@ -123,14 +124,15 @@ export async function GET(req: NextRequest) {
       ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-    const [materis, total, downloadsUsed, pptCount, pdfCount] = await Promise.all([
+    const [materis, total, downloadsUsed, pptCount, pdfCount, docxCount] = await Promise.all([
       db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
       db.materi.count({ where }),
       db.materiDownload.count({ where: { userId: dbUser.id } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PPT } }] } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PDF } }] } }),
+      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.DOCX } }] } }),
     ]);
-    const folderCounts = { PPT: pptCount, PDF: pdfCount };
+    const folderCounts = { PPT: pptCount, PDF: pdfCount, DOCX: docxCount };
 
     // Kuota unduh: gratis 10 modul, premium/founder/admin tak terbatas.
     const unlimited = dbUser.isPremium || dbUser.isFounder || dbUser.role === "ADMIN";
