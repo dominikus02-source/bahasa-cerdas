@@ -9,7 +9,6 @@ import {
 } from "lucide-react"
 import { MateriViewer } from "@/components/materi/MateriViewer"
 import { FILE_TYPE_LABELS } from "@/lib/upload"
-import { createClient } from "@/lib/supabase/client"
 
 interface Materi {
   id: string
@@ -420,41 +419,41 @@ export default function MateriAjarPage() {
                   if (uploadFiles.length === 0 || !uploadForm.tema.trim()) return
                   setUploading(true)
                   setUploadProgress({ done: 0, total: uploadFiles.length })
-                  const supabase = createClient()
-                  const { data: { user } } = await supabase.auth.getUser()
-                  const userId = user?.id || "anonymous"
-                  let ok = 0, failed = 0, rlsBlocked = false
+                  let ok = 0, failed = 0;
+                  const errors: string[] = [];
                   for (const f of uploadFiles) {
                     try {
-                      const fileExt = f.name.split(".").pop()?.toLowerCase() || "pdf"
-                      const fileName = `${userId}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`
-                      const { data: uploadData, error: uploadError } = await supabase.storage
-                        .from("documents").upload(fileName, f, { cacheControl: "31536000", upsert: false })
-                      if (uploadError || !uploadData) {
-                        if (uploadError?.message?.toLowerCase().includes("row-level security") || uploadError?.message?.includes("policy")) rlsBlocked = true
-                        failed++
+                      const fileExt = f.name.split(".").pop()?.toLowerCase() || "";
+                      const fd = new FormData();
+                      fd.set("title", (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : f.name.replace(/\\.[^.]+$/, ""));
+                      fd.set("description", uploadForm.description);
+                      fd.set("grade", uploadForm.grade);
+                      fd.set("tema", uploadForm.tema.trim());
+                      fd.set("isPublished", "true");
+                      fd.set("file", f, f.name);
+
+                      // Upload dan penyimpanan metadata dilakukan melalui server agar tidak
+                      // bergantung pada kebijakan INSERT Storage RLS di browser pengguna.
+                      const res = await fetch("/api/guru/materi", { method: "POST", body: fd });
+                      const result = await res.json().catch(() => ({}));
+                      if (res.ok) {
+                        ok++;
                       } else {
-                        const { data: urlData } = supabase.storage.from("documents").getPublicUrl(uploadData.path)
-                        const baseName = f.name.replace(/\.[^.]+$/, "")
-                        const title = (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : baseName
-                        const fd = new FormData()
-                        fd.set("title", title)
-                        fd.set("description", uploadForm.description)
-                        fd.set("grade", uploadForm.grade)
-                        fd.set("tema", uploadForm.tema.trim())
-                        fd.set("isPublished", "true")
-                        fd.set("fileUrl", urlData.publicUrl)
-                        fd.set("fileKey", uploadData.path)
-                        fd.set("fileType", fileExt.toUpperCase())
-                        const res = await fetch("/api/guru/materi", { method: "POST", body: fd })
-                        if (res.ok) ok++; else failed++
+                        failed++;
+                        const reason = typeof result.error === "string" ? result.error : `HTTP ${res.status}`;
+                        errors.push(`${f.name}: ${reason}`);
                       }
-                    } catch { failed++ }
-                    setUploadProgress(p => ({ done: (p?.done || 0) + 1, total: uploadFiles.length }))
+                    } catch (error) {
+                      failed++;
+                      errors.push(`${f.name}: ${error instanceof Error ? error.message : "Gangguan jaringan"}`);
+                    }
+                    setUploadProgress(p => ({ done: (p?.done || 0) + 1, total: uploadFiles.length }));
                   }
                   setUploading(false); setUploadProgress(null)
-                  if (rlsBlocked) alert("Izin upload ditolak. Hubungi admin untuk mengaktifkan izin storage.")
-                  else if (failed > 0) alert(`${ok} berhasil diunggah, ${failed} gagal.`)
+                  if (failed > 0) {
+                    const detail = errors.slice(0, 3).join("\\n");
+                    alert(`${ok} berhasil diunggah, ${failed} gagal.\\n${detail}`);
+                  }
                   if (ok > 0) {
                     setShowUpload(false); setUploadFiles([])
                     setUploadForm({ title: "", description: "", grade: "SMP Kelas 7", tema: "" })
