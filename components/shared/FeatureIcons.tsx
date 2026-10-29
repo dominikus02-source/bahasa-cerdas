@@ -3,9 +3,9 @@ import React from "react";
 const Gradient = () => (
   <defs>
     <linearGradient id="bc-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#14b8a6" />
-      <stop offset="50%" stopColor="#3b82f6" />
-      <stop offset="100%" stopColor="#8b5cf6" />
+      <stop offset="0%" stopColor="#14b8a6" /> {/* warna-izin: gradasi merek BahasaCerdas */}
+      <stop offset="50%" stopColor="#3b82f6" /> {/* warna-izin: gradasi merek BahasaCerdas */}
+      <stop offset="100%" stopColor="#8b5cf6" /> {/* warna-izin: gradasi merek BahasaCerdas */}
     </linearGradient>
   </defs>
 );
