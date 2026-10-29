@@ -50,10 +50,10 @@ export const MainBersamaIcon = ({ size = 40, className }: IconProps) => {
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
       <Gradient id={gradientId} />
       <rect width="48" height="48" rx="14" fill={`url(#${gradientId})`} />
-      <circle cx="18" cy="20" r="4" fill="white" />
-      <circle cx="30" cy="20" r="4" fill="white" />
-      <path d="M12 32c0-4 3-6 6-6s6 2 6 6" fill="white" />
-      <path d="M24 32c0-4 3-6 6-6s6 2 6 6" fill="white" />
+      <circle cx="17" cy="19" r="3.5" fill="white" />
+      <circle cx="31" cy="19" r="3.5" fill="white" />
+      <path d="M11 33c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5" fill="white" />
+      <path d="M25 33c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5" fill="white" />
     </svg>
   );
 };
@@ -91,12 +91,12 @@ export const NaraGuruIcon = ({ size = 40, className }: IconProps) => {
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
       <Gradient id={gradientId} />
       <rect width="48" height="48" rx="14" fill={`url(#${gradientId})`} />
-      <path d="M16 20a8 8 0 0 1 16 0v5a8 8 0 0 1-16 0v-5z" fill="white" />
-      <circle cx="21" cy="21" r="1.5" fill={`url(#${gradientId})`} />
-      <circle cx="27" cy="21" r="1.5" fill={`url(#${gradientId})`} />
-      <path d="M21 25q3 2 6 0" stroke={`url(#${gradientId})`} strokeWidth="1.5" strokeLinecap="round" fill="none" />
-      <path d="M32 16l2-2m0 0l2 2m-2-2v3" stroke="white" strokeWidth="1.4" strokeLinecap="round" />
-      <rect x="14" y="30" width="20" height="3" rx="1.5" fill="white" opacity="0.9" />
+      <path d="M15 19a9 9 0 0 1 18 0v5a9 9 0 0 1-18 0v-5z" fill="white" />
+      <circle cx="20.5" cy="20.5" r="1.6" fill={`url(#${gradientId})`} />
+      <circle cx="27.5" cy="20.5" r="1.6" fill={`url(#${gradientId})`} />
+      <path d="M20.5 25q3.5 2 7 0" stroke={`url(#${gradientId})`} strokeWidth="1.6" strokeLinecap="round" fill="none" />
+      <path d="M33 15l2-2m0 0l2 2m-2-2v3" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+      <rect x="14" y="31" width="20" height="2.5" rx="1.25" fill="white" opacity="0.95" />
     </svg>
   );
 };
