@@ -4548,6 +4548,7 @@ model CurriculumProgress {
 
   @@unique([userId, track, stageIndex])
   @@index([userId, track])
+}
 
 /// Klaim uji coba sekali per orang (Premium Umum). SENGAJA tanpa relasi ke
 /// User: baris ini bertahan saat akun dihapus/dianonimkan
