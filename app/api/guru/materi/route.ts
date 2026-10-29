@@ -2,14 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
+import {
+  MATERI_CONTENT_TYPE,
+  MATERI_FOLDER_TYPES,
+  MATERI_MAX_BYTES,
+  MATERI_SEMUA_TIPE,
+  MATERI_TYPE_ERROR,
+  MATERI_TYPE_LABEL,
+  materiExtFromName,
+  materiFileTypeFromExt,
+} from "@/lib/materi/file-types";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
-// Folder guru: PPT / PDF — dikelompokkan dari fileType.
-const FOLDER_TYPES: Record<string, string[]> = {
-  PPT: ["PPTX"],
-  PDF: ["PDF"],
-};
+// Folder guru: PowerPoint / Word / PDF — dikelompokkan dari fileType.
+const FOLDER_TYPES: Record<string, string[]> = MATERI_FOLDER_TYPES;
 
 // SECURITY (M2b): identitas HANYA dari sesi Supabase (cookie). supabaseId dari
 // query/formData/body TIDAK dipakai lagi — dulu siapa pun yang tahu supabaseId
@@ -41,7 +48,9 @@ async function resolveSessionGuru(): Promise<{ dbUser: any; authId: string } | {
 // dan (b) fileUrl sembarang (mis. javascript:) yang dibuka guru lain via preview.
 function validatePreUploadedFile(opts: { fileUrl: string | null; fileKey: string | null; fileType: string | null; authId: string; dbUserId: string }): string | null {
   const { fileUrl, fileKey, fileType, authId, dbUserId } = opts;
-  if (fileType && !["PDF", "PPTX"].includes(fileType.toUpperCase())) return "File harus PDF atau PPTX";
+  if (fileType && !MATERI_SEMUA_TIPE.includes(fileType.toUpperCase() as (typeof MATERI_SEMUA_TIPE)[number])) {
+    return MATERI_TYPE_ERROR;
+  }
   if (fileKey) {
     if (fileKey.includes("..") || fileKey.startsWith("/")) return "Lokasi file tidak valid";
     if (!fileKey.startsWith(`${authId}/`) && !fileKey.startsWith(`${dbUserId}/`)) return "Lokasi file tidak valid";
@@ -112,8 +121,8 @@ export async function GET(req: NextRequest) {
     if (folder && FOLDER_TYPES[folder]) {
       and.push({ fileType: { in: FOLDER_TYPES[folder] } });
     } else {
-      // Tanpa filter folder spesifik: hanya tampilkan PPT + PDF.
-      and.push({ fileType: { in: ["PPTX", "PDF"] } });
+      // Tanpa filter folder spesifik: tampilkan semua tipe materi ajar.
+      and.push({ fileType: { in: MATERI_SEMUA_TIPE } });
     }
 
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
@@ -123,14 +132,15 @@ export async function GET(req: NextRequest) {
       ? [{ downloads: "desc" as const }, { createdAt: "desc" as const }]
       : [{ createdAt: "desc" as const }];
 
-    const [materis, total, downloadsUsed, pptCount, pdfCount] = await Promise.all([
+    const [materis, total, downloadsUsed, pptCount, pdfCount, docCount] = await Promise.all([
       db.materi.findMany({ where, orderBy, skip: (page - 1) * limit, take: limit }),
       db.materi.count({ where }),
       db.materiDownload.count({ where: { userId: dbUser.id } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PPT } }] } }),
       db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.PDF } }] } }),
+      db.materi.count({ where: { ...countsWhere, AND: [...(countsWhere.AND || []), { fileType: { in: FOLDER_TYPES.DOC } }] } }),
     ]);
-    const folderCounts = { PPT: pptCount, PDF: pdfCount };
+    const folderCounts = { PPT: pptCount, PDF: pdfCount, DOC: docCount };
 
     // Kuota unduh: gratis 10 modul, premium/founder/admin tak terbatas.
     const unlimited = dbUser.isPremium || dbUser.isFounder || dbUser.role === "ADMIN";
@@ -178,18 +188,25 @@ export async function POST(req: NextRequest) {
     if (file && file.size > 0) {
       console.log("Uploading file:", file.name, "Size:", file.size, "Type:", file.type);
       
-      const fileExt = file.name.split(".").pop()?.toLowerCase() || "pdf";
-      if (!["pdf", "pptx"].includes(fileExt)) {
-        return NextResponse.json({ error: "File harus PDF atau PPTX" }, { status: 400 });
+      const fileExt = materiExtFromName(file.name);
+      const materiType = fileExt ? materiFileTypeFromExt(fileExt) : null;
+      if (!fileExt || !materiType) {
+        return NextResponse.json({ error: MATERI_TYPE_ERROR }, { status: 400 });
       }
 
-      const maxSize = fileExt === "pptx" ? 50 * 1024 * 1024 : 20 * 1024 * 1024;
+      const maxSize = MATERI_MAX_BYTES[materiType];
       if (file.size > maxSize) {
-        return NextResponse.json({ error: `Ukuran file maksimal ${maxSize / (1024 * 1024)}MB` }, { status: 400 });
+        return NextResponse.json(
+          { error: `Ukuran file maksimal ${Math.round(maxSize / (1024 * 1024))}MB untuk ${MATERI_TYPE_LABEL[materiType]}` },
+          { status: 400 }
+        );
       }
-      
+
       const fileName = `${dbUser.id}/materi/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${fileExt}`;
-      const uploadResult = await uploadFileServer(file, fileName, "documents", file.type);
+      // Content-Type diturunkan dari ekstensi: browser mengirim "" atau
+      // application/octet-stream untuk .doc/.ppt, yang membuat berkas tidak
+      // bisa dipratinjau setelah tersimpan.
+      const uploadResult = await uploadFileServer(file, fileName, "documents", MATERI_CONTENT_TYPE[materiType]);
       
       if ("error" in uploadResult) {
         console.error("Upload failed:", uploadResult.error);
@@ -198,7 +215,7 @@ export async function POST(req: NextRequest) {
 
       fileUrl = uploadResult.url;
       fileKey = uploadResult.key;
-      fileType = fileExt.toUpperCase();
+      fileType = materiType;
     } else {
       // Client-side pre-uploaded — use provided metadata
       fileUrl = (formData.get("fileUrl") as string | null) || null;
