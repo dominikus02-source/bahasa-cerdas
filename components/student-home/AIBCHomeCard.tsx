@@ -1,8 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
-import { gambarKarakter } from "@/lib/arena-junior/karakter";
+import { NaraIcon } from "@/components/shared/FeatureIcons";
 
 const QUICK_TOPICS = ["Arti kata", "Tata bahasa", "Sinonim", "Latihan UKBI"];
 
@@ -11,14 +10,8 @@ export function AIBCHomeCard() {
     <section aria-label="NARA" className="ai-bc-note px-card bc-tint-mint h-full px-5 py-5 md:p-6 relative overflow-hidden">
       <div className="relative">
         <div className="flex items-center gap-4">
-          <div className="shrink-0 w-14 h-14" aria-hidden="true">
-            <Image
-              src={gambarKarakter("zelby", "reading")}
-              alt=""
-              width={56}
-              height={56}
-              className="h-full w-full object-contain drop-shadow"
-            />
+          <div className="shrink-0" aria-hidden="true">
+            <NaraIcon size={56} />
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-bc-success">NARA</p>
