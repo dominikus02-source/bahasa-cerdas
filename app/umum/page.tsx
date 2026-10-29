@@ -30,7 +30,7 @@ import { AktivitasList } from "@/components/umum/AktivitasList";
 import { UmumTrialOffer } from "@/components/umum/UmumTrialOffer";
 import { umumTrialView } from "@/lib/umum/trial";
 import { buttonClass } from "@/components/ui/button";
-import { NaraIcon, JumpaIcon, GimIcon, JalurCerdasIcon, BigtIcon, AksaraIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
+import { NaraIcon, JumpaIcon, JalurCerdasIcon, BigtIcon, AksaraIcon, TokoKaryaIcon, MainBersamaIcon } from "@/components/shared/FeatureIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +47,7 @@ const PRODUCT_TILE: Record<UmumProductKey, { icon: React.ComponentType<any>; til
   {
     NARA: { icon: NaraIcon, tile: "", custom: true },
     JUMPA: { icon: JumpaIcon, tile: "", custom: true },
-    MAIN_BERSAMA: { icon: GimIcon, tile: "", custom: true },
+    MAIN_BERSAMA: { icon: MainBersamaIcon, tile: "", custom: true },
     JALUR_CERDAS: { icon: JalurCerdasIcon, tile: "", custom: true },
     BIGT: { icon: BigtIcon, tile: "", custom: true },
     AKSARA: { icon: AksaraIcon, tile: "", custom: true },

@@ -50,10 +50,10 @@ export const MainBersamaIcon = ({ size = 40, className }: IconProps) => {
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
       <Gradient id={gradientId} />
       <rect width="48" height="48" rx="14" fill={`url(#${gradientId})`} />
-      <circle cx="17" cy="19" r="3.5" fill="white" />
-      <circle cx="31" cy="19" r="3.5" fill="white" />
-      <path d="M11 33c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5" fill="white" />
-      <path d="M25 33c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5" fill="white" />
+      <circle cx="18" cy="18" r="3.2" fill="white" />
+      <circle cx="30" cy="18" r="3.2" fill="white" />
+      <path d="M12 32c0-3.8 2.8-6 6-6s6 2.2 6 6" fill="white" />
+      <path d="M24 32c0-3.8 2.8-6 6-6s6 2.2 6 6" fill="white" />
     </svg>
   );
 };
