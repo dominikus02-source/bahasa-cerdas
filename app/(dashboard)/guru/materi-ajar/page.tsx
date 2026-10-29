@@ -343,7 +343,7 @@ export default function MateriAjarPage() {
               <X size={16} className="text-gray-500" />
             </button>
             <h2 className="font-bold text-lg text-gray-900 mb-1">Unggah Rencana Pembelajaran</h2>
-            <p className="text-xs text-gray-500 mb-4">Bisa pilih banyak file Word/PDF sekaligus. Isi tema agar mudah ditemukan guru saat mencari.</p>
+            <p className="text-xs text-gray-500 mb-4">Bisa pilih banyak file Word, PDF, atau PowerPoint sekaligus. Isi tema agar mudah ditemukan guru saat mencari.</p>
 
             <div className="space-y-4">
               <div>
@@ -423,7 +423,6 @@ export default function MateriAjarPage() {
                   const errors: string[] = [];
                   for (const f of uploadFiles) {
                     try {
-                      const fileExt = f.name.split(".").pop()?.toLowerCase() || "";
                       const fd = new FormData();
                       fd.set("title", (uploadFiles.length === 1 && uploadForm.title.trim()) ? uploadForm.title.trim() : f.name.replace(/\.[^.]+$/, ""));
                       fd.set("description", uploadForm.description);
@@ -451,8 +450,8 @@ export default function MateriAjarPage() {
                   }
                   setUploading(false); setUploadProgress(null)
                   if (failed > 0) {
-                    const detail = errors.slice(0, 3).join("\\n");
-                    alert(`${ok} berhasil diunggah, ${failed} gagal.\\n${detail}`);
+                    const detail = errors.slice(0, 3).join("\n");
+                    alert(`${ok} berhasil diunggah, ${failed} gagal.\n${detail}`);
                   }
                   if (ok > 0) {
                     setShowUpload(false); setUploadFiles([])
