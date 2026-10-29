@@ -231,6 +231,7 @@ model User {
   aiJobs                AIJob[]
   aiSavedResults        AiSavedResult[]
   writingProjects       WritingProject[]
+  curriculumProgress    CurriculumProgress[]
   groups                Group[]
   groupMemberships      GroupMember[]
   groupQuizResults      GroupQuizResult[]
@@ -4478,4 +4479,21 @@ model WritingChapter {
 
   @@unique([projectId, orderIndex])
   @@index([projectId, updatedAt])
+}
+
+// AKU SASTRAWAN: curriculum stage progress tracking.
+model CurriculumProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  track       String   // "cerpen" | "novel"
+  stageIndex  Int
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, track, stageIndex])
+  @@index([userId, track])
 }

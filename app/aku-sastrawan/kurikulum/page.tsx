@@ -1,3 +1,4 @@
+import { CurriculumStages } from "@/components/aku-sastrawan/CurriculumStages";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -11,6 +12,7 @@ import {
   Target,
 } from "lucide-react";
 import { getUser } from "@/lib/supabase/server";
+import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
 
 const curriculum = {
   cerpen: {
@@ -46,6 +48,7 @@ export default async function AkuSastrawanCurriculumPage({
   searchParams: Promise<{ jalur?: string }>;
 }) {
   const user = await getUser();
+  const hasAccess = user ? await hasAkuSastrawanAccess(user.id) : false;
   const params = await searchParams;
   const selected = params.jalur === "novel" ? "novel" : "cerpen";
   const track = curriculum[selected];
@@ -69,7 +72,7 @@ export default async function AkuSastrawanCurriculumPage({
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Feather size={23} /></div>
           <p className="mt-6 text-xs font-bold uppercase tracking-[0.18em] text-primary">Kurikulum bertahap</p>
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Pilih jalur menulismu.</h1>
-          <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Dua jalur yang berbeda untuk membantumu bergerak dari gagasan menuju naskah yang selesai. Halaman ini menampilkan peta kurikulum; materi interaktifnya belum tersedia.</p>
+          <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Dua jalur yang berbeda untuk membantumu bergerak dari gagasan menuju naskah yang selesai. Tandai progresmu di setiap tahap. Materi panduan sudah tersedia; modul latihan interaktif lanjutan akan menyusul.</p>
         </div>
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
@@ -100,32 +103,15 @@ export default async function AkuSastrawanCurriculumPage({
               <p className="mt-1 text-muted-foreground">{track.subtitle}</p>
             </div>
           </div>
-          <div className="mt-7 space-y-3">
-            {track.stages.map((stage, index) => (
-              <article key={stage.title} className="rounded-2xl border border-border p-4 sm:p-5">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted text-sm font-black">{String(index + 1).padStart(2, "0")}</span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <h3 className="font-bold">{stage.title}</h3>
-                      <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-semibold text-muted-foreground">Tahap rancangan</span>
-                    </div>
-                    <p className="mt-2 text-sm leading-6 text-muted-foreground">{stage.detail}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {stage.lessons.map((lesson) => <span key={lesson} className="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs">{lesson}</span>)}
-                    </div>
-                  </div>
-                  <Lock size={16} className="mt-1 shrink-0 text-muted-foreground" />
-                </div>
-              </article>
-            ))}
+          <div className="mt-7">
+            <CurriculumStages track={selected} stages={track.stages} hasAccess={hasAccess} />
           </div>
           <div className="mt-6 rounded-2xl bg-muted/60 p-4 sm:p-5">
             <div className="flex items-start gap-3">
               <Target size={20} className="mt-0.5 shrink-0 text-primary" />
               <div>
                 <h3 className="font-bold">Belajar sampai naskah selesai</h3>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">Halaman ini adalah peta belajar, bukan modul pelajaran interaktif. Kamu sudah dapat memakai Writing Studio untuk menyimpan naskah dan AI Writing Coach jika kunci layanan AI tersedia. Materi bertahap dan pelacakan progres belum tersedia.</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">Tandai setiap tahap yang sudah kamu kuasai. Progres tersimpan di akunmu. Gunakan Writing Studio untuk menulis naskah dan AI Writing Coach (jika tersedia) untuk umpan balik.</p>
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">

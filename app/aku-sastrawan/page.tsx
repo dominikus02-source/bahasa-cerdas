@@ -44,7 +44,7 @@ const pillars = [
   {
     icon: BookOpen,
     title: "Peta kurikulum",
-    description: "Peta belajar cerpen dan novel sudah tersedia; modul, contoh, dan latihan interaktif sedang disiapkan.",
+    description: "Peta belajar cerpen dan novel dengan pelacakan progres. Tandai tahap yang selesai.",
   },
   {
     icon: PenLine,
@@ -59,13 +59,13 @@ const pillars = [
   {
     icon: Target,
     title: "Progres yang nyata",
-    description: "Lanjutkan naskah melalui Writing Studio. Pelacakan progres belajar belum tersedia.",
+    description: "Lanjutkan naskah melalui Writing Studio. Progres kurikulum tersimpan di akunmu.",
   },
 ];
 
 const process = [
   ["01", "Pilih jalur", "Mulai dari cerpen atau novel sesuai tujuanmu."],
-  ["02", "Pelajari teknik", "Gunakan peta tahapan sebagai panduan; modul interaktif belum tersedia."],
+  ["02", "Pelajari teknik", "Ikuti peta tahapan dan tandai progresmu di kurikulum."],
   ["03", "Tulis karyamu", "Bangun ide menjadi draf dalam ruang menulis pribadi."],
   ["04", "Evaluasi & revisi", "Minta masukan AI Coach jika layanan AI tersedia, lalu revisi naskahmu sendiri."],
 ];
