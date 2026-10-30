@@ -11,7 +11,6 @@ import {
   ChevronRight,
   Crown,
   Feather,
-  Gamepad2,
   Hourglass,
   Inbox,
   Route,
@@ -30,7 +29,7 @@ import { AktivitasList } from "@/components/umum/AktivitasList";
 import { UmumTrialOffer } from "@/components/umum/UmumTrialOffer";
 import { umumTrialView } from "@/lib/umum/trial";
 import { buttonClass } from "@/components/ui/button";
-import { NaraIcon, JumpaIcon, GimIcon, JalurCerdasIcon, BigtIcon, AksaraIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
+import { NaraIcon, JumpaIcon, GimIcon, MainBersamaIcon, JalurCerdasIcon, BigtIcon, AksaraIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -47,7 +46,7 @@ const PRODUCT_TILE: Record<UmumProductKey, { icon: React.ComponentType<any>; til
   {
     NARA: { icon: NaraIcon, tile: "", custom: true },
     JUMPA: { icon: JumpaIcon, tile: "", custom: true },
-    MAIN_BERSAMA: { icon: GimIcon, tile: "", custom: true },
+    MAIN_BERSAMA: { icon: MainBersamaIcon, tile: "", custom: true },
     JALUR_CERDAS: { icon: JalurCerdasIcon, tile: "", custom: true },
     BIGT: { icon: BigtIcon, tile: "", custom: true },
     AKSARA: { icon: AksaraIcon, tile: "", custom: true },
@@ -447,7 +446,7 @@ export default async function UmumDashboardPage({
                     className="group flex h-full flex-col rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-bc-2"
                   >
                     <div className="flex h-10 w-10 items-center justify-center rounded-bc-icon bg-bc-info-soft text-bc-info">
-                      <Gamepad2 size={20} />
+                      <GimIcon size={40} />
                     </div>
                     <h3 className="mt-3 font-semibold text-bc-text group-hover:text-bc-aud">
                       {g.title}
