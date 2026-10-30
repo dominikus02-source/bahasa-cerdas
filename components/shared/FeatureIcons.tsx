@@ -48,11 +48,11 @@ export const AksaraIcon = ({ size = 40, className }: IconProps) => {
   const gradientId = useId();
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-      <defs><linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stopColor="#FB7185" /><stop offset="100%" stopColor="#DC2626" /></linearGradient></defs>
+      <Gradient id={gradientId} />
       <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
       <path d="M10 21.5c4-2.5 8-2.5 14 0v15c-6-2.5-10-2.5-14 0v-15Z" fill="white" />
       <path d="M38 21.5c-4-2.5-8-2.5-14 0v15c6-2.5 10-2.5 14 0v-15Z" fill="white" />
-      <path d="M24 21.5v15" stroke="#F97373" strokeWidth="1.5" />
+      <path d="M24 21.5v15" stroke="var(--clr-violet)" strokeWidth="1.5" />
       <path d="m29 10 2.5 1.5-8 13-2.5-1.5 8-13Z" fill="white" />
       <path d="m29 10 2.5 1.5 1.5-2.5-2.5-1.5L29 10Z" fill="white" />
       <path d="m21 23 2.5 1.5-3.5 1 1-2.5Z" fill="white" />
@@ -64,18 +64,13 @@ export const TokoKaryaIcon = ({ size = 40, className }: IconProps) => {
   const gradientId = useId();
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-      <defs>
-        <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#3B82F6" />
-          <stop offset="100%" stopColor="#7C3AED" />
-        </linearGradient>
-      </defs>
+      <Gradient id={gradientId} />
       <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
       <path d="M12 18.5 24 13l12 5.5v17H12v-17Z" fill="white" />
-      <path d="M12 18.5 24 24l12-5.5M24 24v11.5" stroke="#6366F1" strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="m34 8 .9 2.3 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.3Z" fill="#FDE68A" />
+      <path d="M12 18.5 24 24l12-5.5M24 24v11.5" stroke="var(--clr-violet)" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="m34 8 .9 2.3 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.3Z" fill="var(--clr-warning)" />
       <circle cx="35" cy="30" r="5" fill="#FDE68A" />
-      <path d="m35 26.8 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3 1-2Z" fill="#7C3AED" />
+      <path d="m35 26.8 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3 1-2Z" fill="var(--clr-on-brand)" />
     </svg>
   );
 };
