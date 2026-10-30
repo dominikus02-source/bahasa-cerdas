@@ -10,7 +10,8 @@ import {
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
   Crown, Target, ChevronDown, Bot, ScrollText,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
+import { GimIcon, NaraIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 import { createClient } from "@/lib/supabase/client";
 import {
   NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
@@ -22,7 +23,7 @@ import {
 interface NavItem {
   label: string;
   href: string;
-  icon: LucideIcon;
+  icon: ComponentType<any>;
 }
 
 interface NavGroup {
@@ -61,7 +62,7 @@ const NAV: NavEntry[] = [
   { label: "Control Tower", href: "/admin/executive", icon: Target },
 
   // ── 2. Founder operations agent ──
-  { label: "BC Agent", href: "/admin/agent", icon: Bot },
+  { label: "BC Agent", href: "/admin/agent", icon: NaraIcon },
 
   // ── 3. User management ──
   { label: "Pengguna", href: "/admin/users", icon: Users },
@@ -86,7 +87,7 @@ const NAV: NavEntry[] = [
     items: [
       { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation },
       { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText },
-      { label: "Toko Karya", href: "/admin/karya", icon: ShoppingBag },
+      { label: "Toko Karya", href: "/admin/karya", icon: TokoKaryaIcon },
       { label: "Video", href: "/admin/video", icon: Film },
       { label: "Artikel", href: "/admin/artikel", icon: FileText },
     ],
@@ -98,7 +99,7 @@ const NAV: NavEntry[] = [
     icon: LineChart,
     items: [
       { label: "Learning Analytics", href: "/admin/analytics", icon: LineChart },
-      { label: "Arena BC", href: "/admin/arena", icon: Trophy },
+      { label: "Arena BC", href: "/admin/arena", icon: GimIcon },
     ],
   },
 
