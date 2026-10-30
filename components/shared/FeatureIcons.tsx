@@ -110,12 +110,29 @@ export const BigtIcon = ({ size = 40, className }: IconProps) => {
   );
 };
 
+
+export const MainBersamaIcon = ({ size = 40, className }: IconProps) => {
+  const gradientId = useId();
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
+      <Gradient id={gradientId} />
+      <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
+      <circle cx="18" cy="18" r="5" fill="white" />
+      <circle cx="30" cy="18" r="5" fill="white" />
+      <path d="M8 35c0-6 4-10 10-10s10 4 10 10v2H8v-2z" fill="white" />
+      <path d="M20 35c0-6 4-10 10-10s10 4 10 10v2H20v-2z" fill="white" opacity="0.82" />
+      <path d="M21 22h6m-3-3v6" stroke={`url(#${gradientId})`} strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+};
+
 export const FEATURE_ICONS = {
   jumpa: JumpaIcon,
   nara: NaraIcon,
   aksara: AksaraIcon,
   "toko-karya": TokoKaryaIcon,
   gim: GimIcon,
+  "main-bersama": MainBersamaIcon,
   "jalur-cerdas": JalurCerdasIcon,
   bigt: BigtIcon,
 } as const;
