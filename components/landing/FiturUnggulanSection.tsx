@@ -1,27 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
-import { JumpaIcon, NaraIcon, GimIcon, JalurCerdasIcon } from "@/components/shared/FeatureIcons";
+import { JumpaIcon, NaraIcon, GimIcon, JalurCerdasIcon, MainBersamaIcon } from "@/components/shared/FeatureIcons";
 
 const features = [
   {
-    icon: Users,
+    icon: MainBersamaIcon,
     title: "Main Bersama",
     desc: "Belajar bareng teman sekelas.",
     href: "/main-bersama",
-    color: "bg-violet-100 text-violet-600",
-    custom: false,
   },
   {
     icon: JumpaIcon,
     title: "JUMPA",
     desc: "Video kelas & webinar.",
     href: "/jumpa",
-    color: "",
-    custom: true,
   },
   {
     icon: GimIcon,
@@ -48,12 +44,10 @@ const features = [
     custom: true,
   },
   {
-    icon: Sparkles,
+    icon: NaraIcon,
     title: "NARA untuk Guru",
     desc: "Rekan guru menyiapkan pembelajaran.",
     href: "/ai-bc",
-    color: "bg-indigo-100 text-indigo-600",
-    custom: false,
   },
 ];
 
@@ -87,8 +81,8 @@ export default function FiturUnggulanSection() {
                   href={f.href}
                   className="group flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-4 hover:border-zinc-200 hover:shadow-md transition-all"
                 >
-                  <div className={f.custom ? "flex-shrink-0" : `flex-shrink-0 p-3 rounded-xl ${f.color}`}>
-                    {f.custom ? <Icon size={48} /> : <Icon size={22} />}
+                  <div className="flex-shrink-0">
+                    <Icon size={48} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-zinc-900 group-hover:text-primary transition-colors">
