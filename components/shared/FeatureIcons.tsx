@@ -1,135 +1,115 @@
 import React, { useId } from "react";
 
-const Gradient = ({ id }: { id: string }) => (
-  <defs>
-    <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stopColor="#14b8a6" /> {/* warna-izin: gradasi merek BahasaCerdas */}
-      <stop offset="50%" stopColor="#3b82f6" /> {/* warna-izin: gradasi merek BahasaCerdas */}
-      <stop offset="100%" stopColor="#8b5cf6" /> {/* warna-izin: gradasi merek BahasaCerdas */}
-    </linearGradient>
-  </defs>
-);
-
 interface IconProps {
   size?: number;
   className?: string;
 }
 
-export const JumpaIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-  <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-    <Gradient id={gradientId} />
-    <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-    <path d="M14 16h12v10H14z" fill="white" />
-    <path d="M28 18l8 4-8 4v-8z" fill="white" />
-    <circle cx="18" cy="20" r="2" fill={`url(#${gradientId})`} />
-    <circle cx="22" cy="21" r="1.5" fill={`url(#${gradientId})`} />
+const IconTile = ({ id, size, className, children }: IconProps & { id: string; children: React.ReactNode }) => (
+  <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none" role="img" aria-hidden="true">
+    <defs>
+      <linearGradient id={id} x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="var(--clr-accent-strong)" />
+        <stop offset="42%" stopColor="var(--clr-info)" />
+        <stop offset="72%" stopColor="var(--clr-violet)" />
+        <stop offset="100%" stopColor="var(--clr-danger)" />
+      </linearGradient>
+    </defs>
+    <rect width="48" height="48" rx="10" fill={`url(#${id})`} />
+    {children}
   </svg>
-  );
+);
+
+export const JumpaIcon = ({ size = 40, className }: IconProps) => {
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <rect x="6" y="13" width="35" height="27" rx="4" stroke="white" strokeWidth="2.4" />
+    <rect x="27" y="8" width="11" height="9" rx="2" fill="white" />
+    <path d="m39 10 4-2v10l-4-2z" fill="white" />
+    <circle cx="14" cy="25" r="3" fill="white" /><circle cx="24" cy="22" r="4" fill="white" /><circle cx="34" cy="25" r="3" fill="white" />
+    <path d="M9 35v-2a5 5 0 0 1 10 0v2m0 0v-3a5 5 0 0 1 10 0v3m0 0v-2a5 5 0 0 1 10 0v2" fill="white" />
+  </IconTile>;
 };
 
 export const NaraIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-  <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-    <Gradient id={gradientId} />
-    <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-    <path d="M14 16a10 10 0 0 1 20 0v8a10 10 0 0 1-20 0v-8z" fill="white" />
-    <circle cx="20" cy="20" r="1.5" fill={`url(#${gradientId})`} />
-    <circle cx="28" cy="20" r="1.5" fill={`url(#${gradientId})`} />
-    <path d="M20 24q4 3 8 0" stroke={`url(#${gradientId})`} strokeWidth="1.5" fill="none" />
-    <path d="M32 14l2-2m0 0l2 2m-2-2v4" stroke="white" strokeWidth="1.5" />
-  </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <rect x="10" y="10" width="28" height="25" rx="11" stroke="white" strokeWidth="2.8" />
+    <path d="M24 5v5m-2-5a2 2 0 1 1 4 0" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    <path d="M8 17h2m28 0h2" stroke="white" strokeWidth="2.5" strokeLinecap="round" />
+    <path d="M18 22q2-4 4 0m4 0q2-4 4 0" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    <path d="M17 29q7 4 14 0" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    <path d="M15 36h14q4 0 4 4H17q-4 0-4-3 0-1 2-1Z" fill="white" />
+    <path d="M34 29h8a4 4 0 0 1 4 4v2a4 4 0 0 1-4 4h-3l-4 3v-4a4 4 0 0 1-5-4v-1a4 4 0 0 1 4-4Z" fill="white" />
+    <circle cx="36" cy="34" r="1" fill="var(--clr-violet)" /><circle cx="39" cy="34" r="1" fill="var(--clr-violet)" /><circle cx="42" cy="34" r="1" fill="var(--clr-violet)" />
+  </IconTile>;
 };
 
 export const AksaraIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-      <Gradient id={gradientId} />
-      <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-      <path d="M10 21.5c4-2.5 8-2.5 14 0v15c-6-2.5-10-2.5-14 0v-15Z" fill="white" />
-      <path d="M38 21.5c-4-2.5-8-2.5-14 0v15c6-2.5 10-2.5 14 0v-15Z" fill="white" />
-      <path d="M24 21.5v15" stroke="var(--clr-violet)" strokeWidth="1.5" />
-      <path d="m29 10 2.5 1.5-8 13-2.5-1.5 8-13Z" fill="white" />
-      <path d="m29 10 2.5 1.5 1.5-2.5-2.5-1.5L29 10Z" fill="white" />
-      <path d="m21 23 2.5 1.5-3.5 1 1-2.5Z" fill="white" />
-    </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <path d="M7 18h4v22H7zM37 18h4v22h-4z" fill="white" />
+    <path d="M11 18q8-3 13 2 5-5 13-2v20q-8-3-13 2-5-5-13-2V18Z" fill="white" />
+    <path d="M24 20v20" stroke="var(--clr-violet)" strokeWidth="1.3" />
+    <path d="m24 23 11-17q1-2 3-1l2 1q1 1 0 3L29 27l-6 4 1-8Z" fill="white" />
+    <path d="m35 6 3 2" stroke="var(--clr-violet)" strokeWidth="1.2" />
+  </IconTile>;
 };
 
 export const TokoKaryaIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-      <Gradient id={gradientId} />
-      <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-      <path d="M12 18.5 24 13l12 5.5v17H12v-17Z" fill="white" />
-      <path d="M12 18.5 24 24l12-5.5M24 24v11.5" stroke="var(--clr-violet)" strokeWidth="1.6" strokeLinejoin="round" />
-      <path d="m34 8 .9 2.3 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.3Z" fill="var(--clr-warning)" />
-      <circle cx="35" cy="30" r="5" fill="var(--clr-warning-soft)" />
-      <path d="m35 26.8 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3 1-2Z" fill="var(--clr-on-brand)" />
-    </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <path d="M14 13q0-8 10-8t10 8" stroke="white" strokeWidth="2.8" strokeLinecap="round" />
+    <path d="M10 14h28l2 20-16-4-16 4 2-20Z" fill="white" />
+    <circle cx="17" cy="18" r="2" fill="var(--clr-info)" /><circle cx="31" cy="18" r="2" fill="var(--clr-violet)" />
+    <path d="m5 30 12 5 8 7-8 2-12-8Z" fill="white" />
+    <circle cx="37" cy="36" r="8" fill="white" />
+    <path d="m37 30 1.8 3.8 4.2.6-3 2.9.7 4.2-3.7-2-3.7 2 .7-4.2-3-2.9 4.2-.6Z" fill="var(--clr-danger)" />
+  </IconTile>;
 };
 
 export const GimIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-  <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-    <Gradient id={gradientId} />
-    <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-    <path d="M14 22h20a6 6 0 0 1 6 6v4a4 4 0 0 1-4 4h-2l-2-3h-8l-2 3h-2a4 4 0 0 1-4-4v-4a6 6 0 0 1 6-6z" fill="white" />
-    <circle cx="20" cy="28" r="1.5" fill={`url(#${gradientId})`} />
-    <circle cx="24" cy="26" r="1" fill={`url(#${gradientId})`} />
-    <circle cx="28" cy="28" r="1.5" fill={`url(#${gradientId})`} />
-    <path d="M18 18h12v4H18z" fill="white" opacity="0.9" />
-  </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <path d="m24 5 2.5 5.5 6 .8-4.4 4.2 1 6-5.1-2.8-5.1 2.8 1-6-4.4-4.2 6-.8Z" fill="white" />
+    <path d="M10 22q-4 0-5 7l-1 9q0 5 5 5l8-7h14l8 7q5 0 5-5l-1-9q-1-7-5-7H10Z" fill="white" />
+    <path d="M13 27v9m-4.5-4.5h9" stroke="var(--clr-info)" strokeWidth="2.5" strokeLinecap="round" />
+    <circle cx="31" cy="29" r="1.8" fill="var(--clr-violet)" /><circle cx="35" cy="33" r="1.8" fill="var(--clr-violet)" /><circle cx="27" cy="35" r="1.8" fill="var(--clr-violet)" />
+  </IconTile>;
 };
 
 export const JalurCerdasIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-  <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-    <Gradient id={gradientId} />
-    <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-    <path d="M14 34h6v-6h6v-6h6v-6h6" stroke="white" strokeWidth="3" fill="none" strokeLinecap="round" />
-    <path d="M28 14h8v6h-8z" fill="white" />
-  </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <path d="M6 36h12V28h9V20h9V11" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M31 10h4V5l9 5-9 5v-5" fill="white" />
+    <rect x="6" y="31" width="12" height="9" rx="1.5" fill="white" />
+    <rect x="18" y="25" width="12" height="15" rx="1.5" fill="white" />
+    <rect x="30" y="18" width="12" height="22" rx="1.5" fill="white" />
+  </IconTile>;
 };
 
 export const BigtIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-  <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-    <Gradient id={gradientId} />
-    <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-    <path d="M16 14h16v20H16z" fill="white" />
-    <path d="M20 20h8M20 24h8M20 28h5" stroke={`url(#${gradientId})`} strokeWidth="1.5" />
-    <circle cx="32" cy="30" r="4" fill="white" />
-    <path d="M30 30l1.5 1.5L34 29" stroke={`url(#${gradientId})`} strokeWidth="1.5" fill="none" />
-  </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <rect x="8" y="7" width="28" height="35" rx="4" fill="white" />
+    <rect x="12" y="14" width="5" height="5" rx="1" fill="var(--clr-info)" /><path d="m13 16 1.5 1.5L17 14" stroke="white" strokeWidth="1.2" fill="none" />
+    <path d="M21 15h10m-10 3h7" stroke="var(--clr-violet)" strokeWidth="1.8" strokeLinecap="round" />
+    <rect x="12" y="24" width="5" height="5" rx="1" fill="var(--clr-info)" /><path d="m13 26 1.5 1.5L17 24" stroke="white" strokeWidth="1.2" fill="none" />
+    <path d="M21 25h10m-10 3h7" stroke="var(--clr-violet)" strokeWidth="1.8" strokeLinecap="round" />
+    <rect x="12" y="34" width="5" height="5" rx="1" fill="var(--clr-info)" /><path d="m13 36 1.5 1.5L17 34" stroke="white" strokeWidth="1.2" fill="none" />
+    <circle cx="36" cy="36" r="9" fill="white" /><path d="m32 36 2.5 2.5 5-6" stroke="var(--clr-danger)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+  </IconTile>;
 };
 
-
 export const MainBersamaIcon = ({ size = 40, className }: IconProps) => {
-  const gradientId = useId();
-  return (
-    <svg width={size} height={size} viewBox="0 0 48 48" className={className} fill="none">
-      <Gradient id={gradientId} />
-      <rect width="48" height="48" rx="12" fill={`url(#${gradientId})`} />
-      <circle cx="18" cy="18" r="5" fill="white" />
-      <circle cx="30" cy="18" r="5" fill="white" />
-      <path d="M8 35c0-6 4-10 10-10s10 4 10 10v2H8v-2z" fill="white" />
-      <path d="M20 35c0-6 4-10 10-10s10 4 10 10v2H20v-2z" fill="white" opacity="0.82" />
-      <path d="M21 22h6m-3-3v6" stroke={`url(#${gradientId})`} strokeWidth="2" strokeLinecap="round" />
-    </svg>
-  );
+  const id = useId();
+  return <IconTile id={id} size={size} className={className}>
+    <path d="m24 6 1.5 4 4 1.5-4 1.5-1.5 4-1.5-4-4-1.5 4-1.5Z" fill="white" />
+    <path d="m10 14 2 2m24-2-2 2" stroke="white" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="24" cy="25" r="6" fill="white" /><circle cx="11" cy="27" r="4" fill="white" /><circle cx="37" cy="27" r="4" fill="white" />
+    <path d="M15 41v-4a9 9 0 0 1 18 0v4H15Zm-12-1v-3a8 8 0 0 1 8-8h2a9 9 0 0 0-3 7v4H3Zm30 0v-4a9 9 0 0 0-3-7h2a8 8 0 0 1 8 8v3h-7Z" fill="white" />
+  </IconTile>;
 };
 
 export const FEATURE_ICONS = {
