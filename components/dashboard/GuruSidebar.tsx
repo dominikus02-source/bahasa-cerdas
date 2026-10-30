@@ -27,16 +27,16 @@ const NAV: NavItem[] = [
   { label: "Hasil Karya", href: "/guru/feed-karya", icon: <Star size={18} /> },
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
-  { label: "Arena", href: "/arena", icon: <Gamepad2 size={18} /> },
+  { label: "Arena", href: "/arena", icon: <GimIcon size={22} /> },
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Buku Ajar", href: "/guru/panduan-guru", icon: <BookOpen size={18} /> },
   // ── LANJUTAN ────────────────────────────────────────────────────
-  { label: "Toko Karya", href: "/guru/toko-karya", icon: <ShoppingBag size={18} /> },
-  { label: "Jelajahi Toko Karya", href: "/marketplace", icon: <ShoppingBag size={18} /> },
+  { label: "Toko Karya", href: "/guru/toko-karya", icon: <TokoKaryaIcon size={22} /> },
+  { label: "Jelajahi Toko Karya", href: "/marketplace", icon: <TokoKaryaIcon size={22} /> },
   { label: "Video Belajar", href: "/guru/video-belajar", icon: <Video size={18} /> },
-  { label: "Kuis Game", href: "/guru/game/lobby", icon: <Gamepad2 size={18} /> },
+  { label: "Kuis Game", href: "/guru/game/lobby", icon: <GimIcon size={22} /> },
   { label: "Rencana Pembelajaran", href: "/guru/ai-tools?tool=rpp-modul", icon: <FileText size={18} /> },
-  { label: "AI Tools", href: "/guru/ai-tools", icon: <Sparkles size={18} /> },
+  { label: "AI Tools", href: "/guru/ai-tools", icon: <NaraIcon size={22} /> },
   {
     label: "Simulasi",
     icon: <BarChart3 size={18} />,
@@ -50,7 +50,7 @@ const NAV: NavItem[] = [
   { label: "Hasil Murid", href: "/guru/hasil-simulasi", icon: <TrendingUp size={18} /> },
   { label: "Tinjau Menulis & Berbicara", href: "/guru/tinjau-simulasi", icon: <PenLine size={18} /> },
   { label: "Dokumen Latihan Murid", href: "/guru/dokumen-latihan", icon: <Star size={18} /> },
-  { label: "BIGT", href: "/guru/bigt", icon: <ExternalLink size={18} /> },
+  { label: "BIGT", href: "/guru/bigt", icon: <BigtIcon size={22} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },
   {
     label: "Olimpiade",
@@ -64,7 +64,7 @@ const NAV: NavItem[] = [
   // Arena Junior = dasbor murid TK–SD. Guru bukan anggota kelas, jadi tautan ini
   // membuka mode pratinjau (lihat lib/arena-junior/kurikulum.ts).
   { label: "Arena Junior (TK–SD)", href: "/junior", icon: <Baby size={18} /> },
-  { label: "AKSARA", href: "/guru/artikel", icon: <FileText size={18} /> },
+  { label: "AKSARA", href: "/guru/artikel", icon: <AksaraIcon size={22} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
 
