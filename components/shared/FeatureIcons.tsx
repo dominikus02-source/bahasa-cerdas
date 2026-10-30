@@ -69,7 +69,7 @@ export const TokoKaryaIcon = ({ size = 40, className }: IconProps) => {
       <path d="M12 18.5 24 13l12 5.5v17H12v-17Z" fill="white" />
       <path d="M12 18.5 24 24l12-5.5M24 24v11.5" stroke="var(--clr-violet)" strokeWidth="1.6" strokeLinejoin="round" />
       <path d="m34 8 .9 2.3 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.3Z" fill="var(--clr-warning)" />
-      <circle cx="35" cy="30" r="5" fill="#FDE68A" />
+      <circle cx="35" cy="30" r="5" fill="var(--clr-warning-soft)" />
       <path d="m35 26.8 1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3 1-2Z" fill="var(--clr-on-brand)" />
     </svg>
   );
