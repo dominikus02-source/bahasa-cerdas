@@ -156,7 +156,7 @@ function RoomCard({ room, now }: { room: RoomListItem; now: number | null }) {
       <span className="jumpa-icon-chip" data-kind={room.kind} aria-hidden><Icon size={20} /></span>
       <span className="min-w-0 flex-1">
         <span className="jumpa-room-title">{room.title}</span>
-        <span className="jumpa-room-sub">{KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
+        <span className="jumpa-room-sub">{room.mode === "WEBINAR" ? "Webinar interaktif" : room.kind === "GURU" ? "Rapat biasa" : KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
         <span className="mt-1.5 flex items-center gap-2 text-xs">
           {live ? <span className="jumpa-live">Berlangsung</span> : <span className="jumpa-soon">{scheduledLabel(room.scheduledAt, now)}</span>}
         </span>
@@ -236,7 +236,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           <div className="flex items-center gap-3">
             <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
             <div>
-              <h2 className="text-base font-bold">Mulai ruang guru</h2>
+              <h2 className="text-base font-bold">Rapat biasa</h2>
               <p className="text-xs text-[var(--jp-text-3)]">{plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
             </div>
           </div>
