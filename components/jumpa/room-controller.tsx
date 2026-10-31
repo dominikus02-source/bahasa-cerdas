@@ -20,6 +20,7 @@ export interface JumpaRoomInfo {
   code: string;
   title: string;
   kind: "KELAS" | "GURU" | "MURID" | "UMUM";
+  mode: "MEETING" | "CLASS" | "WEBINAR";
   isLocked: boolean;
   chatEnabled: boolean;
   allowMuridScreenShare: boolean;
