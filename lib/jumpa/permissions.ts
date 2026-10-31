@@ -259,7 +259,8 @@ export function evaluateJoin(
     }
   } else if (room.kind === "GURU" && room.mode === "WEBINAR") {
     // Webinar terbuka bagi akun Guru/Murid BC yang sudah masuk dan memegang kode.
-    // Akun Junior tetap ditolak oleh pagar di atas; peserta tidak otomatis menjadi cohost.
+    // Akun Junior tetap ditolak; peserta tidak otomatis menjadi cohost.
+    if (actor.isJunior) return deny("JUNIOR_NOT_ALLOWED", "Akun Junior belum bisa ikut webinar.");
     if ((role === "GURU" || role === "MURID") && (JUMPA_WEBINAR_CODE_JOIN || relation.hasValidLink || relation.isExistingParticipant)) {
       access = { roomRole: "MEMBER", accessVia: "LINK" };
     }
