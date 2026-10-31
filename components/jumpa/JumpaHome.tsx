@@ -254,6 +254,24 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy} onClick={() => void create({ kind: "GURU" })}>
             {busy ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai sekarang
           </button>
+          <div className="mt-3 rounded-2xl border border-[var(--jp-accent)]/25 bg-[var(--jp-accent)]/5 p-3">
+            <div className="flex items-start gap-3">
+              <span className="jumpa-icon-chip shrink-0" data-kind="GURU" aria-hidden><Video size={19} /></span>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-bold">Webinar interaktif</h3>
+                <p className="mt-1 text-xs text-[var(--jp-text-3)]">Sesi hingga 200 peserta dan 180 menit. Peserta harus masuk dengan akun BahasaCerdas.</p>
+                {plan?.tier === "PREMIUM" ? (
+                  <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy} onClick={() => void create({ kind: "GURU", isWebinar: true })}>
+                    {busy ? <Loader2 size={16} className="animate-spin" /> : <Video size={16} />} Mulai webinar
+                  </button>
+                ) : (
+                  <Link href={plan?.upgradeUrl ?? "/guru/berlangganan"} className="jumpa-ghost mt-3 w-full">
+                    <Crown size={16} /> Aktifkan Premium untuk webinar
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
           <Link href="/guru/kelasku" className="jumpa-ghost mt-2 w-full">
             <GraduationCap size={18} /> Mulai dari KelasKu
           </Link>
