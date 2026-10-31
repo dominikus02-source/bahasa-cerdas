@@ -466,6 +466,7 @@ export async function loadRoomContext(
     actor,
     room: {
       kind: room.kind,
+      mode: room.mode,
       status: room.status,
       isLocked: room.isLocked,
       startedAt: room.startedAt,
