@@ -100,7 +100,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       metadata: { v: 1, bcRole: effective, roomRole, avatar: ctx.room.kind === "UMUM" && effective === "MURID" ? null : profile?.avatar ?? null },
       grant: buildJoinGrant(
         ctx.room.livekitRoomName,
-        ctx.room.mode === "WEBINAR" && roomRole === "MEMBER"
+        ctx.view.mode === "WEBINAR" && roomRole === "MEMBER" && !ctx.participant?.stageApproved
           ? []
           : publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare }),
       ),
