@@ -2,7 +2,7 @@
 
 Tanggal: 31 Oktober 2026  
 Cabang: `feat/jumpa-webinar-interactive-v1`  
-Status: audit kode selesai sebagian; uji beban media nyata belum dijalankan.
+Status: audit kode dan pengamanan awal selesai; uji beban API maupun media nyata belum dijalankan.
 
 ## Ringkasan
 
@@ -94,10 +94,10 @@ Pada 31 Oktober 2026, cabang fitur menambahkan pengamanan publikasi media beriku
 - Pemandu utama dapat menaikkan peserta biasa ke panggung atau menurunkannya melalui panel peserta.
 - Aksi panggung melewati endpoint moderasi yang memeriksa peran pemandu di server; klien tidak memiliki kunci admin LiveKit.
 - Izin panggung diberikan/dicabut langsung melalui `updateParticipant` LiveKit. Jika pembaruan izin gagal, API mengembalikan kegagalan dan tidak menyatakan tindakan berhasil.
-- Izin panggung bersifat sementara pada sesi LiveKit; peserta yang masuk ulang kembali tanpa izin publikasi sampai disetujui lagi.
+- Persetujuan panggung disimpan pada `JumpaParticipant.stageApproved`; peserta yang tersambung ulang tetap memperoleh izin kamera/mikrofon jika persetujuannya masih aktif. Saat pemandu menurunkan peserta dari panggung, izin LiveKit dicabut dan status persetujuan disimpan sebagai `false`.
 
 Batas implementasi tahap ini:
-- Belum ada penyimpanan status panggung lintas sesi/reconnect.
+- Status persetujuan panggung sudah disimpan di basis data dan dipakai saat token diterbitkan ulang setelah koneksi terputus.
 - Belum ada antrean permintaan panggung yang tersimpan di server; antrean angkat tangan yang sudah ada menjadi sarana permintaan.
 - Persetujuan panggung saat ini hanya memberi kamera dan mikrofon, bukan berbagi layar.
 - Perubahan masih di cabang fitur dan belum diterapkan ke produksi.
@@ -126,6 +126,7 @@ Skrip `scripts/k6-jumpa-token-api.js` mengukur jalur HTTP penerbitan token JUMPA
 Prasyarat:
 - k6 terpasang pada mesin operator.
 - URL HTTPS lingkungan uji yang terpisah dari produksi.
+- Nama host staging yang disetujui secara eksplisit melalui `ALLOWED_STAGING_HOST`; harus sama persis dengan host pada `BASE_URL`.
 - Satu ruang webinar uji yang aktif dan tidak berisi data/rapat sungguhan.
 - Minimal 10 akun uji BC berbeda yang diizinkan masuk ke ruang tersebut.
 - Cookie sesi untuk masing-masing akun uji. Jangan masukkan cookie ke repositori, tiket, atau percakapan; simpan hanya di lingkungan operator.
@@ -139,7 +140,7 @@ USER_COOKIES_JSON='{"1":"sb-access-token=...","2":"sb-access-token=..."}' \
 k6 run scripts/k6-jumpa-token-api.js
 ```
 
-Contoh di atas hanya menunjukkan bentuk variabel; isi 10 cookie sesi uji yang berbeda pada mesin operator. Jangan gunakan akun atau cookie produksi. Skrip menolak domain produksi dan meminta minimal 10 cookie. Profil bawaan bertahap 2 → 5 → 10 VU, satu permintaan tiap 4 detik per VU agar tidak sengaja melampaui batas 20 permintaan per menit per akun. Ambang awal: kegagalan di bawah 1% dan p95 di bawah 2 detik.
+Contoh di atas hanya menunjukkan bentuk variabel; isi 10 cookie sesi uji yang berbeda pada mesin operator. Jangan gunakan akun atau cookie produksi. Skrip menolak domain utama BC beserta seluruh subdomain `*.bahasacerdas.com`, dan hanya menerima host yang sama persis dengan `ALLOWED_STAGING_HOST`. Skrip juga meminta minimal 10 cookie. Profil bawaan bertahap 2 → 5 → 10 VU, satu permintaan tiap 4 detik per VU agar tidak sengaja melampaui batas 20 permintaan per menit per akun. Ambang awal: kegagalan di bawah 1% dan p95 di bawah 2 detik.
 
 Gerbang keselamatan:
 1. Pastikan `BASE_URL` benar-benar lingkungan uji dan database-nya terpisah.
