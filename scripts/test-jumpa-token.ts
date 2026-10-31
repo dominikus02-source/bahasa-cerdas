@@ -43,6 +43,11 @@ async function main() {
   check("Sumber publish hanya kamera + mikrofon", JSON.stringify(g.canPublishSources) === JSON.stringify([TrackSource.CAMERA, TrackSource.MICROPHONE]))
   const none = buildJoinGrant("bc-room-1", [])
   check("Tanpa sumber → canPublish false", none.canPublish === false)
+  check("Webinar peserta biasa: kamera dan mikrofon tidak diizinkan sebelum disetujui", none.canPublish === false && none.canPublishSources?.length === 0)
+  const stage = buildParticipantPermission(["camera", "microphone"])
+  check("Izin panggung hanya kamera + mikrofon, tanpa hak admin", stage.canPublish === true && stage.canPublishSources?.length === 2 && stage.canUpdateMetadata === false)
+  const offStage = buildParticipantPermission([])
+  check("Turun panggung mencabut seluruh izin publikasi", offStage.canPublish === false && offStage.canPublishSources?.length === 0)
 
   console.log("\n1b. Fase 2 — berbagi layar")
   const kelas = { kind: "KELAS" as const, allowMuridScreenShare: false }
