@@ -15,6 +15,7 @@ import { getLivekitServerConfig, getLivekitPublicWsUrl, DEFAULT_LIVEKIT_URL } fr
 import {
   ensureLivekitRoom,
   countActiveOthers,
+  probeLivekit,
   sendServerSignal,
   listLivekitIdentities,
   updateLivekitParticipant,
@@ -100,6 +101,7 @@ async function main() {
   let capacityProbeFailedClosed = false
   try { await countActiveOthers("bc-x", "u", deadCfg) } catch (error) { capacityProbeFailedClosed = error instanceof Error && error.message === "LIVEKIT_UNAVAILABLE" }
   check("countActiveOthers menolak saat server tak terjangkau (fail-closed)", capacityProbeFailedClosed)
+  check("Probe kesehatan LiveKit mendeteksi server tidak terjangkau", (await probeLivekit(deadCfg)) === false)
   let threw = false
   try { await ensureLivekitRoom({ name: "bc-x", maxParticipants: 5, config: deadCfg }) } catch { threw = true }
   check("ensureLivekitRoom melempar (→ 503 MEDIA_UNAVAILABLE)", threw)
