@@ -3,6 +3,7 @@ import { check, sleep } from "k6";
 
 const baseUrl = (__ENV.BASE_URL || "").replace(/\/$/, "");
 const roomCode = __ENV.ROOM_CODE || "";
+const allowedStagingHost = (__ENV.ALLOWED_STAGING_HOST || "").trim().toLowerCase();
 const cookies = JSON.parse(__ENV.USER_COOKIES_JSON || "{}");
 
 export const options = {
@@ -20,14 +21,20 @@ export const options = {
 };
 
 export function setup() {
-  if (!baseUrl || !roomCode || !Object.keys(cookies).length) {
-    throw new Error("Isi BASE_URL, ROOM_CODE, dan USER_COOKIES_JSON.");
+  if (!baseUrl || !roomCode || !allowedStagingHost || !Object.keys(cookies).length) {
+    throw new Error("Isi BASE_URL, ALLOWED_STAGING_HOST, ROOM_CODE, dan USER_COOKIES_JSON.");
   }
 
   const target = new URL(baseUrl);
   const host = target.hostname.toLowerCase();
-  if (target.protocol !== "https:" || host === "bahasacerdas.com" || host === "www.bahasacerdas.com") {
-    throw new Error("Uji beban hanya boleh memakai HTTPS lingkungan uji, bukan domain produksi.");
+  if (
+    target.protocol !== "https:" ||
+    host === "bahasacerdas.com" ||
+    host === "www.bahasacerdas.com" ||
+    host.endsWith(".bahasacerdas.com") ||
+    host !== allowedStagingHost
+  ) {
+    throw new Error("BASE_URL harus memakai HTTPS dan host yang sama persis dengan ALLOWED_STAGING_HOST; domain produksi/BC ditolak.");
   }
   if (target.pathname !== "" && target.pathname !== "/") {
     throw new Error("BASE_URL harus berupa alamat dasar tanpa jalur.");
