@@ -19,7 +19,7 @@ gitbc fetch origin main
 [[ "$(gitbc branch --show-current)" == "main" ]] || { echo "Checkout must be main" >&2; exit 1; }
 HEAD="$(gitbc rev-parse HEAD)"
 TARGET="$(gitbc rev-parse origin/main)"
-[[ "$HEAD" == "$TARGET" ]] || { echo "Local main differs from origin/main; stop (no implicit pull)" >&2; exit 1; }
+gitbc merge-base --is-ancestor "$HEAD" "$TARGET" || { echo "Local main diverged from origin/main" >&2; exit 1; }
 [[ -n "${BC_APPROVED_SHA:-}" && "$TARGET" == "$BC_APPROVED_SHA" ]] || { echo "Set BC_APPROVED_SHA to reviewed origin/main full SHA" >&2; exit 1; }
 [[ "$TARGET" =~ ^[a-f0-9]{40}$ ]] || exit 1
 # Require GitHub CLI authenticated for checks. Never assume a green old commit means green main.
@@ -64,6 +64,9 @@ subprocess.run(["pg_restore","--list",out],check=True,stdout=subprocess.DEVNULL)
 print("Backup archive created and structurally readable:",out)
 PY
 chmod 600 "$BACKUP"
+# Update checkout only after a verified backup exists, using fast-forward only.
+gitbc pull --ff-only origin main
+[[ "$(gitbc rev-parse HEAD)" == "$TARGET" ]] || { echo "Unexpected checkout SHA" >&2; exit 1; }
 # Prisma runs with DB connection string from protected env file, without shell-sourcing secrets.
 python3 - "$CONFIG/web.env" "$REPO" <<'PY'
 import os,sys,subprocess
