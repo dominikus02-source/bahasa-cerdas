@@ -72,7 +72,6 @@ function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="jumpa-tier" data-tier={plan.tier}>{premium && <Crown size={12} aria-hidden />}{premium ? "Premium" : "Gratis"}</span>
-          
         </div>
         {plan.roomsPerDay === null ? (
           <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Ruang tanpa batas</p>
