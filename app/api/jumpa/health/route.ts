@@ -33,15 +33,23 @@ export async function GET() {
   } catch {
     storage = "unavailable";
   }
+  let stageApprovalReady = false;
+  try {
+    const columns = await db.$queryRaw<{ column_name: string }[]>`SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'JumpaParticipant' AND column_name = 'stageApproved'`;
+    stageApprovalReady = columns.length > 0;
+  } catch {
+    stageApprovalReady = false;
+  }
   const livekitConfigured = Boolean(getLivekitServerConfig());
   const livekitReachable = await probeLivekit();
-  const storageReady = storage === "ready";
+  const storageReady = storage === "ready" && stageApprovalReady;
   const ready = JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady;
   return jumpaJson({
     ok: ready,
     enabled: JUMPA_ENABLED,
     livekitConfigured,
     livekitReachable,
+    stageApprovalReady,
     storage,
   }, ready ? 200 : 503);
 }
