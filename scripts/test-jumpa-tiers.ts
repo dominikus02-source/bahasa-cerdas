@@ -105,6 +105,8 @@ check("createRoom menegakkan kuota harian", svc.includes("checkDailyQuota(tier, 
 check("createRoom menyimpan tier di event ROOM_CREATED", svc.includes('action: "ROOM_CREATED"') && svc.includes("tier,"))
 check("createRoom: ruang MURID memakai tier pembuat", svc.includes("Ruang MURID memakai tier pembuat"))
 check("createRoom: tier per jenis ruang, webinar tetap tierForPlan", svc.includes("isWebinar ? resolved.tier : tierForRoomKind(resolved.plan, req.kind)"))
+check("Webinar disimpan sebagai mode WEBINAR", svc.includes('mode: isWebinar ? "WEBINAR"'))
+check("Webinar dan rapat biasa tidak saling memakai ulang ruang", svc.includes('metadata: { path: ["isWebinar"], equals: isWebinar }'))
 check("loadRoomContext membaca tier ruang", svc.includes("tierFromCreatedMetadata(created?.metadata)"))
 const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts")
 check("Token API mengirim tierView (batas dari baris ruang)", tokenRoute.includes("tierView({") && tokenRoute.includes("maxParticipants: ctx.room.maxParticipants"))
