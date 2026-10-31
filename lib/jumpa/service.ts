@@ -583,6 +583,7 @@ export interface RoomListItem {
   code: string;
   title: string;
   kind: JumpaRoom["kind"];
+  mode: JumpaRoom["mode"];
   status: JumpaRoom["status"];
   place: string | null;
   mine: boolean;
