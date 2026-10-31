@@ -117,3 +117,36 @@ Batas implementasi tahap ini:
 3. Terapkan model panggung untuk webinar besar sebelum mengaktifkan kamera bebas untuk semua peserta.
 4. Jalankan benchmark bertahap pada lingkungan uji dan simpan metrik mentah.
 5. Pisahkan LiveKit ke node media khusus bila benchmark node saat ini tidak memenuhi target.
+
+
+## Penguji beban API token (khusus lingkungan uji)
+
+Skrip `scripts/k6-jumpa-token-api.js` mengukur jalur HTTP penerbitan token JUMPA. Skrip ini **bukan** simulator media LiveKit: ia tidak menerbitkan kamera/mikrofon dan tidak mengukur bandwidth, jitter, packet loss, atau kualitas audio/video.
+
+Prasyarat:
+- k6 terpasang pada mesin operator.
+- URL HTTPS lingkungan uji yang terpisah dari produksi.
+- Satu ruang webinar uji yang aktif dan tidak berisi data/rapat sungguhan.
+- Minimal 10 akun uji BC berbeda yang diizinkan masuk ke ruang tersebut.
+- Cookie sesi untuk masing-masing akun uji. Jangan masukkan cookie ke repositori, tiket, atau percakapan; simpan hanya di lingkungan operator.
+
+Contoh pemanggilan dari terminal operator:
+
+```bash
+BASE_URL="https://alamat-staging" \
+ROOM_CODE="KODE_WEBINAR_UJI" \
+USER_COOKIES_JSON='{"1":"sb-access-token=...","2":"sb-access-token=..."}' \
+k6 run scripts/k6-jumpa-token-api.js
+```
+
+Contoh di atas hanya menunjukkan bentuk variabel; isi 10 cookie sesi uji yang berbeda pada mesin operator. Jangan gunakan akun atau cookie produksi. Skrip menolak domain produksi dan meminta minimal 10 cookie. Profil bawaan bertahap 2 → 5 → 10 VU, satu permintaan tiap 4 detik per VU agar tidak sengaja melampaui batas 20 permintaan per menit per akun. Ambang awal: kegagalan di bawah 1% dan p95 di bawah 2 detik.
+
+Gerbang keselamatan:
+1. Pastikan `BASE_URL` benar-benar lingkungan uji dan database-nya terpisah.
+2. Gunakan ruang webinar uji yang dibuat khusus; jangan memakai ruang aktif pengguna.
+3. Mulai dengan 2 VU. Hentikan bila muncul 429, 5xx, lonjakan latensi, atau beban database tidak wajar.
+4. Naikkan ke 5 dan 10 VU hanya setelah tahap sebelumnya stabil.
+5. Setelah pengujian, akhiri ruang uji dan cabut sesi akun uji.
+6. Jangan menaikkan jumlah VU atau menguji produksi tanpa persetujuan dan rencana kapasitas terpisah.
+
+Uji media LiveKit tetap merupakan pekerjaan terpisah. Untuk itu diperlukan klien peserta nyata atau alat simulasi LiveKit yang menerbitkan track media, ditambah pemantauan CPU, RAM, jaringan, packet loss, jitter, dan RTT pada node media.
