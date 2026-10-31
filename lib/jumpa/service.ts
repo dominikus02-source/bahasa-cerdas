@@ -726,10 +726,20 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   return {
     effective,
     isJunior: actor.isJunior,
-    rooms: rooms.map((r) => ({
+    rooms: rooms.map((r) => {
+      const createdMetadata = r.events[0]?.metadata;
+      const createdAsWebinar = Boolean(
+        createdMetadata &&
+        typeof createdMetadata === "object" &&
+        !Array.isArray(createdMetadata) &&
+        "isWebinar" in createdMetadata &&
+        createdMetadata.isWebinar === true
+      );
+      return {
       code: r.code,
       title: r.title,
       kind: r.kind,
+      mode: createdAsWebinar ? "WEBINAR" : r.mode,
       status: r.status,
       place: (r.groupId && groupName.get(r.groupId)) || (r.communityId && commName.get(r.communityId)) || null,
       mine: r.createdById === user.id,
@@ -739,7 +749,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         const ids = presentIds.get(r.code) ?? [];
         return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };
       })(),
-    })),
+      };
+    }),
     groups: effective === "GURU" ? ownedGroups : actor.isJunior || effective === "UMUM" ? [] : memberGroups.map((m) => m.group),
     communities: communities.map((c) => c.community),
     canSeePanel: user.role === "ADMIN" || user.isFounder || effective === "GURU",
