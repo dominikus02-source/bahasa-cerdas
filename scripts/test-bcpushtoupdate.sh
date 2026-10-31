@@ -19,6 +19,8 @@ checks={
  "forward-only checkout": 'pull --ff-only',
  "no automatic DB rollback": 'database migrations may be incompatible',
  "JUMPA health": '/api/jumpa/health',
+ "staging restore proof": 'BC_STAGING_RESTORE_PROOF',
+ "pinned deploy SHA": 'BC_DEPLOY_PINNED_SHA="$TARGET"',
 }
 for name,needle in checks.items():
     if isinstance(needle,tuple):
@@ -28,3 +30,8 @@ for name,needle in checks.items():
 assert "bcrollback || true" not in s, "Automatic rollback forbidden after migration"
 print("PASS no automatic rollback after migration")
 PY
+
+DEPLOY="$ROOT/ops/vps/deploy.sh"
+bash -n "$DEPLOY"
+grep -Fq 'BC_DEPLOY_PINNED_SHA' "$DEPLOY"
+echo "PASS deploy script checks immutable SHA pin"
