@@ -86,6 +86,22 @@ Target pengukuran yang disarankan:
 
 Angka target di atas adalah gerbang penerimaan yang diusulkan, bukan hasil pengukuran yang sudah diperoleh.
 
+### Implementasi awal panggung webinar (cabang fitur)
+
+Pada 31 Oktober 2026, cabang fitur menambahkan pengamanan publikasi media berikut:
+- Token peserta biasa pada ruang `WEBINAR` diterbitkan tanpa izin publikasi kamera/mikrofon.
+- Kamera dan mikrofon peserta biasa tidak dimulai saat masuk.
+- Pemandu utama dapat menaikkan peserta biasa ke panggung atau menurunkannya melalui panel peserta.
+- Aksi panggung melewati endpoint moderasi yang memeriksa peran pemandu di server; klien tidak memiliki kunci admin LiveKit.
+- Izin panggung diberikan/dicabut langsung melalui `updateParticipant` LiveKit. Jika pembaruan izin gagal, API mengembalikan kegagalan dan tidak menyatakan tindakan berhasil.
+- Izin panggung bersifat sementara pada sesi LiveKit; peserta yang masuk ulang kembali tanpa izin publikasi sampai disetujui lagi.
+
+Batas implementasi tahap ini:
+- Belum ada penyimpanan status panggung lintas sesi/reconnect.
+- Belum ada antrean permintaan panggung yang tersimpan di server; antrean angkat tangan yang sudah ada menjadi sarana permintaan.
+- Persetujuan panggung saat ini hanya memberi kamera dan mikrofon, bukan berbagi layar.
+- Perubahan masih di cabang fitur dan belum diterapkan ke produksi.
+
 ## Batas validasi saat ini
 
 - Pemeriksaan kode dan regresi berjalan melalui GitHub Actions.
