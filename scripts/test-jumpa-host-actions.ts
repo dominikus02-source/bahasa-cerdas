@@ -72,22 +72,22 @@ for (const a of ["MUTE_AUDIO", "MUTE_VIDEO", "STOP_SCREEN", "REMOVE", "DELETE_CH
 }
 check("Murid 'HOST' di ruang KELAS (tak mungkin) tetap tanpa kuasa", !ok(muridHost, "END", undefined, "KELAS"))
 
-console.log("\n3b. Pengamanan panggung webinar");
-const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts");
-const roomView = read("components/jumpa/JumpaRoomView.tsx");
-const panels = read("components/jumpa/RoomPanels.tsx");
-const stageActions = read("lib/jumpa/room-actions.ts");
-check("Token webinar peserta biasa tidak memberi izin publikasi", tokenRoute.includes('ctx.room.mode === "WEBINAR" && roomRole === "MEMBER"') && tokenRoute.includes("? []"));
-check("Kamera dan mikrofon peserta webinar mati saat masuk", roomView.includes('props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER"'));
-check("Tombol panggung hanya muncul bagi pemandu utama", panels.includes('self.roomRole === "HOST"') && panels.includes('"Naikkan ke panggung"') && panels.includes('"Turunkan dari panggung"'));
-check("Aksi panggung mengubah izin LiveKit di server", stageActions.includes('case "ALLOW_STAGE":') && stageActions.includes("buildParticipantPermission([...sources])"));
-check("Kegagalan izin panggung tidak dilaporkan berhasil", stageActions.includes('if (!updated) return fail(503, "MEDIA_UNAVAILABLE"'));
-const jumpaService = read("lib/jumpa/service.ts");
-const jumpaSchema = read("prisma/schema.prisma");
-const stageMigration = read("prisma/migrations/20261031120000_jumpa_webinar_stage/migration.sql");
-check("Izin panggung tersimpan pada peserta", jumpaSchema.includes("stageApproved Boolean") && stageMigration.includes('ADD COLUMN "stageApproved" BOOLEAN NOT NULL DEFAULT false'));
-check("Persetujuan panggung dibaca saat token diterbitkan", jumpaService.includes("stageApproved: participant.stageApproved") && tokenRoute.includes("!ctx.participant?.stageApproved"));
-check("Persetujuan panggung disimpan setelah izin LiveKit berhasil", stageActions.includes('data: { stageApproved: action === "ALLOW_STAGE" }'));
+console.log("\n3b. Pengamanan panggung webinar")
+const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts")
+const roomView = read("components/jumpa/JumpaRoomView.tsx")
+const panels = read("components/jumpa/RoomPanels.tsx")
+const stageActions = read("lib/jumpa/room-actions.ts")
+check("Token webinar peserta biasa tidak memberi izin publikasi", tokenRoute.includes('ctx.view.mode === "WEBINAR" && roomRole === "MEMBER"') && tokenRoute.includes("!ctx.participant?.stageApproved") && tokenRoute.includes("? []"))
+check("Kamera dan mikrofon peserta webinar mati saat masuk", roomView.includes('props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER"'))
+check("Tombol panggung hanya muncul bagi pemandu utama", panels.includes('self.roomRole === "HOST"') && panels.includes('"Naikkan ke panggung"') && panels.includes('"Turunkan dari panggung"'))
+check("Aksi panggung mengubah izin LiveKit di server", stageActions.includes('case "ALLOW_STAGE":') && stageActions.includes("buildParticipantPermission([...sources])"))
+check("Kegagalan izin panggung tidak dilaporkan berhasil", stageActions.includes('if (!updated) return fail(503, "MEDIA_UNAVAILABLE"'))
+const jumpaService = read("lib/jumpa/service.ts")
+const jumpaSchema = read("prisma/schema.prisma")
+const stageMigration = read("prisma/migrations/20261031120000_jumpa_webinar_stage/migration.sql")
+check("Izin panggung tersimpan pada peserta", jumpaSchema.includes("stageApproved Boolean") && stageMigration.includes('ADD COLUMN "stageApproved" BOOLEAN NOT NULL DEFAULT false'))
+check("Persetujuan panggung dibaca saat token diterbitkan", jumpaService.includes("stageApproved: participant.stageApproved") && tokenRoute.includes("!ctx.participant?.stageApproved"))
+check("Persetujuan panggung disimpan setelah izin LiveKit berhasil", stageActions.includes('data: { stageApproved: action === "ALLOW_STAGE" }'))
 
 console.log("\n4. Undangan")
 const inv = (actor: ModerationActor, roomKind: "KELAS" | "GURU" | "MURID", invite: Parameters<typeof canInvite>[0]["invite"]) => canInvite({ actor, roomKind, invite }).ok
@@ -131,7 +131,7 @@ check("Leave setelah 10 mnt → 600 dtk", !isAttending(s) && s.totalSeconds === 
 const again = attendanceOnLeave(s, at(900))
 check("Leave ganda idempoten", again.totalSeconds === 600)
 s = attendanceOnJoin(s, at(1000))
-s = attendanceOnJoin(s, at(1300)) // leave hilang
+s = attendanceOnJoin(s, at(1300))
 check("Join ganda menutup sesi sebelumnya (+300)", s.totalSeconds === 900 && s.joinCount === 3)
 s = attendanceOnLeave(s, at(1360))
 check("Total akumulatif", s.totalSeconds === 960)
