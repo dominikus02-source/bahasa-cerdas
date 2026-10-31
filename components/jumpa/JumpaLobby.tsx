@@ -384,7 +384,7 @@ export default function JumpaLobby(props: Props) {
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
           {props.mode === "WEBINAR" && (
             <p className="mt-2 text-sm text-[var(--jp-text-2)]">
-              Webinar BahasaCerdas · Maksimal {JUMPA_WEBINAR.maxParticipants} peserta · Semua peserta masuk dengan akun BC dan dapat berpartisipasi melalui kamera, mikrofon, obrolan, serta angkat tangan.
+              Gunakan kamera, mikrofon, obrolan, dan fitur angkat tangan untuk berpartisipasi.
             </p>
           )}
           {props.subtitle && (
