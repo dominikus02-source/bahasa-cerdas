@@ -42,6 +42,9 @@ for (const a of ["LOCK", "UNLOCK", "END", "TOGGLE_CHAT", "ALLOW_MURID_SCREEN", "
 check("Host boleh jadikan guru co-host", ok(host, "SET_COHOST", tGuru))
 check("Host TIDAK bisa jadikan murid co-host", !ok(host, "SET_COHOST", tMurid))
 check("Host tidak bisa SET_COHOST yang sudah co-host", !ok(host, "SET_COHOST", tCohost))
+check("Host utama dapat menaikkan peserta webinar ke panggung", canModerate({ actor: host, action: "ALLOW_STAGE", roomKind: "GURU", target: tMurid }).ok)
+check("Host utama dapat menurunkan peserta dari panggung", canModerate({ actor: host, action: "REMOVE_STAGE", roomKind: "GURU", target: tMurid }).ok)
+check("Host tidak dapat mengatur panggung di ruang kelas", !canModerate({ actor: host, action: "ALLOW_STAGE", roomKind: "KELAS", target: tMurid }).ok)
 check("Host boleh cabut co-host", ok(host, "UNSET_COHOST", tCohost))
 check("UNSET_COHOST ke non-cohost ditolak", !ok(host, "UNSET_COHOST", tGuru))
 check("Tidak bisa menindak diri sendiri", !ok(host, "REMOVE", { ...tGuru, userId: "h" }))
@@ -53,6 +56,7 @@ for (const a of ["MUTE_AUDIO", "MUTE_VIDEO", "STOP_SCREEN", "REMOVE"] as const) 
 check("Co-host boleh kunci/buka", ok(cohost, "LOCK") && ok(cohost, "UNLOCK"))
 check("Co-host TIDAK bisa akhiri untuk semua", !ok(cohost, "END"))
 check("Co-host tidak bisa atur co-host", !ok(cohost, "SET_COHOST", tGuru))
+check("Co-host tidak dapat menaikkan atau menurunkan peserta panggung", !canModerate({ actor: cohost, action: "ALLOW_STAGE", roomKind: "GURU", target: tMurid }).ok && !canModerate({ actor: cohost, action: "REMOVE_STAGE", roomKind: "GURU", target: tMurid }).ok)
 check("Co-host tidak bisa atur obrolan / izin layar", !ok(cohost, "TOGGLE_CHAT") && !ok(cohost, "ALLOW_MURID_SCREEN"))
 check("Co-host tidak bisa menindak co-host lain", !ok(cohost, "REMOVE", tCohost))
 check("Tidak ada yang bisa menindak HOST", !ok(cohost, "MUTE_AUDIO", tHost) && !ok(host, "REMOVE", { ...tHost, userId: "x" }))
@@ -67,6 +71,17 @@ for (const a of ["MUTE_AUDIO", "MUTE_VIDEO", "STOP_SCREEN", "REMOVE", "DELETE_CH
   check(`Murid host TIDAK punya kuasa atas murid lain: ${a}`, !ok(muridHost, a, tMurid, "MURID"))
 }
 check("Murid 'HOST' di ruang KELAS (tak mungkin) tetap tanpa kuasa", !ok(muridHost, "END", undefined, "KELAS"))
+
+console.log("\n3b. Pengamanan panggung webinar");
+const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts");
+const roomView = read("components/jumpa/JumpaRoomView.tsx");
+const panels = read("components/jumpa/RoomPanels.tsx");
+const actions = read("lib/jumpa/room-actions.ts");
+check("Token webinar peserta biasa tidak memberi izin publikasi", tokenRoute.includes('ctx.room.mode === "WEBINAR" && roomRole === "MEMBER"') && tokenRoute.includes("? []"));
+check("Kamera dan mikrofon peserta webinar mati saat masuk", roomView.includes('props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER"'));
+check("Tombol panggung hanya muncul bagi pemandu utama", panels.includes('self.roomRole === "HOST"') && panels.includes('"Naikkan ke panggung"') && panels.includes('"Turunkan dari panggung"'));
+check("Aksi panggung mengubah izin LiveKit di server", actions.includes('case "ALLOW_STAGE":') && actions.includes("buildParticipantPermission([...sources])"));
+check("Kegagalan izin panggung tidak dilaporkan berhasil", actions.includes('if (!updated) return fail(503, "MEDIA_UNAVAILABLE"'));
 
 console.log("\n4. Undangan")
 const inv = (actor: ModerationActor, roomKind: "KELAS" | "GURU" | "MURID", invite: Parameters<typeof canInvite>[0]["invite"]) => canInvite({ actor, roomKind, invite }).ok
