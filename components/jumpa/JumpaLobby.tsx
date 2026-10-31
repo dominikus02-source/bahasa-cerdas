@@ -378,7 +378,7 @@ export default function JumpaLobby(props: Props) {
           <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">{props.canJoin || props.denyCode === "NOT_STARTED" ? "Siap masuk?" : "Ruang JUMPA"}</p>
           {props.mode === "WEBINAR" && (
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--jp-accent)]/30 bg-[var(--jp-accent)]/10 px-3 py-1.5 text-xs font-extrabold tracking-wide text-[var(--jp-accent)]">
-              <Video size={14} /> WEBINAR INTERAKTIF
+              <Video size={14} /> WEBINAR
             </div>
           )}
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
