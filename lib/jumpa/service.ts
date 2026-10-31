@@ -390,7 +390,7 @@ export interface RoomContext {
   actor: JumpaActor;
   effective: JumpaEffectiveRole | null;
   groupTeacherId: string | null;
-  participant: { roomRole: JumpaRoomRole; removedAt: Date | null } | null;
+  participant: { roomRole: JumpaRoomRole; removedAt: Date | null; stageApproved: boolean } | null;
   decision: Decision<{ roomRole: JumpaRoomRole; accessVia: JumpaAccessVia; effective: JumpaEffectiveRole }>;
 }
 
@@ -415,7 +415,7 @@ export async function loadRoomContext(
       : Promise.resolve(null),
     db.jumpaParticipant.findUnique({
       where: { roomId_userId: { roomId: room.id, userId: user.id } },
-      select: { removedAt: true, roomRole: true },
+      select: { removedAt: true, roomRole: true, stageApproved: true },
     }),
     db.user.findUnique({ where: { id: room.createdById }, select: { fullName: true, nickname: true } }),
     db.jumpaInvite.findMany({
@@ -493,7 +493,7 @@ export async function loadRoomContext(
     actor,
     effective: effectiveRole(actor),
     groupTeacherId: group?.teacherId ?? null,
-    participant: participant ? { roomRole: participant.roomRole, removedAt: participant.removedAt } : null,
+    participant: participant ? { roomRole: participant.roomRole, removedAt: participant.removedAt, stageApproved: participant.stageApproved } : null,
     view: {
       code: room.code,
       title: room.title,
