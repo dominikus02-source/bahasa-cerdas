@@ -119,6 +119,7 @@ check("Beranda JUMPA menyediakan pilihan rapat biasa", home.includes('create({ k
 check("Beranda JUMPA menyediakan tombol webinar untuk Guru Premium", home.includes('create({ kind: "GURU", isWebinar: true })'))
 check("Daftar ruang membedakan webinar dari rapat biasa", home.includes('room.mode === "WEBINAR" ? "Webinar interaktif" : room.kind === "GURU" ? "Rapat biasa"'))
 check("Daftar ruang membaca mode webinar dan metadata lama", svc.includes('mode: "WEBINAR"') && svc.includes("r.events[0]?.metadata") )
+check("Pemetaan beranda menyertakan mode ruang dan mengenali webinar lama", svc.includes('mode: createdAsWebinar ? "WEBINAR" : r.mode') && svc.includes('"isWebinar" in createdMetadata'))
 const createRoute = read("app/api/jumpa/rooms/route.ts")
 check("Create API meneruskan kode TIER_DAILY_LIMIT + upgradeUrl", createRoute.includes("result.extra"))
 check("Tidak ada angka paket di luar tiers.ts (caps.ts turunan)", !/maxDurationMin: 45/.test(read("lib/jumpa/caps.ts")) && read("lib/jumpa/caps.ts").includes("JUMPA_TIERS.PREMIUM"))
