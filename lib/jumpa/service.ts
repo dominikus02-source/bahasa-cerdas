@@ -58,7 +58,7 @@ export interface CreateRoomRequest {
   durationMin?: number | null;
   /** "Beri tahu kelas" (default true). false = tanpa notifikasi kelas/komunitas. */
   notifyClass?: boolean | null;
-  /** Webinar: hanya guru Premium, 1x per minggu, 200 peserta. */
+  /** Webinar: hanya guru Premium, 1x per minggu, maksimal 100 peserta. */
   isWebinar?: boolean | null;
 }
 
