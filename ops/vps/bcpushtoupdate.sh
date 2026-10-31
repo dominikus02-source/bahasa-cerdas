@@ -87,11 +87,10 @@ if ! (cd "$REPO" && bash ops/vps/deploy.sh); then
   exit 1
 fi
 if ! curl -4 -fsS --max-time 15 https://www.bahasacerdas.com/api/health | jq -e '.status == "ok" and .db == "up"' >/dev/null; then
-  echo "Post-deploy web health failed; attempting web rollback" >&2
-  /usr/local/bin/bcrollback || true
+  echo "Post-deploy web health failed; manual recovery required (migration is forward-only)" >&2
   exit 1
 fi
-if [[ "$(grep -E "^ENABLE_JUMPA=" "$CONFIG/stack.env" | tail -1 | cut -d= -f2 | tr -d "\\\"\x27 " )" == "1" ]]; then
+if grep -Eq '^ENABLE_JUMPA=(1|true)$' "$CONFIG/stack.env"; then
   curl -4 -fsS --max-time 15 https://www.bahasacerdas.com/api/jumpa/health | jq -e '.ok == true and .stageApprovalReady == true and .livekitReachable == true' >/dev/null || { echo "JUMPA health failed; operator intervention required" >&2; exit 1; }
 fi
 echo "DEPLOY OK; manual media and user flow verification still required. Backup: $BACKUP"
