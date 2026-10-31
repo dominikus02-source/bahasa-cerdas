@@ -29,6 +29,17 @@ function client(config: LivekitServerConfig): RoomServiceClient {
   return new RoomServiceClient(config.url, config.apiKey, config.apiSecret);
 }
 
+/** Probe ringan ke LiveKit API untuk kesiapan operator (maks. 4 detik). */
+export async function probeLivekit(config: LivekitServerConfig | null = getLivekitServerConfig()): Promise<boolean> {
+  if (!config) return false;
+  try {
+    await withTimeout(client(config).listRooms());
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 /** Buat (atau pakai ulang) ruang LiveKit. createRoom idempotent per nama. */
 export async function ensureLivekitRoom(params: {
   name: string;
