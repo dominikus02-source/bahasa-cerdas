@@ -35,7 +35,7 @@ export async function GET() {
   }
   let stageApprovalReady = false;
   try {
-    const columns = await db.$queryRaw<{ column_name: string }[]>`SELECT column_name FROM information_schema.columns WHERE table_schema = 'public' AND table_name = 'JumpaParticipant' AND column_name = 'stageApproved'`;
+    const columns = await db.$queryRaw<{ column_name: string }[]>`SELECT column_name FROM information_schema.columns WHERE (table_schema, table_name, column_name) = ('public', 'JumpaParticipant', 'stageApproved')`;
     stageApprovalReady = columns.length > 0;
   } catch {
     stageApprovalReady = false;
