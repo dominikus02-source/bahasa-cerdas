@@ -616,6 +616,7 @@ function ControlBar({
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
+  const stageBlocked = info.mode === "WEBINAR" && self.roomRole === "MEMBER" && permissions?.canPublish !== true;
   // Pemandu dewasa: guru di ruang sekolah, atau akun UMUM di ruang UMUM. Guru/murid
   // yang ikut ruang UMUM lewat tautan = peserta biasa (server tetap menegakkan izin).
   const adult = info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU";
@@ -779,11 +780,16 @@ function ControlBar({
         </>
       )}
 
+      {stageBlocked && (
+        <p role="status" className="mx-auto mb-2 max-w-xl rounded-xl border border-[var(--jp-accent)]/30 bg-[var(--jp-accent)]/10 px-4 py-2 text-center text-xs font-semibold text-[var(--jp-text-2)]">
+          Kamera dan mikrofon terkunci. Angkat tangan untuk meminta izin berbicara dari pemandu.
+        </p>
+      )}
       <nav aria-label="Kontrol ruang" className="jumpa-dock jumpa-in-up">
         <div className="jumpa-dock-group">
-          <MicKey on={isMicrophoneEnabled} busy={busy === "mic"} onToggle={toggleMic} />
+          <MicKey on={isMicrophoneEnabled} busy={busy === "mic" || stageBlocked} onToggle={toggleMic} />
           <div className="jumpa-ctl">
-            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy === "camera"}>
+            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy === "camera" || stageBlocked}>
               {isCameraEnabled ? <Video size={22} /> : <VideoOff size={22} />}
             </button>
             <span className="jumpa-ctl-label">{isCameraEnabled ? "Kamera" : prefs.audioOnly ? "Audio saja" : "Kamera mati"}</span>
