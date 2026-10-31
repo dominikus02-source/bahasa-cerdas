@@ -49,20 +49,24 @@ export async function ensureLivekitRoom(params: {
 
 /**
  * Jumlah peserta yang sedang tersambung selain `excludeIdentity`.
- * Mengembalikan 0 bila ruang belum ada / LiveKit tidak menjawab —
- * LiveKit tetap menegakkan maxParticipants di sisi server.
+ * Ruang yang belum dibuat dihitung nol. Gangguan/timeout LiveKit harus
+ * menggagalkan pemeriksaan kapasitas (fail-closed), bukan dianggap kosong.
  */
 export async function countActiveOthers(
   roomName: string,
   excludeIdentity: string,
   config: LivekitServerConfig | null = getLivekitServerConfig(),
 ): Promise<number> {
-  if (!config) return 0;
+  if (!config) throw new Error("LIVEKIT_NOT_CONFIGURED");
   try {
     const list = await withTimeout(client(config).listParticipants(roomName));
     return list.filter((p) => p.identity !== excludeIdentity).length;
-  } catch {
-    return 0;
+  } catch (error) {
+    const message = String(error instanceof Error ? error.message : error).toLowerCase();
+    // LiveKit mengembalikan not-found untuk ruang yang belum pernah dibuat.
+    // Hanya kondisi ini yang aman diperlakukan sebagai kapasitas nol.
+    if (message.includes("room") && (message.includes("not found") || message.includes("does not exist"))) return 0;
+    throw new Error("LIVEKIT_UNAVAILABLE", { cause: error });
   }
 }
 
