@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Offline, zero-production regression tests for bcpushtoupdate.
 set -euo pipefail
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SCRIPT="$ROOT/ops/vps/bcpushtoupdate.sh"
 bash -n "$SCRIPT"
 python3 - "$SCRIPT" <<'PY'
