@@ -76,12 +76,12 @@ console.log("\n3b. Pengamanan panggung webinar");
 const tokenRoute = read("app/api/jumpa/rooms/[code]/token/route.ts");
 const roomView = read("components/jumpa/JumpaRoomView.tsx");
 const panels = read("components/jumpa/RoomPanels.tsx");
-const actions = read("lib/jumpa/room-actions.ts");
+const stageActions = read("lib/jumpa/room-actions.ts");
 check("Token webinar peserta biasa tidak memberi izin publikasi", tokenRoute.includes('ctx.room.mode === "WEBINAR" && roomRole === "MEMBER"') && tokenRoute.includes("? []"));
 check("Kamera dan mikrofon peserta webinar mati saat masuk", roomView.includes('props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER"'));
 check("Tombol panggung hanya muncul bagi pemandu utama", panels.includes('self.roomRole === "HOST"') && panels.includes('"Naikkan ke panggung"') && panels.includes('"Turunkan dari panggung"'));
-check("Aksi panggung mengubah izin LiveKit di server", actions.includes('case "ALLOW_STAGE":') && actions.includes("buildParticipantPermission([...sources])"));
-check("Kegagalan izin panggung tidak dilaporkan berhasil", actions.includes('if (!updated) return fail(503, "MEDIA_UNAVAILABLE"'));
+check("Aksi panggung mengubah izin LiveKit di server", stageActions.includes('case "ALLOW_STAGE":') && stageActions.includes("buildParticipantPermission([...sources])"));
+check("Kegagalan izin panggung tidak dilaporkan berhasil", stageActions.includes('if (!updated) return fail(503, "MEDIA_UNAVAILABLE"'));
 
 console.log("\n4. Undangan")
 const inv = (actor: ModerationActor, roomKind: "KELAS" | "GURU" | "MURID", invite: Parameters<typeof canInvite>[0]["invite"]) => canInvite({ actor, roomKind, invite }).ok
