@@ -87,6 +87,8 @@ const jumpaSchema = read("prisma/schema.prisma")
 const stageMigration = read("prisma/migrations/20261031120000_jumpa_webinar_stage/migration.sql")
 check("Izin panggung tersimpan pada peserta", jumpaSchema.includes("stageApproved Boolean") && stageMigration.includes('ADD COLUMN "stageApproved" BOOLEAN NOT NULL DEFAULT false'))
 check("Persetujuan panggung dibaca saat token diterbitkan", jumpaService.includes("stageApproved: participant.stageApproved") && tokenRoute.includes("!ctx.participant?.stageApproved"))
+check("Izin peserta yang disetujui tetap diberikan saat token diterbitkan ulang", tokenRoute.includes("!ctx.participant?.stageApproved") && tokenRoute.includes(": publishSourcesFor(roomRole, effective"))
+check("Pemeriksaan kesehatan menolak kesiapan bila kolom izin panggung belum dimigrasikan", read("app/api/jumpa/health/route.ts").includes("stageApprovalReady") && read("app/api/jumpa/health/route.ts").includes("storageReady = storage === \"ready\" && stageApprovalReady"))
 check("Persetujuan panggung disimpan setelah izin LiveKit berhasil", stageActions.includes('data: { stageApproved: action === "ALLOW_STAGE" }'))
 
 console.log("\n4. Undangan")
