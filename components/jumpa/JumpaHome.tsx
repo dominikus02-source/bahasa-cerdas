@@ -72,7 +72,7 @@ function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="jumpa-tier" data-tier={plan.tier}>{premium && <Crown size={12} aria-hidden />}{premium ? "Premium" : "Gratis"}</span>
-          <span className="text-sm text-[var(--jp-text-2)]">Kelas {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit</span>
+          <span className="text-sm text-[var(--jp-text-2)]">Paket {premium ? "Premium" : "Gratis"}</span>
         </div>
         {plan.roomsPerDay === null ? (
           <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Ruang tanpa batas</p>
@@ -259,7 +259,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
               <span className="jumpa-icon-chip shrink-0" data-kind="GURU" aria-hidden><Video size={19} /></span>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-bold">Webinar interaktif</h3>
-                <p className="mt-1 text-xs text-[var(--jp-text-3)]">Sesi hingga 200 peserta dan 180 menit. Peserta harus masuk dengan akun BahasaCerdas.</p>
+                <p className="mt-1 text-xs text-[var(--jp-text-3)]">Sesi hingga 100 peserta selama 180 menit. Peserta masuk menggunakan akun BahasaCerdas.</p>
                 {plan?.tier === "PREMIUM" ? (
                   <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy} onClick={() => void create({ kind: "GURU", isWebinar: true })}>
                     {busy ? <Loader2 size={16} className="animate-spin" /> : <Video size={16} />} Mulai webinar
@@ -351,7 +351,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           </div>
           <div className="flex items-start gap-3">
             <span className="text-xs font-bold text-[var(--jp-text)]" style={{ flexShrink: 0, width: 52 }}>Webinar</span>
-            <span className="text-xs text-[var(--jp-text-2)]">Premium · 200 orang · 180 menit · 1x/minggu</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Premium · 100 orang · 180 menit · 1x/minggu</span>
           </div>
         </div>
       </section>
