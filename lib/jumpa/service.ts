@@ -179,12 +179,9 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
       groupId: req.kind === "GURU" ? null : (group?.id ?? null),
       communityId: req.kind === "GURU" ? (community?.id ?? null) : null,
       // Webinar dan rapat biasa tidak boleh saling memakai ulang ruang.
-      events: {
-        some: {
-          action: "ROOM_CREATED",
-          metadata: { path: ["isWebinar"], equals: isWebinar },
-        },
-      },
+      ...(isWebinar
+        ? { events: { some: { action: "ROOM_CREATED", metadata: { path: ["isWebinar"], equals: true } } } }
+        : { NOT: { events: { some: { action: "ROOM_CREATED", metadata: { path: ["isWebinar"], equals: true } } } } }),
       OR: [
         { scheduledAt: null, createdAt: { gt: new Date(now - REUSE_WINDOW_MS) } },
         { scheduledAt: { gt: new Date(now - REUSE_WINDOW_MS), lte: new Date(now + 15 * 60_000) } },
@@ -448,6 +445,15 @@ export async function loadRoomContext(
   ]);
   const linkHash = linkToken && INVITE_TOKEN_RE.test(linkToken) ? hashInviteToken(linkToken) : null;
 
+  // Kompatibilitas: webinar yang sempat tersimpan sebagai MEETING tetap dikenali
+  // dari metadata penciptaan, tanpa migrasi atau penulisan ulang data lama.
+  const createdAsWebinar = Boolean(
+    created?.metadata &&
+    typeof created.metadata === "object" &&
+    (created.metadata as { isWebinar?: unknown }).isWebinar === true
+  );
+  const effectiveMode = createdAsWebinar ? "WEBINAR" : room.mode;
+
   const relation: JoinRelation = {
     isCreator: room.createdById === user.id,
     isGroupOwner: Boolean(group && group.teacherId === user.id),
@@ -466,7 +472,7 @@ export async function loadRoomContext(
     actor,
     room: {
       kind: room.kind,
-      mode: room.mode,
+      mode: effectiveMode,
       status: room.status,
       isLocked: room.isLocked,
       startedAt: room.startedAt,
@@ -492,7 +498,7 @@ export async function loadRoomContext(
       code: room.code,
       title: room.title,
       kind: room.kind,
-      mode: room.mode,
+      mode: effectiveMode,
       status: room.status,
       isLocked: room.isLocked,
       chatEnabled: room.chatEnabled,
