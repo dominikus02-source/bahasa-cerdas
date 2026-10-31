@@ -36,11 +36,12 @@ export async function GET() {
   const livekitConfigured = Boolean(getLivekitServerConfig());
   const livekitReachable = await probeLivekit();
   const storageReady = storage === "ready";
+  const ready = JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady;
   return jumpaJson({
-    ok: JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady,
+    ok: ready,
     enabled: JUMPA_ENABLED,
     livekitConfigured,
     livekitReachable,
     storage,
-  }, { status: JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady ? 200 : 503 });
+  }, ready ? 200 : 503);
 }
