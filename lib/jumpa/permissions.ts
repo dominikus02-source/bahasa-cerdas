@@ -358,6 +358,8 @@ export type JumpaModerationAction =
   | "DISALLOW_MURID_SCREEN"
   | "SET_COHOST"
   | "UNSET_COHOST"
+  | "ALLOW_STAGE"
+  | "REMOVE_STAGE"
   | "DELETE_CHAT"
   | "TOGGLE_CHAT";
 
@@ -368,6 +370,8 @@ export const TARGETED_ACTIONS: readonly JumpaModerationAction[] = [
   "REMOVE",
   "SET_COHOST",
   "UNSET_COHOST",
+  "ALLOW_STAGE",
+  "REMOVE_STAGE",
 ];
 
 export interface ModerationActor {
@@ -414,6 +418,13 @@ export function canModerate(input: {
   }
   if (actor.roomRole === "MEMBER") return no;
   if (actor.roomRole === "COHOST" && !GURU_COHOST_ACTIONS.includes(action)) return no;
+
+  if (action === "ALLOW_STAGE" || action === "REMOVE_STAGE") {
+    if (roomKind !== "GURU" || actor.effective !== "GURU" || actor.roomRole !== "HOST") {
+      return deny("NOT_ALLOWED", "Hanya pemandu utama webinar yang dapat mengatur panggung.");
+    }
+    if (!target || target.roomRole !== "MEMBER") return deny("BAD_TARGET", "Hanya peserta biasa yang dapat diatur ke panggung.");
+  }
 
   if (action === "ALLOW_MURID_SCREEN" || action === "DISALLOW_MURID_SCREEN") {
     if (roomKind !== "KELAS") return deny("BAD_TARGET", "Pengaturan ini hanya untuk ruang kelas.");
