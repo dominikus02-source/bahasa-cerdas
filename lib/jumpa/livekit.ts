@@ -173,12 +173,14 @@ export async function updateLivekitParticipant(
   }
 }
 
-/** Identitas peserta yang sedang tersambung ([] bila ruang belum ada). */
+/** Identitas peserta yang tersambung. Ruang belum ada = []; gangguan media = error. */
 export async function listLivekitIdentities(roomName: string, config?: LivekitServerConfig | null): Promise<Array<{ identity: string; metadata: string }>> {
   try {
     const list = await withTimeout(client(requireConfig(config)).listParticipants(roomName));
     return list.map((p) => ({ identity: p.identity, metadata: p.metadata }));
-  } catch {
-    return [];
+  } catch (error) {
+    const message = String(error instanceof Error ? error.message : error).toLowerCase();
+    if (message.includes("room") && (message.includes("not found") || message.includes("does not exist"))) return [];
+    throw new Error("LIVEKIT_UNAVAILABLE", { cause: error });
   }
 }
