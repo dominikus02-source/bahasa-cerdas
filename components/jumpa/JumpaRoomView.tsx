@@ -151,8 +151,8 @@ export default function JumpaRoomView(props: ViewProps) {
       serverUrl={props.serverUrl}
       token={props.token}
       connect
-      video={camOn}
-      audio={props.prefs.mic}
+      video={camOn && !(props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER")}
+      audio={props.prefs.mic && !(props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER")}
       options={options}
       onDisconnected={(reason) => {
         const ended = endedRef?.current ?? null;
