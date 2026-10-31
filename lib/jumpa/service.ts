@@ -178,6 +178,13 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
       status: { in: ["SCHEDULED", "LIVE"] },
       groupId: req.kind === "GURU" ? null : (group?.id ?? null),
       communityId: req.kind === "GURU" ? (community?.id ?? null) : null,
+      // Webinar dan rapat biasa tidak boleh saling memakai ulang ruang.
+      events: {
+        some: {
+          action: "ROOM_CREATED",
+          metadata: { path: ["isWebinar"], equals: isWebinar },
+        },
+      },
       OR: [
         { scheduledAt: null, createdAt: { gt: new Date(now - REUSE_WINDOW_MS) } },
         { scheduledAt: { gt: new Date(now - REUSE_WINDOW_MS), lte: new Date(now + 15 * 60_000) } },
@@ -229,7 +236,7 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
           livekitRoomName: generateLivekitRoomName(),
           title,
           kind: req.kind,
-          mode: req.kind === "KELAS" ? "CLASS" : "MEETING",
+          mode: isWebinar ? "WEBINAR" : req.kind === "KELAS" ? "CLASS" : "MEETING",
           createdById: user.id,
           creatorRole: user.isFounder ? "GURU" : user.role,
           groupId: req.kind === "GURU" ? null : group!.id,
