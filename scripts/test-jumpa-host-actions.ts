@@ -82,6 +82,12 @@ check("Kamera dan mikrofon peserta webinar mati saat masuk", roomView.includes('
 check("Tombol panggung hanya muncul bagi pemandu utama", panels.includes('self.roomRole === "HOST"') && panels.includes('"Naikkan ke panggung"') && panels.includes('"Turunkan dari panggung"'));
 check("Aksi panggung mengubah izin LiveKit di server", stageActions.includes('case "ALLOW_STAGE":') && stageActions.includes("buildParticipantPermission([...sources])"));
 check("Kegagalan izin panggung tidak dilaporkan berhasil", stageActions.includes('if (!updated) return fail(503, "MEDIA_UNAVAILABLE"'));
+const jumpaService = read("lib/jumpa/service.ts");
+const jumpaSchema = read("prisma/schema.prisma");
+const stageMigration = read("prisma/migrations/20261031120000_jumpa_webinar_stage/migration.sql");
+check("Izin panggung tersimpan pada peserta", jumpaSchema.includes("stageApproved Boolean") && stageMigration.includes('ADD COLUMN "stageApproved" BOOLEAN NOT NULL DEFAULT false'));
+check("Persetujuan panggung dibaca saat token diterbitkan", jumpaService.includes("stageApproved: participant.stageApproved") && tokenRoute.includes("!ctx.participant?.stageApproved"));
+check("Persetujuan panggung disimpan setelah izin LiveKit berhasil", stageActions.includes('data: { stageApproved: action === "ALLOW_STAGE" }'));
 
 console.log("\n4. Undangan")
 const inv = (actor: ModerationActor, roomKind: "KELAS" | "GURU" | "MURID", invite: Parameters<typeof canInvite>[0]["invite"]) => canInvite({ actor, roomKind, invite }).ok
