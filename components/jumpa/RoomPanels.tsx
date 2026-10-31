@@ -325,6 +325,8 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
         {sorted.map((p) => {
           const meta = parseParticipantMeta(p.metadata);
           const actions = p.isLocal ? [] : personActions(p).filter((a) => can(a.action, p));
+          const canManageStage = info.mode === "WEBINAR" && self.bcRole === "GURU" && self.roomRole === "HOST" && !p.isLocal && meta.roomRole === "MEMBER";
+          const onStage = Boolean(p.permissions?.canPublish);
           const name = p.name || "Peserta";
           return (
             <li key={p.identity} className="relative">
@@ -342,6 +344,11 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                   </span>
                 </span>
                 {p.isMicrophoneEnabled ? <Mic size={16} className="text-[var(--jp-text-3)]" aria-label="Mikrofon nyala" /> : <MicOff size={16} className="text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
+                {canManageStage && (
+                  <button type="button" className="jumpa-chip" disabled={busy !== null} onClick={() => void run(onStage ? "REMOVE_STAGE" : "ALLOW_STAGE", p)}>
+                    {onStage ? "Turunkan dari panggung" : "Naikkan ke panggung"}
+                  </button>
+                )}
                 {actions.length > 0 && (
                   <button
                     type="button"
