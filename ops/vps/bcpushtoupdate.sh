@@ -10,7 +10,7 @@ MODE="${1:---check}"
 for cmd in git docker jq curl python3 runuser flock; do
   command -v "$cmd" >/dev/null || { echo "Missing dependency: $cmd" >&2; exit 1; }
 done
-[[ -f "$REPO/.git/HEAD" && -f "$CONFIG/web.env" && -f "$CONFIG/stack.env" ]] || { echo "Missing repo/config" >&2; exit 1; }
+[[ -d "$REPO/.git" && -f "$CONFIG/web.env" && -f "$CONFIG/stack.env" ]] || { echo "Missing repo/config" >&2; exit 1; }
 [[ -x /usr/local/bin/bcrollback ]] || { echo "bcrollback not installed" >&2; exit 1; }
 [[ -s /opt/bahasacerdas/rollback/stable ]] || { echo "No verified stable image; run bcrollback --mark-stable after manual verification" >&2; exit 1; }
 gitbc() { runuser -u bcadmin -- git -C "$REPO" "$@"; }
@@ -22,6 +22,7 @@ TARGET="$(gitbc rev-parse origin/main)"
 gitbc merge-base --is-ancestor "$HEAD" "$TARGET" || { echo "Local main diverged from origin/main" >&2; exit 1; }
 [[ -n "${BC_APPROVED_SHA:-}" && "$TARGET" == "$BC_APPROVED_SHA" ]] || { echo "Set BC_APPROVED_SHA to reviewed origin/main full SHA" >&2; exit 1; }
 [[ "$TARGET" =~ ^[a-f0-9]{40}$ ]] || exit 1
+[[ -f "$REPO/prisma/schema.prisma" ]] || { echo "Missing Prisma schema" >&2; exit 1; }
 # Require GitHub CLI authenticated for checks. Never assume a green old commit means green main.
 command -v gh >/dev/null || { echo "gh CLI required for CI verification" >&2; exit 1; }
 RUNS="$(gh api "repos/dominikus02-source/bahasa-cerdas/actions/runs?head_sha=$TARGET&per_page=100")"
@@ -44,6 +45,7 @@ for cmd in pg_dump pg_restore; do command -v "$cmd" >/dev/null || { echo "Missin
 # Backup is taken BEFORE migration; never auto-restore PostgreSQL on failure.
 install -d -m 700 "$BACKUPS"
 BACKUP="$BACKUPS/bc-predeploy-$(date -u +%Y%m%dT%H%M%SZ)-${TARGET:0:12}.dump"
+umask 077
 python3 - "$CONFIG/web.env" "$BACKUP" <<'PY'
 import os,sys,subprocess
 from urllib.parse import urlsplit,urlunsplit,parse_qsl,urlencode
@@ -65,6 +67,7 @@ subprocess.run(["pg_restore","--list",out],check=True,stdout=subprocess.DEVNULL)
 print("Backup archive created and structurally readable:",out)
 PY
 chmod 600 "$BACKUP"
+[[ -s "$BACKUP" ]] || { echo "Backup archive empty" >&2; exit 1; }
 # Update checkout only after a verified backup exists, using fast-forward only.
 gitbc pull --ff-only origin main
 [[ "$(gitbc rev-parse HEAD)" == "$TARGET" ]] || { echo "Unexpected checkout SHA" >&2; exit 1; }
@@ -81,7 +84,7 @@ subprocess.run(["./node_modules/.bin/prisma","migrate","deploy"],cwd=sys.argv[2]
 PY
 echo "Migration applied. Deploying app; database changes are NOT automatically reversible."
 if ! (cd "$REPO" && bash ops/vps/deploy.sh); then
-  echo "DEPLOY FAILED; attempting web-image rollback only" >&2
+  echo "DEPLOY FAILED; manual recovery required" >&2
   echo "Rollback NOT automatically attempted: database migrations may be incompatible with previous image." >&2
   echo "Manual DB compatibility review required; backup at $BACKUP" >&2
   exit 1
