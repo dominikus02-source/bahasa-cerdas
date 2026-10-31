@@ -97,7 +97,9 @@ async function main() {
 
   console.log("\n4. Degradasi aman bila LiveKit mati")
   const deadCfg = { url: "http://127.0.0.1:1", apiKey: KEY, apiSecret: SECRET }
-  check("countActiveOthers → 0 saat server tak terjangkau", (await countActiveOthers("bc-x", "u", deadCfg)) === 0)
+  let capacityProbeFailedClosed = false
+  try { await countActiveOthers("bc-x", "u", deadCfg) } catch (error) { capacityProbeFailedClosed = error instanceof Error && error.message === "LIVEKIT_UNAVAILABLE" }
+  check("countActiveOthers menolak saat server tak terjangkau (fail-closed)", capacityProbeFailedClosed)
   let threw = false
   try { await ensureLivekitRoom({ name: "bc-x", maxParticipants: 5, config: deadCfg }) } catch { threw = true }
   check("ensureLivekitRoom melempar (→ 503 MEDIA_UNAVAILABLE)", threw)
