@@ -15,20 +15,21 @@ Perbaikan pada cabang ini:
 
 ## Temuan penting
 
-### P0 — Kapasitas media 200 peserta belum terbukti
+### P0 — Target 100 peserta belum terbukti pada VPS bersama
 
 Konfigurasi LiveKit yang ada:
 - Kontainer LiveKit dibatasi 2 CPU dan RAM 1.5 GiB.
 - Batas kasar `limit.num_tracks` adalah 400.
-- Webinar pada aplikasi mengizinkan hingga 200 peserta.
-- Setiap peserta dapat menerbitkan kamera dan mikrofon. Dengan 200 peserta, jumlah track masuk berpotensi mendekati 400 sebelum berbagi layar atau kebutuhan tambahan.
+- Webinar pada aplikasi saat ini memiliki batas produk 200 peserta, tetapi keputusan operasional tahap ini diturunkan menjadi target maksimal 100 peserta.
+- `room.max_participants: 50` pada `livekit.yaml` adalah batas bawaan server; layanan aplikasi juga mengirim batas per ruang saat membuat ruang. Efektivitas batas aktual wajib diverifikasi pada integrasi staging, bukan diasumsikan dari satu konfigurasi.
+- Setiap peserta yang disetujui ke panggung dapat menerbitkan kamera dan mikrofon. Karena itu jumlah track media harus dikendalikan melalui model panggung, bukan dengan mengaktifkan kamera semua peserta.
 - LiveKit berjalan sebagai satu layanan pada stack VPS yang juga menjalankan web, Redis, Caddy, dan layanan lain.
 
-Kesimpulan: angka 200 adalah batas produk, bukan hasil pengujian kapasitas. Jangan mempromosikan 200 peserta dengan kamera aktif bersamaan sebelum uji beban dan pengukuran CPU, RAM, bandwidth, packet loss, RTT, dan kualitas audio/video selesai.
+Kesimpulan: 100 adalah sasaran pengujian, bukan kapasitas yang sudah terbukti. Jangan mengubah angka UI atau mengiklankan kapasitas 100 sebelum batas ruang LiveKit, sumber daya VPS, bandwidth, packet loss, RTT, dan kualitas audio/video tervalidasi.
 
 ### P0 — Pola interaksi webinar harus menghindari semua kamera aktif bersamaan
 
-Untuk webinar 200 orang yang tetap interaktif, pola yang lebih aman:
+Untuk webinar hingga target 100 orang yang tetap interaktif, pola yang lebih aman:
 - Semua peserta dapat melihat, mendengar pemandu, memakai obrolan, dan mengangkat tangan.
 - Kamera dan mikrofon peserta dimulai dalam keadaan mati.
 - Peserta meminta giliran bicara; pemandu menyetujui untuk naik ke panggung.
@@ -72,8 +73,8 @@ Beban media harus dipisahkan dari aplikasi web dan basis data bila targetnya web
 | A | 10 | Masuk, kamera/mikrofon, obrolan | Tidak ada kegagalan kritis |
 | B | 25 | Rapat biasa, berbagi layar, pergantian pembicara | Audio stabil, reconnect berhasil |
 | C | 50 | Webinar, kamera pemandu, peserta audio/chat | Tidak ada lonjakan error atau CPU mentok |
-| D | 100 | Webinar, peserta masuk bertahap, obrolan dan angkat tangan | Tidak ada kegagalan massal |
-| E | 200 | Webinar dengan model panggung, kamera aktif terbatas | Hanya lulus jika metrik media dan pengalaman pengguna memenuhi target |
+| D | 75 | Webinar, peserta masuk bertahap, obrolan dan angkat tangan | Tidak ada kegagalan massal; CPU/RAM masih memiliki ruang aman |
+| E | 100 | Webinar dengan model panggung, kamera aktif terbatas | Hanya lulus jika seluruh metrik media dan pengalaman pengguna memenuhi target |
 
 Target pengukuran yang disarankan:
 - API join p95 di bawah 2 detik setelah sesi siap.
@@ -105,7 +106,7 @@ Batas implementasi tahap ini:
 ## Batas validasi saat ini
 
 - Pemeriksaan kode dan regresi berjalan melalui GitHub Actions.
-- Uji beban 10/25/50/100/200 peserta belum dijalankan.
+- Uji beban API maupun media pada 10/25/50/75/100 peserta belum dijalankan.
 - Tidak ada perangkat VPS yang terhubung ke sesi ini untuk menjalankan inspeksi langsung atau uji media nyata.
 - Endpoint kesehatan produksi belum dapat diverifikasi melalui jalur pemeriksaan yang tersedia.
 - Jangan menggabungkan atau menerapkan perubahan ke produksi sampai CI lulus dan uji integrasi LiveKit pada lingkungan uji selesai.
@@ -113,9 +114,9 @@ Batas implementasi tahap ini:
 ## Keputusan operasional
 
 1. Pertahankan JUMPA rapat biasa tanpa mengubah perilaku lama.
-2. Perlakukan webinar 200 peserta sebagai target yang masih harus dibuktikan.
+2. Tetapkan 100 peserta sebagai sasaran uji tahap ini; jangan menyatakan kapasitas tersebut sebelum lulus uji media nyata.
 3. Terapkan model panggung untuk webinar besar sebelum mengaktifkan kamera bebas untuk semua peserta.
-4. Jalankan benchmark bertahap pada lingkungan uji dan simpan metrik mentah.
+4. Jalankan benchmark bertahap 10 → 25 → 50 → 75 → 100 peserta pada lingkungan uji dan simpan metrik mentah. Hentikan kenaikan bila satu gerbang keselamatan gagal.
 5. Pisahkan LiveKit ke node media khusus bila benchmark node saat ini tidak memenuhi target.
 
 
@@ -125,7 +126,7 @@ Skrip `scripts/k6-jumpa-token-api.js` mengukur jalur HTTP penerbitan token JUMPA
 
 Prasyarat:
 - k6 terpasang pada mesin operator.
-- URL HTTPS lingkungan uji yang terpisah dari produksi.
+- URL HTTPS lingkungan uji yang terpisah dari produksi. Karena skrip menolak seluruh subdomain `bahasacerdas.com`, gunakan nama host uji di luar domain produksi atau ubah penjagaan host melalui perubahan kode yang ditinjau terlebih dahulu.
 - Nama host staging yang disetujui secara eksplisit melalui `ALLOWED_STAGING_HOST`; harus sama persis dengan host pada `BASE_URL`.
 - Satu ruang webinar uji yang aktif dan tidak berisi data/rapat sungguhan.
 - Minimal 10 akun uji BC berbeda yang diizinkan masuk ke ruang tersebut.
