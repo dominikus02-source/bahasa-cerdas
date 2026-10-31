@@ -7,7 +7,7 @@ BACKUPS="${BC_BACKUP_DIR:-/opt/bahasacerdas/backups}"
 MODE="${1:---check}"
 [[ "$MODE" == "--check" || "$MODE" == "--apply" ]] || { echo "Usage: bcpushtoupdate [--check|--apply]"; exit 2; }
 [[ $(id -u) -eq 0 ]] || { echo "Run as root" >&2; exit 1; }
-for cmd in git docker jq curl python3 pg_dump pg_restore npx runuser flock; do
+for cmd in git docker jq curl python3 runuser flock; do
   command -v "$cmd" >/dev/null || { echo "Missing dependency: $cmd" >&2; exit 1; }
 done
 [[ -f "$REPO/.git/HEAD" && -f "$CONFIG/web.env" && -f "$CONFIG/stack.env" ]] || { echo "Missing repo/config" >&2; exit 1; }
@@ -40,6 +40,7 @@ if [[ "$MODE" == "--check" ]]; then
 fi
 [[ "${BC_MAINTENANCE_CONFIRMED:-0}" == "1" ]] || { echo "Explicit maintenance approval required" >&2; exit 1; }
 [[ "${BC_BACKUP_VERIFIED:-0}" == "1" ]] || { echo "Operator must verify a restorable backup plan (BC_BACKUP_VERIFIED=1)" >&2; exit 1; }
+for cmd in pg_dump pg_restore; do command -v "$cmd" >/dev/null || { echo "Missing backup tool: $cmd" >&2; exit 1; }; done
 # Backup is taken BEFORE migration; never auto-restore PostgreSQL on failure.
 install -d -m 700 "$BACKUPS"
 BACKUP="$BACKUPS/bc-predeploy-$(date -u +%Y%m%dT%H%M%SZ)-${TARGET:0:12}.dump"
@@ -81,7 +82,7 @@ PY
 echo "Migration applied. Deploying app; database changes are NOT automatically reversible."
 if ! (cd "$REPO" && bash ops/vps/deploy.sh); then
   echo "DEPLOY FAILED; attempting web-image rollback only" >&2
-  /usr/local/bin/bcrollback || true
+  echo "Rollback NOT automatically attempted: database migrations may be incompatible with previous image." >&2
   echo "Manual DB compatibility review required; backup at $BACKUP" >&2
   exit 1
 fi
@@ -90,4 +91,7 @@ if ! curl -4 -fsS --max-time 15 https://www.bahasacerdas.com/api/health | jq -e 
   /usr/local/bin/bcrollback || true
   exit 1
 fi
-echo "DEPLOY OK; manual JUMPA health, LiveKit media and user flows still required. Backup: $BACKUP"
+if [[ "$(grep -E "^ENABLE_JUMPA=" "$CONFIG/stack.env" | tail -1 | cut -d= -f2 | tr -d "\\\"\x27 " )" == "1" ]]; then
+  curl -4 -fsS --max-time 15 https://www.bahasacerdas.com/api/jumpa/health | jq -e '.ok == true and .stageApprovalReady == true and .livekitReachable == true' >/dev/null || { echo "JUMPA health failed; operator intervention required" >&2; exit 1; }
+fi
+echo "DEPLOY OK; manual media and user flow verification still required. Backup: $BACKUP"
