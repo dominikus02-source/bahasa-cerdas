@@ -667,7 +667,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         take: 30,
         select: {
-          code: true, title: true, kind: true, mode: true, status: true, createdById: true, startedAt: true, scheduledAt: true, groupId: true, communityId: true,\n          events: { where: { action: "ROOM_CREATED" }, orderBy: { createdAt: "asc" }, take: 1, select: { metadata: true } },
+          code: true, title: true, kind: true, mode: true, status: true, createdById: true, startedAt: true, scheduledAt: true, groupId: true, communityId: true,
+          events: { where: { action: "ROOM_CREATED" }, orderBy: { createdAt: "asc" }, take: 1, select: { metadata: true } },
           participants: {
             where: { removedAt: null, lastJoinedAt: { not: null } },
             orderBy: { lastJoinedAt: "desc" },
