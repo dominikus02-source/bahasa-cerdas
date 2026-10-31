@@ -106,7 +106,9 @@ async function main() {
   try { await ensureLivekitRoom({ name: "bc-x", maxParticipants: 5, config: deadCfg }) } catch { threw = true }
   check("ensureLivekitRoom melempar (→ 503 MEDIA_UNAVAILABLE)", threw)
   check("sendServerSignal → false (tidak fatal)", (await sendServerSignal("bc-x", "jumpa.room", { t: "room.locked", locked: true }, undefined, deadCfg)) === false)
-  check("listLivekitIdentities → []", (await listLivekitIdentities("bc-x", deadCfg)).length === 0)
+  let identitiesFailedClosed = false
+  try { await listLivekitIdentities("bc-x", deadCfg) } catch (error) { identitiesFailedClosed = error instanceof Error && error.message === "LIVEKIT_UNAVAILABLE" }
+  check("listLivekitIdentities menolak saat server tak terjangkau (fail-closed)", identitiesFailedClosed)
   check("updateLivekitParticipant → false", (await updateLivekitParticipant("bc-x", "u", { metadata: "{}" }, deadCfg)) === false)
   let delThrew = false
   try { await deleteLivekitRoom("bc-x", deadCfg) } catch { delThrew = true }
