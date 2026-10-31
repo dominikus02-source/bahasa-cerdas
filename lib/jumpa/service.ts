@@ -58,7 +58,7 @@ export interface CreateRoomRequest {
   durationMin?: number | null;
   /** "Beri tahu kelas" (default true). false = tanpa notifikasi kelas/komunitas. */
   notifyClass?: boolean | null;
-  /** Webinar: hanya guru Premium, 1x per minggu, 200 peserta. */
+  /** Webinar: hanya guru Premium, 1x per minggu, maksimal 100 peserta. */
   isWebinar?: boolean | null;
 }
 
@@ -178,6 +178,10 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
       status: { in: ["SCHEDULED", "LIVE"] },
       groupId: req.kind === "GURU" ? null : (group?.id ?? null),
       communityId: req.kind === "GURU" ? (community?.id ?? null) : null,
+      // Webinar dan rapat biasa tidak boleh saling memakai ulang ruang.
+      ...(isWebinar
+        ? { events: { some: { action: "ROOM_CREATED", metadata: { path: ["isWebinar"], equals: true } } } }
+        : { NOT: { events: { some: { action: "ROOM_CREATED", metadata: { path: ["isWebinar"], equals: true } } } } }),
       OR: [
         { scheduledAt: null, createdAt: { gt: new Date(now - REUSE_WINDOW_MS) } },
         { scheduledAt: { gt: new Date(now - REUSE_WINDOW_MS), lte: new Date(now + 15 * 60_000) } },
@@ -229,7 +233,7 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
           livekitRoomName: generateLivekitRoomName(),
           title,
           kind: req.kind,
-          mode: req.kind === "KELAS" ? "CLASS" : "MEETING",
+          mode: isWebinar ? "WEBINAR" : req.kind === "KELAS" ? "CLASS" : "MEETING",
           createdById: user.id,
           creatorRole: user.isFounder ? "GURU" : user.role,
           groupId: req.kind === "GURU" ? null : group!.id,
@@ -386,7 +390,7 @@ export interface RoomContext {
   actor: JumpaActor;
   effective: JumpaEffectiveRole | null;
   groupTeacherId: string | null;
-  participant: { roomRole: JumpaRoomRole; removedAt: Date | null } | null;
+  participant: { roomRole: JumpaRoomRole; removedAt: Date | null; stageApproved: boolean } | null;
   decision: Decision<{ roomRole: JumpaRoomRole; accessVia: JumpaAccessVia; effective: JumpaEffectiveRole }>;
 }
 
@@ -411,7 +415,7 @@ export async function loadRoomContext(
       : Promise.resolve(null),
     db.jumpaParticipant.findUnique({
       where: { roomId_userId: { roomId: room.id, userId: user.id } },
-      select: { removedAt: true, roomRole: true },
+      select: { removedAt: true, roomRole: true, stageApproved: true },
     }),
     db.user.findUnique({ where: { id: room.createdById }, select: { fullName: true, nickname: true } }),
     db.jumpaInvite.findMany({
@@ -441,6 +445,15 @@ export async function loadRoomContext(
   ]);
   const linkHash = linkToken && INVITE_TOKEN_RE.test(linkToken) ? hashInviteToken(linkToken) : null;
 
+  // Kompatibilitas: webinar yang sempat tersimpan sebagai MEETING tetap dikenali
+  // dari metadata penciptaan, tanpa migrasi atau penulisan ulang data lama.
+  const createdAsWebinar = Boolean(
+    created?.metadata &&
+    typeof created.metadata === "object" &&
+    (created.metadata as { isWebinar?: unknown }).isWebinar === true
+  );
+  const effectiveMode = createdAsWebinar ? "WEBINAR" : room.mode;
+
   const relation: JoinRelation = {
     isCreator: room.createdById === user.id,
     isGroupOwner: Boolean(group && group.teacherId === user.id),
@@ -459,6 +472,7 @@ export async function loadRoomContext(
     actor,
     room: {
       kind: room.kind,
+      mode: effectiveMode,
       status: room.status,
       isLocked: room.isLocked,
       startedAt: room.startedAt,
@@ -479,12 +493,12 @@ export async function loadRoomContext(
     actor,
     effective: effectiveRole(actor),
     groupTeacherId: group?.teacherId ?? null,
-    participant: participant ? { roomRole: participant.roomRole, removedAt: participant.removedAt } : null,
+    participant: participant ? { roomRole: participant.roomRole, removedAt: participant.removedAt, stageApproved: participant.stageApproved } : null,
     view: {
       code: room.code,
       title: room.title,
       kind: room.kind,
-      mode: room.mode,
+      mode: effectiveMode,
       status: room.status,
       isLocked: room.isLocked,
       chatEnabled: room.chatEnabled,
@@ -569,6 +583,7 @@ export interface RoomListItem {
   code: string;
   title: string;
   kind: JumpaRoom["kind"];
+  mode: JumpaRoom["mode"];
   status: JumpaRoom["status"];
   place: string | null;
   mine: boolean;
@@ -653,7 +668,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         orderBy: [{ status: "asc" }, { createdAt: "desc" }],
         take: 30,
         select: {
-          code: true, title: true, kind: true, status: true, createdById: true, startedAt: true, scheduledAt: true, groupId: true, communityId: true,
+          code: true, title: true, kind: true, mode: true, status: true, createdById: true, startedAt: true, scheduledAt: true, groupId: true, communityId: true,
+          events: { where: { action: "ROOM_CREATED" }, orderBy: { createdAt: "asc" }, take: 1, select: { metadata: true } },
           participants: {
             where: { removedAt: null, lastJoinedAt: { not: null } },
             orderBy: { lastJoinedAt: "desc" },
@@ -710,10 +726,20 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   return {
     effective,
     isJunior: actor.isJunior,
-    rooms: rooms.map((r) => ({
+    rooms: rooms.map((r) => {
+      const createdMetadata = r.events[0]?.metadata;
+      const createdAsWebinar = Boolean(
+        createdMetadata &&
+        typeof createdMetadata === "object" &&
+        !Array.isArray(createdMetadata) &&
+        "isWebinar" in createdMetadata &&
+        createdMetadata.isWebinar === true
+      );
+      return {
       code: r.code,
       title: r.title,
       kind: r.kind,
+      mode: createdAsWebinar ? "WEBINAR" : r.mode,
       status: r.status,
       place: (r.groupId && groupName.get(r.groupId)) || (r.communityId && commName.get(r.communityId)) || null,
       mine: r.createdById === user.id,
@@ -723,7 +749,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
         const ids = presentIds.get(r.code) ?? [];
         return { count: ids.length, initials: ids.slice(0, 4).map((id) => personInitials.get(id) ?? "P") };
       })(),
-    })),
+      };
+    }),
     groups: effective === "GURU" ? ownedGroups : actor.isJunior || effective === "UMUM" ? [] : memberGroups.map((m) => m.group),
     communities: communities.map((c) => c.community),
     canSeePanel: user.role === "ADMIN" || user.isFounder || effective === "GURU",

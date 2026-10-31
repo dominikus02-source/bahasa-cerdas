@@ -25,6 +25,8 @@ const bodySchema = z.object({
     "DISALLOW_MURID_SCREEN",
     "SET_COHOST",
     "UNSET_COHOST",
+    "ALLOW_STAGE",
+    "REMOVE_STAGE",
     "TOGGLE_CHAT",
   ]),
   targetUserId: z.string().min(1).max(64).optional(),

@@ -15,6 +15,7 @@ import { getLivekitServerConfig, getLivekitPublicWsUrl, DEFAULT_LIVEKIT_URL } fr
 import {
   ensureLivekitRoom,
   countActiveOthers,
+  probeLivekit,
   sendServerSignal,
   listLivekitIdentities,
   updateLivekitParticipant,
@@ -43,6 +44,11 @@ async function main() {
   check("Sumber publish hanya kamera + mikrofon", JSON.stringify(g.canPublishSources) === JSON.stringify([TrackSource.CAMERA, TrackSource.MICROPHONE]))
   const none = buildJoinGrant("bc-room-1", [])
   check("Tanpa sumber → canPublish false", none.canPublish === false)
+  check("Webinar peserta biasa: kamera dan mikrofon tidak diizinkan sebelum disetujui", none.canPublish === false && none.canPublishSources?.length === 0)
+  const stage = buildParticipantPermission(["camera", "microphone"])
+  check("Izin panggung hanya kamera + mikrofon, tanpa hak admin", stage.canPublish === true && stage.canPublishSources?.length === 2 && stage.canUpdateMetadata === false)
+  const offStage = buildParticipantPermission([])
+  check("Turun panggung mencabut seluruh izin publikasi", offStage.canPublish === false && offStage.canPublishSources?.length === 0)
 
   console.log("\n1b. Fase 2 — berbagi layar")
   const kelas = { kind: "KELAS" as const, allowMuridScreenShare: false }
@@ -92,12 +98,17 @@ async function main() {
 
   console.log("\n4. Degradasi aman bila LiveKit mati")
   const deadCfg = { url: "http://127.0.0.1:1", apiKey: KEY, apiSecret: SECRET }
-  check("countActiveOthers → 0 saat server tak terjangkau", (await countActiveOthers("bc-x", "u", deadCfg)) === 0)
+  let capacityProbeFailedClosed = false
+  try { await countActiveOthers("bc-x", "u", deadCfg) } catch (error) { capacityProbeFailedClosed = error instanceof Error && error.message === "LIVEKIT_UNAVAILABLE" }
+  check("countActiveOthers menolak saat server tak terjangkau (fail-closed)", capacityProbeFailedClosed)
+  check("Probe kesehatan LiveKit mendeteksi server tidak terjangkau", (await probeLivekit(deadCfg)) === false)
   let threw = false
   try { await ensureLivekitRoom({ name: "bc-x", maxParticipants: 5, config: deadCfg }) } catch { threw = true }
   check("ensureLivekitRoom melempar (→ 503 MEDIA_UNAVAILABLE)", threw)
   check("sendServerSignal → false (tidak fatal)", (await sendServerSignal("bc-x", "jumpa.room", { t: "room.locked", locked: true }, undefined, deadCfg)) === false)
-  check("listLivekitIdentities → []", (await listLivekitIdentities("bc-x", deadCfg)).length === 0)
+  let identitiesFailedClosed = false
+  try { await listLivekitIdentities("bc-x", deadCfg) } catch (error) { identitiesFailedClosed = error instanceof Error && error.message === "LIVEKIT_UNAVAILABLE" }
+  check("listLivekitIdentities menolak saat server tak terjangkau (fail-closed)", identitiesFailedClosed)
   check("updateLivekitParticipant → false", (await updateLivekitParticipant("bc-x", "u", { metadata: "{}" }, deadCfg)) === false)
   let delThrew = false
   try { await deleteLivekitRoom("bc-x", deadCfg) } catch { delThrew = true }

@@ -100,7 +100,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       metadata: { v: 1, bcRole: effective, roomRole, avatar: ctx.room.kind === "UMUM" && effective === "MURID" ? null : profile?.avatar ?? null },
       grant: buildJoinGrant(
         ctx.room.livekitRoomName,
-        publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare }),
+        ctx.view.mode === "WEBINAR" && roomRole === "MEMBER" && !ctx.participant?.stageApproved
+          ? []
+          : publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare }),
       ),
     });
 
@@ -128,7 +130,11 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       }),
     });
   } catch (error) {
-    console.error("JUMPA_TOKEN_FAILED", { error: error instanceof Error ? error.message : String(error) });
+    const code = error instanceof Error ? error.message : String(error);
+    console.error("JUMPA_TOKEN_FAILED", { error: code });
+    if (code === "LIVEKIT_UNAVAILABLE" || code === "LIVEKIT_NOT_CONFIGURED") {
+      return jumpaError(503, "MEDIA_UNAVAILABLE", "Layanan video sedang bermasalah. Kapasitas ruang belum dapat dipastikan. Coba lagi sebentar.");
+    }
     return jumpaError(503, "STORAGE_UNAVAILABLE", "JUMPA belum tersedia saat ini. Coba lagi sebentar.");
   }
 }

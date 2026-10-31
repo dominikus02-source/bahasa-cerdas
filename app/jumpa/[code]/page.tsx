@@ -74,6 +74,7 @@ export default async function JumpaRoomPage({
       denyMessage={ctx.decision.ok ? null : ctx.decision.message}
       denyCode={ctx.decision.ok ? null : ctx.decision.code}
       scheduledAt={ctx.view.scheduledAt}
+      mode={ctx.view.mode}
       share={
         // Ruang UMUM: lembar bagikan hanya untuk akun UMUM (guru/murid yang
         // ikut lewat tautan tidak menyebarkan ruang ini).

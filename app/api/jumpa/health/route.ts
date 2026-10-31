@@ -5,6 +5,7 @@
 import { db } from "@/lib/db";
 import { JUMPA_ENABLED } from "@/lib/features";
 import { getLivekitServerConfig } from "@/lib/jumpa/config";
+import { probeLivekit } from "@/lib/jumpa/livekit";
 import { jumpaJson } from "@/lib/jumpa/http";
 
 export const dynamic = "force-dynamic";
@@ -32,5 +33,23 @@ export async function GET() {
   } catch {
     storage = "unavailable";
   }
-  return jumpaJson({ ok: true, enabled: JUMPA_ENABLED, livekitConfigured: Boolean(getLivekitServerConfig()), storage });
+  let stageApprovalReady = false;
+  try {
+    const columns = await db.$queryRaw<{ column_name: string }[]>`SELECT column_name FROM information_schema.columns WHERE (table_schema, table_name, column_name) = ('public', 'JumpaParticipant', 'stageApproved')`;
+    stageApprovalReady = columns.length > 0;
+  } catch {
+    stageApprovalReady = false;
+  }
+  const livekitConfigured = Boolean(getLivekitServerConfig());
+  const livekitReachable = await probeLivekit();
+  const storageReady = storage === "ready" && stageApprovalReady;
+  const ready = JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady;
+  return jumpaJson({
+    ok: ready,
+    enabled: JUMPA_ENABLED,
+    livekitConfigured,
+    livekitReachable,
+    stageApprovalReady,
+    storage,
+  }, ready ? 200 : 503);
 }
