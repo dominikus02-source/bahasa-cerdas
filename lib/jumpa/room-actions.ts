@@ -220,6 +220,11 @@ export async function moderate(
         const sources = action === "ALLOW_STAGE" ? ["camera", "microphone"] as const : [];
         const updated = await updateLivekitParticipant(lk, target!.userId, { permission: buildParticipantPermission([...sources]) });
         if (!updated) return fail(503, "MEDIA_UNAVAILABLE", "Izin panggung belum dapat diterapkan. Coba lagi.");
+        // Persist after LiveKit succeeds so approval survives reconnects.
+        await db.jumpaParticipant.update({
+          where: { roomId_userId: { roomId: room.id, userId: target!.userId } },
+          data: { stageApproved: action === "ALLOW_STAGE" },
+        });
         break;
       }
       case "SET_COHOST":
