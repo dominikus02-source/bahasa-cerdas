@@ -194,7 +194,6 @@ const tierUi = read("components/jumpa/TierUi.tsx")
 const sheet = tierUi.slice(tierUi.indexOf("export function UpgradeSheet"))
 check("Lembar upgrade: angka Premium kelas hanya sekali", (sheet.match(/P\.rooms\.KELAS\.maxDurationMin/g) ?? []).length === 1)
 check("Lembar upgrade: tanpa paragraf penjelasan ganda", !sheet.includes("{body}"))
-const home = read("components/jumpa/JumpaHome.tsx")
 check("Kuota habis tidak diulang di banner error", /TIER_DAILY_LIMIT"\) \{ setLimitHit\(true\); return; \}/.test(home))
 
 console.log(`\n${passed} lulus, ${failed} gagal\n`)
