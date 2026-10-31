@@ -70,7 +70,7 @@ check("Guru: batas KELAS/GURU per plan tidak berubah (tierForRoomKind = tierForP
   return tierForRoomKind(plan, kind) === tierForPlan(plan) && l.maxParticipants === p && l.maxDurationMin === m
 }))
 check("Guru PRO/FOUNDER: ruang MURID tetap PREMIUM, FREE tetap FREE", tierForRoomKind("PRO", "MURID") === "PREMIUM" && tierForRoomKind("FOUNDER", "MURID") === "PREMIUM" && tierForRoomKind("FREE", "MURID") === "FREE")
-check("Guru: webinar tetap Premium 200/180", limitsFor(tierForPlan("PRO"), "KELAS", true).maxParticipants === 200 && limitsFor(tierForPlan("FREE"), "KELAS", true).maxParticipants === 0)
+check("Guru: webinar Premium dibatasi 100 peserta/180 menit", limitsFor(tierForPlan("PRO"), "KELAS", true).maxParticipants === 100 && limitsFor(tierForPlan("FREE"), "KELAS", true).maxParticipants === 0)
 const ent = read("lib/jumpa/entitlement.ts")
 check("entitlement memakai resolvePlan() yang sudah ada", ent.includes("resolvePlan(userId)") && ent.includes("@/lib/premium-economy/plans"))
 check("Gagal baca DB → FREE (fail-closed)", ent.includes('return { tier: "FREE"'))
