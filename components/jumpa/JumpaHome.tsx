@@ -155,7 +155,7 @@ function RoomCard({ room, now }: { room: RoomListItem; now: number | null }) {
       <span className="jumpa-icon-chip" data-kind={room.kind} aria-hidden><Icon size={20} /></span>
       <span className="min-w-0 flex-1">
         <span className="jumpa-room-title">{room.title}</span>
-        <span className="jumpa-room-sub">{room.mode === "WEBINAR" ? "Webinar interaktif" : room.kind === "GURU" ? "Rapat biasa" : KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
+        <span className="jumpa-room-sub">{room.mode === "WEBINAR" ? "Webinar Interaktif" : room.kind === "GURU" ? "Rapat biasa" : KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
         <span className="mt-1.5 flex items-center gap-2 text-xs">
           {live ? <span className="jumpa-live">Berlangsung</span> : <span className="jumpa-soon">{scheduledLabel(room.scheduledAt, now)}</span>}
         </span>
