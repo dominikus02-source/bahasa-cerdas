@@ -59,6 +59,8 @@ export interface JumpaActor {
 
 /** Ruang UMUM: kode ruang = undangan (seperti Meet) untuk akun BC yang login. */
 export const JUMPA_UMUM_CODE_JOIN = true;
+/** Webinar: akun BC yang sudah login dan memiliki kode dapat bergabung. */
+export const JUMPA_WEBINAR_CODE_JOIN = true;
 
 export function effectiveRole(actor: JumpaActor): JumpaEffectiveRole | null {
   if (actor.isFounder) return "GURU";
@@ -169,6 +171,8 @@ export function canCreateRoom(input: CreateRoomInput): Decision<Record<never, ne
 
 export interface JoinRoomState {
   kind: JumpaKind;
+  /** Mode webinar memperbolehkan akun Guru/Murid terdaftar masuk dengan kode. */
+  mode?: "MEETING" | "CLASS" | "WEBINAR";
   status: JumpaStatus;
   isLocked: boolean;
   startedAt: Date | null;
@@ -252,6 +256,12 @@ export function evaluateJoin(
     } else if (relation.isUserInvited) {
       // Undangan individu divalidasi saat dibuat (guru rekan / murid kelas host).
       access = { roomRole: "MEMBER", accessVia: "INVITED_USER" };
+    }
+  } else if (room.kind === "GURU" && room.mode === "WEBINAR") {
+    // Webinar terbuka bagi akun Guru/Murid BC yang sudah masuk dan memegang kode.
+    // Akun Junior tetap ditolak oleh pagar di atas; peserta tidak otomatis menjadi cohost.
+    if ((role === "GURU" || role === "MURID") && (JUMPA_WEBINAR_CODE_JOIN || relation.hasValidLink || relation.isExistingParticipant)) {
+      access = { roomRole: "MEMBER", accessVia: "LINK" };
     }
   } else if (room.kind === "GURU") {
     if (role === "GURU") {
