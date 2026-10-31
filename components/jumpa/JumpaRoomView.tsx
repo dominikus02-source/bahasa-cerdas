@@ -280,7 +280,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
               JUMPA
               {info.mode === "WEBINAR" && (
                 <span className="rounded-full border border-[var(--jp-accent)]/30 bg-[var(--jp-accent)]/10 px-2 py-0.5 text-[9px] font-extrabold tracking-[.12em] text-[var(--jp-accent)]">
-                  WEBINAR INTERAKTIF
+                  WEBINAR
                 </span>
               )}
               <span className="hidden font-semibold normal-case tracking-normal text-[var(--jp-text-3)] sm:inline">dari BahasaCerdas</span>
