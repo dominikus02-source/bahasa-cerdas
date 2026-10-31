@@ -5,6 +5,7 @@
 import { db } from "@/lib/db";
 import { JUMPA_ENABLED } from "@/lib/features";
 import { getLivekitServerConfig } from "@/lib/jumpa/config";
+import { probeLivekit } from "@/lib/jumpa/livekit";
 import { jumpaJson } from "@/lib/jumpa/http";
 
 export const dynamic = "force-dynamic";
@@ -32,5 +33,14 @@ export async function GET() {
   } catch {
     storage = "unavailable";
   }
-  return jumpaJson({ ok: true, enabled: JUMPA_ENABLED, livekitConfigured: Boolean(getLivekitServerConfig()), storage });
+  const livekitConfigured = Boolean(getLivekitServerConfig());
+  const livekitReachable = await probeLivekit();
+  const storageReady = storage === "ready";
+  return jumpaJson({
+    ok: JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady,
+    enabled: JUMPA_ENABLED,
+    livekitConfigured,
+    livekitReachable,
+    storage,
+  }, { status: JUMPA_ENABLED && livekitConfigured && livekitReachable && storageReady ? 200 : 503 });
 }
