@@ -29,6 +29,7 @@ interface Props {
   denyCode?: string | null;
   /** Waktu mulai terjadwal (ISO) bila ada. */
   scheduledAt?: string | null;
+  mode: "MEETING" | "CLASS" | "WEBINAR";
   /** Data bagikan (kode, judul, tautan 24 jam bila boleh). */
   share?: ShareTarget | null;
   joining: boolean;
@@ -375,7 +376,17 @@ export default function JumpaLobby(props: Props) {
       <section className="jumpa-card jumpa-lobby-info jumpa-in-up flex w-full flex-col items-center gap-5 text-center [animation-delay:60ms] md:flex-1 md:items-start md:text-left">
         <div>
           <p className="jumpa-section-title !m-0 !mb-2 justify-center md:justify-start">{props.canJoin || props.denyCode === "NOT_STARTED" ? "Siap masuk?" : "Ruang JUMPA"}</p>
+          {props.mode === "WEBINAR" && (
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-[var(--jp-accent)]/30 bg-[var(--jp-accent)]/10 px-3 py-1.5 text-xs font-extrabold tracking-wide text-[var(--jp-accent)]">
+              <Video size={14} /> WEBINAR INTERAKTIF
+            </div>
+          )}
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">{props.title}</h1>
+          {props.mode === "WEBINAR" && (
+            <p className="mt-2 text-sm text-[var(--jp-text-2)]">
+              Webinar BahasaCerdas · Maksimal {JUMPA_WEBINAR.maxParticipants} peserta · Semua peserta masuk dengan akun BC dan dapat berpartisipasi melalui kamera, mikrofon, obrolan, serta angkat tangan.
+            </p>
+          )}
           {props.subtitle && (
             <p className="mt-2 flex items-center justify-center gap-2 text-[var(--jp-text-2)] md:justify-start">
               <Users size={16} /> {props.subtitle}
