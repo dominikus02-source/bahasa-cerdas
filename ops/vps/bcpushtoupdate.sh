@@ -36,11 +36,12 @@ jq -e '[.workflow_runs[] | select(.head_sha == $sha)] | all(.status == "complete
 [[ -f "$REPO/ops/vps/deploy.sh" ]] || exit 1
 echo "PRECHECK PASS: main=$TARGET, CI=success, stable rollback image exists"
 if [[ "$MODE" == "--check" ]]; then
-  echo "DRY RUN ONLY. To release later: BC_APPROVED_SHA=$TARGET BC_MAINTENANCE_CONFIRMED=1 bcpushtoupdate --apply"
+  echo "DRY RUN ONLY. Apply requires BC_APPROVED_SHA, BC_MAINTENANCE_CONFIRMED=1, BC_BACKUP_VERIFIED=1 and staging restore proof."
   exit 0
 fi
 [[ "${BC_MAINTENANCE_CONFIRMED:-0}" == "1" ]] || { echo "Explicit maintenance approval required" >&2; exit 1; }
 [[ "${BC_BACKUP_VERIFIED:-0}" == "1" ]] || { echo "Operator must verify a restorable backup plan (BC_BACKUP_VERIFIED=1)" >&2; exit 1; }
+[[ -s "${BC_STAGING_RESTORE_PROOF:-/nonexistent}" ]] || { echo "Staging restore evidence file required (BC_STAGING_RESTORE_PROOF)" >&2; exit 1; }
 for cmd in pg_dump pg_restore; do command -v "$cmd" >/dev/null || { echo "Missing backup tool: $cmd" >&2; exit 1; }; done
 # Backup is taken BEFORE migration; never auto-restore PostgreSQL on failure.
 install -d -m 700 "$BACKUPS"
@@ -83,7 +84,7 @@ for line in open(sys.argv[1]):
 subprocess.run(["./node_modules/.bin/prisma","migrate","deploy"],cwd=sys.argv[2],env=env,check=True)
 PY
 echo "Migration applied. Deploying app; database changes are NOT automatically reversible."
-if ! (cd "$REPO" && bash ops/vps/deploy.sh); then
+if ! (cd "$REPO" && BC_DEPLOY_PINNED_SHA="$TARGET" bash ops/vps/deploy.sh); then
   echo "DEPLOY FAILED; manual recovery required" >&2
   echo "Rollback NOT automatically attempted: database migrations may be incompatible with previous image." >&2
   echo "Manual DB compatibility review required; backup at $BACKUP" >&2
