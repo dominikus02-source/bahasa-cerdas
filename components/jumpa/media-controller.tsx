@@ -157,6 +157,20 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
 
   const recv = useMemo(() => receivePolicy(prefs.quality, device, degraded), [prefs.quality, device, degraded]);
 
+  // Saat koneksi memburuk pada mode Otomatis, turunkan juga video KIRIM
+  // (bukan hanya video yang diterima). Pulihkan setelah indikator koneksi stabil.
+  const lastDegraded = useRef(degraded);
+  useEffect(() => {
+    if (lastDegraded.current === degraded) return;
+    lastDegraded.current = degraded;
+    if (prefs.quality !== "auto") return;
+    const effectiveQuality = degraded ? "hemat" : "auto";
+    const nextPolicy = publishPolicy(effectiveQuality, device, tier.maxCameraHeight, tier.maxScreenHeight);
+    void republishCamera(room, prefs, nextPolicy).catch(() => {
+      toast("Kualitas kamera belum dapat disesuaikan. Coba matikan kamera sebentar.", "warn");
+    });
+  }, [degraded, prefs, room, device, tier.maxCameraHeight, tier.maxScreenHeight, toast]);
+
   // Kebijakan langganan video peserta lain.
   useEffect(() => {
     const run = () => {
