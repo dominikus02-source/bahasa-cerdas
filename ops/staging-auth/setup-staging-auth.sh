@@ -13,7 +13,13 @@ die(){ echo "STOP: $*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] || die "Jalankan sebagai root."
 command -v docker >/dev/null || die "Docker tidak ditemukan."
 docker info >/dev/null 2>&1 || die "Docker daemon tidak aktif."
-docker network inspect jumpa-staging-net >/dev/null 2>&1 || die "Network jumpa-staging-net tidak ada. Tidak membuat/mengubah network production."
+docker inspect jumpa-web-staging >/dev/null 2>&1 || die "Container jumpa-web-staging tidak ditemukan."
+NETWORKS="$(docker inspect -f '{{range $name, $cfg := .NetworkSettings.Networks}}{{println $name}}{{end}}' jumpa-web-staging | grep -i staging || true)"
+[[ -n "$NETWORKS" ]] || die "Tidak menemukan network staging pada jumpa-web-staging."
+[[ "$(printf '%s\\n' "$NETWORKS" | wc -l | tr -d ' ')" == "1" ]] || die "Lebih dari satu network staging; set STAGING_DOCKER_NETWORK secara eksplisit."
+STAGING_DOCKER_NETWORK="$(printf '%s' "$NETWORKS" | head -1)"
+export STAGING_DOCKER_NETWORK
+docker network inspect "$STAGING_DOCKER_NETWORK" >/dev/null 2>&1 || die "Network staging tidak tersedia."
 [[ -f "$COMPOSE" ]] || die "Compose file tidak ditemukan: $COMPOSE"
 mkdir -p "$ROOT"
 chmod 700 "$ROOT"
@@ -75,7 +81,19 @@ for i in $(seq 1 30); do
     echo "PASS: isolated GoTrue healthy."
     echo "Service: jumpa-auth-staging on jumpa-staging-net (alias auth-staging:9999)"
     echo "Secret files: $ROOT/.env and $ROOT/auth.env (mode 600)"
-    echo "NEXT: configure staging-only reverse proxy for https://$DOMAIN -> http://auth-staging:9999"
+  python3 - "$AUTH_ENV" "$ROOT/web.env.fragment" <<'PY'
+import sys
+values={}
+for line in open(sys.argv[1]):
+    if "=" in line:
+        k,v=line.rstrip("\\n").split("=",1); values[k]=v
+with open(sys.argv[2],"w") as f:
+    f.write("NEXT_PUBLIC_SUPABASE_URL=https://auth-staging.bahasacerdas.com\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_ANON_KEY="+values["STAGING_ANON_KEY"]+"\\n")
+PY
+  chmod 600 "$ROOT/web.env.fragment"
+  echo "Staging web env fragment created: $ROOT/web.env.fragment (merge into staging build/runtime env only)."
+    echo "NEXT: configure staging-only reverse proxy: https://$DOMAIN/auth/v1/* -> auth-staging:9999 (strip /auth/v1 prefix)."
     echo "Then set STAGING auth URL/key in jumpa-web-staging build/runtime, and run staging-auth-e2e.mjs."
     exit 0
   fi
