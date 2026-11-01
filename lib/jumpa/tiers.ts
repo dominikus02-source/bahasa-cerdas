@@ -107,7 +107,7 @@ export function umumTierDef(tier: JumpaTier): JumpaUmumTierDef {
 }
 
 /** Webinar: hanya Premium, 1x per minggu, kapasitas lebih tinggi. */
-export const JUMPA_WEBINAR: JumpaRoomLimits = { maxParticipants: 200, maxDurationMin: 180 };
+export const JUMPA_WEBINAR: JumpaRoomLimits = { maxParticipants: 100, maxDurationMin: 180 };
 export const JUMPA_WEBINAR_PER_WEEK = 1;
 
 /** Fitur premium yang sudah dijanjikan di UI tetapi belum tersedia. */

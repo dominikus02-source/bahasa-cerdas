@@ -4378,6 +4378,8 @@ model JumpaParticipant {
   /// User.id peserta (plain string).
   userId        String
   roomRole      JumpaRoomRole @default(MEMBER)
+  /// Izin naik panggung webinar; bertahan saat peserta tersambung ulang.
+  stageApproved Boolean       @default(false)
   /// Jalur akses yang meloloskan peserta: "CREATOR" | "GROUP_OWNER" | "GROUP_MEMBER".
   accessVia     String
   firstJoinedAt DateTime      @default(now())
