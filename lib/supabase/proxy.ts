@@ -175,12 +175,12 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // into a 500. When the URL is unusable, skip the auth gate: no session can be
   // verified, so pass the request through and let page-level guards redirect at
   // the application layer instead.
-  if (!isValidSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL)) {
+  if (!isValidSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)) {
     return supabaseResponse;
   }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    (process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!,
     SUPABASE_PUBLISHABLE_KEY,
     {
       global: {
