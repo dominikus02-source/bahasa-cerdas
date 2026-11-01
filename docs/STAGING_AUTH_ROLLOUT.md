@@ -11,12 +11,13 @@ Staging-only GoTrue is configured with email auto-confirm enabled to let isolate
    `bash ops/staging-auth/setup-staging-auth.sh`
 3. The script discovers the staging Docker network from `jumpa-web-staging`, creates a dedicated PostgreSQL 16 volume and GoTrue container, generates unique DB/JWT secrets, prompts once for the Resend SMTP key (hidden input), and attaches GoTrue to the network discovered from `jumpa-web-staging` plus a private DB network. It writes secrets under `/opt/bahasacerdas/staging/auth/`, never into Git.
 4. Configure a **staging-only** reverse proxy route: `https://auth-staging.bahasacerdas.com/auth/v1/*` → `http://auth-staging:9999/*` (strip `/auth/v1` before proxying); also proxy `/health` to `/health`. Do not add this host to production Caddy. If staging has no independent proxy/DNS/TLS path, stop and establish one before configuring the browser.
-5. Set `NEXT_PUBLIC_SUPABASE_URL=https://auth-staging.bahasacerdas.com` and the generated `STAGING_ANON_KEY` as the staging app's publishable/anon key at build time and runtime where needed. Never set production keys in staging. GoTrue's `/auth/v1` path is supplied by the existing SDK URL convention; validate actual browser network requests.
+5. **STOP before wiring the app:** the current repository uses `NEXT_PUBLIC_SUPABASE_URL` for both Auth and Storage. Setting it to a GoTrue-only host would break Storage uploads and could misroute storage traffic. The bootstrap emits `NEXT_PUBLIC_SUPABASE_AUTH_URL` and `NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY` as future split-client settings only; current code does not consume them yet. First complete issue #208: split Auth and Storage clients, provision staging-only Storage (or a fully isolated Supabase Storage stack), and prove no staging upload targets production. Only then wire the Auth URL into Auth-only clients. Never set production keys in staging.
 6. Verify actual container env and issuer/URL. Do not rely on host env file status alone.
 
 ## Phase 1 acceptance
 - `GET https://auth-staging.bahasacerdas.com/health` returns 200 and `GET https://auth-staging.bahasacerdas.com/auth/v1/health` returns 200 through the proxy.
 - `jumpa-auth-db-staging` and `jumpa-auth-staging` are healthy and only staging network is used for app connectivity.
+- Auth client and Storage client have separate base URLs; staging Storage is isolated and no upload can reach production.
 - DB volume is dedicated: `jumpa_auth_staging_db`.
 - Two separate dummy accounts pass `node scripts/staging-auth-e2e.mjs`.
 - Recovery requests accepted and both actual mailboxes receive the recovery message.
