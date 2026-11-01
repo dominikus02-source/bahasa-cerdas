@@ -12,6 +12,14 @@ BACKUP="$TARGET.bak.$STAMP"
 
 [[ -f "$SOURCE" ]] || { echo "STOP: staging Caddy snippet missing"; exit 1; }
 docker inspect "$CADDY_CONTAINER" >/dev/null 2>&1 || { echo "STOP: shared Caddy container missing"; exit 1; }
+STAGING_NETWORK="${STAGING_DOCKER_NETWORK:-jumpa-staging-net}"
+docker network inspect "$STAGING_NETWORK" >/dev/null 2>&1 || { echo "STOP: staging network missing"; exit 1; }
+CADDY_NETWORKS="$(docker inspect -f '{{range $name, $cfg := .NetworkSettings.Networks}}{{println $name}}{{end}}' "$CADDY_CONTAINER")"
+printf '%s\n' "$CADDY_NETWORKS" | grep -Fxq "$STAGING_NETWORK" || {
+  echo "STOP: Caddy is not attached to $STAGING_NETWORK."
+  echo "Do not auto-attach the shared production proxy; review network topology and approve a dedicated staging ingress."
+  exit 1
+}
 docker exec "$CADDY_CONTAINER" test -f /etc/caddy/Caddyfile || { echo "STOP: Caddyfile missing"; exit 1; }
 grep -Fq 'import /etc/caddy/conf.d/*.caddy' /opt/bahasacerdas/config/Caddyfile 2>/dev/null || \
   docker exec "$CADDY_CONTAINER" grep -Fq 'import /etc/caddy/conf.d/*.caddy' /etc/caddy/Caddyfile || {
