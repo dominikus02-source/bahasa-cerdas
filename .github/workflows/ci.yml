@@ -39,6 +39,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Staging Auth/Storage isolation contract
+        run: npm run test:staging-auth-storage-separation
+
       - name: Guard warna baru (hex/rgb hanya di app/theme/tokens.css)
         env:
           GUARD_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
