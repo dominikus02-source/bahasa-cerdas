@@ -18,7 +18,10 @@ import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 // Jika SUPABASE_SECRET_KEY belum diset, jatuh ke anon (perilaku lama, header
 // diabaikan Supabase) supaya tidak ada yang rusak di environment lain.
 const SUPABASE_SECRET_KEY =
-  process.env.SUPABASE_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+  process.env.SUPABASE_AUTH_SECRET_KEY ||
+  process.env.SUPABASE_SECRET_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
 
 async function buildAuthHeaders(): Promise<Record<string, string>> {
   const h = await headers();
@@ -32,7 +35,7 @@ export async function createClient() {
   // synchronously and every API route becomes a 500. Degrade to a local
   // endpoint instead; auth calls then fail with a null session, which the
   // existing anonymous paths already tolerate (getUser()/requireAuth()).
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
   const usable = isValidSupabaseUrl(url) ? url! : "http://localhost:3000";
   const usableKey = SUPABASE_SECRET_KEY || "local-dev-anon-key";
 
