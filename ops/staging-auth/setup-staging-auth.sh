@@ -88,8 +88,9 @@ for line in open(sys.argv[1]):
     if "=" in line:
         k,v=line.rstrip("\\n").split("=",1); values[k]=v
 with open(sys.argv[2],"w") as f:
-    f.write("NEXT_PUBLIC_SUPABASE_URL=https://auth-staging.bahasacerdas.com\\n")
-    f.write("NEXT_PUBLIC_SUPABASE_ANON_KEY="+values["STAGING_ANON_KEY"]+"\\n")
+    f.write("# AUTH-ONLY endpoint. Do NOT map this to NEXT_PUBLIC_SUPABASE_URL until Auth and Storage clients are split.\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_AUTH_URL=https://auth-staging.bahasacerdas.com\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY="+values["STAGING_ANON_KEY"]+"\\n")
 PY
   chmod 600 "$ROOT/web.env.fragment"
   echo "Staging web env fragment created: $ROOT/web.env.fragment (merge into staging build/runtime env only)."
