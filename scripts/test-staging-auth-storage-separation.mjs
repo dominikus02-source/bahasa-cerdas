@@ -33,6 +33,17 @@ for (const path of [
   assert.doesNotMatch(source, /NEXT_PUBLIC_SUPABASE_URL/, path + " must not target the legacy shared URL directly");
 }
 
+const compose = read("../ops/staging-auth/docker-compose.yml");
+const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
+const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
+assert.match(compose, /supabase\\/storage-api:v1\\.81\\.0/);
+assert.match(compose, /jumpa_storage_staging/);
+assert.match(compose, /STORAGE_BACKEND: file/);
+assert.match(bootstrap, /jumpa_storage_staging/);
+assert.match(bootstrap, /NEXT_PUBLIC_SUPABASE_STORAGE_URL/);
+assert.match(caddy, /handle_path \\/storage\\/v1\\/\\*/);
+assert.match(caddy, /reverse_proxy storage-staging:5000/);
+
 console.log("PASS: Auth and Storage endpoint separation contracts");
 console.log("PASS: split Auth without Storage fails closed");
 console.log("PASS: upload API routes use server-only Storage credentials");
