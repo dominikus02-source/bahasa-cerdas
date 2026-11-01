@@ -58,6 +58,7 @@ def jwt(role):
     return f"{header}.{payload}.{sig}"
 with open(path,"w") as f:
     f.write("GOTRUE_JWT_SECRET="+secret+"\n")
+    f.write("AUTH_JWT_SECRET="+secret+"\n")
     f.write("GOTRUE_JWT_EXP=3600\n")
     f.write("GOTRUE_JWT_DEFAULT_GROUP_NAME=authenticated\n")
     f.write("STAGING_ANON_KEY="+jwt("anon")+"\n")
@@ -66,10 +67,69 @@ PY
   cat "$ENV_FILE" >> "$AUTH_ENV"
   chmod 600 "$ENV_FILE" "$AUTH_ENV"
 fi
-# Compose reads both files; secrets stay under ROOT.
+# Prepare a dedicated Storage metadata database inside the existing staging
+# Postgres container. This creates a new DB/role only; jumpa_staging is untouched.
+DB_CONTAINER="jumpa-db-staging"
+docker inspect "$DB_CONTAINER" >/dev/null 2>&1 || die "Database staging container tidak ditemukan."
+PGUSER="$(docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$DB_CONTAINER" | sed -n 's/^POSTGRES_USER=//p' | head -1)"
+PGUSER="${PGUSER:-postgres}"
+if ! grep -q '^STORAGE_DB_PASSWORD=' "$ENV_FILE"; then
+  STORAGE_DB_PASSWORD="$(openssl rand -hex 32)"
+  printf 'STORAGE_DB_PASSWORD=%s\n' "$STORAGE_DB_PASSWORD" >> "$ENV_FILE"
+fi
+STORAGE_DB_PASSWORD="$(sed -n 's/^STORAGE_DB_PASSWORD=//p' "$ENV_FILE" | head -1)"
+[[ -n "$STORAGE_DB_PASSWORD" ]] || die "STORAGE_DB_PASSWORD kosong."
+docker exec "$DB_CONTAINER" psql -U "$PGUSER" -d postgres -v ON_ERROR_STOP=1 \\
+  -c "DO \\$\\$ BEGIN IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='jumpa_storage') THEN CREATE ROLE jumpa_storage LOGIN PASSWORD '$STORAGE_DB_PASSWORD'; END IF; END \\$\\$;" \\
+  -c "ALTER ROLE jumpa_storage WITH LOGIN PASSWORD '$STORAGE_DB_PASSWORD';" >/dev/null
+if ! docker exec "$DB_CONTAINER" psql -U "$PGUSER" -d postgres -Atc "SELECT 1 FROM pg_database WHERE datname='jumpa_storage_staging'" | grep -q '^1
+# Point compose to the secret directory without copying secrets into source.
+TMP_COMPOSE="$ROOT/docker-compose.yml"
+sed "s|\./auth.env|$AUTH_ENV|" "$COMPOSE" > "$TMP_COMPOSE"
+chmod 600 "$TMP_COMPOSE"
+docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d
+for i in $(seq 1 30); do
+  if docker exec jumpa-auth-staging wget -q -O - http://127.0.0.1:9999/health >/dev/null 2>&1 && docker exec jumpa-storage-staging wget -q -O - http://127.0.0.1:5000/status >/dev/null 2>&1; then
+    echo "PASS: isolated GoTrue and Storage healthy."
+    echo "Service: jumpa-auth-staging on jumpa-staging-net (alias auth-staging:9999)"
+    echo "Secret files: $ROOT/.env and $ROOT/auth.env (mode 600)"
+  python3 - "$AUTH_ENV" "$ROOT/web.env.fragment" <<'PY'
+import sys
+values={}
+for line in open(sys.argv[1]):
+    if "=" in line:
+        k,v=line.rstrip("\\n").split("=",1); values[k]=v
+with open(sys.argv[2],"w") as f:
+    f.write("# Both APIs share this host but use separate /auth/v1 and /storage/v1 proxy routes.\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_AUTH_URL=https://auth-staging.bahasacerdas.com\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY="+values["STAGING_ANON_KEY"]+"\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_STORAGE_URL=https://auth-staging.bahasacerdas.com\\n")
+    f.write("NEXT_PUBLIC_SUPABASE_STORAGE_ANON_KEY="+values["STAGING_ANON_KEY"]+"\\n")
+    f.write("SUPABASE_STORAGE_URL=https://auth-staging.bahasacerdas.com\\n")
+    f.write("SUPABASE_STORAGE_SERVICE_ROLE_KEY="+values["STAGING_SERVICE_ROLE_KEY"]+"\\n")
+PY
+  chmod 600 "$ROOT/web.env.fragment"
+  echo "Staging web env fragment created: $ROOT/web.env.fragment (merge into staging build/runtime env only)."
+    echo "NEXT: configure staging-only reverse proxy: https://$DOMAIN/auth/v1/* -> auth-staging:9999 (strip /auth/v1 prefix)."
+    echo "Then set STAGING auth URL/key in jumpa-web-staging build/runtime, and run staging-auth-e2e.mjs."
+    exit 0
+  fi
+  sleep 2
+done
+docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" logs --tail=80 auth
+die "GoTrue healthcheck failed. Production was not touched."
+; then
+  docker exec "$DB_CONTAINER" createdb -U "$PGUSER" -O jumpa_storage jumpa_storage_staging
+fi
+if ! grep -q '^STORAGE_DATABASE_URL=' "$ENV_FILE"; then
+  printf 'STORAGE_DATABASE_URL=postgresql://jumpa_storage:%s@jumpa-db-staging:5432/jumpa_storage_staging?sslmode=disable\\n' "$STORAGE_DB_PASSWORD" >> "$ENV_FILE"
+fi
+chmod 600 "$ENV_FILE" "$AUTH_ENV"
+# Compose interpolation needs values from both root-only secret files.
 export AUTH_DB_PASSWORD SMTP_HOST SMTP_PORT SMTP_USER SMTP_PASS SMTP_SENDER
 set -a
 . "$ENV_FILE"
+. "$AUTH_ENV"
 set +a
 # Point compose to the secret directory without copying secrets into source.
 TMP_COMPOSE="$ROOT/docker-compose.yml"
