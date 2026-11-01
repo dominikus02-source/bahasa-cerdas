@@ -133,7 +133,12 @@ for line in open(sys.argv[1]):
     if "=" in line:
         k,v=line.rstrip("\n").split("=",1); values[k]=v
 with open(sys.argv[2],"w") as f:
-    f.write("# Staging-only Auth + Storage endpoints; Caddy routes each API path separately.\n")
+    f.write("# Staging-only endpoints and public JUMPA settings.\n")
+    f.write("APP_URL=https://staging.bahasacerdas.com\n")
+    f.write("NEXT_PUBLIC_SITE_URL=https://staging.bahasacerdas.com\n")
+    f.write("NEXT_PUBLIC_JUMPA_ENABLED=true\n")
+    f.write("NEXT_PUBLIC_LIVEKIT_WS_URL=wss://jumpa-staging.bahasacerdas.com\n")
+    f.write("LIVEKIT_URL=http://jumpa-livekit-staging:7883\n")
     f.write("NEXT_PUBLIC_SUPABASE_AUTH_URL=https://auth-staging.bahasacerdas.com\n")
     f.write("NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY="+values["STAGING_ANON_KEY"]+"\n")
     f.write("NEXT_PUBLIC_SUPABASE_STORAGE_URL=https://auth-staging.bahasacerdas.com\n")
