@@ -134,7 +134,9 @@ services:
       FILE_SIZE_LIMIT: "524288000"
       STORAGE_BACKEND: file
       GLOBAL_S3_BUCKET: jumpa-staging
+      STORAGE_FILE_BACKEND_PATH: /var/lib/storage
       FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      SERVER_REGION: local
       TENANT_ID: jumpa-staging
       REGION: local
       ENABLE_IMAGE_TRANSFORMATION: "false"
