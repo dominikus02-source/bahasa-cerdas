@@ -442,7 +442,8 @@
     "test:jumpa-umum": "npx tsx scripts/test-jumpa-umum.ts",
     "jumpa:bundle-report": "node scripts/jumpa-bundle-report.mjs",
     "email:preview": "node scripts/preview-recovery-email.mjs",
-    "test:password-recovery": "node --import tsx scripts/test-password-recovery.ts"
+    "test:password-recovery": "node --import tsx scripts/test-password-recovery.ts",
+    "test:staging-auth-storage-separation": "node scripts/test-staging-auth-storage-separation.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
