@@ -61,7 +61,7 @@ export async function configureBucket(
       const existing = await current.json();
       if (!existing.file_size_limit || existing.file_size_limit < maxSizeBytes) {
         const updated = await fetch(bucketUrl, {
-          method: "PATCH", headers,
+          method: "PUT", headers,
           body: JSON.stringify({ public: true, file_size_limit: maxSizeBytes }),
         });
         if (!updated.ok) throw new Error(`Bucket update failed: ${updated.status}`);
