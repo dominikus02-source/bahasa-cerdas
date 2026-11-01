@@ -2,9 +2,9 @@
 # One-time, staging-only GoTrue + Storage bootstrap. Production is never targeted.
 set -Eeuo pipefail
 umask 077
-ROOT="$STAGING_AUTH_DIR"
+ROOT="$(printenv STAGING_AUTH_DIR 2>/dev/null || true)"
 [[ -n "$ROOT" ]] || ROOT="/opt/bahasacerdas/staging/auth"
-REPO_DIR="$STAGING_AUTH_REPO"
+REPO_DIR="$(printenv STAGING_AUTH_REPO 2>/dev/null || true)"
 if [[ -z "$REPO_DIR" ]]; then REPO_DIR="$(cd "$(dirname "$0")/../.." && pwd)"; fi
 COMPOSE="$REPO_DIR/ops/staging-auth/docker-compose.yml"
 DB_CONTAINER="jumpa-db-staging"
