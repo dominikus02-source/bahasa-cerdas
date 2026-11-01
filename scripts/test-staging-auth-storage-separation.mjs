@@ -56,6 +56,7 @@ assert.match(compose, /PGRST_DB_URI/);
 assert.match(compose, /DB_INSTALL_ROLES: "true"/);
 assert.match(compose, /storage-private/);
 assert.match(compose, /storage-db/);
+assert.doesNotMatch(compose, /rest:\s*\n\s*condition: service_healthy/);
 assert.match(compose, /STORAGE_BACKEND: file/);
 assert.match(bootstrap, /STORAGE_DB_PASSWORD/);
 assert.match(bootstrap, /AUTHENTICATOR_DB_PASSWORD/);
