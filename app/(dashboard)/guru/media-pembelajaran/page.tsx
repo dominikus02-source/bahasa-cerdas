@@ -28,7 +28,7 @@ export default function MediaPembelajaranPage() {
             <Clapperboard className="w-7 h-7 text-emerald-600" />
             Media Pembelajaran
           </h1>
-          <p className="text-sm text-slate-500">Video belajar dan artikel dalam satu tempat</p>
+          <p className="text-sm text-slate-500">Video belajar dan AKSARA dalam satu tempat</p>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default function MediaPembelajaranPage() {
           }`}
         >
           <Newspaper className="w-4 h-4" />
-          Artikel
+          AKSARA
         </button>
       </div>
 

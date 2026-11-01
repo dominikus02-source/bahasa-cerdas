@@ -190,7 +190,7 @@ export default async function HomePage() {
                   href="/artikel"
                   className="text-sm font-semibold text-zinc-500 hover:text-primary transition-colors focus-ring rounded"
                 >
-                  Lihat Semua Artikel &rarr;
+                  Lihat Semua AKSARA &rarr;
                 </Link>
               </div>
             </div>

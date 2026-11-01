@@ -31,8 +31,8 @@ export const MISI_GURU: MisiGuruConfig[] = [
   },
   {
     id: "artikel",
-    label: "Menulis Artikel",
-    desc: "Tulis artikel minggu ini",
+    label: "Menulis di AKSARA",
+    desc: "Tulis karya minggu ini",
     xp: 50,
     href: "/guru/artikel",
     icon: "pen",

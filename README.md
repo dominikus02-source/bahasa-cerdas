@@ -134,7 +134,7 @@ npm start
 
 ## Environment Variables
 
-`.gitignore` mengabaikan seluruh pola `.env*` (termasuk `.env.example`), dan saat ini **belum ada template env di root**. Variabel berikut diambil dari pemakaian aktual di `app/`, `lib/`, `src/`, serta `ops/vps/prepare-runtime-envs.sh`.
+`.gitignore` mengabaikan seluruh pola `.env*` **kecuali `.env.example`** (ada rule `!.env.example`) — jadi **template env sudah tersedia di root: [`.env.example`](.env.example)** (berisi placeholder, tanpa rahasia). Nilai produksi tidak ada di repo: semuanya di VPS, `/opt/bahasacerdas/config/web.env`. Variabel berikut diambil dari pemakaian aktual di `app/`, `lib/`, `src/`, serta `ops/vps/prepare-runtime-envs.sh`.
 
 Wajib:
 
@@ -218,7 +218,7 @@ npm run test:load:ukbi-100
 - `.github/workflows/deploy-production.yml` berjalan setelah CI sukses di branch `main` (atau manual `workflow_dispatch`): SSH ke VPS, `git pull --ff-only`, lalu `ops/vps/deploy.sh` yang mem-build image web, menyalakan Redis + web, dan menunggu `/api/health` melaporkan `status=ok` dan `db=up`.
 - Stack VPS (`ops/vps/docker-compose.yml`) terdiri dari service `redis`, `web`, `game`, `agent`, `cron` (profil `scheduler`, diaktifkan dengan `ENABLE_CRON=1`), dan `caddy` sebagai reverse proxy/TLS.
 - `Dockerfile.worker` membangun image worker agent (`src/agent/worker/run.ts`); `Dockerfile.cron` hanya berisi `crond` + `curl` dengan zona waktu `Asia/Jakarta`.
-- `vercel.json` masih dipertahankan untuk redirect (`bahasacerdas.com` → `www`, `/arena-junior` → `/junior`). Catatan: `redirects`/`headers` di `vercel.json` menimpa konfigurasi setara di `next.config.ts`.
+- `vercel.json` **sudah tidak aktif** — Vercel tidak lagi melayani traffic (origin = VPS, di belakang Cloudflare + Caddy; respons produksi membawa `via: 1.1 Caddy`). Isinya (`regions: ["sin1"]`, redirect `bahasacerdas.com` → `www`, `/arena-junior` → `/junior`) tetap dipertahankan sebagai warisan, tapi **tidak dieksekusi siapa pun**. Kalau redirect itu diperlukan, pindahkan ke `next.config.ts` atau `ops/vps/Caddyfile` — jangan mengandalkan `vercel.json`. Catatan lama yang masih relevan bila dipakai lagi: `redirects`/`headers` di `vercel.json` menimpa konfigurasi setara di `next.config.ts`.
 
 ## Konvensi Kontribusi
 

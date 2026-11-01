@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
+import type React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -29,6 +30,7 @@ import { AktivitasList } from "@/components/umum/AktivitasList";
 import { UmumTrialOffer } from "@/components/umum/UmumTrialOffer";
 import { umumTrialView } from "@/lib/umum/trial";
 import { buttonClass } from "@/components/ui/button";
+import { NaraIcon, JumpaIcon, GimIcon, JalurCerdasIcon, BigtIcon, AksaraIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 
 export const dynamic = "force-dynamic";
 
@@ -41,15 +43,15 @@ export const metadata: Metadata = {
  * Ubin ikon "Ruang Jelajahmu": satu gradien per produk (tokens.css §4,
  * --bc-tile-*), ikon putih (kontras ≥ 3:1). Tanpa palet Tailwind mentah.
  */
-const PRODUCT_TILE: Record<UmumProductKey, { icon: LucideIcon; tile: string }> =
+const PRODUCT_TILE: Record<UmumProductKey, { icon: React.ComponentType<any>; tile: string; custom?: boolean }> =
   {
-    NARA: { icon: Sparkles, tile: "bg-[image:var(--bc-tile-nara)]" },
-    JUMPA: { icon: Camera, tile: "bg-[image:var(--bc-tile-jumpa)]" },
-    MAIN_BERSAMA: { icon: Gamepad2, tile: "bg-[image:var(--bc-tile-main)]" },
-    JALUR_CERDAS: { icon: Route, tile: "bg-[image:var(--bc-tile-jalur)]" },
-    BIGT: { icon: Target, tile: "bg-[image:var(--bc-tile-bigt)]" },
-    AKSARA: { icon: BookOpenText, tile: "bg-[image:var(--bc-tile-aksara)]" },
-    TOKO_KARYA: { icon: Store, tile: "bg-[image:var(--bc-tile-toko)]" },
+    NARA: { icon: NaraIcon, tile: "", custom: true },
+    JUMPA: { icon: JumpaIcon, tile: "", custom: true },
+    MAIN_BERSAMA: { icon: GimIcon, tile: "", custom: true },
+    JALUR_CERDAS: { icon: JalurCerdasIcon, tile: "", custom: true },
+    BIGT: { icon: BigtIcon, tile: "", custom: true },
+    AKSARA: { icon: AksaraIcon, tile: "", custom: true },
+    TOKO_KARYA: { icon: TokoKaryaIcon, tile: "", custom: true },
     AKU_SASTRAWAN: { icon: Feather, tile: "bg-[image:var(--bc-tile-aku)]" },
   };
 /** Produk berlabel Premium di desain (AKU SASTRAWAN = produk premium). */
@@ -222,7 +224,7 @@ export default async function UmumDashboardPage({
           ) : (
             <ul className="grid grid-cols-4 gap-2.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
               {products.map((p) => {
-                const { icon: Icon, tile } = PRODUCT_TILE[p.key];
+                const { icon: Icon, tile, custom } = PRODUCT_TILE[p.key];
                 const dev = p.status === "dev";
                 const premium = PREMIUM.has(p.key);
                 const Arrow = p.external ? ArrowUpRight : ArrowRight;
@@ -232,7 +234,7 @@ export default async function UmumDashboardPage({
                       <span
                         className={`relative grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon text-white shadow-bc-1 sm:h-12 sm:w-12 ${tile}`}
                       >
-                        <Icon size={22} aria-hidden />
+                        {custom ? <Icon size={44} aria-hidden /> : <Icon size={22} aria-hidden />}
                         {dev && (
                           <span
                             aria-hidden
@@ -437,37 +439,25 @@ export default async function UmumDashboardPage({
                 : "Belum ada gim yang tersedia."}
             </p>
           ) : (
-            <ul className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3">
-              {games.map((g) => {
-                const Icon = g.icon ?? Gamepad2;
-                return (
-                  <li key={g.id} className="min-w-0">
-                    <Link
-                      href={g.href}
-                      data-game={g.id}
-                      className="group flex h-full items-start gap-3 rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-colors hover:border-bc-line-strong hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
-                    >
-                      <span
-                        className={`grid h-11 w-11 shrink-0 place-items-center rounded-bc-icon bg-gradient-to-br text-white ${g.gradient}`}
-                      >
-                        <Icon size={22} aria-hidden />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate font-bold text-bc-text">
-                          {g.title}
-                        </span>
-                        <span className="mt-0.5 line-clamp-2 block text-bc-small text-bc-text-2">
-                          {g.description}
-                        </span>
-                        <span className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs font-semibold text-bc-text-3">
-                          <span>{g.xp}</span>
-                          <span>{g.time}</span>
-                        </span>
-                      </span>
-                    </Link>
-                  </li>
-                );
-              })}
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {games.map((g) => (
+                <li key={g.id}>
+                  <Link
+                    href={`/arena/game/${g.id}`}
+                    className="group flex h-full flex-col rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-bc-1 transition-[transform,box-shadow] hover:-translate-y-0.5 hover:shadow-bc-2"
+                  >
+                    <div className="flex h-10 w-10 items-center justify-center rounded-bc-icon bg-bc-info-soft text-bc-info">
+                      <Gamepad2 size={20} />
+                    </div>
+                    <h3 className="mt-3 font-semibold text-bc-text group-hover:text-bc-aud">
+                      {g.title}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-xs text-bc-text-3">
+                      {g.description}
+                    </p>
+                  </Link>
+                </li>
+              ))}
             </ul>
           )}
         </section>

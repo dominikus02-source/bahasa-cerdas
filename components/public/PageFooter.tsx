@@ -21,7 +21,7 @@ const footerLinks = [
       { href: "/tentang", label: "Tim" },
       { href: "/loker", label: "Kontak & Karier" },
       { href: "/faq", label: "FAQ" },
-      { href: "/artikel", label: "Artikel & Tips" },
+      { href: "/artikel", label: "AKSARA" },
     ],
   },
   {

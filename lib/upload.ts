@@ -24,7 +24,7 @@ const ALLOWED_FILE_TYPES = {
 const MAX_FILE_SIZES = {
   PDF: 20 * 1024 * 1024,
   EPUB: 20 * 1024 * 1024,
-  DOCX: 15 * 1024 * 1024,
+  DOCX: 20 * 1024 * 1024,
   PPTX: 50 * 1024 * 1024,
   XLSX: 10 * 1024 * 1024,
   MP4: 500 * 1024 * 1024,
@@ -232,7 +232,9 @@ export const FILE_TYPE_LABELS: Record<string, string> = {
   PDF: "PDF",
   EPUB: "EPUB",
   DOCX: "Word Document",
+  DOC: "Word Document (lama)",
   PPTX: "PowerPoint",
+  PPT: "PowerPoint (lama)",
   XLSX: "Excel",
   MP4: "Video MP4",
   ZIP: "ZIP Archive",

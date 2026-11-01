@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Video, Gamepad2, Map, Bot, Sparkles, ArrowRight } from "lucide-react";
+import { Users, Sparkles, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
+import { JumpaIcon, NaraIcon, GimIcon, JalurCerdasIcon } from "@/components/shared/FeatureIcons";
 
 const features = [
   {
@@ -12,34 +13,39 @@ const features = [
     desc: "Belajar bareng teman sekelas.",
     href: "/main-bersama",
     color: "bg-violet-100 text-violet-600",
+    custom: false,
   },
   {
-    icon: Video,
+    icon: JumpaIcon,
     title: "JUMPA",
     desc: "Video kelas & webinar.",
     href: "/jumpa",
-    color: "bg-emerald-100 text-emerald-600",
+    color: "",
+    custom: true,
   },
   {
-    icon: Gamepad2,
+    icon: GimIcon,
     title: "Gim Edukasi",
     desc: "Kuis Tempur & arena.",
     href: "/arena/game",
-    color: "bg-rose-100 text-rose-600",
+    color: "",
+    custom: true,
   },
   {
-    icon: Map,
+    icon: JalurCerdasIcon,
     title: "Jalur Cerdas",
     desc: "Belajar langkah demi langkah.",
     href: "/arena/jalur-cerdas",
-    color: "bg-sky-100 text-sky-600",
+    color: "",
+    custom: true,
   },
   {
-    icon: Bot,
+    icon: NaraIcon,
     title: "NARA",
     desc: "Teman ngobrol untuk belajar.",
     href: "/arena/ai",
-    color: "bg-amber-100 text-amber-600",
+    color: "",
+    custom: true,
   },
   {
     icon: Sparkles,
@@ -47,6 +53,7 @@ const features = [
     desc: "Rekan guru menyiapkan pembelajaran.",
     href: "/ai-bc",
     color: "bg-indigo-100 text-indigo-600",
+    custom: false,
   },
 ];
 
@@ -80,8 +87,8 @@ export default function FiturUnggulanSection() {
                   href={f.href}
                   className="group flex items-center gap-4 rounded-xl border border-zinc-100 bg-white p-4 hover:border-zinc-200 hover:shadow-md transition-all"
                 >
-                  <div className={`flex-shrink-0 p-3 rounded-xl ${f.color}`}>
-                    <Icon size={22} />
+                  <div className={f.custom ? "flex-shrink-0" : `flex-shrink-0 p-3 rounded-xl ${f.color}`}>
+                    {f.custom ? <Icon size={48} /> : <Icon size={22} />}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-zinc-900 group-hover:text-primary transition-colors">

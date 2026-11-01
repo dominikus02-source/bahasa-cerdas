@@ -55,7 +55,7 @@ const PRIORITAS_MISI = [
 export const CTA_SELESAI: readonly NextActionGuru[] = [
   {
     type: "artikel",
-    label: "Tulis Artikel",
+    label: "Tulis di AKSARA",
     desc: "Bagikan praktik baikmu dan kumpulkan XP mingguan berikutnya",
     xp: 50,
     href: "/guru/artikel",

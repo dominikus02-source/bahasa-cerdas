@@ -11,6 +11,7 @@ import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ShellLayout } from "@/components/shell/ShellLayout";
 import { RoleSections } from "@/components/shell/RoleSections";
+import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
 import { ShellSidebarFooter } from "@/components/shell/ShellSidebarFooter";
 import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
@@ -49,7 +50,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
     redirect(dashboardForUser(user.role, user.isFounder));
   }
 
-  if (!user.onboarded) {
+  if (!user.onboarded && !user.isFounder) {
     redirect("/guru/onboarding");
   }
 
@@ -161,6 +162,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
           </div>
 
           <div className="flex min-w-0 items-center gap-1.5 md:gap-2">
+            <FounderDashboardSwitcher user={user} compact />
             <Link
               href="/guru/profile"
               className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
 import { isUmum } from "@/lib/auth/roles";
 import { dashboardForUser } from "@/lib/auth/redirect";
+import { canUseFounderDashboardSwitcher } from "@/lib/auth/founder-access";
 
 /**
  * Guard server untuk halaman dasbor UMUM (/umum, /umum/koleksi, …).
@@ -21,6 +22,6 @@ import { dashboardForUser } from "@/lib/auth/redirect";
 export async function requireUmumPage(path: string) {
   const user = await getUser();
   if (!user) redirect(`/login?next=${encodeURIComponent(path)}`);
-  if (!isUmum(user.role) || user.isFounder) redirect(dashboardForUser(user.role, user.isFounder));
+  if ((!isUmum(user.role) || user.isFounder) && !canUseFounderDashboardSwitcher(user)) redirect(dashboardForUser(user.role, user.isFounder));
   return user;
 }

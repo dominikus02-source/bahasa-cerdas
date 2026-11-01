@@ -63,7 +63,7 @@ const QUICK_ACTIONS: QuickAction[] = [
   },
   {
     label: "Buat Karya",
-    desc: "Tulis artikel, puisi, atau karya pembelajaran.",
+    desc: "Tulis artikel, puisi, atau karya pembelajaran di AKSARA.",
     href: "/guru/artikel",
     icon: FilePenLine,
     image: PHOTO.writing,
