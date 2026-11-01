@@ -104,6 +104,19 @@ set +a
 TMP_COMPOSE="$ROOT/docker-compose.yml"
 sed "s|\./auth.env|$AUTH_ENV|" "$COMPOSE" > "$TMP_COMPOSE"
 chmod 600 "$TMP_COMPOSE"
+# Start only the dedicated databases first. Keep the password-bearing SQL mode
+# 600 on the host; feed it over stdin rather than mounting it for another UID.
+docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d auth-db storage-db
+STORAGE_DB_READY=0
+for i in $(seq 1 120); do
+  if docker exec -u postgres jumpa-storage-db-staging pg_isready -U postgres -d storage >/dev/null 2>&1; then
+    STORAGE_DB_READY=1
+    break
+  fi
+  sleep 2
+done
+[[ "$STORAGE_DB_READY" == "1" ]] || die "Staging Storage database not ready; no volumes removed."
+docker exec -i -u postgres jumpa-storage-db-staging psql -X -v ON_ERROR_STOP=1 -d storage < "$ROOT/init-storage.sql"
 docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d
 
 for i in $(seq 1 40); do

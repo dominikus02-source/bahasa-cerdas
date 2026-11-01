@@ -71,7 +71,6 @@ services:
       POSTGRES_PASSWORD: ${STORAGE_DB_PASSWORD:?STORAGE_DB_PASSWORD required}
     volumes:
       - jumpa_storage_staging_db:/var/lib/postgresql/data
-      - ./init-storage.sql:/docker-entrypoint-initdb.d/00-init-authenticator.sql:ro
     networks: [storage-private]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres -d storage"]

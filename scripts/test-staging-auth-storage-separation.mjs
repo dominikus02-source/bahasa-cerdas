@@ -93,3 +93,10 @@ for (const path of ["../lib/supabase/server-login.ts", "../app/api/auth/forgot-p
   assert.match(source, /SUPABASE_AUTH_(ANON|SERVICE_ROLE)_KEY/, path + " must use dedicated Auth credentials");
 }
 console.log("PASS: login, recovery, registration and reauthentication use dedicated Auth");
+
+// A root-only SQL file must be piped from the host, never read by the container UID.
+assert.doesNotMatch(compose, /init-storage\.sql:\/docker-entrypoint-initdb\.d/);
+assert.match(bootstrap, /docker exec -i -u postgres jumpa-storage-db-staging psql -X -v ON_ERROR_STOP=1 -d storage < "\$ROOT\/init-storage\.sql"/);
+assert.ok(bootstrap.indexOf('up -d auth-db storage-db') < bootstrap.indexOf('psql -X -v ON_ERROR_STOP=1'));
+assert.ok(bootstrap.indexOf('psql -X -v ON_ERROR_STOP=1') < bootstrap.lastIndexOf('up -d\n'));
+console.log("PASS: private Storage init SQL uses host stdin before API startup");
