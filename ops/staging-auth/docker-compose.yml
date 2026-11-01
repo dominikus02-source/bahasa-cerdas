@@ -30,6 +30,7 @@ services:
       GOTRUE_DB_DATABASE_URL: postgres://gotrue:${AUTH_DB_PASSWORD}@auth-db:5432/gotrue?sslmode=disable
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: "9999"
+      API_EXTERNAL_URL: https://auth-staging.bahasacerdas.com/auth/v1
       GOTRUE_SITE_URL: https://staging.bahasacerdas.com
       GOTRUE_URI_ALLOW_LIST: https://staging.bahasacerdas.com/**
       GOTRUE_JWT_ADMIN_ROLES: service_role
