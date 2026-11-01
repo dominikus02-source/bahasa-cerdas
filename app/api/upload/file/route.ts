@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createStorageAdminClient } from "@/lib/supabase/storage-server";
 import { getUser } from "@/lib/supabase/server";
 import { validateUpload } from "@/lib/upload-validation";
 
@@ -22,10 +22,7 @@ export async function POST(req: NextRequest) {
     const folder = formData.get("folder") as string || "umum";
     const fileName = `${folder}/${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${check.ext}`;
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createStorageAdminClient();
 
     const { error, data } = await supabase.storage.from(bucket).upload(fileName, file, {
       cacheControl: "31536000",
