@@ -39,6 +39,7 @@ const compose = read("../ops/staging-auth/docker-compose.yml");
 const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
 const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
 const caddyInstaller = read("../ops/staging-auth/install-staging-caddy.sh");
+const backup = read("../ops/staging-auth/backup-staging-auth-storage.sh");
 const provision = read("../scripts/staging-storage-provision.mjs");
 const recording = read("../app/api/upload/rekaman/route.ts");
 const fileRoute = read("../app/api/upload/file/route.ts");
@@ -74,6 +75,10 @@ assert.match(caddyInstaller, /STAGING_CADDY_CONTAINER/);
 assert.match(caddyInstaller, /dedicated staging Caddy/);
 assert.doesNotMatch(caddyInstaller, /bahasacerdas-prod-caddy/);
 assert.match(caddyInstaller, /STAGING_CADDY_CONFIG_DIR.*STAGING_ROOT/);
+assert.match(backup, /jumpa-auth-db-staging/);
+assert.match(backup, /jumpa-storage-db-staging/);
+assert.match(backup, /jumpa_storage_staging_files/);
+assert.match(backup, /sha256sum -c SHA256SUMS/);
 
 console.log("PASS: Auth and Storage endpoint separation contracts");
 console.log("PASS: split Auth without Storage fails closed");
