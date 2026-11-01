@@ -35,6 +35,7 @@ for (const path of [
 const compose = read("../ops/staging-auth/docker-compose.yml");
 const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
 const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
+const provision = read("../scripts/staging-storage-provision.mjs");
 assert.match(compose, /supabase\/storage-api:v1\.81\.0/);
 assert.match(compose, /jumpa_storage_staging_db/);
 assert.match(compose, /postgrest\/postgrest:v14\.18/);
@@ -48,6 +49,9 @@ assert.match(bootstrap, /AUTHENTICATOR_DB_PASSWORD/);
 assert.match(bootstrap, /PGRST_DB_URI/);
 assert.match(bootstrap, /init-storage\.sql/);
 assert.match(bootstrap, /NEXT_PUBLIC_SUPABASE_STORAGE_URL/);
+assert.match(provision, /auth-staging\\./);
+assert.match(provision, /public: true/);
+assert.match(provision, /will not make it public/);
 assert.match(caddy, /handle_path \/storage\/v1\/\*/);
 assert.match(caddy, /reverse_proxy storage-staging:5000/);
 assert.match(caddy, /X-Forwarded-Prefix \/storage\/v1/);
