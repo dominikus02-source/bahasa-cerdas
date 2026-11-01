@@ -40,6 +40,7 @@ const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
 const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
 const provision = read("../scripts/staging-storage-provision.mjs");
 const recording = read("../app/api/upload/rekaman/route.ts");
+const fileRoute = read("../app/api/upload/file/route.ts");
 assert.match(compose, /supabase\/storage-api:v1\.81\.0/);
 assert.match(compose, /jumpa_storage_staging_db/);
 assert.match(compose, /postgrest\/postgrest:v14\.18/);
