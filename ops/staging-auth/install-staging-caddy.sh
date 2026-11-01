@@ -13,8 +13,8 @@ BACKUP="$TARGET.bak.$STAMP"
 [[ -f "$SOURCE" ]] || { echo "STOP: staging Caddy snippet missing"; exit 1; }
 docker inspect "$CADDY_CONTAINER" >/dev/null 2>&1 || { echo "STOP: shared Caddy container missing"; exit 1; }
 docker exec "$CADDY_CONTAINER" test -f /etc/caddy/Caddyfile || { echo "STOP: Caddyfile missing"; exit 1; }
-grep -q 'import /etc/caddy/conf.d/\\*.caddy' /opt/bahasacerdas/config/Caddyfile 2>/dev/null || \
-  docker exec "$CADDY_CONTAINER" grep -q 'import /etc/caddy/conf.d/\\*.caddy' /etc/caddy/Caddyfile || {
+grep -Fq 'import /etc/caddy/conf.d/*.caddy' /opt/bahasacerdas/config/Caddyfile 2>/dev/null || \
+  docker exec "$CADDY_CONTAINER" grep -Fq 'import /etc/caddy/conf.d/*.caddy' /etc/caddy/Caddyfile || {
     echo "STOP: Caddy does not import the staging snippet directory"; exit 1;
   }
 
