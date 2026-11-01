@@ -66,4 +66,4 @@ networks:
     internal: true
   jumpa-staging-net:
     external: true
-    name: jumpa-staging-net
+    name: ${STAGING_DOCKER_NETWORK:?STAGING_DOCKER_NETWORK required}
