@@ -52,7 +52,7 @@ def b64(v): return base64.urlsafe_b64encode(v).rstrip(b"=").decode()
 def jwt(role):
     now=int(time.time())
     header=b64(b'{"alg":"HS256","typ":"JWT"}')
-    payload=b64(json.dumps({"iss":"gotrue","ref":"jumpa-auth-staging","role":role,"aud":"authenticated" if role=="authenticated" else "service_role","iat":now,"exp":now+10*365*86400},separators=(",",":")).encode())
+    payload=b64(json.dumps({"iss":"gotrue","ref":"jumpa-auth-staging","role":role,"aud":"authenticated","iat":now,"exp":now+10*365*86400},separators=(",",":")).encode())
     msg=f"{header}.{payload}".encode()
     sig=b64(hmac.new(secret.encode(),msg,hashlib.sha256).digest())
     return f"{header}.{payload}.{sig}"
