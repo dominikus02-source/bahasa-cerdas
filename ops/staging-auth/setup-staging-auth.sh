@@ -7,7 +7,6 @@ ROOT="$(printenv STAGING_AUTH_DIR 2>/dev/null || true)"
 REPO_DIR="$(printenv STAGING_AUTH_REPO 2>/dev/null || true)"
 if [[ -z "$REPO_DIR" ]]; then REPO_DIR="$(cd "$(dirname "$0")/../.." && pwd)"; fi
 COMPOSE="$REPO_DIR/ops/staging-auth/docker-compose.yml"
-DB_CONTAINER="jumpa-db-staging"
 
 die(){ echo "STOP: $*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] || die "Jalankan sebagai root."
@@ -15,7 +14,6 @@ command -v docker >/dev/null || die "Docker tidak ditemukan."
 command -v openssl >/dev/null || die "openssl dibutuhkan."
 docker info >/dev/null 2>&1 || die "Docker daemon tidak aktif."
 docker inspect jumpa-web-staging >/dev/null 2>&1 || die "Container jumpa-web-staging tidak ditemukan."
-docker inspect "$DB_CONTAINER" >/dev/null 2>&1 || die "Database staging container tidak ditemukan."
 NETWORKS="$(docker inspect -f '{{range $name, $cfg := .NetworkSettings.Networks}}{{println $name}}{{end}}' jumpa-web-staging | grep -i staging || true)"
 [[ -n "$NETWORKS" ]] || die "Tidak menemukan network staging pada jumpa-web-staging."
 [[ "$(printf '%s\n' "$NETWORKS" | wc -l | tr -d ' ')" == "1" ]] || die "Lebih dari satu network staging; set STAGING_DOCKER_NETWORK secara eksplisit."
@@ -67,47 +65,35 @@ elif [[ ! -s "$ENV_FILE" || ! -s "$AUTH_ENV" ]]; then
   die "Konfigurasi parsial. Periksa manual; tidak menimpa secret."
 fi
 
-# Create a dedicated Storage metadata database inside staging Postgres only.
-PGUSER="$(docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' "$DB_CONTAINER" | sed -n 's/^POSTGRES_USER=//p' | head -1)"
-[[ -n "$PGUSER" ]] || PGUSER="postgres"
+# Dedicated Storage database runs in its own Postgres container and volume.
+# It never shares the application database or the Auth database.
 if ! grep -q '^STORAGE_DB_PASSWORD=' "$ENV_FILE"; then
   printf 'STORAGE_DB_PASSWORD=%s\n' "$(openssl rand -hex 32)" >> "$ENV_FILE"
 fi
+if ! grep -q '^AUTHENTICATOR_DB_PASSWORD=' "$ENV_FILE"; then
+  printf 'AUTHENTICATOR_DB_PASSWORD=%s\n' "$(openssl rand -hex 32)" >> "$ENV_FILE"
+fi
 STORAGE_DB_PASSWORD="$(sed -n 's/^STORAGE_DB_PASSWORD=//p' "$ENV_FILE" | head -1)"
-[[ -n "$STORAGE_DB_PASSWORD" ]] || die "STORAGE_DB_PASSWORD kosong."
+AUTHENTICATOR_DB_PASSWORD="$(sed -n 's/^AUTHENTICATOR_DB_PASSWORD=//p' "$ENV_FILE" | head -1)"
+[[ -n "$STORAGE_DB_PASSWORD" && -n "$AUTHENTICATOR_DB_PASSWORD" ]] || die "Storage database credentials incomplete."
+if ! grep -q '^PGRST_DB_URI=' "$ENV_FILE"; then
+  printf 'PGRST_DB_URI=postgres://authenticator:%s@storage-db:5432/storage?sslmode=disable\n' "$AUTHENTICATOR_DB_PASSWORD" >> "$ENV_FILE"
+fi
 
-docker exec -i "$DB_CONTAINER" psql -U "$PGUSER" -d postgres -v ON_ERROR_STOP=1 <<SQL >/dev/null
-DO \$\$
+# The Storage API migrations create anon/authenticated/service_role and grant
+# them to authenticator. Pre-create only the isolated PostgREST login.
+cat > "$ROOT/init-storage.sql" <<SQL
+DO \\$\\$
 BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='jumpa_storage') THEN
-    EXECUTE format('CREATE ROLE jumpa_storage LOGIN PASSWORD %L', '$STORAGE_DB_PASSWORD');
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='authenticator') THEN
+    CREATE ROLE authenticator LOGIN NOINHERIT PASSWORD '$AUTHENTICATOR_DB_PASSWORD';
+  ELSE
+    ALTER ROLE authenticator WITH LOGIN NOINHERIT PASSWORD '$AUTHENTICATOR_DB_PASSWORD';
   END IF;
 END
-\$\$;
-ALTER ROLE jumpa_storage WITH LOGIN PASSWORD '$STORAGE_DB_PASSWORD';
+\\$\\$;
 SQL
-
-if ! docker exec "$DB_CONTAINER" psql -U "$PGUSER" -d postgres -Atc "SELECT 1 FROM pg_database WHERE datname='jumpa_storage_staging'" | grep -q '^1$'; then
-  docker exec "$DB_CONTAINER" createdb -U "$PGUSER" -O jumpa_storage jumpa_storage_staging
-fi
-if ! grep -q '^STORAGE_DATABASE_URL=' "$ENV_FILE"; then
-  printf 'STORAGE_DATABASE_URL=postgresql://jumpa_storage:%s@jumpa-db-staging:5432/jumpa_storage_staging?sslmode=disable\n' "$STORAGE_DB_PASSWORD" >> "$ENV_FILE"
-fi
-# Prepare only the new Storage database: roles, extensions and ownership.
-docker exec -i "$DB_CONTAINER" psql -U "$PGUSER" -d jumpa_storage_staging -v ON_ERROR_STOP=1 <<SQL >/dev/null
-DO \$\$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='anon') THEN EXECUTE 'CREATE ROLE anon NOLOGIN'; END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='authenticated') THEN EXECUTE 'CREATE ROLE authenticated NOLOGIN'; END IF;
-  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='service_role') THEN EXECUTE 'CREATE ROLE service_role NOLOGIN BYPASSRLS'; END IF;
-END
-\$\$;
-ALTER ROLE service_role BYPASSRLS;
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
-GRANT anon, authenticated, service_role TO jumpa_storage;
-GRANT USAGE, CREATE ON SCHEMA public TO jumpa_storage;
-ALTER SCHEMA public OWNER TO jumpa_storage;
-SQL
+chmod 600 "$ROOT/init-storage.sql"
 
 chmod 600 "$ENV_FILE" "$AUTH_ENV"
 set -a
@@ -123,9 +109,11 @@ docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d
 for i in $(seq 1 40); do
   AUTH_OK=0
   STORAGE_OK=0
+  REST_OK=0
   docker exec jumpa-auth-staging wget -q -O - http://127.0.0.1:9999/health >/dev/null 2>&1 && AUTH_OK=1 || true
+  docker exec jumpa-storage-rest-staging postgrest --ready >/dev/null 2>&1 && REST_OK=1 || true
   docker exec jumpa-storage-staging wget -q -O - http://127.0.0.1:5000/status >/dev/null 2>&1 && STORAGE_OK=1 || true
-  if [[ "$AUTH_OK" == "1" && "$STORAGE_OK" == "1" ]]; then
+  if [[ "$AUTH_OK" == "1" && "$REST_OK" == "1" && "$STORAGE_OK" == "1" ]]; then
     python3 - "$AUTH_ENV" "$ROOT/web.env.fragment" <<'PY'
 import sys
 values={}
@@ -147,7 +135,7 @@ with open(sys.argv[2],"w") as f:
     f.write("SUPABASE_STORAGE_SERVICE_ROLE_KEY="+values["STAGING_SERVICE_ROLE_KEY"]+"\n")
 PY
     chmod 600 "$ROOT/web.env.fragment"
-    echo "PASS: isolated GoTrue and Storage healthy."
+    echo "PASS: isolated GoTrue, PostgREST and Storage health endpoints are healthy."
     echo "Secret files: $ROOT/.env and $ROOT/auth.env (mode 600)"
     echo "Web env fragment: $ROOT/web.env.fragment (staging build/runtime only)"
     echo "NEXT: install the staging-only Caddy routes for /auth/v1/* and /storage/v1/*, then rebuild staging web with this fragment."
