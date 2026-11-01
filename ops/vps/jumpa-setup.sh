@@ -45,7 +45,7 @@ WEB_URL="${WEB_URL:-https://www.bahasacerdas.com}"
 EXPECTED_IP="${EXPECTED_IP:-103.242.10.81}"
 SYSCTL_FILE="${JUMPA_SYSCTL_FILE:-/etc/sysctl.d/99-livekit.conf}"
 MIGRATION_NAME="20261018000000_jumpa_phase1"   # rollback DB: lihat header file ini
-MIGRATIONS=("20261018000000_jumpa_phase1" "20261018120000_jumpa_phase2" "20261019000000_jumpa_flow")
+MIGRATIONS=("20261018000000_jumpa_phase1" "20261018120000_jumpa_phase2" "20261019000000_jumpa_flow" "20261031120000_jumpa_webinar_stage")
 TURN_DOMAIN="${TURN_DOMAIN:-turn.bahasacerdas.com}"
 TURN_CRON_FILE="${JUMPA_TURN_CRON_FILE:-/etc/cron.d/bahasacerdas-jumpa-turn}"
 PRISMA_VERSION="5.22.0"
@@ -606,14 +606,16 @@ mig_objects_sql() {
     *_jumpa_phase2)
       echo "select (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname in ('JumpaInvite','JumpaChatMessage','JumpaReport'))
                  + (select count(*) from information_schema.columns where table_schema='public' and ((table_name='JumpaRoom' and column_name='chatEnabled') or (table_name='JumpaParticipant' and column_name='totalSeconds') or (table_name='JumpaEvent' and column_name='dedupeKey')))" ;;
+    *_jumpa_webinar_stage)
+      echo "select count(*) from information_schema.columns where table_schema='public' and table_name='JumpaParticipant' and column_name='stageApproved' and data_type='boolean' and is_nullable='NO'" ;;
     *_jumpa_flow)
       echo "select (select count(*) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='public' and c.relkind='r' and c.relname='JumpaNotice')
                  + (select count(*) from pg_indexes where schemaname='public' and indexname='JumpaRoom_status_scheduledAt_idx')
                  + (select count(*) from information_schema.columns where table_schema='public' and table_name='JumpaRoom' and column_name='notifyClass')" ;;
   esac
 }
-mig_expected() { case "$1" in *_jumpa_phase1) echo 7 ;; *_jumpa_phase2) echo 6 ;; *_jumpa_flow) echo 3 ;; esac; }
-mig_rls_tables() { case "$1" in *_jumpa_phase1) echo "'JumpaRoom','JumpaParticipant','JumpaEvent'" ;; *_jumpa_phase2) echo "'JumpaInvite','JumpaChatMessage','JumpaReport'" ;; *_jumpa_flow) echo "'JumpaNotice'" ;; esac; }
+mig_expected() { case "$1" in *_jumpa_phase1) echo 7 ;; *_jumpa_phase2) echo 6 ;; *_jumpa_flow) echo 3 ;; *_jumpa_webinar_stage) echo 1 ;; esac; }
+mig_rls_tables() { case "$1" in *_jumpa_phase1) echo "'JumpaRoom','JumpaParticipant','JumpaEvent'" ;; *_jumpa_phase2) echo "'JumpaInvite','JumpaChatMessage','JumpaReport'" ;; *_jumpa_flow) echo "'JumpaNotice'" ;; *_jumpa_webinar_stage) echo "'JumpaParticipant'" ;; esac; }
 
 PREV_PLANNED=0
 for MIG in "${MIGRATIONS[@]}"; do

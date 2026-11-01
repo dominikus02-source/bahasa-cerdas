@@ -59,6 +59,8 @@ export interface JumpaActor {
 
 /** Ruang UMUM: kode ruang = undangan (seperti Meet) untuk akun BC yang login. */
 export const JUMPA_UMUM_CODE_JOIN = true;
+/** Webinar: akun BC yang sudah login dan memiliki kode dapat bergabung. */
+export const JUMPA_WEBINAR_CODE_JOIN = true;
 
 export function effectiveRole(actor: JumpaActor): JumpaEffectiveRole | null {
   if (actor.isFounder) return "GURU";
@@ -169,6 +171,8 @@ export function canCreateRoom(input: CreateRoomInput): Decision<Record<never, ne
 
 export interface JoinRoomState {
   kind: JumpaKind;
+  /** Mode webinar memperbolehkan akun Guru/Murid terdaftar masuk dengan kode. */
+  mode?: "MEETING" | "CLASS" | "WEBINAR";
   status: JumpaStatus;
   isLocked: boolean;
   startedAt: Date | null;
@@ -252,6 +256,13 @@ export function evaluateJoin(
     } else if (relation.isUserInvited) {
       // Undangan individu divalidasi saat dibuat (guru rekan / murid kelas host).
       access = { roomRole: "MEMBER", accessVia: "INVITED_USER" };
+    }
+  } else if (room.kind === "GURU" && room.mode === "WEBINAR") {
+    // Webinar terbuka bagi akun Guru/Murid BC yang sudah masuk dan memegang kode.
+    // Akun Junior tetap ditolak; peserta tidak otomatis menjadi cohost.
+    if (actor.isJunior) return deny("JUNIOR_NOT_ALLOWED", "Akun Junior belum bisa ikut webinar.");
+    if ((role === "GURU" || role === "MURID") && (JUMPA_WEBINAR_CODE_JOIN || relation.hasValidLink || relation.isExistingParticipant)) {
+      access = { roomRole: "MEMBER", accessVia: "LINK" };
     }
   } else if (room.kind === "GURU") {
     if (role === "GURU") {
@@ -347,6 +358,8 @@ export type JumpaModerationAction =
   | "DISALLOW_MURID_SCREEN"
   | "SET_COHOST"
   | "UNSET_COHOST"
+  | "ALLOW_STAGE"
+  | "REMOVE_STAGE"
   | "DELETE_CHAT"
   | "TOGGLE_CHAT";
 
@@ -357,6 +370,8 @@ export const TARGETED_ACTIONS: readonly JumpaModerationAction[] = [
   "REMOVE",
   "SET_COHOST",
   "UNSET_COHOST",
+  "ALLOW_STAGE",
+  "REMOVE_STAGE",
 ];
 
 export interface ModerationActor {
@@ -403,6 +418,13 @@ export function canModerate(input: {
   }
   if (actor.roomRole === "MEMBER") return no;
   if (actor.roomRole === "COHOST" && !GURU_COHOST_ACTIONS.includes(action)) return no;
+
+  if (action === "ALLOW_STAGE" || action === "REMOVE_STAGE") {
+    if (roomKind !== "GURU" || actor.effective !== "GURU" || actor.roomRole !== "HOST") {
+      return deny("NOT_ALLOWED", "Hanya pemandu utama webinar yang dapat mengatur panggung.");
+    }
+    if (!target || target.roomRole !== "MEMBER") return deny("BAD_TARGET", "Hanya peserta biasa yang dapat diatur ke panggung.");
+  }
 
   if (action === "ALLOW_MURID_SCREEN" || action === "DISALLOW_MURID_SCREEN") {
     if (roomKind !== "KELAS") return deny("BAD_TARGET", "Pengaturan ini hanya untuk ruang kelas.");

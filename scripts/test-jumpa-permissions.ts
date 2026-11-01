@@ -8,6 +8,7 @@ import { readFileSync } from "fs"
 import { join as pathJoin } from "path"
 import {
   canCreateRoom,
+  canModerate,
   effectiveRole,
   evaluateJoin,
   publishSourcesFor,
@@ -164,6 +165,16 @@ for (const w of [360, 390, 430]) {
 }
 check("fitGrid area kosong → null (fallback kolom)", fitGrid(4, 0, 0, 8, 1) === null && fitGrid(0, 100, 100, 8, 1) === null)
 check("avatarTone stabil & 0–3", avatarTone("u-ani") === avatarTone("u-ani") && [..."abcdefgh"].every((c) => avatarTone(c) >= 0 && avatarTone(c) <= 3))
+
+console.log("\n9b. Panggung webinar");
+const hostActor = { userId: "guru-host", roomRole: "HOST" as const, effective: "GURU" as const };
+const cohostActor = { userId: "guru-cohost", roomRole: "COHOST" as const, effective: "GURU" as const };
+const memberTarget = { userId: "murid-1", roomRole: "MEMBER" as const, effective: "MURID" as const };
+check("Pemandu utama dapat menaikkan peserta webinar ke panggung", canModerate({ actor: hostActor, action: "ALLOW_STAGE", roomKind: "GURU", target: memberTarget }).ok);
+check("Pemandu utama dapat menurunkan peserta dari panggung", canModerate({ actor: hostActor, action: "REMOVE_STAGE", roomKind: "GURU", target: memberTarget }).ok);
+check("Wakil pemandu tidak dapat mengatur panggung", !canModerate({ actor: cohostActor, action: "ALLOW_STAGE", roomKind: "GURU", target: memberTarget }).ok);
+check("Pemandu tidak dapat mengatur panggung di rapat biasa", !canModerate({ actor: hostActor, action: "ALLOW_STAGE", roomKind: "KELAS", target: memberTarget }).ok);
+check("Peserta biasa tidak dapat memberi izin panggung", !canModerate({ actor: { ...memberTarget, userId: "murid-2" }, action: "ALLOW_STAGE", roomKind: "GURU", target: { ...memberTarget, userId: "murid-3" } }).ok);
 
 console.log("\n10. Struktur & guard")
 const ROOT = pathJoin(import.meta.dirname, "..")

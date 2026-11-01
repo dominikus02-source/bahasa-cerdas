@@ -35,6 +35,7 @@ export interface JumpaAppProps {
   denyMessage: string | null;
   denyCode?: string | null;
   scheduledAt?: string | null;
+  mode: "MEETING" | "CLASS" | "WEBINAR";
   share?: ShareTarget | null;
   dashboardHref: string;
   /** Token tautan undangan guru (?u=), diteruskan ke API token. */
@@ -234,6 +235,7 @@ export default function JumpaApp(props: JumpaAppProps) {
       denyMessage={props.denyMessage}
       denyCode={props.denyCode}
       scheduledAt={props.scheduledAt}
+      mode={props.mode}
       share={props.share}
       joining={joining}
       joinError={joinError}

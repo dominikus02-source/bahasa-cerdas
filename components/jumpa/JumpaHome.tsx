@@ -72,7 +72,6 @@ function PlanCard({ plan }: { plan: NonNullable<JumpaHomeData["plan"]> }) {
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <span className="jumpa-tier" data-tier={plan.tier}>{premium && <Crown size={12} aria-hidden />}{premium ? "Premium" : "Gratis"}</span>
-          <span className="text-sm text-[var(--jp-text-2)]">Kelas {plan.kelas.maxParticipants} orang · {plan.kelas.maxDurationMin} menit</span>
         </div>
         {plan.roomsPerDay === null ? (
           <p className="mt-2 text-xs font-semibold text-[var(--jp-text-2)]">Ruang tanpa batas</p>
@@ -156,7 +155,7 @@ function RoomCard({ room, now }: { room: RoomListItem; now: number | null }) {
       <span className="jumpa-icon-chip" data-kind={room.kind} aria-hidden><Icon size={20} /></span>
       <span className="min-w-0 flex-1">
         <span className="jumpa-room-title">{room.title}</span>
-        <span className="jumpa-room-sub">{KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
+        <span className="jumpa-room-sub">{room.mode === "WEBINAR" ? "Webinar interaktif" : room.kind === "GURU" ? "Rapat biasa" : KIND_LABEL[room.kind]}{room.mine && <span className="jumpa-mine">Ruangmu</span>}</span>
         <span className="mt-1.5 flex items-center gap-2 text-xs">
           {live ? <span className="jumpa-live">Berlangsung</span> : <span className="jumpa-soon">{scheduledLabel(room.scheduledAt, now)}</span>}
         </span>
@@ -236,7 +235,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           <div className="flex items-center gap-3">
             <span className="jumpa-icon-chip" data-kind="GURU" aria-hidden><Users size={20} /></span>
             <div>
-              <h2 className="text-base font-bold">Mulai ruang guru</h2>
+              <h2 className="text-base font-bold">Rapat biasa</h2>
               <p className="text-xs text-[var(--jp-text-3)]">{plan?.guru.maxParticipants ?? 25} orang · {plan?.guru.maxDurationMin ?? 120} menit</p>
             </div>
           </div>
@@ -254,6 +253,24 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy} onClick={() => void create({ kind: "GURU" })}>
             {busy ? <Loader2 size={18} className="animate-spin" /> : <Plus size={18} />} Mulai sekarang
           </button>
+          <div className="mt-3 rounded-2xl border border-[var(--jp-accent)]/25 bg-[var(--jp-accent)]/5 p-3">
+            <div className="flex items-start gap-3">
+              <span className="jumpa-icon-chip shrink-0" data-kind="GURU" aria-hidden><Video size={19} /></span>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-bold">Webinar interaktif</h3>
+                <p className="mt-1 text-xs text-[var(--jp-text-3)]">Sesi hingga 100 peserta selama 180 menit. Peserta masuk menggunakan akun BahasaCerdas.</p>
+                {plan?.tier === "PREMIUM" ? (
+                  <button type="button" className="jumpa-primary mt-3 w-full" disabled={busy} onClick={() => void create({ kind: "GURU", isWebinar: true })}>
+                    {busy ? <Loader2 size={16} className="animate-spin" /> : <Video size={16} />} Mulai webinar
+                  </button>
+                ) : (
+                  <Link href={plan?.upgradeUrl ?? "/guru/berlangganan"} className="jumpa-ghost mt-3 w-full">
+                    <Crown size={16} /> Aktifkan Premium untuk webinar
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
           <Link href="/guru/kelasku" className="jumpa-ghost mt-2 w-full">
             <GraduationCap size={18} /> Mulai dari KelasKu
           </Link>
@@ -333,7 +350,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
           </div>
           <div className="flex items-start gap-3">
             <span className="text-xs font-bold text-[var(--jp-text)]" style={{ flexShrink: 0, width: 52 }}>Webinar</span>
-            <span className="text-xs text-[var(--jp-text-2)]">Premium · 200 orang · 180 menit · 1x/minggu</span>
+            <span className="text-xs text-[var(--jp-text-2)]">Premium · 100 orang · 180 menit · 1x/minggu</span>
           </div>
         </div>
       </section>

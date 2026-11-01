@@ -214,6 +214,19 @@ export async function moderate(
         await sendServerSignal(lk, JUMPA_TOPICS.room, { t: "room.screen", allowMurid: allow });
         break;
       }
+      case "ALLOW_STAGE":
+      case "REMOVE_STAGE": {
+        if (room.mode !== "WEBINAR") return fail(400, "BAD_TARGET", "Panggung hanya tersedia untuk webinar.");
+        const sources = action === "ALLOW_STAGE" ? ["camera", "microphone"] as const : [];
+        const updated = await updateLivekitParticipant(lk, target!.userId, { permission: buildParticipantPermission([...sources]) });
+        if (!updated) return fail(503, "MEDIA_UNAVAILABLE", "Izin panggung belum dapat diterapkan. Coba lagi.");
+        // Persist after LiveKit succeeds so approval survives reconnects.
+        await db.jumpaParticipant.update({
+          where: { roomId_userId: { roomId: room.id, userId: target!.userId } },
+          data: { stageApproved: action === "ALLOW_STAGE" },
+        });
+        break;
+      }
       case "SET_COHOST":
       case "UNSET_COHOST": {
         const roomRole: JumpaRoomRole = action === "SET_COHOST" ? "COHOST" : "MEMBER";
