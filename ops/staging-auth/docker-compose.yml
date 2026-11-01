@@ -28,7 +28,7 @@ services:
     env_file: [./auth.env]
     environment:
       GOTRUE_DB_DRIVER: postgres
-      GOTRUE_DB_DATABASE_URL: postgres://gotrue:${AUTH_DB_PASSWORD}@auth-db:5432/gotrue?sslmode=disable
+      GOTRUE_DB_DATABASE_URL: postgres://gotrue:${AUTH_DB_PASSWORD}@auth-db:5432/gotrue?sslmode=disable&search_path=auth,public
       GOTRUE_API_HOST: 0.0.0.0
       GOTRUE_API_PORT: "9999"
       API_EXTERNAL_URL: https://auth-staging.bahasacerdas.com/auth/v1

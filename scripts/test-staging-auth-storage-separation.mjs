@@ -112,3 +112,7 @@ console.log("PASS: Storage database provisions PostgREST extra search-path schem
 assert.match(compose, /PGRST_ADMIN_SERVER_PORT: "3001"/);
 assert.match(compose, /PGRST_SERVER_HOST: 0\.0\.0\.0/);
 console.log("PASS: PostgREST readiness probe has an enabled internal admin endpoint");
+
+assert.match(compose, /GOTRUE_DB_DATABASE_URL: .*search_path=auth,public/);
+assert.match(bootstrap, /ALTER ROLE gotrue IN DATABASE gotrue SET search_path = auth, public/);
+console.log("PASS: isolated Auth runtime connections resolve the migrated auth schema");

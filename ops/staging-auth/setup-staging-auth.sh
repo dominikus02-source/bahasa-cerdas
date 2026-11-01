@@ -140,6 +140,7 @@ BEGIN
 END
 $$;
 CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue;
+ALTER ROLE gotrue IN DATABASE gotrue SET search_path = auth, public;
 AUTH_SQL
 docker exec -i -u postgres jumpa-storage-db-staging psql -X -v ON_ERROR_STOP=1 -d storage < "$ROOT/init-storage.sql"
 docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d
