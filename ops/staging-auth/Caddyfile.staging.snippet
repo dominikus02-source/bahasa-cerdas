@@ -1,9 +1,14 @@
-# Include only in the STAGING ingress Caddy instance.
-# Do NOT add this snippet to production Caddy.
+# Install only as a host-specific route on the staging ingress.
+# If shared ingress is used, this is a separate host matcher and must not alter production site blocks.
 auth-staging.bahasacerdas.com {
   handle_path /auth/v1/* {
     reverse_proxy auth-staging:9999
   }
+
+  handle_path /storage/v1/* {
+    reverse_proxy storage-staging:5000
+  }
+
   handle /health {
     reverse_proxy auth-staging:9999
   }
