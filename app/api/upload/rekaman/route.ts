@@ -29,9 +29,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Penyimpanan rekaman belum dapat diperiksa." }, { status: 502 });
     }
 
-    let bucketInfo = buckets?.find((item) => item.name === bucket);
+    const bucketInfo = buckets?.find((item) => item.name === bucket);
     if (!bucketInfo) {
-      const { data, error } = await storage.storage.createBucket(bucket, {
+      const { error } = await storage.storage.createBucket(bucket, {
         public: false,
         fileSizeLimit: 25 * 1024 * 1024,
         allowedMimeTypes: AUDIO_MIMES,
@@ -40,7 +40,6 @@ export async function POST(req: NextRequest) {
         console.error("AUDIO_STORAGE_BUCKET_CREATE_FAILED", { message: error.message });
         return NextResponse.json({ error: "Penyimpanan rekaman gagal disiapkan." }, { status: 502 });
       }
-      bucketInfo = data;
     }
 
     const fileName = `rekaman/${user.id}/${Date.now()}-${crypto.randomUUID()}.${validation.ext}`;
@@ -55,7 +54,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Rekaman gagal disimpan." }, { status: 502 });
     }
 
-    if (bucketInfo.public) {
+    if (bucketInfo?.public) {
       const { data } = storage.storage.from(bucket).getPublicUrl(fileName);
       return NextResponse.json({ url: data.publicUrl, key: fileName });
     }
