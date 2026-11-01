@@ -42,6 +42,13 @@ const caddyInstaller = read("../ops/staging-auth/install-staging-caddy.sh");
 const provision = read("../scripts/staging-storage-provision.mjs");
 const recording = read("../app/api/upload/rekaman/route.ts");
 const fileRoute = read("../app/api/upload/file/route.ts");
+
+assert.match(recording, /AUDIO_MIMES/);
+assert.match(recording, /public: false/);
+assert.match(recording, /createSignedUrl/);
+assert.doesNotMatch(recording, /updateBucket\(bucket, \{ public: true \}\)/);
+assert.match(fileRoute, /folder\.length > 40/);
+assert.match(fileRoute, /\^\[a-zA-Z0-9_-\]\+\$/);
 assert.match(compose, /supabase\/storage-api:v1\.81\.0/);
 assert.match(compose, /jumpa_storage_staging_db/);
 assert.match(compose, /postgrest\/postgrest:v14\.18/);
