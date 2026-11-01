@@ -2,10 +2,12 @@
 
 ## Infrastructure
 - [ ] staging DNS A/AAAA for auth-staging points to staging ingress
-- [ ] HTTPS certificate valid; no production proxy config changed
+- [ ] HTTPS certificate valid on a dedicated staging ingress; production Caddy and proxy config untouched
 - [ ] GoTrue and dedicated PostgreSQL healthy
 - [ ] dedicated Auth PostgreSQL volume exists; no production DB host in Auth container env
 - [ ] dedicated Storage PostgreSQL volume exists, separate from Auth and application DB
+- [ ] `audio` bucket is private; recording endpoint validates audio type/size and returns signed URLs
+- [ ] existing bucket visibility is reviewed and no bucket is made public automatically
 - [ ] internal PostgREST healthy; Storage migrations applied; file volume persistent
 - [ ] staging ingress routes `/auth/v1/*` and `/storage/v1/*` only to staging containers
 - [ ] app and Auth communicate only on staging network
