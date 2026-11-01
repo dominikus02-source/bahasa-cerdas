@@ -6,7 +6,7 @@
  */
 const required = ["STAGING_AUTH_URL","STAGING_ANON_KEY","STAGING_TEST_USER_A_EMAIL","STAGING_TEST_USER_A_PASSWORD","STAGING_TEST_USER_B_EMAIL","STAGING_TEST_USER_B_PASSWORD"]
 for (const k of required) if (!process.env[k]) throw new Error(`Missing ${k}`)
-const base = process.env.STAGING_AUTH_URL.replace(/\/$/,"")
+const base = process.env.STAGING_AUTH_URL.replace(/\/$/,"")+"/auth/v1"
 const u = new URL(base)
 if (u.protocol !== "https:" || !u.hostname.startsWith("auth-staging.")) throw new Error("Refusing non-staging Auth URL")
 const anon = process.env.STAGING_ANON_KEY
