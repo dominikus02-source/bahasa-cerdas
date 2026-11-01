@@ -26,7 +26,8 @@ async function request(path, method = "GET", body) {
 }
 for (const bucket of buckets) {
   const existing = await request("/bucket/" + bucket.id);
-  if (existing.response.status === 404) {
+  if (existing.response.status === 404 ||
+      (existing.response.status === 400 && existing.data?.code === "NoSuchBucket")) {
     const created = await request("/bucket", "POST", bucket);
     if (!created.response.ok) throw new Error("Cannot create " + bucket.id + ": " + JSON.stringify(created.data));
     console.log("CREATED " + (bucket.public ? "public" : "private") + " bucket:", bucket.id);
