@@ -4,7 +4,11 @@
 set -Eeuo pipefail
 umask 077
 [[ $EUID -eq 0 ]] || { echo 'STOP: run as root.' >&2; exit 1; }
-exec 9>/tmp/bahasacerdas-deploy.lock
+# Open the existing shared inode without O_CREAT/O_TRUNC. This also works
+# under Linux fs.protected_regular when the lock belongs to bcadmin.
+LOCK=/tmp/bahasacerdas-deploy.lock
+[[ -f "$LOCK" && ! -L "$LOCK" ]] || { echo 'STOP: expected deployment lock missing or symlinked; inspect before proceeding.' >&2; exit 1; }
+exec 9<"$LOCK"
 flock -n 9 || { echo 'STOP: deployment/rollback in progress.' >&2; exit 1; }
 python3 <<'PY'
 import datetime, hashlib, json, os, pathlib, shutil, subprocess, sys
