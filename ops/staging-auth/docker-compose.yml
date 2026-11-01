@@ -17,6 +17,7 @@ services:
       timeout: 3s
       retries: 20
     security_opt: ["no-new-privileges:true"]
+
   auth:
     image: supabase/gotrue:v2.196.0
     container_name: jumpa-auth-staging
@@ -58,29 +59,90 @@ services:
       timeout: 5s
       retries: 15
     security_opt: ["no-new-privileges:true"]
+
+  # Dedicated Storage metadata DB: never shares the application DB or Auth DB.
+  storage-db:
+    image: postgres:16-alpine
+    container_name: jumpa-storage-db-staging
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: storage
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${STORAGE_DB_PASSWORD:?STORAGE_DB_PASSWORD required}
+    volumes:
+      - jumpa_storage_staging_db:/var/lib/postgresql/data
+      - ./init-storage.sql:/docker-entrypoint-initdb.d/00-init-authenticator.sql:ro
+    networks: [storage-private]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d storage"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    security_opt: ["no-new-privileges:true"]
+
+  # PostgREST is an internal dependency of Supabase Storage, not exposed publicly.
+  rest:
+    image: postgrest/postgrest:v14.18
+    container_name: jumpa-storage-rest-staging
+    restart: unless-stopped
+    depends_on:
+      storage-db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: ${PGRST_DB_URI:?PGRST_DB_URI required}
+      PGRST_DB_SCHEMAS: public,storage
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_DB_EXTRA_SEARCH_PATH: public,extensions
+      PGRST_DB_MAX_ROWS: "1000"
+      PGRST_JWT_SECRET: ${GOTRUE_JWT_SECRET:?GOTRUE_JWT_SECRET required}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+    networks: [storage-private]
+    expose: ["3000"]
+    healthcheck:
+      test: ["CMD", "postgrest", "--ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    security_opt: ["no-new-privileges:true"]
+
   storage:
     image: supabase/storage-api:v1.81.0
     container_name: jumpa-storage-staging
     restart: unless-stopped
+    depends_on:
+      storage-db:
+        condition: service_healthy
+      rest:
+        condition: service_healthy
     env_file: [./auth.env]
     environment:
       SERVER_HOST: 0.0.0.0
       SERVER_PORT: "5000"
+      ANON_KEY: ${STAGING_ANON_KEY:?STAGING_ANON_KEY required}
+      SERVICE_KEY: ${STAGING_SERVICE_ROLE_KEY:?STAGING_SERVICE_ROLE_KEY required}
+      POSTGREST_URL: http://rest:3000
       AUTH_JWT_SECRET: ${GOTRUE_JWT_SECRET:?GOTRUE_JWT_SECRET required}
-      AUTH_JWT_ALGORITHM: HS256
-      DATABASE_URL: ${STORAGE_DATABASE_URL:?STORAGE_DATABASE_URL required}
-      DB_INSTALL_ROLES: "false"
+      DATABASE_URL: postgres://postgres:${STORAGE_DB_PASSWORD}@storage-db:5432/storage?sslmode=disable
+      DB_INSTALL_ROLES: "true"
       DB_ALLOW_MIGRATION_REFRESH: "false"
+      DB_SUPER_USER: postgres
+      DB_ANON_ROLE: anon
+      DB_AUTHENTICATED_ROLE: authenticated
+      DB_SERVICE_ROLE: service_role
+      STORAGE_PUBLIC_URL: https://auth-staging.bahasacerdas.com
+      REQUEST_ALLOW_X_FORWARDED_PATH: "true"
+      FILE_SIZE_LIMIT: "524288000"
       STORAGE_BACKEND: file
-      STORAGE_FILE_BACKEND_PATH: /var/lib/storage
-      UPLOAD_FILE_SIZE_LIMIT: "524288000"
-      UPLOAD_FILE_SIZE_LIMIT_STANDARD: "52428800"
-      UPLOAD_SIGNED_URL_EXPIRATION_TIME: "120"
-      IMAGE_TRANSFORMATION_ENABLED: "false"
+      GLOBAL_S3_BUCKET: jumpa-staging
+      FILE_STORAGE_BACKEND_PATH: /var/lib/storage
+      TENANT_ID: jumpa-staging
+      REGION: local
+      ENABLE_IMAGE_TRANSFORMATION: "false"
       LOG_LEVEL: info
     volumes:
       - jumpa_storage_staging_files:/var/lib/storage
     networks:
+      storage-private: {}
       jumpa-staging-net:
         aliases: [storage-staging]
     expose: ["5000"]
@@ -90,14 +152,21 @@ services:
       timeout: 5s
       retries: 20
     security_opt: ["no-new-privileges:true"]
+
 volumes:
   jumpa_auth_staging_db:
     name: jumpa_auth_staging_db
+  jumpa_storage_staging_db:
+    name: jumpa_storage_staging_db
   jumpa_storage_staging_files:
     name: jumpa_storage_staging_files
+
 networks:
   auth-private:
     name: jumpa-auth-private
+    internal: true
+  storage-private:
+    name: jumpa-storage-private
     internal: true
   jumpa-staging-net:
     external: true
