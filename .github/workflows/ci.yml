@@ -46,6 +46,7 @@ jobs:
         run: |
           bash -n ops/staging-auth/setup-staging-auth.sh
           bash -n ops/staging-auth/install-staging-caddy.sh
+          bash -n ops/staging-auth/backup-staging-auth-storage.sh
           bash -n ops/staging-auth/deploy-staging-web.sh
           mkdir -p /tmp/staging-auth-ci
           cp ops/staging-auth/docker-compose.yml /tmp/staging-auth-ci/docker-compose.yml
