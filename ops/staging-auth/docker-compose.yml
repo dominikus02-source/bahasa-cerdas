@@ -109,10 +109,10 @@ services:
     image: supabase/storage-api:v1.81.0
     container_name: jumpa-storage-staging
     restart: unless-stopped
+    # Do not wait for PostgREST health here: Storage applies the DB migrations
+    # that create the storage schema before PostgREST can become ready.
     depends_on:
       storage-db:
-        condition: service_healthy
-      rest:
         condition: service_healthy
     env_file: [./auth.env]
     environment:
