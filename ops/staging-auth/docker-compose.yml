@@ -1,0 +1,69 @@
+name: jumpa-auth-staging
+services:
+  auth-db:
+    image: postgres:16-alpine
+    container_name: jumpa-auth-db-staging
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: gotrue
+      POSTGRES_USER: gotrue
+      POSTGRES_PASSWORD: ${AUTH_DB_PASSWORD:?AUTH_DB_PASSWORD required}
+    volumes:
+      - jumpa_auth_staging_db:/var/lib/postgresql/data
+    networks: [auth-private]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gotrue -d gotrue"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    security_opt: ["no-new-privileges:true"]
+  auth:
+    image: supabase/gotrue:v2.177.0
+    container_name: jumpa-auth-staging
+    restart: unless-stopped
+    depends_on:
+      auth-db:
+        condition: service_healthy
+    env_file: [./auth.env]
+    environment:
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://gotrue:${AUTH_DB_PASSWORD}@auth-db:5432/gotrue?sslmode=disable
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      GOTRUE_SITE_URL: https://staging.bahasacerdas.com
+      GOTRUE_URI_ALLOW_LIST: https://staging.bahasacerdas.com/**
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: "false"
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-smtp.resend.com}
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-465}
+      GOTRUE_SMTP_USER: ${SMTP_USER:-resend}
+      GOTRUE_SMTP_PASS: ${SMTP_PASS:?SMTP_PASS required}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${SMTP_SENDER:-noreply@bahasacerdas.com}
+      GOTRUE_SMTP_SENDER_NAME: BahasaCerdas Staging
+      GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
+      GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: /auth/v1/verify
+      GOTRUE_SECURITY_CAPTCHA_ENABLED: "false"
+    networks:
+      auth-private: {}
+      jumpa-staging-net:
+        aliases: [auth-staging]
+    expose: ["9999"]
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:9999/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+    security_opt: ["no-new-privileges:true"]
+volumes:
+  jumpa_auth_staging_db:
+    name: jumpa_auth_staging_db
+networks:
+  auth-private:
+    name: jumpa-auth-private
+    internal: true
+  jumpa-staging-net:
+    external: true
+    name: jumpa-staging-net
