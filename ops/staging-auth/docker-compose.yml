@@ -80,7 +80,8 @@ services:
     volumes:
       - jumpa_storage_staging_files:/var/lib/storage
     networks:
-      - jumpa-staging-net
+      jumpa-staging-net:
+        aliases: [storage-staging]
     expose: ["5000"]
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "-", "http://127.0.0.1:5000/status"]
