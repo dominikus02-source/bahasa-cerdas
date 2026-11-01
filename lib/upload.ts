@@ -62,7 +62,7 @@ export async function configureBucket(
       if (!existing.file_size_limit || existing.file_size_limit < maxSizeBytes) {
         const updated = await fetch(bucketUrl, {
           method: "PUT", headers,
-          body: JSON.stringify({ public: true, file_size_limit: maxSizeBytes }),
+          body: JSON.stringify({ file_size_limit: maxSizeBytes }),
         });
         if (!updated.ok) throw new Error(`Bucket update failed: ${updated.status}`);
       }
@@ -93,7 +93,7 @@ export async function uploadFileServer(
   const fileBuffer = file instanceof File ? Buffer.from(await file.arrayBuffer()) : Buffer.from(file);
   const response = await fetch(uploadUrl, {
     method: "POST",
-    headers: { Authorization: `Bearer ${serviceKey}`, "Content-Type": contentType || "application/octet-stream" },
+    headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": contentType || "application/octet-stream" },
     body: fileBuffer,
   });
   if (!response.ok) return { error: `Upload failed: ${response.status} ${(await response.text()).slice(0, 300)}` };
