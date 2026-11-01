@@ -1,4 +1,5 @@
-import { createClient } from "@/lib/supabase/client";
+import { createStorageClient } from "@/lib/supabase/storage";
+import { getStorageAdminConfig } from "@/lib/supabase/storage-config";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 const ALLOWED_FILE_TYPES = {
@@ -56,7 +57,7 @@ export async function uploadFile(
   userId: string,
   supabaseClient?: SupabaseClient
 ): Promise<{ url: string; key: string } | { error: string }> {
-  const supabase = supabaseClient || createClient();
+  const supabase = supabaseClient || createStorageClient();
 
   const detectedType = getFileTypeFromMime(file.type);
   if (!detectedType) {
@@ -76,10 +77,9 @@ export async function uploadFile(
   const bucket = BUCKET_MAP[detectedType as keyof typeof BUCKET_MAP] || "documents";
 
   // Configure bucket for large files (server-side only)
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
-  if (supabaseUrl && serviceKey) {
-    await configureBucket(supabaseUrl, serviceKey, bucket).catch(() => {});
+  const storageAdmin = getStorageAdminConfig();
+  if (storageAdmin) {
+    await configureBucket(storageAdmin.url, storageAdmin.serviceKey, bucket).catch(() => {});
   }
 
   const { data, error } = await supabase.storage
@@ -155,14 +155,13 @@ export async function uploadFileServer(
   bucket: string = "documents",
   contentType?: string
 ): Promise<{ url: string; key: string } | { error: string }> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceKey) {
+  const storageAdmin = getStorageAdminConfig();
+  if (!storageAdmin) {
     return { error: "Server configuration error: Missing Supabase credentials" };
   }
 
   // Auto-create/configure bucket
+  const { url: supabaseUrl, serviceKey } = storageAdmin;
   await configureBucket(supabaseUrl, serviceKey, bucket);
 
   // Upload file
@@ -197,7 +196,7 @@ export async function deleteFile(fileKey: string, supabaseClient?: SupabaseClien
 }
 
 export function getPublicUrl(fileKey: string, bucket: "documents" | "videos" | "images" = "documents"): string {
-  const supabase = createClient();
+  const supabase = createStorageClient();
   const { data } = supabase.storage.from(bucket).getPublicUrl(fileKey);
   return data.publicUrl;
 }
