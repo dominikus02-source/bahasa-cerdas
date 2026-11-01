@@ -83,7 +83,7 @@ fi
 # The Storage API migrations create anon/authenticated/service_role and grant
 # them to authenticator. Pre-create only the isolated PostgREST login.
 cat > "$ROOT/init-storage.sql" <<SQL
-DO \\$\\$
+DO \$\$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='authenticator') THEN
     CREATE ROLE authenticator LOGIN NOINHERIT PASSWORD '$AUTHENTICATOR_DB_PASSWORD';
@@ -91,7 +91,7 @@ BEGIN
     ALTER ROLE authenticator WITH LOGIN NOINHERIT PASSWORD '$AUTHENTICATOR_DB_PASSWORD';
   END IF;
 END
-\\$\\$;
+\$\$;
 SQL
 chmod 600 "$ROOT/init-storage.sql"
 
