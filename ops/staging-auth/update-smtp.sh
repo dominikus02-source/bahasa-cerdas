@@ -7,6 +7,9 @@ ROOT=/opt/bahasacerdas/staging/auth
 [[ -d "$ROOT" && ! -L "$ROOT" ]] || { echo 'STOP: Staging Auth directory missing.' >&2; exit 1; }
 exec 9>"$ROOT/smtp-update.lock"
 flock -n 9 || { echo 'STOP: SMTP update already running.' >&2; exit 1; }
+MODE=${1:-update}
+[[ "$MODE" == update || "$MODE" == --apply-saved ]] || { echo "STOP: Use update or --apply-saved." >&2; exit 1; }
+if [[ "$MODE" == update ]]; then
 python3 - "$ROOT" <<'PY'
 import datetime, getpass, pathlib, re, shutil, smtplib, ssl, sys
 root=pathlib.Path(sys.argv[1])
@@ -34,10 +37,15 @@ for path in files:
     path.chmod(0o600)
 print('PASS: staging SMTP files updated; original configuration backed up privately.')
 PY
+else
+  echo "Using saved staging SMTP settings; no key input needed."
+fi
 set -a
 . "$ROOT/.env"
 . "$ROOT/auth.env"
 set +a
+export STAGING_DOCKER_NETWORK=jumpa-staging-net
+docker network inspect "$STAGING_DOCKER_NETWORK" >/dev/null
 # Use only the staging Compose project and recreate its Auth service.
 docker compose --env-file "$ROOT/.env" -f "$ROOT/docker-compose.yml" up -d --no-deps --force-recreate auth
 for i in $(seq 1 60); do
