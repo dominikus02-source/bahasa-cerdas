@@ -6,7 +6,9 @@ auth-staging.bahasacerdas.com {
   }
 
   handle_path /storage/v1/* {
-    reverse_proxy storage-staging:5000
+    reverse_proxy storage-staging:5000 {
+      header_up X-Forwarded-Prefix /storage/v1
+    }
   }
 
   handle /health {
