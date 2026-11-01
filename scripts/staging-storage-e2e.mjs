@@ -17,6 +17,8 @@ const headers = { apikey: serviceKey, Authorization: "Bearer " + serviceKey };
 const bucket = "bc-staging-e2e-" + Date.now();
 const objectKey = "probe/isolated-storage-check.txt";
 let created = false;
+// Existing data is never deleted. Cleanup is optional and limited to this generated bucket.
+const cleanup = process.env.STAGING_E2E_CLEANUP === "generated-only";
 
 async function call(path, method = "GET", body, extra = {}) {
   const response = await fetch(api + path, {
@@ -51,21 +53,26 @@ try {
 
   const signed = await call("/object/sign/" + bucket + "/" + objectKey, "POST", { expiresIn: 120 });
   assert.ok(signed.response.ok && signed.data?.signedURL, "Signed URL failed: " + JSON.stringify(signed.data));
-  const signedUrl = new URL(signed.data.signedURL, baseUrl);
-  assert.equal(signedUrl.hostname, endpoint.hostname, "Signed URL escaped staging host");
+  assert.ok(signed.data.signedURL.startsWith("/object/sign/"), "Unexpected signed URL path");
+  const signedUrl = new URL(api + signed.data.signedURL);
+  assert.equal(signedUrl.origin, endpoint.origin, "Signed URL escaped staging origin");
   const download = await fetch(signedUrl);
   assert.equal(download.status, 200, "Signed download failed");
   assert.equal(await download.text(), "BahasaCerdas JUMPA staging Storage E2E");
   console.log("PASS: signed download");
 
-  const removed = await call("/object/" + bucket + "/" + objectKey, "DELETE");
-  assert.ok(removed.response.ok, "Delete object failed: " + JSON.stringify(removed.data));
-  console.log("PASS: delete object");
+  if (cleanup) {
+    const removed = await call("/object/" + bucket, "DELETE", { prefixes: [objectKey] });
+    assert.ok(removed.response.ok, "Delete generated object failed: " + JSON.stringify(removed.data));
+    console.log("PASS: delete generated test object");
+  } else {
+    console.log("NOT RUN: deletion (disabled); retained generated bucket " + bucket);
+  }
 } finally {
-  if (created) {
+  if (created && cleanup) {
     const removedBucket = await call("/bucket/" + bucket, "DELETE");
     if (!removedBucket.response.ok) console.error("WARNING: test bucket cleanup failed:", removedBucket.data);
     else console.log("PASS: cleanup test bucket");
   }
 }
-console.log("STAGING STORAGE API E2E PASS");
+console.log(cleanup ? "STAGING STORAGE API E2E PASS" : "STAGING STORAGE READ/WRITE PASS; DELETION NOT RUN");
