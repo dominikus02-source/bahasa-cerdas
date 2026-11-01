@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     const check = await validateUpload(file, IMAGE_MIMES);
     if (!check.ok) return NextResponse.json({ error: check.error }, { status: check.status });
 
-    let admin;
+    let admin: ReturnType<typeof createStorageAdminClient>;
     try { admin = createStorageAdminClient(); }
     catch {
       console.error("IMAGE_STORAGE_CONFIG_MISSING");
