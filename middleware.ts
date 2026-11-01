@@ -11,6 +11,17 @@ import { livekitCspOrigins } from "@/lib/jumpa/config";
 // 'strict-dynamic', which would nullify those allowlists).
 // style-src keeps 'unsafe-inline' — Tailwind/inline styles rely on it; removing it
 // causes broad breakage, so it is left in place by design.
+function supabaseCspOrigins(): string[] {
+  const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!raw) return [];
+  try {
+    const url = new URL(raw);
+    return url.protocol === "https:" || url.protocol === "http:" ? [url.origin] : [];
+  } catch {
+    return [];
+  }
+}
+
 function buildCsp(nonce: string): string {
   const csp: Record<string, string[]> = {
     "default-src": ["'self'"],
@@ -33,7 +44,7 @@ function buildCsp(nonce: string): string {
     "font-src": ["'self'", "https://fonts.gstatic.com"],
     // JUMPA: origin server media (wss + https) dari NEXT_PUBLIC_LIVEKIT_WS_URL,
     // default wss://jumpa.bahasacerdas.com — lib/jumpa/config.ts.
-    "connect-src": ["'self'", ...livekitCspOrigins(), "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
+    "connect-src": ["'self'", ...livekitCspOrigins(), ...supabaseCspOrigins(), "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
     "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com"],
     "worker-src": ["'self'", "blob:"],
     "object-src": ["'none'"],
