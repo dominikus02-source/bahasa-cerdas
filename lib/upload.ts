@@ -55,7 +55,7 @@ export async function configureBucket(
 ) {
   try {
     const bucketUrl = `${supabaseUrl}/storage/v1/bucket/${bucketName}`;
-    const headers = { Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json" };
+    const headers = { apikey: serviceKey, Authorization: `Bearer ${serviceKey}`, "Content-Type": "application/json" };
     const current = await fetch(bucketUrl, { headers });
     if (current.ok) {
       const existing = await current.json();
