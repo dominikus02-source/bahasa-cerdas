@@ -38,6 +38,7 @@ for (const path of [
 const compose = read("../ops/staging-auth/docker-compose.yml");
 const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
 const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
+const caddyInstaller = read("../ops/staging-auth/install-staging-caddy.sh");
 const provision = read("../scripts/staging-storage-provision.mjs");
 const recording = read("../app/api/upload/rekaman/route.ts");
 const fileRoute = read("../app/api/upload/file/route.ts");
@@ -59,7 +60,7 @@ assert.match(provision, /public: true/);
 assert.match(provision, /will not make it public/);
 assert.match(caddy, /handle_path \/storage\/v1\/\*/);
 assert.match(caddy, /reverse_proxy storage-staging:5000/);
-assert.match(caddy, /X-Forwarded-Prefix \/storage\/v1/);
+assert.match(caddy, /X-Forwarded-Prefix \/storage\/v1/);\nassert.match(caddyInstaller, /STAGING_CADDY_CONTAINER/);\nassert.match(caddyInstaller, /dedicated staging Caddy/);\nassert.doesNotMatch(caddyInstaller, /bahasacerdas-prod-caddy/);\nassert.match(caddyInstaller, /STAGING_CADDY_CONFIG_DIR.*STAGING_ROOT/);
 
 console.log("PASS: Auth and Storage endpoint separation contracts");
 console.log("PASS: split Auth without Storage fails closed");
