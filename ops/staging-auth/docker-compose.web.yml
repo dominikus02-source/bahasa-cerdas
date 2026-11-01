@@ -1,0 +1,40 @@
+name: jumpa-staging-web
+services:
+  web:
+    image: bahasacerdas/jumpa-web:staging
+    container_name: jumpa-web-staging
+    build:
+      context: ${STAGING_APP_DIR:?STAGING_APP_DIR required}
+      dockerfile: Dockerfile.web
+      args:
+        WEB_BUILD_FINGERPRINT: ${WEB_BUILD_FINGERPRINT:-staging}
+      secrets:
+        - web_env
+    env_file:
+      - ${STAGING_WEB_ENV_FILE:?STAGING_WEB_ENV_FILE required}
+    environment:
+      NODE_ENV: production
+      HOSTNAME: 0.0.0.0
+      PORT: "3000"
+      NODE_OPTIONS: --max-http-header-size=65536
+    ports:
+      - "127.0.0.1:13000:3000"
+    networks:
+      jumpa-staging-net:
+        aliases: [jumpa-web-staging]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+secrets:
+  web_env:
+    file: ${STAGING_WEB_ENV_FILE:?STAGING_WEB_ENV_FILE required}
+
+networks:
+  jumpa-staging-net:
+    external: true
+    name: ${STAGING_DOCKER_NETWORK:-jumpa-staging-net}

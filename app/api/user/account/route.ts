@@ -6,6 +6,7 @@ import { anonymizeAccount } from "@/lib/account/deletion";
 
 export async function DELETE(req: NextRequest) {
   try {
+    if (process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL) return NextResponse.json({ error: "Penghapusan akun belum tersedia di staging terisolasi." }, { status: 503 });
     const { supabase, user } = await accountContext(req);
     const body = await readAccountBody(req);
     if (body.confirmation !== "HAPUS AKUN") throw new AccountError("Ketik HAPUS AKUN untuk melanjutkan.");

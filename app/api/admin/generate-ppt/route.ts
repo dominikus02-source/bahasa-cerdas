@@ -1,3 +1,4 @@
+import { getStorageAdminConfig } from "@/lib/supabase/storage-config";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -758,8 +759,9 @@ function generateFallbackPPT(params: { title: string; topik: string; grade: stri
 }
 
 async function uploadToSupabase(buffer: Buffer | ArrayBuffer, fileName: string, contentType: string): Promise<{ url: string; key: string } | { error: string }> {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
+  const config = getStorageAdminConfig();
+  const supabaseUrl = config?.url;
+  const serviceKey = config?.serviceKey;
 
   if (!supabaseUrl || !serviceKey) {
     return { error: "Server configuration error" };

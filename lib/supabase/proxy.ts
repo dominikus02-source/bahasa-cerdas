@@ -5,7 +5,9 @@ import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 
 // User-session auth client. Middleware verifies/refreshes user sessions and
 // therefore must use the publishable/anon key, never the elevated secret key.
-const SUPABASE_PUBLISHABLE_KEY =
+const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL
+  ? process.env.NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY || ""
+  :
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   "";
@@ -175,12 +177,12 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // into a 500. When the URL is unusable, skip the auth gate: no session can be
   // verified, so pass the request through and let page-level guards redirect at
   // the application layer instead.
-  if (!isValidSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_URL)) {
+  if (!isValidSupabaseUrl(process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)) {
     return supabaseResponse;
   }
 
   const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    (process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!,
     SUPABASE_PUBLISHABLE_KEY,
     {
       global: {

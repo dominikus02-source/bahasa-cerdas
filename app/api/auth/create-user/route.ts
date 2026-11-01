@@ -74,8 +74,8 @@ export async function POST(req: Request) {
     }
 
     const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      (process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!,
+      (process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL ? process.env.SUPABASE_AUTH_SERVICE_ROLE_KEY : process.env.SUPABASE_SERVICE_ROLE_KEY)!
     );
 
     // SECURITY: this endpoint is public. It may only ever CREATE a brand-new

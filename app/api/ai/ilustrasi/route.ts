@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { createClient } from "@supabase/supabase-js"
+import { createStorageAdminClient } from "@/lib/supabase/storage-server"
 import crypto from "crypto"
 import { getUser } from "@/lib/supabase/server"
 import { rateLimitRoute } from "@/lib/rate-limit"
@@ -22,10 +22,7 @@ export async function GET(req: NextRequest) {
     const hash = crypto.createHash("md5").update(prompt).digest("hex")
     const fileName = `ilustrasi/${hash}.jpg`
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    )
+    const supabase = createStorageAdminClient()
 
     const { data: existing } = await supabase.storage.from("images").list("ilustrasi", {
       search: `${hash}.jpg`,

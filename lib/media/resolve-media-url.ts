@@ -1,4 +1,5 @@
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "";
+import { getStorageUrl } from "@/lib/supabase/storage-config";
+const supabaseUrl = getStorageUrl() || "";
 
 export function resolveMediaUrl(src: string | null | undefined): string | null {
   if (!src) return null;

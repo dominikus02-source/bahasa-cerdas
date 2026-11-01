@@ -39,6 +39,36 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Staging Auth/Storage isolation contract
+        run: npm run test:staging-auth-storage-separation
+
+      - name: Validate staging Auth/Storage scripts and Compose
+        run: |
+          bash -n ops/staging-auth/setup-staging-auth.sh
+          bash -n ops/staging-auth/install-staging-caddy.sh
+          bash -n ops/staging-auth/backup-staging-auth-storage.sh
+          bash -n ops/staging-auth/deploy-staging-web.sh
+          mkdir -p /tmp/staging-auth-ci
+          cp ops/staging-auth/docker-compose.yml /tmp/staging-auth-ci/docker-compose.yml
+          : > /tmp/staging-auth-ci/auth.env
+          : > /tmp/staging-auth-ci/init-storage.sql
+          cat > /tmp/staging-auth-ci/.env <<'EOF'
+          STAGING_DOCKER_NETWORK=jumpa-staging-net
+          AUTH_DB_PASSWORD=ci-auth-password
+          STORAGE_DB_PASSWORD=ci-storage-password
+          AUTHENTICATOR_DB_PASSWORD=ci-authenticator-password
+          PGRST_DB_URI=postgres://authenticator:ci-authenticator-password@storage-db:5432/storage
+          GOTRUE_JWT_SECRET=ci-jwt-secret
+          STAGING_ANON_KEY=ci-anon-jwt
+          STAGING_SERVICE_ROLE_KEY=ci-service-jwt
+          SMTP_HOST=smtp.resend.com
+          SMTP_PORT=465
+          SMTP_USER=resend
+          SMTP_PASS=ci-smtp-password
+          SMTP_SENDER=noreply@bahasacerdas.com
+          EOF
+          docker compose --env-file /tmp/staging-auth-ci/.env -f /tmp/staging-auth-ci/docker-compose.yml config -q
+
       - name: Guard warna baru (hex/rgb hanya di app/theme/tokens.css)
         env:
           GUARD_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}

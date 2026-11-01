@@ -26,7 +26,7 @@ export async function accountContext(req: NextRequest) {
   return { supabase, user };
 }
 export function isolatedAuth() {
-  return createIsolatedClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+  return createIsolatedClient((process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL || process.env.NEXT_PUBLIC_SUPABASE_URL)!, (process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL ? process.env.NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY : process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)!, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
 }
 export async function reauthenticate(user: { id: string; email?: string }, body: { currentPassword?: unknown; verificationCode?: unknown; oauthReauth?: unknown; emailReauth?: unknown }, authenticated?: Awaited<ReturnType<typeof createClient>>) {
   if ((body.oauthReauth === true || body.emailReauth === true) && authenticated) {

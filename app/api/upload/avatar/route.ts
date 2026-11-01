@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { createStorageAdminClient } from "@/lib/supabase/storage-server";
 import { getUser } from "@/lib/supabase/server";
 import { validateUpload, IMAGE_MIMES } from "@/lib/upload-validation";
 
@@ -31,16 +31,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: validation.status });
     }
 
-    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
-    if (!url || !serviceKey) {
-      console.error("AVATAR_UPLOAD_CONFIG_MISSING", { urlConfigured: !!url, serviceKeyConfigured: !!serviceKey });
+    let admin: ReturnType<typeof createStorageAdminClient>;
+    try { admin = createStorageAdminClient(); }
+    catch {
+      console.error("AVATAR_STORAGE_CONFIG_MISSING");
       return NextResponse.json({ error: "Penyimpanan foto belum dikonfigurasi. Hubungi pengelola." }, { status: 503 });
     }
 
-    const admin = createSupabaseClient(url, serviceKey, {
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
     const fileName = `profiles/${user.id}/avatar-${Date.now()}-${crypto.randomUUID()}.${validation.ext}`;
     const { error } = await admin.storage.from("avatars").upload(fileName, value, {
       cacheControl: "3600",
