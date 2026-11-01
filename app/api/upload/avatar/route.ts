@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: validation.error }, { status: validation.status });
     }
 
-    let admin;
+    let admin: ReturnType<typeof createStorageAdminClient>;
     try { admin = createStorageAdminClient(); }
     catch {
       console.error("AVATAR_STORAGE_CONFIG_MISSING");
