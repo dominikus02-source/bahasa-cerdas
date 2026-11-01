@@ -20,6 +20,9 @@ assert.match(storageClient, /accessToken:\s*async/);
 assert.match(storageServer, /import ["']server-only["']/);
 assert.match(upload, /createStorageClient\(\)/);
 assert.match(upload, /getStorageAdminConfig\(\)/);
+assert.match(upload, /apikey: serviceKey/);
+assert.match(upload, /body: JSON.stringify\(\{ file_size_limit: maxSizeBytes \}\)/);
+assert.doesNotMatch(upload, /body: JSON.stringify\(\{ public: true, file_size_limit/);
 
 for (const path of [
   "../app/api/upload/avatar/route.ts",
@@ -36,6 +39,7 @@ const compose = read("../ops/staging-auth/docker-compose.yml");
 const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
 const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
 const provision = read("../scripts/staging-storage-provision.mjs");
+const recording = read("../app/api/upload/rekaman/route.ts");
 assert.match(compose, /supabase\/storage-api:v1\.81\.0/);
 assert.match(compose, /jumpa_storage_staging_db/);
 assert.match(compose, /postgrest\/postgrest:v14\.18/);
