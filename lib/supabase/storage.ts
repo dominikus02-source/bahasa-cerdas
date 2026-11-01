@@ -1,19 +1,8 @@
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
+import { getStorageUrl } from "@/lib/supabase/storage-config";
 import { createClient as createAuthClient } from "@/lib/supabase/client";
 
-/**
- * Browser Storage client. Its endpoint is independent from the Auth endpoint;
- * access tokens are obtained from the Auth client so cookies/session ownership
- * remains with the Auth-only client.
- */
-export function getStorageUrl(): string | null {
-  return (
-    process.env.NEXT_PUBLIC_SUPABASE_STORAGE_URL ||
-    process.env.NEXT_PUBLIC_SUPABASE_URL ||
-    null
-  );
-}
-
+/** Browser Storage client uses a separate endpoint and Auth-owned access token. */
 export function createStorageClient(): SupabaseClient {
   const url = getStorageUrl();
   const key =
