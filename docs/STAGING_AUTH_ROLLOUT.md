@@ -17,6 +17,13 @@ Staging-only GoTrue is configured with email auto-confirm enabled to let isolate
 8. Next.js embeds `NEXT_PUBLIC_*` values at build time. Merge the fragment into the staging BuildKit env secret and rebuild only `jumpa-web-staging`; do not merely set runtime env and assume the browser bundle changes.
 9. Verify actual container env, issuer, storage DB target and object volume. Do not rely on host env file status alone.
 
+## Staging backup
+Before staging cutover or destructive maintenance, run as root:
+
+`bash ops/staging-auth/backup-staging-auth-storage.sh`
+
+The script backs up the isolated GoTrue database, Storage metadata database, and Storage file volume to `/opt/bahasacerdas/staging/backups/jumpa-auth-storage/<UTC timestamp>/`, with a SHA-256 manifest. Preserve the backup outside the VPS before any destructive restore. A backup is not considered proven until a restore has been exercised against a disposable staging copy and the restored Auth login plus Storage object read are verified.
+
 ## Phase 1 acceptance
 - `GET https://auth-staging.bahasacerdas.com/health` returns 200 and `GET https://auth-staging.bahasacerdas.com/auth/v1/health` returns 200 through the proxy.
 - `jumpa-auth-db-staging`, `jumpa-auth-staging`, `jumpa-storage-db-staging`, `jumpa-storage-rest-staging`, and `jumpa-storage-staging` are healthy; Storage DB and PostgREST remain on the private Storage network.
