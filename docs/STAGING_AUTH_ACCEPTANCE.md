@@ -4,9 +4,13 @@
 - [ ] staging DNS A/AAAA for auth-staging points to staging ingress
 - [ ] HTTPS certificate valid; no production proxy config changed
 - [ ] GoTrue and dedicated PostgreSQL healthy
-- [ ] dedicated auth DB volume exists; no production DB host in auth container env
+- [ ] dedicated Auth PostgreSQL volume exists; no production DB host in Auth container env
+- [ ] dedicated Storage PostgreSQL volume exists, separate from Auth and application DB
+- [ ] internal PostgREST healthy; Storage migrations applied; file volume persistent
+- [ ] staging ingress routes `/auth/v1/*` and `/storage/v1/*` only to staging containers
 - [ ] app and Auth communicate only on staging network
-- [ ] actual staging web container has staging URL and anon key at build/runtime
+- [ ] actual staging web container has staging Auth/Storage URLs and staging anon key at build/runtime
+- [ ] Storage private-bucket E2E passes upload, anonymous-deny, signed download and delete
 
 ## Identity E2E
 - [ ] User A sign-up/login
@@ -25,6 +29,6 @@
 - [ ] Google OAuth (if enabled) callback works
 - [ ] production web health remains HTTP 200
 - [ ] production Auth URL/JWT/DB config unchanged
-- [ ] staging E2E run attached to exact commit SHA
+- [ ] staging Auth and Storage E2E runs attached to exact commit SHA
 - [ ] backup and staging rollback tested
 - [ ] no production deployment triggered by staging workflow
