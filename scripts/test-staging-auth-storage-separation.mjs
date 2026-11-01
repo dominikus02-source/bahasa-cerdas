@@ -1,0 +1,38 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+
+const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
+const authClient = read("../lib/supabase/client.ts");
+const authServer = read("../lib/supabase/server.ts");
+const proxy = read("../lib/supabase/proxy.ts");
+const storageConfig = read("../lib/supabase/storage-config.ts");
+const storageClient = read("../lib/supabase/storage.ts");
+const storageServer = read("../lib/supabase/storage-server.ts");
+const upload = read("../lib/upload.ts");
+
+assert.match(authClient, /NEXT_PUBLIC_SUPABASE_AUTH_URL\s*\|\|\s*process\.env\.NEXT_PUBLIC_SUPABASE_URL/);
+assert.match(authServer, /NEXT_PUBLIC_SUPABASE_AUTH_URL\s*\|\|\s*process\.env\.NEXT_PUBLIC_SUPABASE_URL/);
+assert.match(proxy, /NEXT_PUBLIC_SUPABASE_AUTH_URL\s*\|\|\s*process\.env\.NEXT_PUBLIC_SUPABASE_URL/);
+assert.match(storageConfig, /if \(hasDedicatedAuth\(\)\) return null/);
+assert.match(storageConfig, /if \(hasDedicatedAuth\(\)\) return null/);
+assert.match(storageConfig, /SUPABASE_STORAGE_SERVICE_ROLE_KEY/);
+assert.match(storageConfig, /NEXT_PUBLIC_SUPABASE_STORAGE_ANON_KEY/);
+assert.match(storageClient, /accessToken:\s*async/);
+assert.match(storageServer, /import ["']server-only["']/);
+assert.match(upload, /createStorageClient\(\)/);
+assert.match(upload, /getStorageAdminConfig\(\)/);
+
+for (const path of [
+  "../app/api/upload/avatar/route.ts",
+  "../app/api/upload/image/route.ts",
+  "../app/api/upload/file/route.ts",
+  "../app/api/upload/rekaman/route.ts",
+]) {
+  const source = read(path);
+  assert.match(source, /createStorageAdminClient\(\)/, path + " must use Storage admin client");
+  assert.doesNotMatch(source, /NEXT_PUBLIC_SUPABASE_URL/, path + " must not target the legacy shared URL directly");
+}
+
+console.log("PASS: Auth and Storage endpoint separation contracts");
+console.log("PASS: split Auth without Storage fails closed");
+console.log("PASS: upload API routes use server-only Storage credentials");
