@@ -133,6 +133,7 @@ with open(sys.argv[2],"w") as f:
     f.write("NEXT_PUBLIC_SUPABASE_STORAGE_ANON_KEY="+values["STAGING_ANON_KEY"]+"\n")
     f.write("SUPABASE_STORAGE_URL=https://auth-staging.bahasacerdas.com\n")
     f.write("SUPABASE_STORAGE_SERVICE_ROLE_KEY="+values["STAGING_SERVICE_ROLE_KEY"]+"\n")
+    f.write("SUPABASE_AUTH_SERVICE_ROLE_KEY="+values["STAGING_SERVICE_ROLE_KEY"]+"\n")
 PY
     chmod 600 "$ROOT/web.env.fragment"
     echo "PASS: isolated GoTrue, PostgREST and Storage health endpoints are healthy."

@@ -1,7 +1,9 @@
+import { getStorageUrl } from "@/lib/supabase/storage-config";
 let SUPABASE_PROJECT: string | null = null;
 try {
-  SUPABASE_PROJECT = process.env.NEXT_PUBLIC_SUPABASE_URL
-    ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+  const storageUrl = getStorageUrl();
+  SUPABASE_PROJECT = storageUrl
+    ? new URL(storageUrl).hostname
     : null;
 } catch {
   // env var not set or invalid URL

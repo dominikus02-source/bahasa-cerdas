@@ -1,5 +1,5 @@
 # Install only as a host-specific route on the staging ingress.
-# If shared ingress is used, this is a separate host matcher and must not alter production site blocks.
+# Never install this snippet into a shared or production ingress.
 auth-staging.bahasacerdas.com {
   handle_path /auth/v1/* {
     reverse_proxy auth-staging:9999

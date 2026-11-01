@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createStorageAdminClient } from "@/lib/supabase/storage-server";
 import { db } from "@/lib/db";
 
 export async function GET(
@@ -18,10 +18,7 @@ export async function GET(
       return new NextResponse("Audio not found", { status: 404 });
     }
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createStorageAdminClient();
 
     const storagePath = question.audioUrl.replace(
       /^.*\/storage\/v1\/object\/(public|authenticated)\//,

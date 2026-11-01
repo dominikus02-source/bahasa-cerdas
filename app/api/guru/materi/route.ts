@@ -1,3 +1,5 @@
+import { getStorageUrl } from "@/lib/supabase/storage-config";
+import { createStorageAdminClient } from "@/lib/supabase/storage-server";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -58,7 +60,7 @@ function validatePreUploadedFile(opts: { fileUrl: string | null; fileKey: string
   if (fileUrl) {
     let parsed: URL;
     try { parsed = new URL(fileUrl); } catch { return "URL file tidak valid"; }
-    const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const base = getStorageUrl();
     if (base) {
       let origin = "";
       try { origin = new URL(base).origin; } catch {}
@@ -343,7 +345,7 @@ export async function DELETE(req: NextRequest) {
 
     if (existing.fileKey) {
       try {
-        const sup = await createClient();
+        const sup = createStorageAdminClient();
         const bucket = existing.fileKey.includes("/videos/") ? "videos" : "documents";
         await sup.storage.from(bucket).remove([existing.fileKey]).catch(() => {});
       } catch {}

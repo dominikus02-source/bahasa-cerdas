@@ -29,6 +29,9 @@ for (const path of [
   "../app/api/upload/image/route.ts",
   "../app/api/upload/file/route.ts",
   "../app/api/upload/rekaman/route.ts",
+  "../app/api/ai/ilustrasi/route.ts",
+  "../app/api/audio-proxy/route.ts",
+  "../app/api/kompetensi/audio/[questionId]/route.ts",
 ]) {
   const source = read(path);
   assert.match(source, /createStorageAdminClient\(\)/, path + " must use Storage admin client");
@@ -83,3 +86,10 @@ assert.match(backup, /sha256sum -c SHA256SUMS/);
 console.log("PASS: Auth and Storage endpoint separation contracts");
 console.log("PASS: split Auth without Storage fails closed");
 console.log("PASS: upload API routes use server-only Storage credentials");
+
+for (const path of ["../lib/supabase/server-login.ts", "../app/api/auth/forgot-password/route.ts", "../app/api/auth/create-user/route.ts", "../lib/account/security.ts"]) {
+  const source = read(path);
+  assert.match(source, /NEXT_PUBLIC_SUPABASE_AUTH_URL/, path + " must resolve dedicated Auth endpoint");
+  assert.match(source, /SUPABASE_AUTH_(ANON|SERVICE_ROLE)_KEY/, path + " must use dedicated Auth credentials");
+}
+console.log("PASS: login, recovery, registration and reauthentication use dedicated Auth");

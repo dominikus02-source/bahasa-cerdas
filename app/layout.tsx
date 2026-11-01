@@ -1,3 +1,4 @@
+import { getStorageUrl } from "@/lib/supabase/storage-config";
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
@@ -118,8 +119,9 @@ export default async function RootLayout({
   // `new URL()` — cukup lewati dns-prefetch/preconnect saja.
   let supabaseHost: string | null = null;
   try {
-    supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
-      ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname
+    const storageUrl = getStorageUrl();
+    supabaseHost = storageUrl
+      ? new URL(storageUrl).hostname
       : null;
   } catch {
     supabaseHost = null;

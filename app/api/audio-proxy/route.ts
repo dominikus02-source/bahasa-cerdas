@@ -1,15 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { createStorageAdminClient } from "@/lib/supabase/storage-server";
 
 export async function GET(req: NextRequest) {
   try {
     const url = req.nextUrl.searchParams.get("url");
     if (!url) return new NextResponse("Missing url param", { status: 400 });
 
-    const supabase = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+    const supabase = createStorageAdminClient();
 
     const storagePath = url.replace(
       /^https?:\/\/[^\/]+\/storage\/v1\/object\/(public|authenticated)\//,

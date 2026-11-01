@@ -17,8 +17,9 @@ import { isValidSupabaseUrl } from "@/lib/supabase/url-guard";
 //      legacy tidak didukung.
 // Jika SUPABASE_SECRET_KEY belum diset, jatuh ke anon (perilaku lama, header
 // diabaikan Supabase) supaya tidak ada yang rusak di environment lain.
-const SUPABASE_SECRET_KEY =
-  process.env.SUPABASE_AUTH_SECRET_KEY ||
+const SUPABASE_SECRET_KEY = process.env.NEXT_PUBLIC_SUPABASE_AUTH_URL
+  ? process.env.SUPABASE_AUTH_SECRET_KEY || process.env.NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY || ""
+  :
   process.env.SUPABASE_SECRET_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_AUTH_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";

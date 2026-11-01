@@ -89,11 +89,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
             const bucket = afterMarker.substring(0, slashIdx);
             const path = afterMarker.substring(slashIdx + 1);
             // Dynamic import to avoid bundling supabase admin client.
-            const { createClient } = await import("@supabase/supabase-js");
-            const supabase = createClient(
-              process.env.NEXT_PUBLIC_SUPABASE_URL!,
-              process.env.SUPABASE_SERVICE_ROLE_KEY!
-            );
+            const { createStorageAdminClient } = await import("@/lib/supabase/storage-server");
+            const supabase = createStorageAdminClient();
             await supabase.storage.from(bucket).remove([path]);
           }
         }
