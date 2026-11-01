@@ -37,12 +37,12 @@ const compose = read("../ops/staging-auth/docker-compose.yml");
 const bootstrap = read("../ops/staging-auth/setup-staging-auth.sh");
 const caddy = read("../ops/staging-auth/Caddyfile.staging.snippet");
 assert.match(compose, /supabase\/storage-api:v1\.81\.0/);
-assert.match(compose, /jumpa_storage_staging/);
+assert.match(compose, /jumpa_storage_staging_db/);\nassert.match(compose, /postgrest\/postgrest:v14\\.18/);\nassert.match(compose, /PGRST_DB_URI/);\nassert.match(compose, /DB_INSTALL_ROLES: "true"/);\nassert.match(compose, /storage-private/);\nassert.match(compose, /storage-db/);
 assert.match(compose, /STORAGE_BACKEND: file/);
-assert.match(bootstrap, /jumpa_storage_staging/);
+assert.match(bootstrap, /STORAGE_DB_PASSWORD/);\nassert.match(bootstrap, /AUTHENTICATOR_DB_PASSWORD/);\nassert.match(bootstrap, /PGRST_DB_URI/);\nassert.match(bootstrap, /init-storage\\.sql/);
 assert.match(bootstrap, /NEXT_PUBLIC_SUPABASE_STORAGE_URL/);
 assert.match(caddy, /handle_path \/storage\/v1\/\*/);
-assert.match(caddy, /reverse_proxy storage-staging:5000/);
+assert.match(caddy, /reverse_proxy storage-staging:5000/);\nassert.match(caddy, /X-Forwarded-Prefix \/storage\/v1/);
 
 console.log("PASS: Auth and Storage endpoint separation contracts");
 console.log("PASS: split Auth without Storage fails closed");
