@@ -49,7 +49,7 @@ assert.match(bootstrap, /AUTHENTICATOR_DB_PASSWORD/);
 assert.match(bootstrap, /PGRST_DB_URI/);
 assert.match(bootstrap, /init-storage\.sql/);
 assert.match(bootstrap, /NEXT_PUBLIC_SUPABASE_STORAGE_URL/);
-assert.match(provision, /auth-staging\\./);
+assert.match(provision, /auth-staging\./);
 assert.match(provision, /public: true/);
 assert.match(provision, /will not make it public/);
 assert.match(caddy, /handle_path \/storage\/v1\/\*/);
