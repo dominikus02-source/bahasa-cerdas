@@ -1,14 +1,11 @@
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
-import { getStorageUrl } from "@/lib/supabase/storage-config";
+import { getStorageUrl, getStorageAnonKey } from "@/lib/supabase/storage-config";
 import { createClient as createAuthClient } from "@/lib/supabase/client";
 
 /** Browser Storage client uses a separate endpoint and Auth-owned access token. */
 export function createStorageClient(): SupabaseClient {
   const url = getStorageUrl();
-  const key =
-    process.env.NEXT_PUBLIC_SUPABASE_STORAGE_ANON_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const key = getStorageAnonKey();
 
   if (!url || !key) throw new Error("Supabase Storage is not configured");
 
