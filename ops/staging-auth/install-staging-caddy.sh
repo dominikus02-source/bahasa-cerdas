@@ -1,45 +1,54 @@
 #!/usr/bin/env bash
-# Installs only the auth-staging host route into the shared Caddy ingress.
-# Existing production site blocks are not edited.
+# Installs the staging Auth/Storage route ONLY into a dedicated staging Caddy.
+# This script deliberately refuses the production/shared Caddy container.
 set -Eeuo pipefail
+umask 077
+
 APP_DIR="/opt/bahasacerdas/staging/jumpa/app"
-CONFIG_DIR="/opt/bahasacerdas/config/caddy.d"
-CADDY_CONTAINER="bahasacerdas-prod-caddy-1"
+STAGING_ROOT="/opt/bahasacerdas/staging"
 SOURCE="$APP_DIR/ops/staging-auth/Caddyfile.staging.snippet"
-TARGET="$CONFIG_DIR/auth-staging.caddy"
+
+die(){ echo "STOP: $*" >&2; exit 1; }
+
+[[ $EUID -eq 0 ]] || die "Jalankan sebagai root."
+[[ -f "$SOURCE" ]] || die "Staging Caddy snippet missing."
+
+: "${STAGING_CADDY_CONTAINER:?Set STAGING_CADDY_CONTAINER to the dedicated staging Caddy container}"
+: "${STAGING_CADDY_CONFIG_DIR:?Set STAGING_CADDY_CONFIG_DIR under /opt/bahasacerdas/staging}"
+: "${STAGING_CADDYFILE_PATH:?Set STAGING_CADDYFILE_PATH to the Caddyfile inside the staging container}"
+: "${STAGING_DOCKER_NETWORK:?Set STAGING_DOCKER_NETWORK to the verified JUMPA staging network}"
+
+[[ "$STAGING_CADDY_CONTAINER" == *staging* ]] || die "Container name must explicitly identify staging."
+[[ "$STAGING_CADDY_CONTAINER" != *prod* ]] || die "Production Caddy is forbidden."
+[[ "$STAGING_CADDY_CONFIG_DIR" == "$STAGING_ROOT"/* ]] || die "Caddy config directory must be inside the staging root."
+[[ "$STAGING_CADDYFILE_PATH" == /* ]] || die "Container Caddyfile path must be absolute."
+
+docker inspect "$STAGING_CADDY_CONTAINER" >/dev/null 2>&1 || die "Dedicated staging Caddy container not found."
+docker network inspect "$STAGING_DOCKER_NETWORK" >/dev/null 2>&1 || die "Staging Docker network not found."
+NETWORKS="$(docker inspect -f '{{range $name, $cfg := .NetworkSettings.Networks}}{{println $name}}{{end}}' "$STAGING_CADDY_CONTAINER")"
+printf '%s\n' "$NETWORKS" | grep -Fxq "$STAGING_DOCKER_NETWORK" || die "Dedicated staging Caddy is not attached to the verified staging network."
+
+docker exec "$STAGING_CADDY_CONTAINER" test -f "$STAGING_CADDYFILE_PATH" || die "Staging Caddyfile missing inside container."
+IMPORT_LINE="import $STAGING_CADDY_CONFIG_DIR/*.caddy"
+docker exec "$STAGING_CADDY_CONTAINER" grep -Fq "$IMPORT_LINE" "$STAGING_CADDYFILE_PATH" || die "Staging Caddyfile does not import the staging-only snippet directory."
+
+mkdir -p "$STAGING_CADDY_CONFIG_DIR"
+TARGET="$STAGING_CADDY_CONFIG_DIR/auth-staging.caddy"
 STAMP="$(date +%Y%m%d%H%M%S)"
 BACKUP="$TARGET.bak.$STAMP"
+[[ ! -f "$TARGET" ]] || cp -a "$TARGET" "$BACKUP"
+install -m 600 "$SOURCE" "$TARGET"
 
-[[ -f "$SOURCE" ]] || { echo "STOP: staging Caddy snippet missing"; exit 1; }
-docker inspect "$CADDY_CONTAINER" >/dev/null 2>&1 || { echo "STOP: shared Caddy container missing"; exit 1; }
-STAGING_NETWORK="${STAGING_DOCKER_NETWORK:-jumpa-staging-net}"
-docker network inspect "$STAGING_NETWORK" >/dev/null 2>&1 || { echo "STOP: staging network missing"; exit 1; }
-CADDY_NETWORKS="$(docker inspect -f '{{range $name, $cfg := .NetworkSettings.Networks}}{{println $name}}{{end}}' "$CADDY_CONTAINER")"
-printf '%s\n' "$CADDY_NETWORKS" | grep -Fxq "$STAGING_NETWORK" || {
-  echo "STOP: Caddy is not attached to $STAGING_NETWORK."
-  echo "Do not auto-attach the shared production proxy; review network topology and approve a dedicated staging ingress."
-  exit 1
-}
-docker exec "$CADDY_CONTAINER" test -f /etc/caddy/Caddyfile || { echo "STOP: Caddyfile missing"; exit 1; }
-grep -Fq 'import /etc/caddy/conf.d/*.caddy' /opt/bahasacerdas/config/Caddyfile 2>/dev/null || \
-  docker exec "$CADDY_CONTAINER" grep -Fq 'import /etc/caddy/conf.d/*.caddy' /etc/caddy/Caddyfile || {
-    echo "STOP: Caddy does not import the staging snippet directory"; exit 1;
-  }
-
-mkdir -p "$CONFIG_DIR"
-if [[ -f "$TARGET" ]]; then cp -a "$TARGET" "$BACKUP"; fi
-install -m 644 "$SOURCE" "$TARGET"
-
-if ! docker exec "$CADDY_CONTAINER" caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile; then
+if ! docker exec "$STAGING_CADDY_CONTAINER" caddy validate --config "$STAGING_CADDYFILE_PATH" --adapter caddyfile; then
   if [[ -f "$BACKUP" ]]; then cp -a "$BACKUP" "$TARGET"; else rm -f "$TARGET"; fi
-  echo "STOP: invalid Caddy config; previous route restored"; exit 1
+  die "Staging Caddy validation failed; previous staging route restored."
 fi
 
-if ! docker exec "$CADDY_CONTAINER" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile; then
+if ! docker exec "$STAGING_CADDY_CONTAINER" caddy reload --config "$STAGING_CADDYFILE_PATH" --adapter caddyfile; then
   if [[ -f "$BACKUP" ]]; then cp -a "$BACKUP" "$TARGET"; else rm -f "$TARGET"; fi
-  docker exec "$CADDY_CONTAINER" caddy reload --config /etc/caddy/Caddyfile --adapter caddyfile || true
-  echo "STOP: Caddy reload failed; previous route restored"; exit 1
+  docker exec "$STAGING_CADDY_CONTAINER" caddy reload --config "$STAGING_CADDYFILE_PATH" --adapter caddyfile || true
+  die "Staging Caddy reload failed; previous staging route restored."
 fi
 
-echo "PASS: staging-only Auth/Storage host route installed."
-echo "Production site blocks were not modified."
+echo "PASS: Auth/Storage route installed on dedicated staging Caddy only."
+echo "Production Caddy container and production ingress configuration were not accessed."
