@@ -119,14 +119,14 @@ done
 # Plain PostgreSQL does not pre-create GoTrue's auth schema.
 AUTH_DB_READY=0
 for i in $(seq 1 120); do
-  if docker exec -u gotrue jumpa-auth-db-staging pg_isready -U gotrue -d gotrue >/dev/null 2>&1; then
+  if docker exec -u postgres jumpa-auth-db-staging pg_isready -U gotrue -d gotrue >/dev/null 2>&1; then
     AUTH_DB_READY=1
     break
   fi
   sleep 2
 done
 [[ "$AUTH_DB_READY" == "1" ]] || die "Staging Auth database not ready; no volumes removed."
-docker exec -u gotrue jumpa-auth-db-staging psql -X -v ON_ERROR_STOP=1 -U gotrue -d gotrue -c 'CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue;'
+docker exec -u postgres jumpa-auth-db-staging psql -X -v ON_ERROR_STOP=1 -U gotrue -d gotrue -c 'CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue;'
 docker exec -i -u postgres jumpa-storage-db-staging psql -X -v ON_ERROR_STOP=1 -d storage < "$ROOT/init-storage.sql"
 docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d
 
