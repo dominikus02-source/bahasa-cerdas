@@ -83,6 +83,8 @@ fi
 # The Storage API migrations create anon/authenticated/service_role and grant
 # them to authenticator. Pre-create only the isolated PostgREST login.
 cat > "$ROOT/init-storage.sql" <<SQL
+-- PostgREST includes extensions in its configured extra search path.
+CREATE SCHEMA IF NOT EXISTS extensions AUTHORIZATION postgres;
 DO \$\$
 BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='authenticator') THEN

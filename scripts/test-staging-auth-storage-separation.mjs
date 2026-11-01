@@ -105,3 +105,10 @@ assert.match(bootstrap, /docker exec -i -u postgres jumpa-auth-db-staging psql -
 assert.match(bootstrap, /CREATE ROLE postgres NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS/);
 assert.ok(bootstrap.indexOf('CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue') < bootstrap.lastIndexOf('up -d\n'));
 console.log("PASS: dedicated GoTrue auth schema exists before API startup");
+
+assert.match(bootstrap, /CREATE SCHEMA IF NOT EXISTS extensions AUTHORIZATION postgres/);
+console.log("PASS: Storage database provisions PostgREST extra search-path schema");
+
+assert.match(compose, /PGRST_ADMIN_SERVER_PORT: "3001"/);
+assert.match(compose, /PGRST_SERVER_HOST: 0\.0\.0\.0/);
+console.log("PASS: PostgREST readiness probe has an enabled internal admin endpoint");
