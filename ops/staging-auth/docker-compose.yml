@@ -140,6 +140,7 @@ services:
       TENANT_ID: jumpa-staging
       REGION: local
       ENABLE_IMAGE_TRANSFORMATION: "false"
+      IMAGE_TRANSFORMATION_ENABLED: "false"
       LOG_LEVEL: info
     volumes:
       - jumpa_storage_staging_files:/var/lib/storage
