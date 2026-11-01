@@ -4,18 +4,18 @@
 This rollout is staging-only. It must not change `main`, production `web.env`, production database, production Supabase Auth, production JWT keys, or production Caddy routes. The VPS evidence showed the existing `supabase-auth` container belongs to `supabase_default` and targets production Auth/DB. Never reuse it.
 
 ## Phase 1 — compatibility bridge: isolated GoTrue
-GoTrue is the Auth component formerly shipped as Supabase Auth. This phase preserves the current `@supabase/ssr`/Supabase JS protocol while removing staging's dependency on the production Auth service. It is **not** a claim that the codebase is already fully Supabase-free.
+Staging-only GoTrue is configured with email auto-confirm enabled to let isolated test accounts sign in immediately; production email confirmation behavior is not changed. Recovery mail still uses the isolated SMTP configuration. GoTrue is the Auth component formerly shipped as Supabase Auth. This phase preserves the current `@supabase/ssr`/Supabase JS protocol while removing staging's dependency on the production Auth service. It is **not** a claim that the codebase is already fully Supabase-free.
 
 1. Merge/deploy this staging-only branch to the staging baseline only after review.
 2. On the VPS, place the checkout's `ops/staging-auth/docker-compose.yml` and `setup-staging-auth.sh` in the staging checkout. Run once as root:
    `bash ops/staging-auth/setup-staging-auth.sh`
-3. The script creates a dedicated PostgreSQL 16 volume and GoTrue container, generates unique DB/JWT secrets, prompts once for the Resend SMTP key (hidden input), and attaches GoTrue only to `jumpa-staging-net` plus a private DB network. It writes secrets under `/opt/bahasacerdas/staging/auth/`, never into Git.
-4. Configure a **staging-only** reverse proxy route: `https://auth-staging.bahasacerdas.com` → `http://auth-staging:9999`. Do not add this host to production Caddy. If staging has no independent proxy/DNS/TLS path, stop and establish one before configuring the browser.
+3. The script discovers the staging Docker network from `jumpa-web-staging`, creates a dedicated PostgreSQL 16 volume and GoTrue container, generates unique DB/JWT secrets, prompts once for the Resend SMTP key (hidden input), and attaches GoTrue to the network discovered from `jumpa-web-staging` plus a private DB network. It writes secrets under `/opt/bahasacerdas/staging/auth/`, never into Git.
+4. Configure a **staging-only** reverse proxy route: `https://auth-staging.bahasacerdas.com/auth/v1/*` → `http://auth-staging:9999/*` (strip `/auth/v1` before proxying); also proxy `/health` to `/health`. Do not add this host to production Caddy. If staging has no independent proxy/DNS/TLS path, stop and establish one before configuring the browser.
 5. Set `NEXT_PUBLIC_SUPABASE_URL=https://auth-staging.bahasacerdas.com` and the generated `STAGING_ANON_KEY` as the staging app's publishable/anon key at build time and runtime where needed. Never set production keys in staging. GoTrue's `/auth/v1` path is supplied by the existing SDK URL convention; validate actual browser network requests.
 6. Verify actual container env and issuer/URL. Do not rely on host env file status alone.
 
 ## Phase 1 acceptance
-- `GET https://auth-staging.bahasacerdas.com/health` returns 200.
+- `GET https://auth-staging.bahasacerdas.com/health` returns 200 and `GET https://auth-staging.bahasacerdas.com/auth/v1/health` returns 200 through the proxy.
 - `jumpa-auth-db-staging` and `jumpa-auth-staging` are healthy and only staging network is used for app connectivity.
 - DB volume is dedicated: `jumpa_auth_staging_db`.
 - Two separate dummy accounts pass `node scripts/staging-auth-e2e.mjs`.
