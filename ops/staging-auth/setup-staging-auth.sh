@@ -93,6 +93,21 @@ fi
 if ! grep -q '^STORAGE_DATABASE_URL=' "$ENV_FILE"; then
   printf 'STORAGE_DATABASE_URL=postgresql://jumpa_storage:%s@jumpa-db-staging:5432/jumpa_storage_staging?sslmode=disable\n' "$STORAGE_DB_PASSWORD" >> "$ENV_FILE"
 fi
+# Prepare only the new Storage database: roles, extensions and ownership.
+docker exec -i "$DB_CONTAINER" psql -U "$PGUSER" -d jumpa_storage_staging -v ON_ERROR_STOP=1 <<SQL >/dev/null
+DO \$\$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='anon') THEN EXECUTE 'CREATE ROLE anon NOLOGIN'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='authenticated') THEN EXECUTE 'CREATE ROLE authenticated NOLOGIN'; END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname='service_role') THEN EXECUTE 'CREATE ROLE service_role NOLOGIN BYPASSRLS'; END IF;
+END
+\$\$;
+ALTER ROLE service_role BYPASSRLS;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+GRANT anon, authenticated, service_role TO jumpa_storage;
+GRANT USAGE, CREATE ON SCHEMA public TO jumpa_storage;
+ALTER SCHEMA public OWNER TO jumpa_storage;
+SQL
 
 chmod 600 "$ENV_FILE" "$AUTH_ENV"
 set -a
