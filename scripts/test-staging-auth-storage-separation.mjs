@@ -101,6 +101,7 @@ assert.ok(bootstrap.indexOf('up -d auth-db storage-db') < bootstrap.indexOf('psq
 assert.ok(bootstrap.indexOf('psql -X -v ON_ERROR_STOP=1') < bootstrap.lastIndexOf('up -d\n'));
 console.log("PASS: private Storage init SQL uses host stdin before API startup");
 
-assert.match(bootstrap, /docker exec -u postgres jumpa-auth-db-staging psql .*CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue/);
+assert.match(bootstrap, /docker exec -i -u postgres jumpa-auth-db-staging psql -X -v ON_ERROR_STOP=1 -U gotrue -d gotrue/);
+assert.match(bootstrap, /CREATE ROLE postgres NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS/);
 assert.ok(bootstrap.indexOf('CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue') < bootstrap.lastIndexOf('up -d\n'));
 console.log("PASS: dedicated GoTrue auth schema exists before API startup");

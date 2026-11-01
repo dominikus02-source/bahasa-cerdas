@@ -126,7 +126,19 @@ for i in $(seq 1 120); do
   sleep 2
 done
 [[ "$AUTH_DB_READY" == "1" ]] || die "Staging Auth database not ready; no volumes removed."
-docker exec -u postgres jumpa-auth-db-staging psql -X -v ON_ERROR_STOP=1 -U gotrue -d gotrue -c 'CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue;'
+# GoTrue's shipped RLS migration grants SELECT to a role named postgres.
+# POSTGRES_USER=gotrue means plain Postgres has not created that DB role.
+# Provision it as NOLOGIN, with no elevated privileges; preserve existing roles.
+docker exec -i -u postgres jumpa-auth-db-staging psql -X -v ON_ERROR_STOP=1 -U gotrue -d gotrue <<'AUTH_SQL'
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'postgres') THEN
+    CREATE ROLE postgres NOLOGIN NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS;
+  END IF;
+END
+$$;
+CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION gotrue;
+AUTH_SQL
 docker exec -i -u postgres jumpa-storage-db-staging psql -X -v ON_ERROR_STOP=1 -d storage < "$ROOT/init-storage.sql"
 docker compose --env-file "$ENV_FILE" -f "$TMP_COMPOSE" up -d
 
