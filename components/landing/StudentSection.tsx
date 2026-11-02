@@ -3,32 +3,30 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  Compass,
-  Gamepad2,
-  PenLine,
   ArrowRight,
 } from "lucide-react";
+import { JalurCerdasIcon, GimIcon, AksaraIcon } from "@/components/shared/FeatureIcons";
 import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 
 const experiences = [
   {
-    icon: Compass,
+    icon: JalurCerdasIcon,
     title: "Jalur Cerdas",
     description: "Belajar dari dasar hingga mahir.",
-    color: "bg-red-50 text-primary",
+    color: "",
   },
   {
-    icon: Gamepad2,
+    icon: GimIcon,
     title: "Arena & Gim",
     description: "Latihan dan gim.",
-    color: "bg-violet-50 text-violet-600",
+    color: "",
   },
   {
-    icon: PenLine,
+    icon: AksaraIcon,
     title: "Menulis & Berkarya",
     description: "Tulis dan tampilkan karya.",
-    color: "bg-amber-50 text-amber-600",
+    color: "",
   },
 ];
 
@@ -83,7 +81,7 @@ export default function StudentSection() {
                   className="p-6 rounded-2xl bg-zinc-50/80 border border-zinc-100 hover:border-zinc-200 hover:bg-white transition-all duration-300"
                 >
                   <div className={`w-11 h-11 rounded-xl ${e.color} flex items-center justify-center mb-4`}>
-                    <Icon size={22} aria-hidden="true" />
+                    <Icon size={44} aria-hidden="true" />
                   </div>
                   <h3 className="font-display font-bold text-zinc-900 mb-1.5">{e.title}</h3>
                   <p className="text-sm text-zinc-500 leading-relaxed">{e.description}</p>
