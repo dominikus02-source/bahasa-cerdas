@@ -6,7 +6,7 @@ import type { IdentitySource } from "@/lib/account/identity";
 /**
  * AKU SASTRAWAN access policy (single source of truth for pages + API routes).
  *
- * WRITE (create/edit projects & chapters, curriculum progress, AI Writing Coach):
+ * WRITE (create/edit projects & chapters, curriculum progress, Pendamping Menulis AI):
  *   - UMUM        → Premium Umum (paid or Umum trial) via hasUmumPremium().
  *   - GURU/MURID  → canonical plan from resolvePlan(): PRO (guru premium),
  *                   MURID_PREMIUM (murid premium). FOUNDER/ADMIN always.
@@ -44,11 +44,30 @@ export function akuSastrawanUpgradeUrl(role?: string | null): string {
   }
 }
 
-export function akuSastrawanPremiumRequired(role?: string | null, message = "Menulis di AKU SASTRAWAN memerlukan akses Premium. Drafmu tetap bisa dibaca dan diunduh.") {
+export const AKU_SASTRAWAN_DEFAULT_LOCK_MESSAGE =
+  "Masa Premium-mu sudah berakhir atau belum aktif. Karyamu tetap aman: kamu masih bisa membuka, membaca, dan mengunduhnya. Aktifkan Premium untuk membuat, mengubah, melanjutkan tulisan, menghapus karya, dan memakai Pendamping Menulis AI.";
+
+export function akuSastrawanPremiumRequired(role?: string | null, message = AKU_SASTRAWAN_DEFAULT_LOCK_MESSAGE) {
   // UMUM gets the standard Premium Umum 403 (same shape as every other Umum feature).
   if (role?.toUpperCase() === "UMUM") return umumPremiumRequired(message);
   return NextResponse.json(
-    { error: message, code: "AKU_SASTRAWAN_PREMIUM_REQUIRED", upgradeUrl: akuSastrawanUpgradeUrl(role) },
+    { ok: false, error: message, message, code: "AKU_SASTRAWAN_PREMIUM_REQUIRED", upgradeUrl: akuSastrawanUpgradeUrl(role) },
     { status: 403 }
   );
+}
+
+/**
+ * Hapus = tindakan permanen. Selain digerbang premium (tidak bisa saat
+ * kedaluwarsa), server mewajibkan konfirmasi eksplisit di body:
+ * { "konfirmasi": "HAPUS" } (dari dialog konfirmasi di UI).
+ */
+export const AKU_SASTRAWAN_DELETE_CONFIRMATION = "HAPUS";
+
+export function akuSastrawanDeleteConfirmed(body: unknown): boolean {
+  return typeof body === "object" && body !== null && (body as { konfirmasi?: unknown }).konfirmasi === AKU_SASTRAWAN_DELETE_CONFIRMATION;
+}
+
+export function akuSastrawanDeleteConfirmationRequired(target: "karya" | "bab") {
+  const message = `Penghapusan ${target} memerlukan konfirmasi. Ketik ${AKU_SASTRAWAN_DELETE_CONFIRMATION} pada dialog konfirmasi untuk melanjutkan.`;
+  return NextResponse.json({ ok: false, error: message, message, code: "AKU_SASTRAWAN_KONFIRMASI_HAPUS" }, { status: 400 });
 }

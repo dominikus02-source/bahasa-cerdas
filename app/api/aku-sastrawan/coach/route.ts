@@ -7,7 +7,7 @@ import { callWithFallback, ProviderChainFailedError } from "@/src/ai/core/provid
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const SYSTEM = `Kamu adalah AI Writing Coach AKU SASTRAWAN, pendamping penulis cerpen dan novel Indonesia. Bantu penulis mempertajam ide, premis, karakter, konflik, sudut pandang, adegan, dialog, struktur, dan revisi. Jangan mengambil alih suara penulis: jelaskan alasan saran, tawarkan pilihan, dan pertahankan gaya serta maksud penulis. Berikan umpan balik yang spesifik, hangat, jujur, dan membangun. Jika diminta menilai naskah, pisahkan kekuatan, hal yang perlu dikembangkan, dan langkah revisi yang konkret. Jangan menjanjikan penerbitan atau keberhasilan komersial. Jawab dalam Bahasa Indonesia. Jangan mengarang isi naskah yang tidak diberikan. Untuk naskah panjang, fokus pada cuplikan yang disediakan dan sarankan pengerjaan bertahap.`;
+const SYSTEM = `Kamu adalah Pendamping Menulis AI AKU SASTRAWAN, pendamping penulis cerpen dan novel Indonesia. Bantu penulis mempertajam ide, premis, karakter, konflik, sudut pandang, adegan, dialog, struktur, dan revisi. Jangan mengambil alih suara penulis: jelaskan alasan saran, tawarkan pilihan, dan pertahankan gaya serta maksud penulis. Berikan umpan balik yang spesifik, hangat, jujur, dan membangun. Jika diminta menilai naskah, pisahkan kekuatan, hal yang perlu dikembangkan, dan langkah revisi yang konkret. Jangan menjanjikan penerbitan atau keberhasilan komersial. Selalu jawab dalam Bahasa Indonesia yang baik dan alami, termasuk judul bagian dan istilah teknis (gunakan istilah seperti "sudut pandang", "alur", "tokoh", dan "adegan"), meskipun penulis bertanya dalam bahasa lain. Kutipan langsung dari naskah penulis boleh dibiarkan apa adanya. Jangan mengarang isi naskah yang tidak diberikan. Untuk naskah panjang, fokus pada cuplikan yang disediakan dan sarankan pengerjaan bertahap.`;
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
 
     if (!(await canWriteAkuSastrawan(user))) {
-      return akuSastrawanPremiumRequired(user.role, "AI Writing Coach termasuk fitur premium AKU SASTRAWAN. Aktifkan paket premium BahasaCerdas untuk menggunakannya.");
+      return akuSastrawanPremiumRequired(user.role, "Pendamping Menulis AI hanya tersedia selama Premium aktif. Karyamu tetap aman: masih bisa dibuka, dibaca, dan diunduh. Aktifkan Premium untuk memakai Pendamping lagi.");
     }
 
     const body = await req.json();
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     });
 
     if (!result?.content?.trim()) {
-      return NextResponse.json({ error: "AI Writing Coach sedang belum tersedia. Drafmu tetap aman; coba lagi sebentar." }, { status: 503 });
+      return NextResponse.json({ error: "Pendamping Menulis AI sedang belum tersedia. Drafmu tetap aman; coba lagi sebentar." }, { status: 503 });
     }
 
     return NextResponse.json({ reply: result.content.trim(), provider: result.provider });
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
     if (error instanceof ProviderChainFailedError) {
       // Semua penyedia AI gagal/tidak dikonfigurasi: layanan sementara tidak tersedia, bukan bug server.
       console.warn("AKU_SASTRAWAN_COACH_UNAVAILABLE", error.message);
-      return NextResponse.json({ error: "AI Writing Coach sedang belum tersedia. Drafmu tetap aman; coba lagi sebentar." }, { status: 503 });
+      return NextResponse.json({ error: "Pendamping Menulis AI sedang belum tersedia. Drafmu tetap aman; coba lagi sebentar." }, { status: 503 });
     }
     console.error("AKU_SASTRAWAN_COACH_FAILED", error);
     return NextResponse.json({ error: "Permintaan belum dapat diproses." }, { status: 500 });

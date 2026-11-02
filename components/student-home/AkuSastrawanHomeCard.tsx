@@ -45,7 +45,7 @@ export function AkuSastrawanHomeCard() {
             Ruang menulis cerpen dan novel.
           </h2>
           <p className="mt-1.5 text-sm leading-relaxed text-[var(--px-text-dim)]">
-            Kurikulum interaktif, Writing Studio, dan AI Writing Coach untuk mengembangkan ceritamu.
+            Kurikulum interaktif, Studio Menulis, dan Pendamping Menulis AI untuk mengembangkan ceritamu.
           </p>
         </div>
       </div>
@@ -78,15 +78,26 @@ export function AkuSastrawanHomeCard() {
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black">AKU SASTRAWAN adalah fitur Premium.</p>
             <p className="mt-0.5 text-[11px] leading-5 text-bc-text-2">
-              Aktifkan Premium untuk membuka kurikulum cerpen & novel, Writing Studio, dan AI Writing Coach.
+              Aktifkan Premium untuk membuka kurikulum cerpen & novel, Studio Menulis, dan Pendamping Menulis AI.
             </p>
-            <Link
-              href="/murid/premium"
-              className="mt-2 inline-flex items-center gap-1 text-[11px] font-black text-violet-700 underline underline-offset-4 dark:text-violet-300"
-            >
-              Lihat Premium
-              <ArrowRight className="h-3 w-3" />
-            </Link>
+            <p className="mt-0.5 text-[11px] leading-5 text-bc-text-2">
+              Karya yang sudah kamu tulis tetap aman dan bisa dibuka atau diunduh kapan saja.
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1">
+              <Link
+                href="/murid/premium"
+                className="inline-flex items-center gap-1 text-[11px] font-black text-violet-700 underline underline-offset-4 dark:text-violet-300"
+              >
+                Lihat Premium
+                <ArrowRight className="h-3 w-3" />
+              </Link>
+              <Link
+                href="/aku-sastrawan/studio"
+                className="inline-flex items-center gap-1 text-[11px] font-black text-bc-text-2 underline underline-offset-4"
+              >
+                Buka karyaku
+              </Link>
+            </div>
           </div>
           <button
             type="button"

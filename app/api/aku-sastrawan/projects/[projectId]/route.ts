@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
-import { akuSastrawanPremiumRequired, canWriteAkuSastrawan } from "@/lib/aku-sastrawan/access";
+import { akuSastrawanDeleteConfirmationRequired, akuSastrawanDeleteConfirmed, akuSastrawanPremiumRequired, canWriteAkuSastrawan } from "@/lib/aku-sastrawan/access";
 
 export const runtime = "nodejs";
 
@@ -46,12 +46,15 @@ export async function PATCH(request: NextRequest, context: Context) {
   return NextResponse.json({ project });
 }
 
-// Deleting your own draft is a write action (premium), consistent with the
-// "read + export stay free" policy. Founder may decide to allow it for owners.
-export async function DELETE(_request: NextRequest, context: Context) {
+// DELETE: write action — blocked while premium is absent/expired (drafts are
+// never lost on expiry), and even with premium it needs an explicit
+// confirmation body { konfirmasi: "HAPUS" } from the in-page dialog.
+export async function DELETE(request: NextRequest, context: Context) {
   const { projectId } = await context.params;
   const result = await ownedProject(projectId, "write");
   if (result.error) return result.error;
+  const body = await request.json().catch(() => null);
+  if (!akuSastrawanDeleteConfirmed(body)) return akuSastrawanDeleteConfirmationRequired("karya");
   await db.writingProject.delete({ where: { id: result.project!.id } });
   return NextResponse.json({ ok: true });
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CheckCircle2, Lock, Circle } from "lucide-react";
 
@@ -10,10 +11,12 @@ export function CurriculumStages({
   track,
   stages,
   hasAccess,
+  upgradeUrl = "/murid/premium",
 }: {
   track: string;
   stages: Stage[];
   hasAccess: boolean;
+  upgradeUrl?: string;
 }) {
   const [progress, setProgress] = useState<ProgressItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +97,7 @@ export function CurriculumStages({
                     ))}
                   </div>
                   {!hasAccess && unlocked && (
-                    <p className="mt-2 text-xs text-amber-600">Aktifkan premium untuk menandai progres.</p>
+                    <p className="mt-2 text-xs text-amber-700 dark:text-amber-300">Progres hanya bisa ditandai selama Premium aktif. <Link href={upgradeUrl} className="font-bold underline underline-offset-4">Aktifkan Premium</Link></p>
                   )}
                 </div>
               </div>

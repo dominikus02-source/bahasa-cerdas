@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   ArrowRight,
@@ -15,6 +16,11 @@ import {
 } from "lucide-react";
 import { getUser } from "@/lib/supabase/server";
 import { akuSastrawanUpgradeUrl } from "@/lib/aku-sastrawan/access";
+
+export const metadata: Metadata = {
+  title: "AKU SASTRAWAN · Akademi Menulis Premium dari BahasaCerdas",
+  description: "Ruang belajar dan menulis cerpen serta novel: kurikulum bertahap, Studio Menulis, dan Pendamping Menulis AI.",
+};
 
 const tracks = [
   {
@@ -49,18 +55,18 @@ const pillars = [
   },
   {
     icon: PenLine,
-    title: "Writing Studio",
+    title: "Studio Menulis",
     description: "Satu ruang untuk mengembangkan ide, menyusun struktur, dan melanjutkan naskah secara bertahap.",
   },
   {
     icon: BrainCircuit,
-    title: "AI Writing Coach",
+    title: "Pendamping Menulis AI",
     description: "Pendamping untuk mengevaluasi alur, karakter, dialog, sudut pandang, dan pilihan bahasa.",
   },
   {
     icon: Target,
     title: "Progres yang nyata",
-    description: "Lanjutkan naskah melalui Writing Studio. Progres kurikulum tersimpan di akunmu.",
+    description: "Lanjutkan naskah melalui Studio Menulis. Progres kurikulum tersimpan di akunmu.",
   },
 ];
 
@@ -68,7 +74,7 @@ const process = [
   ["01", "Pilih jalur", "Mulai dari cerpen atau novel sesuai tujuanmu."],
   ["02", "Pelajari teknik", "Ikuti peta tahapan dan tandai progresmu di kurikulum."],
   ["03", "Tulis karyamu", "Bangun ide menjadi draf dalam ruang menulis pribadi."],
-  ["04", "Evaluasi & revisi", "Minta masukan AI Coach jika layanan AI tersedia, lalu revisi naskahmu sendiri."],
+  ["04", "Evaluasi & revisi", "Minta masukan Pendamping AI jika layanan AI tersedia, lalu revisi naskahmu sendiri."],
 ];
 
 export default async function AkuSastrawanPage() {
@@ -85,12 +91,12 @@ export default async function AkuSastrawanPage() {
           </span>
           <span className="leading-tight">
             <span className="block text-sm font-black tracking-tight">AKU SASTRAWAN</span>
-            <span className="block text-xs text-muted-foreground">by BahasaCerdas</span>
+            <span className="block text-xs text-muted-foreground">dari BahasaCerdas</span>
           </span>
         </Link>
         <div className="flex items-center gap-2">
           <span className="hidden items-center gap-1.5 rounded-full border border-violet-500/20 bg-violet-500/5 px-3 py-1.5 text-xs font-semibold text-violet-700 dark:text-violet-300 sm:inline-flex">
-            <Sparkles size={13} /> Premium Writing Academy
+            <Sparkles size={13} /> Akademi Menulis Premium
           </span>
           <Link
             href={user ? "#program" : "/login?next=%2Faku-sastrawan"}
@@ -114,7 +120,7 @@ export default async function AkuSastrawanPage() {
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Ruang menulis premium untuk mengembangkan cerpen dan novel, menyimpan naskah pribadi, serta meminta masukan AI Writing Coach (DeepSeek). Kurikulum interaktif dengan pelacakan progres, Writing Studio, dan manajemen bab Novel sudah tersedia.
+            Ruang menulis premium untuk mengembangkan cerpen dan novel, menyimpan naskah pribadi, serta meminta masukan Pendamping Menulis AI (DeepSeek). Kurikulum interaktif dengan pelacakan progres, Studio Menulis, dan manajemen bab Novel sudah tersedia.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
@@ -142,7 +148,7 @@ export default async function AkuSastrawanPage() {
           <div className="relative overflow-hidden rounded-[2rem] border border-border/80 bg-card shadow-2xl shadow-violet-950/10">
             <div className="flex items-center justify-between border-b border-border px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Writing Studio</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Studio Menulis</p>
                 <p className="mt-1 text-sm font-bold">Proyek ceritamu</p>
               </div>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Fokus menulis</span>
@@ -161,7 +167,7 @@ export default async function AkuSastrawanPage() {
                 </div>
               </div>
               <div className="rounded-2xl border border-violet-500/20 bg-violet-500/5 p-4">
-                <div className="flex items-center gap-2 text-sm font-bold"><WandSparkles size={17} className="text-violet-600" /> Catatan AI Writing Coach</div>
+                <div className="flex items-center gap-2 text-sm font-bold"><WandSparkles size={17} className="text-violet-600" /> Catatan Pendamping Menulis AI</div>
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">“Apa yang paling ditakuti tokohmu jika ia akhirnya mengatakan kebenaran? Jawaban itu bisa menjadi sumber konflik yang lebih kuat.”</p>
                 <p className="mt-3 text-xs font-medium text-violet-700 dark:text-violet-300">Pertanyaan pemandu, bukan pengganti suaramu.</p>
               </div>
@@ -252,7 +258,7 @@ export default async function AkuSastrawanPage() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold"><LockKeyhole size={14} /> AKSES PREMIUM</div>
               <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Berikan ruang untuk ceritamu tumbuh.</h2>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base">AKU SASTRAWAN tersedia untuk pengguna Premium BahasaCerdas (Guru PRO, Murid Premium, Premium Umum). Aktifkan langganan resmi di halaman Premium sesuai peranmu untuk membuka kurikulum, Writing Studio, dan AI Writing Coach.</p>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base">AKU SASTRAWAN tersedia untuk pengguna Premium BahasaCerdas (Guru PRO, Murid Premium, Premium Umum). Aktifkan langganan resmi di halaman Premium sesuai peranmu untuk membuka kurikulum, Studio Menulis, dan Pendamping Menulis AI.</p>
             </div>
             <Link href={user ? akuSastrawanUpgradeUrl(user.role) : "/login?next=%2Faku-sastrawan"} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-violet-800 transition hover:bg-violet-50">
               {user ? "Lihat paket Premium" : "Masuk untuk memulai"} <ArrowRight size={16} />

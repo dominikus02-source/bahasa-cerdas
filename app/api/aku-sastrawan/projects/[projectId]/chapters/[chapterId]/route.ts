@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
-import { akuSastrawanPremiumRequired, canWriteAkuSastrawan } from "@/lib/aku-sastrawan/access";
+import { akuSastrawanDeleteConfirmationRequired, akuSastrawanDeleteConfirmed, akuSastrawanPremiumRequired, canWriteAkuSastrawan } from "@/lib/aku-sastrawan/access";
 
 export const runtime = "nodejs";
 type Context = { params: Promise<{ projectId: string; chapterId: string }> };
@@ -34,13 +34,16 @@ export async function PATCH(req: NextRequest, { params }: Context) {
   }
 }
 
-export async function DELETE(_req: NextRequest, { params }: Context) {
+// DELETE: premium-gated + explicit confirmation { konfirmasi: "HAPUS" }.
+export async function DELETE(req: NextRequest, { params }: Context) {
   const user = await getUser();
   if (!user) return NextResponse.json({ error: "Silakan masuk ke akun BahasaCerdas." }, { status: 401 });
   if (!(await canWriteAkuSastrawan(user))) return akuSastrawanPremiumRequired(user.role);
   try {
     const { projectId, chapterId } = await params;
     if (!await ownedChapter(projectId, chapterId, user.id)) return NextResponse.json({ error: "Bab tidak ditemukan." }, { status: 404 });
+    const body = await req.json().catch(() => null);
+    if (!akuSastrawanDeleteConfirmed(body)) return akuSastrawanDeleteConfirmationRequired("bab");
     await db.writingChapter.delete({ where: { id: chapterId } });
     return NextResponse.json({ success: true });
   } catch (error) {

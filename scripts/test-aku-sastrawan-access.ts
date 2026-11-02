@@ -7,12 +7,22 @@
  *      rute TULIS (POST/PATCH/DELETE, progress POST, coach) memakainya.
  *   4. Slug dinamis di app/api/aku-sastrawan/projects seragam [projectId].
  *   5. Coach tetap memakai model deepseek-chat.
+ *   6. Premium kedaluwarsa (GURU/MURID/UMUM): tulis/coach/hapus ditolak 403 dengan
+ *      pesan Indonesia + upgradeUrl; baca/ekspor tetap.
+ *   7. Hapus wajib konfirmasi { konfirmasi: "HAPUS" } (setelah gerbang premium).
+ *   8. Tidak ada penghapusan otomatis karya (hanya 2 rute DELETE milik pengguna).
  *
  * Usage: npx tsx scripts/test-aku-sastrawan-access.ts
  */
 import { existsSync, readFileSync, readdirSync } from "fs";
 import { join } from "path";
-import { akuSastrawanUpgradeUrl, akuSastrawanWriteAllowed } from "../lib/aku-sastrawan/access";
+import {
+  akuSastrawanDeleteConfirmationRequired,
+  akuSastrawanDeleteConfirmed,
+  akuSastrawanPremiumRequired,
+  akuSastrawanUpgradeUrl,
+  akuSastrawanWriteAllowed,
+} from "../lib/aku-sastrawan/access";
 import { hasUmumPremium } from "../lib/umum/premium";
 
 let passed = 0;
@@ -81,5 +91,57 @@ const dyn = readdirSync(projDir).filter((n) => n.startsWith("["));
 assert(dyn.length === 1 && dyn[0] === "[projectId]", `projects/ hanya punya [projectId] (ditemukan: ${dyn.join(", ")})`);
 assert(!existsSync(join(projDir, "[id]")), "projects/[id] sudah dihapus");
 
-console.log(`\nHasil: ${passed} lulus, ${failed} gagal.`);
-if (failed) process.exit(1);
+async function main() {
+  console.log("\n6. Premium kedaluwarsa — tiga peran");
+  const expired = [
+    { role: "GURU", plan: "FREE", label: "GURU (PRO/uji coba berakhir)", url: "/guru/berlangganan", code: "AKU_SASTRAWAN_PREMIUM_REQUIRED" },
+    { role: "MURID", plan: "FREE", label: "MURID (Premium berakhir)", url: "/murid/premium", code: "AKU_SASTRAWAN_PREMIUM_REQUIRED" },
+    { role: "UMUM", plan: "FREE", label: "UMUM (Premium Umum berakhir)", url: "/umum/premium", code: "UMUM_PREMIUM_REQUIRED" },
+  ];
+  for (const r of expired) {
+    assert(!akuSastrawanWriteAllowed({ role: r.role, plan: r.plan, umumPremium: false }), `${r.label}: tidak boleh membuat/mengubah/hapus/coach`);
+    const res = akuSastrawanPremiumRequired(r.role);
+    const body = await res.json();
+    assert(res.status === 403, `${r.label}: status 403`);
+    assert(typeof body.message === "string" && /Karyamu tetap aman/.test(body.message) && /membuka, membaca, dan mengunduh/.test(body.message), `${r.label}: pesan Indonesia, karya tetap aman`);
+    assert(body.upgradeUrl === r.url, `${r.label}: CTA upgrade → ${r.url}`);
+    assert(body.code === r.code, `${r.label}: kode ${r.code}`);
+  }
+  // Rute baca (daftar, buka, bab, ekspor) tidak memanggil gerbang → tetap 200 untuk ketiga peran (diuji E2E).
+  const readRoutes = [handler(projects, "GET"), handler(chapters, "GET"), handler(exp, "GET")];
+  assert(readRoutes.every(readOnly) && /"read"/.test(handler(project, "GET") ?? ""), "Baca/ekspor tidak bergantung pada status premium (semua peran)");
+
+  console.log("\n7. Hapus wajib konfirmasi eksplisit");
+  assert(akuSastrawanDeleteConfirmed({ konfirmasi: "HAPUS" }), "body { konfirmasi: \"HAPUS\" } diterima");
+  for (const bad of [null, {}, { konfirmasi: "hapus" }, { konfirmasi: true }, { confirm: "HAPUS" }, "HAPUS"]) {
+    assert(!akuSastrawanDeleteConfirmed(bad), `body ${JSON.stringify(bad)} ditolak`);
+  }
+  const conf = akuSastrawanDeleteConfirmationRequired("karya");
+  const confBody = await conf.json();
+  assert(conf.status === 400 && /memerlukan konfirmasi/.test(confBody.message), "tanpa konfirmasi → 400 + pesan Indonesia");
+  for (const [name, code, target] of [["DELETE karya", handler(project, "DELETE") ?? "", "karya"], ["DELETE bab", handler(chapter, "DELETE") ?? "", "bab"]] as const) {
+    const iGate = code.search(/ownedProject\(projectId, "write"\)|canWriteAkuSastrawan\(/);
+    const iConfirm = code.indexOf("akuSastrawanDeleteConfirmed(");
+    const iDelete = code.search(/\.delete\(/);
+    assert(iGate >= 0 && iConfirm > iGate && iDelete > iConfirm, `${name}: gerbang premium → konfirmasi → hapus (urutan benar)`);
+    assert(code.includes(`akuSastrawanDeleteConfirmationRequired("${target}")`), `${name}: menolak tanpa konfirmasi`);
+  }
+
+  console.log("\n8. Tidak ada penghapusan otomatis");
+  const hits: string[] = [];
+  const walk = (dir: string) => {
+    for (const n of readdirSync(dir, { withFileTypes: true })) {
+      if (n.name === "node_modules" || n.name.startsWith(".")) continue;
+      const p = join(dir, n.name);
+      if (n.isDirectory()) walk(p);
+      else if (/\.(ts|tsx|js|mjs|cjs|sh)$/.test(n.name) && /writing(Project|Chapter)\.(delete|deleteMany)\(|"WritingProject"|"WritingChapter"/.test(readFileSync(p, "utf8"))) hits.push(p.replace(process.cwd() + "/", ""));
+    }
+  };
+  for (const d of ["app", "lib", "ops", "components"]) if (existsSync(d)) walk(join(process.cwd(), d));
+  const allowed = ["app/api/aku-sastrawan/projects/[projectId]/route.ts", "app/api/aku-sastrawan/projects/[projectId]/chapters/[chapterId]/route.ts"];
+  assert(hits.sort().join("|") === allowed.sort().join("|"), `Hanya rute DELETE milik pengguna yang menghapus karya (ditemukan: ${hits.join(", ")})`);
+
+  console.log(`\nHasil: ${passed} lulus, ${failed} gagal.`);
+  if (failed) process.exit(1);
+}
+void main();

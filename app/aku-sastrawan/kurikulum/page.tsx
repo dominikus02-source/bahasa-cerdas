@@ -13,7 +13,13 @@ import {
 } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/supabase/server";
-import { hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
+import type { Metadata } from "next";
+import { akuSastrawanUpgradeUrl, hasAkuSastrawanAccess } from "@/lib/aku-sastrawan/access";
+
+export const metadata: Metadata = {
+  title: "Kurikulum Menulis · AKU SASTRAWAN",
+  description: "Kurikulum bertahap menulis cerpen dan novel di AKU SASTRAWAN dari BahasaCerdas.",
+};
 
 const curriculum = {
   cerpen: {
@@ -55,6 +61,7 @@ export default async function AkuSastrawanCurriculumPage({
   const selected = params.jalur === "novel" ? "novel" : "cerpen";
   const track = curriculum[selected];
   const Icon = track.icon;
+  const upgradeUrl = akuSastrawanUpgradeUrl(user.role);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -64,7 +71,7 @@ export default async function AkuSastrawanCurriculumPage({
             <ArrowLeft size={16} /> AKU SASTRAWAN
           </Link>
           <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1.5 text-xs font-bold">
-            <Sparkles size={13} /> Premium Academy
+            <Sparkles size={13} /> Akademi Menulis Premium
           </span>
         </div>
       </header>
@@ -76,6 +83,13 @@ export default async function AkuSastrawanCurriculumPage({
           <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-5xl">Pilih jalur menulismu.</h1>
           <p className="mt-4 max-w-2xl leading-7 text-muted-foreground">Dua jalur yang berbeda untuk membantumu bergerak dari gagasan menuju naskah yang selesai. Tandai progresmu di setiap tahap. Materi panduan sudah tersedia; modul latihan interaktif lanjutan akan menyusul.</p>
         </div>
+
+        {!hasAccess && (
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 p-4 text-sm">
+            <p className="flex items-center gap-2 text-amber-800 dark:text-amber-200"><Lock size={15} /> Mode baca: materi kurikulum dan karyamu tetap bisa dibuka. Aktifkan Premium untuk menandai progres dan menulis lagi.</p>
+            <Link href={upgradeUrl} className="inline-flex min-h-9 items-center rounded-full bg-primary px-4 text-xs font-bold text-primary-foreground">Aktifkan Premium</Link>
+          </div>
+        )}
 
         <div className="mt-8 grid gap-3 sm:grid-cols-2">
           {(["cerpen", "novel"] as const).map((key) => {
@@ -106,19 +120,19 @@ export default async function AkuSastrawanCurriculumPage({
             </div>
           </div>
           <div className="mt-7">
-            <CurriculumStages track={selected} stages={track.stages} hasAccess={hasAccess} />
+            <CurriculumStages track={selected} stages={track.stages} hasAccess={hasAccess} upgradeUrl={upgradeUrl} />
           </div>
           <div className="mt-6 rounded-2xl bg-muted/60 p-4 sm:p-5">
             <div className="flex items-start gap-3">
               <Target size={20} className="mt-0.5 shrink-0 text-primary" />
               <div>
                 <h3 className="font-bold">Belajar sampai naskah selesai</h3>
-                <p className="mt-1 text-sm leading-6 text-muted-foreground">Tandai setiap tahap yang sudah kamu kuasai. Progres tersimpan di akunmu. Gunakan Writing Studio untuk menulis naskah dan AI Writing Coach (jika tersedia) untuk umpan balik.</p>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">Tandai setiap tahap yang sudah kamu kuasai. Progres tersimpan di akunmu. Gunakan Studio Menulis untuk menulis naskah dan Pendamping Menulis AI (jika tersedia) untuk umpan balik.</p>
               </div>
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Link href={user ? "/aku-sastrawan/ruang-menulis" : "/login?next=%2Faku-sastrawan%2Fruang-menulis"} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:opacity-90">
-                Mulai menulis <ArrowRight size={16} />
+              <Link href="/aku-sastrawan/studio" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-primary px-5 text-sm font-bold text-primary-foreground transition hover:opacity-90">
+                {hasAccess ? "Mulai menulis" : "Buka karyaku"} <ArrowRight size={16} />
               </Link>
               <Link href="/aku-sastrawan" className="inline-flex min-h-11 items-center justify-center rounded-full border border-border px-5 text-sm font-semibold hover:bg-muted">Kembali ke produk</Link>
             </div>
