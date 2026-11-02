@@ -43,7 +43,7 @@ type QuickAction = {
   label: string;
   desc: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon | typeof KomunitasIcon;
   image: string;
   /** Kelas scrim token (tokens.css §4) — sama di terang & gelap, gelap + peredup. */
   scrim: string;
