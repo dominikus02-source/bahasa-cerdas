@@ -117,6 +117,8 @@
     "test:retention-semantics": "npx tsx scripts/test-retention-semantics.ts",
     "test:mrr-truth": "npx tsx scripts/test-mrr-truth.ts",
     "test:password-reset": "npx tsx scripts/test-password-reset-flow.ts",
+    "test:aku-sastrawan": "npx tsx scripts/test-aku-sastrawan-access.ts",
+    "test:route-slugs": "npx tsx scripts/test-route-slugs.ts",
     "test:founder-health": "npx tsx scripts/test-founder-health.ts",
     "test:investor-growth": "npx tsx scripts/test-investor-growth.ts",
     "test:historical-snapshot": "npx tsx scripts/test-historical-snapshot.ts",

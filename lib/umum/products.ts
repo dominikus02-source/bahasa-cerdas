@@ -12,7 +12,7 @@ import { JUMPA_ENABLED } from "@/lib/features";
  * (PR #183, rute /aku-sastrawan). Setelah #183 rilis, cukup ubah konstanta
  * ini (mis. ke "/aku-sastrawan") — tidak ada tempat lain yang perlu diubah.
  */
-export const AKU_SASTRAWAN_HREF = "/umum/aku-sastrawan";
+export const AKU_SASTRAWAN_HREF = "/aku-sastrawan";
 
 /**
  * BIGT untuk pengguna umum = situs eksternal. URL diambil dari sumber yang
@@ -104,8 +104,7 @@ export const UMUM_PRODUCTS: readonly UmumProduct[] = [
     key: "AKU_SASTRAWAN",
     name: "AKU SASTRAWAN",
     label: "Ruang kreatif",
-    description: "Ruang pengembangan penulisan sastra dan kreativitas literer.",
+    description: "Kurikulum cerpen & novel, Writing Studio, dan AI Writing Coach.",
     href: AKU_SASTRAWAN_HREF,
-    status: "dev",
   },
 ];
