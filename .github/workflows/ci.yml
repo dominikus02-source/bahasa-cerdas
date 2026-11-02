@@ -146,3 +146,55 @@ jobs:
             --env-file /tmp/bc-config/stack.env \
             -f ops/vps/docker-compose.yml \
             config -q
+
+  # Boots the real production build against a throwaway Postgres and fails on
+  # any 5xx. `next build` alone passed on 30 Oct while every request returned
+  # 500 at runtime (conflicting dynamic slugs), so this gate starts the server.
+  smoke:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: smoke
+          POSTGRES_PASSWORD: smoke
+          POSTGRES_DB: smoke
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U smoke"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      DATABASE_URL: "postgresql://smoke:smoke@localhost:5432/smoke"
+      DIRECT_URL: "postgresql://smoke:smoke@localhost:5432/smoke"
+      NEXT_PUBLIC_SUPABASE_URL: "https://placeholder.supabase.co"
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "placeholder-anon-key"
+      NEXT_PUBLIC_SITE_URL: "https://example.com"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create schema in throwaway database
+        run: npx prisma db push --skip-generate --accept-data-loss
+
+      - name: Build
+        run: npm run build
+
+      - name: Start server + smoke (fail on any 5xx)
+        run: bash scripts/ci/smoke-server.sh
+
+      - name: Deploy scripts syntax
+        run: |
+          bash -n ops/vps/deploy.sh
+          bash -n ops/vps/deploy-web.sh
+          bash -n ops/vps/bcrollback.sh
