@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { GimIcon } from "@/components/shared/FeatureIcons";
-import { Coins, Gamepad2, TrendingUp } from "lucide-react";
+import { Coins, TrendingUp } from "lucide-react";
 import { useHomeData } from "./home-data";
 
 /**
