@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import PageNavbar from "@/components/public/PageNavbar";
+import { TokoKaryaIcon, GimIcon, KomunitasIcon } from "@/components/shared/FeatureIcons";
 import PageFooter from "@/components/public/PageFooter";
 import {
   Sparkles,
@@ -52,24 +53,24 @@ const features = [
     href: "/guru/ai-tools/grading",
   },
   {
-    icon: ShoppingBag,
+    icon: TokoKaryaIcon,
     title: "Toko Karya Guru",
     desc: "Jual Rencana Pembelajaran, modul, PPT, soal, dan video pembelajaran. Dapatkan 80% komisi dari setiap penjualan.",
-    color: "bg-violet-50 text-violet-600",
+    color: "",
     href: "/marketplace",
   },
   {
-    icon: Gamepad2,
+    icon: GimIcon,
     title: "Kuis Multiplayer",
     desc: "Buat kuis interaktif, siswa bermain secara real-time. Tebak kata, susun kata, dan berbagai mode game seru.",
-    color: "bg-cyan-50 text-cyan-600",
+    color: "",
     href: "/guru/game/lobby",
   },
   {
-    icon: Users,
+    icon: KomunitasIcon,
     title: "Komunitas MGMP",
     desc: "Forum diskusi, webinar, dan sharing session dengan sesama guru Bahasa Indonesia dari seluruh Indonesia.",
-    color: "bg-blue-50 text-blue-600",
+    color: "",
     href: "/guru/komunitas",
   },
   {
@@ -132,7 +133,7 @@ export default function FiturPage() {
                   <div
                     className={`w-12 h-12 rounded-xl ${f.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <Icon size={24} />
+                    <Icon size={f.color ? 24 : 48} />
                   </div>
                   <h3 className="text-lg font-bold text-zinc-900 mb-2.5 group-hover:text-primary transition-colors">
                     {f.title}
