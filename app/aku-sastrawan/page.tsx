@@ -252,7 +252,7 @@ export default async function AkuSastrawanPage() {
             <div>
               <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1.5 text-xs font-bold"><LockKeyhole size={14} /> AKSES PREMIUM</div>
               <h2 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">Berikan ruang untuk ceritamu tumbuh.</h2>
-              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base">AKU SASTRAWAN tersedia untuk pengguna Premium BahasaCerdas (PRO, Murid Premium, Founder). Aktifkan langganan resmi di halaman Premium sesuai peranmu untuk membuka kurikulum, Writing Studio, dan AI Writing Coach.</p>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-white/85 sm:text-base">AKU SASTRAWAN tersedia untuk pengguna Premium BahasaCerdas (Guru PRO, Murid Premium, Premium Umum). Aktifkan langganan resmi di halaman Premium sesuai peranmu untuk membuka kurikulum, Writing Studio, dan AI Writing Coach.</p>
             </div>
             <Link href={user ? akuSastrawanUpgradeUrl(user.role) : "/login?next=%2Faku-sastrawan"} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-white px-6 text-sm font-bold text-violet-800 transition hover:bg-violet-50">
               {user ? "Lihat paket Premium" : "Masuk untuk memulai"} <ArrowRight size={16} />

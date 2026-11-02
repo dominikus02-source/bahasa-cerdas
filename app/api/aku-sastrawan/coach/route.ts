@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { akuSastrawanPremiumRequired, canWriteAkuSastrawan } from "@/lib/aku-sastrawan/access";
-import { callWithFallback } from "@/src/ai/core/provider";
+import { callWithFallback, ProviderChainFailedError } from "@/src/ai/core/provider";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
@@ -50,6 +50,11 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ reply: result.content.trim(), provider: result.provider });
   } catch (error) {
+    if (error instanceof ProviderChainFailedError) {
+      // Semua penyedia AI gagal/tidak dikonfigurasi: layanan sementara tidak tersedia, bukan bug server.
+      console.warn("AKU_SASTRAWAN_COACH_UNAVAILABLE", error.message);
+      return NextResponse.json({ error: "AI Writing Coach sedang belum tersedia. Drafmu tetap aman; coba lagi sebentar." }, { status: 503 });
+    }
     console.error("AKU_SASTRAWAN_COACH_FAILED", error);
     return NextResponse.json({ error: "Permintaan belum dapat diproses." }, { status: 500 });
   }
