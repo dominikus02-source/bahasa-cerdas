@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { JalurCerdasIcon, BigtIcon, GimIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 import {
   GraduationCap,
   BookOpen,
@@ -15,7 +16,7 @@ import { fadeInUp, staggerContainer, sectionProps } from "@/lib/motion";
 
 const pillars = [
   {
-    icon: BookOpen,
+    icon: JalurCerdasIcon,
     label: "BELAJAR",
     title: "Pengalaman belajar terstruktur",
     description: "Jalur Cerdas, materi, dan buku panduan.",
@@ -24,7 +25,7 @@ const pillars = [
     chip: "Jalur Cerdas · Materi · Buku Panduan",
   },
   {
-    icon: GraduationCap,
+    icon: BigtIcon,
     label: "MENGAJAR",
     title: "Ruang untuk mengajar",
     description: "Kelasku, bank soal, dan penilaian.",
@@ -33,7 +34,7 @@ const pillars = [
     chip: "Kelasku · Bank Soal · Buku Nilai",
   },
   {
-    icon: Gamepad2,
+    icon: GimIcon,
     label: "BERLATIH & BERMAIN",
     title: "Latihan yang terasa seperti bermain",
     description: "Latihan, gim, dan simulasi.",
@@ -42,7 +43,7 @@ const pillars = [
     chip: "Arena · Gim · Simulasi · Liga",
   },
   {
-    icon: PenLine,
+    icon: TokoKaryaIcon,
     label: "BERKARYA & BERTUMBUH",
     title: "Bahasa Indonesia untuk mencipta",
     description: "Karya, Toko Karya, dan komunitas.",
@@ -94,8 +95,8 @@ export default function EcosystemSection() {
                   aria-label={`${p.label} — ${p.title}. ${p.description}`}
                 >
                   <div className="flex items-start justify-between mb-5">
-                    <div className={`w-12 h-12 rounded-2xl ${p.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                      <Icon size={24} aria-hidden="true" />
+                    <div className="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                      <Icon size={48} />
                     </div>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-100 text-[11px] font-bold tracking-widest text-zinc-500">
                       {p.label}

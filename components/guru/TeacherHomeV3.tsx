@@ -5,6 +5,7 @@ import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { KomunitasIcon, AksaraIcon, NaraIcon, BigtIcon } from "@/components/shared/FeatureIcons";
 import {
   ArrowRight,
   Award,
@@ -45,7 +46,7 @@ type QuickAction = {
   label: string;
   desc: string;
   href: string;
-  icon: LucideIcon;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
   image: string;
   /** Kelas scrim token (tokens.css §4) — sama di terang & gelap, gelap + peredup. */
   scrim: string;
@@ -57,7 +58,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "Main Bersama",
     desc: "Ajak kelas belajar secara interaktif.",
     href: "/guru/game/main-bersama",
-    icon: Users,
+    icon: KomunitasIcon,
     image: PHOTO.classroom,
     scrim: "bc-media-scrim--1",
   },
@@ -65,7 +66,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "Buat Karya",
     desc: "Tulis artikel, puisi, atau karya pembelajaran di AKSARA.",
     href: "/guru/artikel",
-    icon: FilePenLine,
+    icon: AksaraIcon,
     image: PHOTO.writing,
     scrim: "bc-media-scrim--2",
   },
@@ -73,7 +74,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "NARA",
     desc: "Rekan Anda untuk ide dan persiapan mengajar.",
     href: "/guru/ai-bc",
-    icon: Bot,
+    icon: NaraIcon,
     image: PHOTO.aiWorkspace,
     scrim: "bc-media-scrim--3",
     imagePosition: "center 52%",
@@ -82,7 +83,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "Dasbor Murid",
     desc: "Lihat pengalaman BahasaCerdas dari sisi murid.",
     href: "/murid/beranda",
-    icon: GraduationCap,
+    icon: BigtIcon,
     image: PHOTO.studentLearning,
     scrim: "bc-media-scrim--4",
     imagePosition: "center 42%",
@@ -231,7 +232,7 @@ function QuickActions() {
               <div className={`bc-media-scrim ${action.scrim}`} />
               <div className="relative z-10 flex h-full min-h-[142px] flex-col p-3 sm:min-h-[168px] sm:p-4">
                 <span className="bc-media-chip grid h-9 w-9 place-items-center rounded-bc-icon sm:h-10 sm:w-10">
-                  <Icon className="h-5 w-5" />
+                  <Icon size={38} />
                 </span>
                 <div className="mt-auto pt-3 sm:pt-5">
                   <div className="flex items-end justify-between gap-2 sm:gap-3">

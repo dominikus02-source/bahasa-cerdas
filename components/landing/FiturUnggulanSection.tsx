@@ -1,19 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { Users, Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
-import { JumpaIcon, NaraIcon, GimIcon, JalurCerdasIcon } from "@/components/shared/FeatureIcons";
+import { JumpaIcon, NaraIcon, GimIcon, JalurCerdasIcon, KomunitasIcon } from "@/components/shared/FeatureIcons";
 
 const features = [
   {
-    icon: Users,
+    icon: KomunitasIcon,
     title: "Main Bersama",
     desc: "Belajar bareng teman sekelas.",
     href: "/main-bersama",
     color: "bg-violet-100 text-violet-600",
-    custom: false,
+    custom: true,
   },
   {
     icon: JumpaIcon,
@@ -48,12 +48,12 @@ const features = [
     custom: true,
   },
   {
-    icon: Sparkles,
+    icon: NaraIcon,
     title: "NARA untuk Guru",
     desc: "Rekan guru menyiapkan pembelajaran.",
     href: "/ai-bc",
     color: "bg-indigo-100 text-indigo-600",
-    custom: false,
+    custom: true,
   },
 ];
 

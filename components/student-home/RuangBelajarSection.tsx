@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { KomunitasIcon, AksaraIcon } from "@/components/shared/FeatureIcons";
 import { ArrowRight, BookOpen, ClipboardList, School, Users } from "lucide-react";
 
 export function RuangBelajarSection() {
@@ -27,8 +28,8 @@ export function RuangBelajarSection() {
           aria-label="Buka kelas"
         >
           <div className="flex items-start gap-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-bc-info-soft text-bc-info">
-              <Users size={21} strokeWidth={2} />
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
+              <KomunitasIcon size={44} />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
@@ -48,8 +49,8 @@ export function RuangBelajarSection() {
 
         <div className="px-card px-4 py-4">
           <div className="flex items-start gap-3.5">
-            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-bc-success-soft text-bc-success">
-              <BookOpen size={21} strokeWidth={2} />
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl">
+              <AksaraIcon size={44} />
             </span>
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
