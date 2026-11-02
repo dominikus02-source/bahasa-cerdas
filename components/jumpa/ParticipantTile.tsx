@@ -15,7 +15,7 @@ interface Props {
   screen?: boolean;
 }
 
-const ROLE_LABEL = { HOST: "Pemandu", GURU: "Guru", MURID: "Murid", UMUM: "Umum" } as const;
+const ROLE_LABEL = { COHOST: "Wakil pemandu", HOST: "Pemandu", GURU: "Guru", MURID: "Murid", UMUM: "Umum" } as const;
 
 function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;
@@ -82,7 +82,7 @@ function Tile({ trackRef, compact = false, screen = false }: Props) {
   }
 
   const talking = speaking && !micMuted;
-  const role: keyof typeof ROLE_LABEL | null = meta.roomRole === "HOST" ? "HOST" : meta.bcRole;
+  const role: keyof typeof ROLE_LABEL | null = meta.roomRole === "HOST" ? "HOST" : meta.roomRole === "COHOST" ? "COHOST" : media?.tier.kind === "GURU" ? null : meta.bcRole;
   const label = participant.isLocal ? `${name} (Kamu)` : name;
 
   return (

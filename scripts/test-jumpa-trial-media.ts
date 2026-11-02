@@ -6,6 +6,8 @@ import { buildJoinGrant } from "../lib/jumpa/token";
 import { parseParticipantLimit } from "../lib/jumpa/server-limits";
 import { isOpenMeeting } from "../lib/jumpa/trial-policy";
 import { VisibleTracks, shouldReceiveTrack } from "../components/jumpa/visible-subscriptions";
+import { applyServerMediaCommand } from "../components/jumpa/server-media";
+import { encodeSignal, parseServerSignal, JUMPA_TOPICS } from "../lib/jumpa/signals";
 import { mediaErrorMessage, withDefaultDeviceFallback } from "../components/jumpa/media-errors";
 
 async function main() {
@@ -63,6 +65,27 @@ async function main() {
   assert.equal(shouldReceiveTrack({ kind: "video", source: "screen_share", visible: true, screenVisible: true, audioOnly: true, pageVisible: true }), true);
   const view = readFileSync("components/jumpa/JumpaRoomView.tsx", "utf8");
   assert.ok(view.includes("autoSubscribe: false"));
+  const commands: Array<[string, boolean?]> = [];
+  const controlled = {
+    localParticipant: {
+      async setMicrophoneEnabled(on: boolean) { commands.push(["mic", on]); },
+      async setCameraEnabled(on: boolean) { commands.push(["camera", on]); },
+      async setScreenShareEnabled(on: boolean) { commands.push(["screen", on]); },
+    },
+    async disconnect() { commands.push(["disconnect"]); },
+  };
+  for (const source of ["microphone", "camera", "screen_share"] as const) {
+    const payload = encodeSignal({ t: "mod.muted", source });
+    assert.equal(parseServerSignal(JUMPA_TOPICS.moderation, payload, false), null);
+    const signal = parseServerSignal(JUMPA_TOPICS.moderation, payload, true);
+    assert.ok(signal && signal.t === "mod.muted");
+    await applyServerMediaCommand(controlled, signal);
+  }
+  const end = parseServerSignal(JUMPA_TOPICS.room, encodeSignal({ t: "room.ended", reason: "HOST" }), true);
+  assert.ok(end && end.t === "room.ended");
+  await applyServerMediaCommand(controlled, end);
+  assert.deepEqual(commands, [["mic", false], ["camera", false], ["screen", false], ["disconnect"]]);
+  await assert.rejects(applyServerMediaCommand({ ...controlled, async disconnect() { throw Error("disconnect failed"); } }, end));
   let selected = 0, fallback = 0;
   const output = await withDefaultDeviceFallback(async () => { selected++; throw { name: "NotFoundError" }; }, async () => { fallback++; return "default"; });
   assert.equal(output, "default"); assert.equal(selected, 1); assert.equal(fallback, 1);

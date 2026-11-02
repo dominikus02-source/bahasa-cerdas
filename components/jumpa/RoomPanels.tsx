@@ -341,7 +341,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                   <span className="mt-0.5 flex gap-1">
                     {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Pemandu</span>}
                     {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Wakil pemandu</span>}
-                    {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : meta.bcRole === "UMUM" ? "Umum" : "Murid"}</span>}
+                    {info.kind !== "GURU" && meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : meta.bcRole === "UMUM" ? "Umum" : "Murid"}</span>}
                   </span>
                 </span>
                 {p.isMicrophoneEnabled && can("MUTE_AUDIO", p) ? (

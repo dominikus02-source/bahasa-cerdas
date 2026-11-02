@@ -48,7 +48,7 @@ Sebelum 100+: uji 20 → 50 → 100 → 150 pengguna pada staging terisolasi. Se
 
 Tes lokal mencakup batas seragam lintas paket/jenis, akses kelas privat, non-Junior, pemandu/peserta, lock/remove, 20 grant kamera/mik, fallback perangkat, dan 150 publikasi dengan hanya 9/4 langganan video terlihat. Ini simulasi kebijakan, bukan load test media WebRTC.
 
-SSR beranda diuji untuk input dan konsistensi render. Pemeriksaan browser visual belum dapat dijalankan: Chromium tidak tersedia dan unduhan browser gagal di lingkungan pemeriksaan. Integrasi staging, 20/150 koneksi media nyata, serta reproduksi error uji pengguna belum dilakukan. #206/#208 masih memerlukan validasi isolasi runtime. PR tetap draft sampai bukti tersebut tersedia.
+SSR beranda diuji untuk input dan konsistensi render. QA Chromium lokal dengan komponen nyata dan media/API simulasi lulus: beranda 360/1280, ruang 360/768/1280. Kamera/mik lokal, bisukan peserta, obrolan/pengaturan, akhir rapat gagal/tertunda, fokus dialog, target sentuh, serta IntersectionObserver untuk 150 tile saat digulir diperiksa. Ini bukan uji autentikasi, jaringan WebRTC, atau kapasitas server. Integrasi staging, 20/150 koneksi media nyata, dan reproduksi error pengguna masih belum dilakukan. #206/#208 memerlukan validasi runtime. PR tetap draft sampai bukti server tersebut tersedia.
 
 Hasil akhir lokal: `npm run build` lulus; TypeScript lulus; ESLint tanpa error (dua peringatan img yang sudah ada pada pengaturan). Sebelas suite JUMPA lulus: 844 pemeriksaan pada sembilan suite bernomor, pemeriksaan bahasa, serta suite kebijakan media/visibilitas. Sesi LiveKit terintegrasi pada suite token dilewati karena endpoint pengujian tidak diisi.
 
@@ -56,7 +56,7 @@ Hasil akhir lokal: `npm run build` lulus; TypeScript lulus; ESLint tanpa error (
 
 Beranda memakai dua tindakan jelas; lobi menampilkan judul, perangkat, batas ruang dan Gabung. Label webinar serta klaim "hanya anggota terdaftar" dihapus dari lobi. Pengaturan menyebut Batas ruang; Latar samar diletakkan bersama pilihan latar, tanpa badge Premium atau tombol terkunci. Pesan laporan dan salin tautan dipersingkat. Ruang penuh menyebut kapasitas, bukan paket. Menu Grid/Pembicara memakai label pendek. Tidak ada klaim kestabilan atau kualitas yang belum diuji.
 
-Kontrol kamera/mik tetap terpisah; menu ponsel dapat digulir dengan tinggi maksimum, panel menjadi lembar bawah di HP dan panel samping di laptop. Struktur lama yang mengatur safe-area, target sentuh, dan teks terpotong pada judul tetap dipakai. Pemeriksaan visual, keyboard/fokus, dan perangkat nyata tetap menjadi gerbang penerimaan, bukan dinyatakan lulus melalui pembacaan kode saja.
+Kontrol kamera/mik tetap terpisah; menu ponsel dapat digulir dengan tinggi maksimum, panel menjadi lembar bawah di HP dan panel samping di laptop. Struktur lama yang mengatur safe-area, target sentuh, dan teks terpotong pada judul tetap dipakai. QA visual/keyboard lokal lulus pada fixture browser. Pemeriksaan pada HP/laptop fisik dengan akun dan media nyata tetap menjadi gerbang penerimaan.
 
 Rollback: gunakan commit sebelum V2 untuk membangun ulang web pada lingkungan yang sama, lalu pulihkan nilai batas peserta di environment. Tidak ada migrasi DB yang perlu dibatalkan. Kapasitas ruang yang sudah tersimpan tidak berubah otomatis ketika kode atau environment dipulihkan; tutup ruang uji tersebut dan buat ulang bila perlu. Jangan mengganti kode server media saat rapat aktif.
 
@@ -65,3 +65,10 @@ Rollback: gunakan commit sebelum V2 untuk membangun ulang web pada lingkungan ya
 Pemandu rapat baru dapat membisukan mikrofon lewat tombol langsung di baris peserta; server tetap memeriksa peran dan sasaran. Peserta biasa tidak mendapat tindakan tersebut. Membisukan tidak memberi pemandu izin menyalakan mikrofon peserta dari jauh.
 
 Tombol Akhiri berada di dock pada HP/laptop. Satu konfirmasi mengakhiri ruang untuk semua; Keluar sendiri tersedia di menu Lainnya. Peserta biasa melihat Keluar. Dialog tetap terbuka jika server menolak/gagal, menampilkan status sibuk, mencegah kirim ulang lewat tombol, dan menahan fokus selama permintaan berjalan. Tombol memakai primitif global; dock memakai token warna, radius dan bayangan global.
+
+
+## QA yang dapat dijalankan ulang
+
+Setelah `npm run build`, jalankan `node scripts/e2e/jumpa-home-fixture.cjs` dan `node scripts/e2e/jumpa-room-fixture.cjs`. Playwright memerlukan Chromium terpasang (`npx playwright install chromium`) atau `CHROME=/path/to/chrome`. Screenshot disimpan di direktori sementara; `JUMPA_QA_DIR` dapat menetapkan direktori keluaran. Fixture memakai komponen UI asli tetapi memalsukan transport media, navigasi/API, dan data akun, tanpa menyentuh layanan produksi.
+
+Tangkapan layar setelah animasi memperlihatkan panel/dialog yang kini solid, tanpa konten belakang mengganggu teks. Badge akun Guru/Murid/Umum tidak memenuhi tile rapat biasa; peran Pemandu/Wakil pemandu tetap ditampilkan. Perintah server yang sah untuk mute mematikan perangkat lokal; sinyal akhir ruang juga memutus sesi klien. Suite trial-media memeriksa penolakan sumber peserta, target false untuk mic/kamera/layar, disconnect, dan propagasi kegagalan. Suite tersebut sekarang dimasukkan ke CI.

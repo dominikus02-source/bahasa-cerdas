@@ -28,7 +28,7 @@ import {
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
 import { publishPolicy, receivePolicy, type DeviceClass, type PublishPolicy, type ReceivePolicy } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
-import { VisibleTracks, shouldReceiveTrack } from "./visible-subscriptions";
+import { VisibleTracks, shouldReceiveTrack, observeVisibleTrack as observeTile } from "./visible-subscriptions";
 import { useJumpa } from "./room-controller";
 
 export function captureOptions(pub: PublishPolicy, prefs: JumpaMediaPrefs): VideoCaptureOptions {
@@ -123,18 +123,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
   const [degraded, setDegraded] = useState(false);
   const refreshSubscriptions = useRef<() => void>(() => undefined);
   const [visibleTracks] = useState(() => new VisibleTracks(() => refreshSubscriptions.current()));
-  const observeVisibleTrack = useCallback((sid: string, element: HTMLElement) => {
-    const tile = Symbol(sid);
-    const mark = (visible: boolean) => visibleTracks.set(sid, tile, visible);
-    let observer: IntersectionObserver | undefined;
-    if (typeof IntersectionObserver !== "undefined") {
-      observer = new IntersectionObserver(([entry]) => mark(entry.isIntersecting && entry.intersectionRatio > 0), { threshold: 0 });
-      observer.observe(element);
-    } else {
-      mark(true); // Browser lama: grid tetap membatasi jumlah tile terpasang.
-    }
-    return () => { observer?.disconnect(); mark(false); };
-  }, [visibleTracks]);
+  const observeVisibleTrack = useCallback((sid: string, element: HTMLElement) => observeTile(visibleTracks, sid, element), [visibleTracks]);
 
   // Koneksi lemah di mode Otomatis → turunkan kualitas terima sementara.
   useEffect(() => {

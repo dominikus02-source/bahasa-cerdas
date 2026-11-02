@@ -1563,3 +1563,12 @@ html:not(.dark) .jumpa-scope {
   background: var(--clr-danger);
   box-shadow: none;
 }
+
+/* Panel dan dialog harus menutup konten di belakang agar teks tetap terbaca. */
+.jumpa-sheet.jumpa-glass,
+.jumpa-panel.jumpa-glass,
+.jumpa-upgrade.jumpa-confirm {
+  background: var(--clr-surface);
+  border-color: var(--clr-border);
+  box-shadow: var(--bc-shadow-3);
+}

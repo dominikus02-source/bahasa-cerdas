@@ -67,6 +67,7 @@ jobs:
         run: |
           npm run test:jumpa-permissions
           npm run test:jumpa-token
+          npm run test:jumpa-trial-media
           npm run test:jumpa-room-types
           npm run test:jumpa-host-actions
           npm run test:jumpa-chat-moderation

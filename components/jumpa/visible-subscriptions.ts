@@ -25,3 +25,15 @@ export function shouldReceiveTrack(input: {
   if (input.kind !== "video" || !input.pageVisible || !input.visible) return false;
   return input.source === "screen_share" || !input.audioOnly;
 }
+
+/** Amati tile, bukan elemen video: tile tetap ada ketika track dilepas. */
+export function observeVisibleTrack(registry: VisibleTracks, sid: string, element: HTMLElement): () => void {
+  const tile = Symbol(sid);
+  const mark = (visible: boolean) => registry.set(sid, tile, visible);
+  let observer: IntersectionObserver | undefined;
+  if (typeof IntersectionObserver !== "undefined") {
+    observer = new IntersectionObserver(([entry]) => mark(entry.isIntersecting && entry.intersectionRatio > 0), { threshold: 0 });
+    observer.observe(element);
+  } else mark(true);
+  return () => { observer?.disconnect(); mark(false); };
+}
