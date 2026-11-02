@@ -101,15 +101,15 @@ export function publishPolicy(quality: JumpaQuality, device: DeviceClass, capHei
   if (quality === "hd") {
     const top = capLayer(capHeight >= 1080 && !device.mobile ? LAYERS.h1080 : LAYERS.h720hd, capHeight);
     const layers = top.height >= 1080 ? [LAYERS.h360, LAYERS.h720] : [LAYERS.h180, LAYERS.h360];
-    return { capture: top, layers, codec, audio: "music", screen };
+    return { capture: top, layers, codec, audio: "speech", screen };
   }
   // Otomatis
   if (device.mobile) {
     return device.lowEnd
       ? { capture: LAYERS.h360, layers: [LAYERS.h180], codec, audio: "speech", screen }
-      : { capture: capLayer(LAYERS.h540m, capHeight), layers: [LAYERS.h180], codec, audio: "music", screen };
+      : { capture: capLayer(LAYERS.h540m, capHeight), layers: [LAYERS.h180], codec, audio: "speech", screen };
   }
-  return { capture: capLayer(LAYERS.h720, capHeight), layers: [LAYERS.h180, LAYERS.h360], codec, audio: "music", screen };
+  return { capture: capLayer(device.lowEnd ? LAYERS.h360 : LAYERS.h540m, capHeight), layers: [LAYERS.h180], codec, audio: "speech", screen };
 }
 
 /**
@@ -127,8 +127,8 @@ export function receivePolicy(quality: JumpaQuality, device: DeviceClass, degrad
     };
   }
   return {
-    pageSize: hemat ? 9 : device.lowEnd ? 12 : 16,
-    stripMax: hemat ? 6 : 12,
+    pageSize: hemat || device.lowEnd ? 4 : 9,
+    stripMax: hemat || device.lowEnd ? 4 : 6,
     remoteQuality: hemat ? "low" : null,
     pixelDensity: hemat ? 1 : "screen",
   };

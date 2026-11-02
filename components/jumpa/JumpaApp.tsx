@@ -10,7 +10,7 @@ import type { LeaveReason } from "./JumpaRoomView";
 import JumpaLobby from "./JumpaLobby";
 import type { ShareTarget } from "./ShareSheet";
 import PostMeeting from "./MeetingSummary";
-import { DEFAULT_MEDIA_PREFS, type JumpaMediaPrefs } from "./media-prefs";
+import { type JumpaMediaPrefs } from "./media-prefs";
 
 // LiveKit hanya jalan di browser; jangan ikut SSR. Chunk ini (~170 KB gzip)
 // TIDAK ikut halaman lain: hanya diunduh di /jumpa/[code], dan dipanaskan
@@ -121,16 +121,7 @@ export default function JumpaApp(props: JumpaAppProps) {
     [props.code, props.inviteToken, props.tier],
   );
 
-  // Auto-join jika datang dari tautan undangan — sekali saja. Bila gagal
-  // (mis. ruang penuh), pesan galat tampil di lobi; jangan mengulang terus.
-  const autoJoined = useRef(false);
-  useEffect(() => {
-    if (autoJoined.current) return;
-    if (props.inviteToken && props.canJoin && !props.umumNotice && phase.name === "lobby" && !joining) {
-      autoJoined.current = true;
-      void join(DEFAULT_MEDIA_PREFS);
-    }
-  }, [props.inviteToken, props.canJoin, props.umumNotice, phase.name, joining, join]);
+  // Semua tautan melewati lobi agar pilihan perangkat terlihat sebelum bergabung.
 
   const handleLeave = useCallback((reason: LeaveReason, ended?: EndedReason | null) => {
     // Keluar manual meng-unmount room → onDisconnected bisa menyusul; abaikan.

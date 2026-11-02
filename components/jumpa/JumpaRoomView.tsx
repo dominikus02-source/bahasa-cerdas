@@ -56,6 +56,7 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
+import { mediaErrorMessage, withDefaultDeviceFallback } from "./media-errors";
 import type { JumpaReaction } from "@/lib/jumpa/signals";
 import { JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN, type JumpaTierView } from "@/lib/jumpa/tiers";
 import ParticipantTile from "./ParticipantTile";
@@ -88,6 +89,8 @@ const PROTO_SCREEN_SHARE = 3;
 function supportsScreenShare(): boolean {
   return typeof navigator !== "undefined" && Boolean(navigator.mediaDevices && "getDisplayMedia" in navigator.mediaDevices);
 }
+
+const CONNECT_OPTIONS = { autoSubscribe: false };
 
 type Layout = "grid" | "speaker";
 
@@ -151,9 +154,10 @@ export default function JumpaRoomView(props: ViewProps) {
       serverUrl={props.serverUrl}
       token={props.token}
       connect
-      video={camOn && !(props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER")}
-      audio={props.prefs.mic && !(props.info.mode === "WEBINAR" && props.self.roomRole === "MEMBER")}
+      video={camOn}
+      audio={props.prefs.mic}
       options={options}
+      connectOptions={CONNECT_OPTIONS}
       onDisconnected={(reason) => {
         const ended = endedRef?.current ?? null;
         if (reason === DisconnectReason.PARTICIPANT_REMOVED) props.onLeave("removed");
@@ -468,7 +472,7 @@ function AloneCard() {
 
 /** Data bagikan dari ruang; tautan 24 jam hanya untuk pemandu ruang guru. */
 function shareTargetOf(info: JumpaRoomInfo, self: JumpaSelf & { roomRole: "HOST" | "COHOST" | "MEMBER" }): ShareTarget {
-  return { code: info.code, title: info.title, kind: info.kind, canLink: ((info.kind === "GURU" && self.bcRole === "GURU") || (info.kind === "UMUM" && self.bcRole === "UMUM")) && self.roomRole !== "MEMBER" };
+  return { code: info.code, title: info.title, kind: info.kind, canLink: ((info.kind === "GURU") || (info.kind === "UMUM" && self.bcRole === "UMUM")) && self.roomRole !== "MEMBER" };
 }
 
 const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeople }: { layout: Layout; wide: boolean; pageSize: number; stripMax: number; onShowPeople: () => void }) {
@@ -598,8 +602,8 @@ function ControlBar({
   const permissions = useLocalParticipantPermissions();
   const { info, self, myHand, toggleHand, react, moderate, toast } = useJumpa();
   const { prefs, update, device, tier } = useMedia();
-  const [busy, setBusy] = useState<"mic" | "camera" | "screen" | null>(null);
-  const mediaBusy = useRef(false);
+  const [busy, setBusy] = useState<ReadonlySet<"mic" | "camera" | "screen">>(new Set());
+  const mediaBusy = useRef(new Set<"mic" | "camera" | "screen">());
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [endAsk, setEndAsk] = useState(false);
@@ -617,51 +621,58 @@ function ControlBar({
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
   const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
-  const stageBlocked = info.mode === "WEBINAR" && self.roomRole === "MEMBER" && permissions?.canPublish !== true;
+  const connected = useConnectionState() === ConnectionState.Connected;
+  const stageBlocked = !connected || permissions?.canPublish === false;
   // Pemandu dewasa: guru di ruang sekolah, atau akun UMUM di ruang UMUM. Guru/murid
   // yang ikut ruang UMUM lewat tautan = peserta biasa (server tetap menegakkan izin).
   const adult = info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU";
-  const isGuruHost = adult && self.roomRole !== "MEMBER";
+  const isGuruHost = (adult || info.kind === "GURU") && self.roomRole !== "MEMBER";
   const canInvite = isGuruHost && info.kind !== "MURID";
-  const canLock = (adult && self.roomRole !== "MEMBER") || (info.kind === "MURID" && self.roomRole === "HOST");
-  const canEnd = (adult && self.roomRole === "HOST") || (info.kind === "MURID" && self.roomRole === "HOST");
+  const canLock = ((adult || info.kind === "GURU") && self.roomRole !== "MEMBER") || (info.kind === "MURID" && self.roomRole === "HOST");
+  const canEnd = ((adult || info.kind === "GURU") && self.roomRole === "HOST") || (info.kind === "MURID" && self.roomRole === "HOST");
 
   const toggleMic = async () => {
-    if (mediaBusy.current) return;
-    mediaBusy.current = true;
-    setBusy("mic");
+    if (mediaBusy.current.has("mic")) return;
+    mediaBusy.current.add("mic");
+    setBusy(new Set(mediaBusy.current));
     try {
       const next = !isMicrophoneEnabled;
-      await localParticipant.setMicrophoneEnabled(next);
+      await withDefaultDeviceFallback(
+        () => localParticipant.setMicrophoneEnabled(next),
+        () => localParticipant.setMicrophoneEnabled(next, { deviceId: "default" }),
+      );
       writeMediaPrefs({ mic: next });
-    } catch {
-      toast("Mikrofon belum dapat diubah. Periksa izin perangkat, lalu coba lagi.", "warn");
+    } catch (error) {
+      toast(mediaErrorMessage(error, "Mikrofon"), "warn");
     } finally {
-      mediaBusy.current = false;
-      setBusy(null);
+      mediaBusy.current.delete("mic");
+      setBusy(new Set(mediaBusy.current));
     }
   };
   const toggleCamera = async () => {
-    if (mediaBusy.current) return;
-    mediaBusy.current = true;
-    setBusy("camera");
+    if (mediaBusy.current.has("camera")) return;
+    mediaBusy.current.add("camera");
+    setBusy(new Set(mediaBusy.current));
     try {
       const next = !isCameraEnabled;
       // Menyalakan kamera = keluar dari mode audio saja.
       if (next && prefs.audioOnly) update({ audioOnly: false });
-      await localParticipant.setCameraEnabled(next);
+      await withDefaultDeviceFallback(
+        () => localParticipant.setCameraEnabled(next),
+        () => localParticipant.setCameraEnabled(next, { deviceId: "default" }),
+      );
       writeMediaPrefs({ camera: next });
-    } catch {
-      toast("Kamera belum dapat diubah. Periksa izin perangkat, lalu coba lagi.", "warn");
+    } catch (error) {
+      toast(mediaErrorMessage(error, "Kamera"), "warn");
     } finally {
-      mediaBusy.current = false;
-      setBusy(null);
+      mediaBusy.current.delete("camera");
+      setBusy(new Set(mediaBusy.current));
     }
   };
   const toggleScreen = async () => {
-    if (mediaBusy.current) return;
-    mediaBusy.current = true;
-    setBusy("screen");
+    if (mediaBusy.current.has("screen")) return;
+    mediaBusy.current.add("screen");
+    setBusy(new Set(mediaBusy.current));
     try {
       const s = publishPolicy(prefs.quality, device, tier.maxCameraHeight, tier.maxScreenHeight).screen;
       await localParticipant.setScreenShareEnabled(!isScreenShareEnabled, {
@@ -673,8 +684,8 @@ function ControlBar({
     } catch {
       // Pengguna membatalkan dialog pilih layar — bukan error.
     } finally {
-      mediaBusy.current = false;
-      setBusy(null);
+      mediaBusy.current.delete("screen");
+      setBusy(new Set(mediaBusy.current));
     }
   };
   const close = () => setMenuOpen(false);
@@ -742,7 +753,7 @@ function ControlBar({
               {prefs.audioOnly && <Check size={18} className="ml-auto" />}
             </button>
             {canScreen && !wide && (
-              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy !== null} onClick={() => { close(); void toggleScreen(); }}>
+              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy.has("screen")} onClick={() => { close(); void toggleScreen(); }}>
                 <MonitorUp size={20} className={isScreenShareEnabled ? "text-[var(--jp-accent)]" : undefined} />
                 {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
               </button>
@@ -793,14 +804,14 @@ function ControlBar({
 
       {stageBlocked && (
         <p role="status" className="mx-auto mb-2 max-w-xl rounded-xl border border-[var(--jp-accent)]/30 bg-[var(--jp-accent)]/10 px-4 py-2 text-center text-xs font-semibold text-[var(--jp-text-2)]">
-          Kamera dan mikrofon terkunci. Angkat tangan untuk meminta izin berbicara dari pemandu.
+          {connected ? "Izin media belum tersedia. Keluar lalu gabung kembali untuk memperbarui sesi." : "Menghubungkan ke ruang…"}
         </p>
       )}
       <nav aria-label="Kontrol ruang" className="jumpa-dock jumpa-in-up">
         <div className="jumpa-dock-group">
-          <MicKey on={isMicrophoneEnabled} busy={busy !== null || stageBlocked} onToggle={toggleMic} />
+          <MicKey on={isMicrophoneEnabled} busy={busy.has("mic") || stageBlocked} onToggle={toggleMic} />
           <div className="jumpa-ctl">
-            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy !== null || stageBlocked}>
+            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy.has("camera") || stageBlocked}>
               {isCameraEnabled ? <Video size={22} /> : <VideoOff size={22} />}
             </button>
             <span className="jumpa-ctl-label">{isCameraEnabled ? "Kamera" : prefs.audioOnly ? "Audio saja" : "Kamera mati"}</span>
@@ -810,7 +821,7 @@ function ControlBar({
         <div className="jumpa-dock-group">
           {canScreen && wide && (
             <div className="jumpa-ctl">
-              <button type="button" className="jumpa-key" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy !== null}>
+              <button type="button" className="jumpa-key" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy.has("screen")}>
                 <MonitorUp size={22} />
               </button>
               <span className="jumpa-ctl-label">{isScreenShareEnabled ? "Berhenti" : "Layar"}</span>

@@ -89,7 +89,7 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
   useEffect(() => setSpeakerOk(supportsSpeakerSelect()), []);
   const setDevice = (kind: Kind, id: string) => onChange({ devices: { ...prefs.devices, [kind]: id } });
   const hdLabel = `${tier.maxCameraHeight}p`;
-  const blurAvailable = JUMPA_TIERS.PREMIUM.features.backgroundBlur && tier.tier === "PREMIUM";
+  const blurAvailable = true;
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 pb-5 pt-1">
@@ -142,9 +142,9 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           <span className="jumpa-setting-icon" aria-hidden><Sparkles size={18} /></span>
           <span className="min-w-0 flex-1 text-left">
             <span className="flex items-center gap-2 text-sm font-semibold">
-              Latar blur <span className="jumpa-tier" data-tier="PREMIUM"><Crown size={11} aria-hidden /> Premium</span>
+              Latar samar
             </span>
-            <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar kamera." : "Khusus pengguna Premium."}</span>
+            <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar kamera." : "Samarkan latar kamera."}</span>
           </span>
           {blurAvailable ? (
             <button

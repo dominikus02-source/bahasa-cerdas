@@ -1,3 +1,5 @@
+import { jumpaRoomLimits } from "./server-limits";
+import { JUMPA_TRIAL, isOpenMeeting } from "./trial-policy";
 /**
  * JUMPA — use case yang menyentuh DB (Prisma). Aturan izin ada di
  * permissions.ts (murni); file ini hanya mengumpulkan fakta lalu
@@ -114,7 +116,7 @@ const REUSE_WINDOW_MS = 3 * 60 * 60_000;
 
 export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): Promise<CreateRoomResult> {
   const actor = await loadActor(user);
-  const isWebinar = Boolean(req.isWebinar);
+  const isWebinar = false; // Satu mode rapat selama uji coba; kompatibel dengan payload lama.
   const [group, groupMember, community, communityMember] = await Promise.all([
     req.groupId
       ? db.group.findUnique({ where: { id: req.groupId }, select: { id: true, name: true, teacherId: true, isActive: true } })
@@ -152,7 +154,7 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
   // Murid Premium → ruang MURID 15 orang; webinar & ruang guru tetap tierForPlan.
   const resolved = await resolveJumpaTier(user.id);
   const tier: JumpaTier = isWebinar ? resolved.tier : tierForRoomKind(resolved.plan, req.kind);
-  const caps = limitsFor(tier, req.kind, isWebinar);
+  const caps = jumpaRoomLimits();
 
   if (isWebinar) {
     if (tier !== "PREMIUM") {
@@ -188,11 +190,11 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
       ],
     },
     orderBy: { createdAt: "desc" },
-    select: { id: true, code: true, title: true, startedAt: true, maxDurationMin: true, scheduledAt: true },
+    select: { id: true, code: true, title: true, startedAt: true, maxDurationMin: true, maxParticipants: true, scheduledAt: true, events: { where: { action: "ROOM_CREATED" }, take: 1, orderBy: { createdAt: "asc" }, select: { metadata: true } } },
   });
   // Baru upgrade ke Premium? Ruang Gratis lama tidak dipakai ulang.
   // (Ruang terjadwal dengan durasi pilihan guru tetap dipakai.)
-  if (existing && (existing.maxDurationMin >= caps.maxDurationMin || existing.scheduledAt)) {
+  if (existing && existing.maxParticipants === caps.maxParticipants && (req.kind !== "GURU" || isOpenMeeting(existing.events[0]?.metadata)) && (existing.maxDurationMin >= caps.maxDurationMin || existing.scheduledAt)) {
     const endsAt = roomEndsAt(existing.startedAt, existing.maxDurationMin);
     if (!endsAt || endsAt.getTime() > now + 5 * 60_000) {
       return { ok: true, room: { id: existing.id, code: existing.code, title: existing.title }, reused: true };
@@ -221,7 +223,7 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
       : req.kind === "KELAS"
         ? custom ?? `JUMPA ${group!.name}`
         : req.kind === "GURU"
-          ? custom ?? (community ? `Ruang ${community.name}` : "Ruang Guru")
+          ? custom ?? (community ? `Ruang ${community.name}` : "Ruang JUMPA")
           : `Belajar bareng · ${custom ?? group!.name}`
   ).slice(0, 120);
 
@@ -243,7 +245,7 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
           scheduledAt: scheduled,
           notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false,
           events: {
-            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, scheduledAt: scheduled ? scheduled.toISOString() : null, notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false, tier, isWebinar } },
+            create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: req.kind, groupId: group?.id ?? null, communityId: community?.id ?? null, scheduledAt: scheduled ? scheduled.toISOString() : null, notifyClass: req.kind === "MURID" ? false : req.notifyClass !== false, tier, isWebinar, policyVersion: JUMPA_TRIAL.version } },
           },
         },
         select: { id: true, code: true, title: true },
@@ -279,9 +281,9 @@ async function createUmumRoom(user: JumpaUserLike, req: CreateRoomRequest): Prom
   // Kait UMUM_PREMIUM: selama JUMPA_UMUM_PREMIUM_ENABLED = false, paket UMUM
   // selalu FREE (tidak membaca langganan → pembayaran tidak tersentuh).
   const tier: JumpaTier = "FREE";
-  const caps = limitsFor(tier, "UMUM");
+  const caps = jumpaRoomLimits();
   const custom = cleanTitle(req.title);
-  const title = (custom ?? "Ruang umum").slice(0, 120);
+  const title = (custom ?? "Ruang JUMPA").slice(0, 120);
 
   for (let attempt = 0; attempt < 4; attempt++) {
     try {
@@ -341,7 +343,7 @@ async function createUmumRoom(user: JumpaUserLike, req: CreateRoomRequest): Prom
             scheduledAt: null,
             notifyClass: false,
             events: {
-              create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: "UMUM", groupId: null, communityId: null, scheduledAt: null, notifyClass: false, tier, isWebinar: false } },
+              create: { actorId: user.id, action: "ROOM_CREATED", metadata: { kind: "UMUM", groupId: null, communityId: null, scheduledAt: null, notifyClass: false, tier, isWebinar: false, policyVersion: JUMPA_TRIAL.version } },
             },
           },
           select: { id: true, code: true, title: true },
@@ -473,6 +475,7 @@ export async function loadRoomContext(
     room: {
       kind: room.kind,
       mode: effectiveMode,
+      openMeeting: isOpenMeeting(created?.metadata) && room.kind === "GURU" && !room.communityId,
       status: room.status,
       isLocked: room.isLocked,
       startedAt: room.startedAt,
@@ -498,7 +501,7 @@ export async function loadRoomContext(
       code: room.code,
       title: room.title,
       kind: room.kind,
-      mode: effectiveMode,
+      mode: "MEETING",
       status: room.status,
       isLocked: room.isLocked,
       chatEnabled: room.chatEnabled,
@@ -595,6 +598,7 @@ export interface RoomListItem {
 }
 
 export interface JumpaHomeData {
+  trialLimits?: { maxParticipants: number; maxDurationMin: number };
   effective: JumpaEffectiveRole | null;
   isJunior: boolean;
   rooms: RoomListItem[];
@@ -644,7 +648,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   const communityIds = communities.map((c) => c.community.id);
 
   const visibleKinds: Array<JumpaRoom["kind"]> =
-    effective === "UMUM" ? ["UMUM"] : effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID"];
+    effective === "UMUM" ? ["UMUM", "GURU"] : effective === "GURU" ? ["KELAS", "GURU", "MURID"] : actor.isJunior ? ["KELAS"] : ["KELAS", "MURID", "GURU"];
 
   const rooms = effective
     ? await db.jumpaRoom.findMany({
@@ -659,7 +663,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
             ...(effective === "GURU" && communityIds.length ? [{ communityId: { in: communityIds } }] : []),
             { invites: { some: { kind: "USER", userId: user.id, revokedAt: null } } },
             // UMUM: ruang orang lain yang pernah dimasuki lewat tautan/kode.
-            ...(effective === "UMUM" ? [{ participants: { some: { userId: user.id, removedAt: null } } }] : []),
+            { participants: { some: { userId: user.id, removedAt: null } } },
             ...(groupIds.length ? [{ invites: { some: { kind: "GROUP", groupId: { in: groupIds }, revokedAt: null } } }] : []),
           ],
           // Guru tidak perlu melihat ruang MURID kelas lain; hanya kelas miliknya.
@@ -702,20 +706,20 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
       tier: t.tier,
       trialing: t.trialing,
       roomsToday,
-      roomsPerDay: JUMPA_TIERS[t.tier].roomsPerDay,
-      kelas: limitsFor(t.tier, "KELAS"),
-      guru: limitsFor(t.tier, "GURU"),
+      roomsPerDay: null,
+      kelas: jumpaRoomLimits(),
+      guru: jumpaRoomLimits(),
       upgradeUrl: JUMPA_UPGRADE_URL,
     };
   }
 
   let umum: JumpaHomeData["umum"] = null;
   if (effective === "UMUM") {
-    const def = umumTierDef("FREE");
+
     umum = {
       roomsToday: await countRoomsOnDay(user.id, startOfJakartaDay(new Date()), ["UMUM"]),
-      roomsPerDay: def.roomsPerDay,
-      ...limitsFor("FREE", "UMUM"),
+      roomsPerDay: null,
+      ...jumpaRoomLimits(),
       maxCameraHeight: cameraCapFor("FREE", "UMUM"),
     };
   }
@@ -724,6 +728,7 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   const commName = new Map(communities.map((c) => [c.community.id, c.community.name]));
 
   return {
+    trialLimits: jumpaRoomLimits(),
     effective,
     isJunior: actor.isJunior,
     rooms: rooms.map((r) => {

@@ -111,7 +111,7 @@ export function ChatPanel() {
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const actor: ModerationActor = { userId: self.userId, roomRole: self.roomRole, effective: self.bcRole };
-  const isGuruHost = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER";
+  const isGuruHost = (info.kind === "GURU" || (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU")) && self.roomRole !== "MEMBER";
   const canWrite = info.chatEnabled || isGuruHost;
 
   useEffect(() => {
@@ -243,7 +243,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
     }).ok;
   };
   const isHostish = self.roomRole !== "MEMBER";
-  const canInviteAny = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && isHostish && info.kind !== "MURID";
+  const canInviteAny = (info.kind === "GURU" || (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU")) && isHostish && info.kind !== "MURID";
 
   const queue = useMemo(() => {
     const byId = new Map(participants.map((p) => [p.identity, p]));
@@ -410,9 +410,9 @@ export function InvitePanel() {
   const { info, self, api, toast } = useJumpa();
   const base = `/api/jumpa/rooms/${encodeURIComponent(info.code)}/invites`;
   const isUmumRoom = info.kind === "UMUM";
-  const canInvite = (isUmumRoom ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER" && info.kind !== "MURID";
+  const canInvite = (info.kind === "GURU" || (isUmumRoom ? self.bcRole === "UMUM" : self.bcRole === "GURU")) && self.roomRole !== "MEMBER" && info.kind !== "MURID";
   // Ruang UMUM: tanpa pencarian pengguna — dibagikan lewat tautan/kode saja.
-  const canSearch = canInvite && !isUmumRoom;
+  const canSearch = canInvite && !isUmumRoom && self.bcRole === "GURU";
   const [cands, setCands] = useState<Candidates | null>(null);
   const [copied, setCopied] = useState<"room" | "link" | null>(null);
   const [q, setQ] = useState("");
@@ -489,8 +489,8 @@ export function InvitePanel() {
             : info.kind === "KELAS"
               ? "Hanya murid kelas ini & yang diundang yang bisa masuk."
               : isUmumRoom
-                ? "Akun umum yang punya tautan atau kode ini bisa masuk."
-                : "Hanya guru anggota komunitas & yang diundang yang bisa masuk."}
+                ? "Peserta dengan akun BahasaCerdas dapat bergabung lewat kode."
+                : "Bagikan tautan kepada peserta yang kamu undang."}
         </p>
         {canInvite && cands?.canLink && (
           <button type="button" className="jumpa-menu-item !px-3" disabled={busy !== null} onClick={() => void invite("link", { kind: "LINK" })}>

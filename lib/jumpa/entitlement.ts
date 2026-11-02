@@ -6,7 +6,6 @@
  * atau langganan baru di sini.
  */
 import type { PlanCode } from "@/lib/premium-economy/plans";
-import { resolvePlan } from "@/lib/premium-economy/plans";
 import type { JumpaKind } from "./caps";
 import type { JumpaTier } from "./tiers";
 
@@ -33,10 +32,7 @@ export function tierForRoomKind(plan: PlanCode | null | undefined, kind: JumpaKi
 
 /** Paket JUMPA milik user. Gagal baca DB → FREE (fail-closed untuk batas). */
 export async function resolveJumpaTier(userId: string): Promise<{ tier: JumpaTier; plan: PlanCode; trialing: boolean }> {
-  try {
-    const r = await resolvePlan(userId);
-    return { tier: tierForPlan(r.plan), plan: r.plan, trialing: r.subscriptionStatus === "TRIALING" };
-  } catch {
-    return { tier: "FREE", plan: "FREE", trialing: false };
-  }
+  // Uji coba JUMPA tidak bergantung langganan layanan BC lainnya.
+  void userId;
+  return { tier: "FREE", plan: "FREE", trialing: true };
 }

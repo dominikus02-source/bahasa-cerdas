@@ -1,5 +1,7 @@
 # JUMPA — audit dan perbaikan minimum, 2 November 2026
 
+> Kebijakan produk ini telah diperbarui oleh [JUMPA uji coba V2](JUMPA_UJI_COBA_V2.md). Tabel di bawah adalah temuan baseline sebelum perubahan.
+
 Status: patch awal; belum diuji pada media staging atau 10 perangkat. Bukan bukti produksi bebas lag/kebocoran.
 Baseline audit: main 8a8789ecaf2063d0c27b6e3dde8bd50ad64bd079.
 

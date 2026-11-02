@@ -66,7 +66,17 @@ check("Render SSR berhasil & memuat input Topik", a.includes('aria-label="Topik 
 check("HTML sama walau jam +90 detik (pergantian menit)", a === b)
 check("HTML sama walau jam +1 jam", a === c)
 check("Label durasi berjalan tidak dirender di server", !/\d+ mnt</.test(a))
-check("Jadwal pra-mount hanya jam WIB (deterministik)", a.includes("10.52 WIB"))
+check("Status jadwal pra-mount deterministik", a.includes("Belum dimulai"))
+
+for (const effective of ["GURU", "MURID", "UMUM"] as const) {
+  data.effective = effective;
+  const html = renderAt(T0);
+  check(`${effective}: satu alur Mulai/Gabung`, html.includes("Mulai ruang baru") && html.includes("Gabung ruang") && !html.includes("Premium"));
+}
+data.effective = "GURU";
+data.isJunior = true;
+check("Junior tidak membuat rapat terbuka", !renderAt(T0).includes("Mulai ruang baru"));
+data.isJunior = false;
 
 console.log("\n2. Input aman IME (Gboard/Samsung)")
 const dir = "components/jumpa"
@@ -80,11 +90,11 @@ const panels = read(`${dir}/RoomPanels.tsx`)
 check("Obrolan: Enter diabaikan saat komposisi IME", panels.includes("e.nativeEvent.isComposing || e.keyCode === 229"))
 check("Obrolan & laporan pakai maxLength", panels.includes("maxLength={JUMPA_CHAT_MAX_LEN}") && panels.includes("maxLength={1000}"))
 const home = read(`${dir}/JumpaHome.tsx`)
-check("JumpaHome: jam null sampai mount", home.includes("useState<number | null>(null)"))
-for (const lbl of ['aria-label="Topik ruang"', 'aria-label="Topik belajar"']) {
+check("JumpaHome: render tidak bergantung jam", !home.includes("Date.now()"))
+for (const lbl of ['aria-label="Topik ruang"']) {
   check(`${lbl} pakai maxLength`, new RegExp(`maxLength=\\{\\d+\\}[\\s\\S]{0,200}?${lbl}`).test(home))
 }
-check("Kode ruang pakai maxLength", home.includes("maxLength={120}"))
+check("Kode ruang pakai maxLength", home.includes("maxLength={200}"))
 const form = read(`${dir}/ScheduleForm.tsx`)
 check("Form jadwal: judul & cari orang pakai maxLength", form.includes("maxLength={80}") && form.includes("maxLength={60}"))
 

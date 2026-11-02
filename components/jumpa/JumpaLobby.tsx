@@ -11,10 +11,10 @@ import { formatWib } from "@/lib/jumpa/schedule";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import LobbyDeny from "./LobbyDeny";
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
-import { JUMPA_TIERS, JUMPA_MURID_FREE, JUMPA_MURID_PREMIUM, JUMPA_UMUM_TIERS, JUMPA_WEBINAR, JUMPA_WEBINAR_PER_WEEK } from "@/lib/jumpa/tiers";
 import { readMediaPrefs, writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { detectDevice, publishPolicy, QUALITY_LABEL } from "./media-policy";
 import { initials } from "./format";
+import { withDefaultDeviceFallback } from "./media-errors";
 import SettingsPanel from "./SettingsPanel";
 import { TierBadge, tierLimitsText } from "./TierUi";
 
@@ -91,57 +91,13 @@ function useMicLevel(stream: MediaStream | null): number {
 }
 
 function PackageRules({ tier }: { tier: JumpaTierView }) {
-  const isUmum = tier.kind === "UMUM";
-  const isGuru = tier.kind !== "MURID" && !isUmum;
   return (
-    <details className="jumpa-rules mt-3 w-full text-left text-sm">
-      <summary className="flex cursor-pointer items-center gap-2 text-[var(--jp-text-2)] hover:text-[var(--jp-text-1)]">
-        <Info size={14} /> Aturan ruang
-      </summary>
-      <div className="mt-2 space-y-2 text-xs text-[var(--jp-text-2)]">
-        <p>Nyalakan kamera dan mikrofon saat siap. Matikan mikrofon saat tidak berbicara. Gunakan angkat tangan untuk meminta giliran.</p>
-        <p>Pemandu dapat membisukan atau mengeluarkan peserta. Rekaman belum tersedia.</p>
-        {isUmum ? (
-          <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
-            <div className="font-semibold text-[var(--jp-text-1)]">Ruang umum</div>
-            <div>Gratis: {JUMPA_UMUM_TIERS.UMUM_FREE.room.maxParticipants} orang · {JUMPA_UMUM_TIERS.UMUM_FREE.room.maxDurationMin} menit · {JUMPA_UMUM_TIERS.UMUM_FREE.roomsPerDay} ruang/hari</div>
-            <div className="mt-1 text-[var(--jp-text-3)]">Hanya akun umum yang punya tautan atau kode yang bisa masuk</div>
-          </div>
-        ) : isGuru ? (
-          <>
-            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
-              <div className="font-semibold text-[var(--jp-text-1)]">Ruang kelas</div>
-              <div>Gratis: {JUMPA_TIERS.FREE.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.FREE.rooms.KELAS.maxDurationMin} menit</div>
-              <div>Premium: {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxParticipants} orang · {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit</div>
-            </div>
-            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
-              <div className="font-semibold text-[var(--jp-text-1)]">Ruang guru</div>
-              <div>Gratis: {JUMPA_TIERS.FREE.rooms.GURU.maxParticipants} orang</div>
-              <div>Premium: {JUMPA_TIERS.PREMIUM.rooms.GURU.maxParticipants} orang</div>
-            </div>
-            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
-              <div className="font-semibold text-[var(--jp-text-1)]">Webinar <span className="text-[var(--clr-accent)]">Premium</span></div>
-              <div>{JUMPA_WEBINAR.maxParticipants} orang · {JUMPA_WEBINAR.maxDurationMin} menit</div>
-              <div>Maksimal {JUMPA_WEBINAR_PER_WEEK}× per minggu</div>
-            </div>
-            <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
-              <div className="font-semibold text-[var(--jp-text-1)]">Kuota harian</div>
-              <div>Gratis: {JUMPA_TIERS.FREE.roomsPerDay} ruang/hari</div>
-              <div>Premium: tanpa batas</div>
-            </div>
-          </>
-        ) : (
-          <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
-            <div className="font-semibold text-[var(--jp-text-1)]">Belajar bareng</div>
-            <div>Gratis: {JUMPA_MURID_FREE.maxParticipants} orang · {JUMPA_MURID_FREE.maxDurationMin} menit</div>
-            <div>Premium: {JUMPA_MURID_PREMIUM.maxParticipants} orang</div>
-            <div className="mt-1 text-[var(--jp-text-3)]">Hanya teman sekelas yang bisa masuk</div>
-          </div>
-        )}
-        <div className="rounded-lg border border-[var(--clr-accent)] p-2">
-          <div className="font-semibold text-[var(--jp-text-1)]">Ruang ini</div>
-          <div>{tierLimitsText(tier)}</div>
-        </div>
+    <details className="mt-3 text-left text-sm">
+      <summary className="cursor-pointer text-bc-text-2">Aturan ruang</summary>
+      <div className="mt-2 space-y-2 text-xs text-bc-text-2">
+        <p>{tierLimitsText(tier)}. Semua peserta mengatur kamera dan mikrofon sendiri.</p>
+        <p>Matikan mikrofon saat tidak berbicara. Pemandu dapat membisukan, mengeluarkan peserta, atau mengunci ruang.</p>
+        <p>Rekaman belum tersedia.</p>
       </div>
     </details>
   );
@@ -190,15 +146,17 @@ export default function JumpaLobby(props: Props) {
     }
     const cap = publishPolicy(quality, detectDevice(), props.tier.maxCameraHeight).capture;
     setStarting(true);
-    navigator.mediaDevices
-      .getUserMedia({
+    withDefaultDeviceFallback(
+      () => navigator.mediaDevices.getUserMedia({
         video: {
           width: { ideal: cap.width },
           height: { ideal: cap.height },
           frameRate: { ideal: cap.fps },
           ...(camDevice ? { deviceId: { exact: camDevice } } : { facingMode: "user" }),
         },
-      })
+      }),
+      () => navigator.mediaDevices.getUserMedia({ video: { width: { ideal: cap.width }, height: { ideal: cap.height }, frameRate: { ideal: cap.fps } } }),
+    )
       .then((stream) => {
         if (cancelled) return stopStream(stream);
         streamsRef.current.v = stream;
@@ -240,8 +198,10 @@ export default function JumpaLobby(props: Props) {
       setNote("mic");
       return;
     }
-    navigator.mediaDevices
-      .getUserMedia({ audio: { echoCancellation: true, noiseSuppression: ns, ...(micDevice ? { deviceId: { exact: micDevice } } : {}) } })
+    withDefaultDeviceFallback(
+      () => navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: ns, ...(micDevice ? { deviceId: { exact: micDevice } } : {}) } }),
+      () => navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: ns } }),
+    )
       .then((stream) => {
         if (cancelled) return stopStream(stream);
         streamsRef.current.a = stream;

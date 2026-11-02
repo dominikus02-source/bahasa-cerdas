@@ -12,13 +12,8 @@ import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
 const P = JUMPA_TIERS.PREMIUM;
 
 export function TierBadge({ tier, compact = false }: { tier: JumpaTierView; compact?: boolean }) {
-  const premium = tier.tier === "PREMIUM" && tier.kind !== "MURID";
-  return (
-    <span className="jumpa-tier" data-tier={tier.kind === "MURID" ? "MURID" : tier.tier} title={`Paket ${tier.label}`}>
-      {premium && <Crown size={compact ? 11 : 12} aria-hidden />}
-      {tier.label}
-    </span>
-  );
+  void compact;
+  return <span className="jumpa-tier" title={tierLimitsText(tier)}>{tier.label}</span>;
 }
 
 /** Ringkasan batas ruang, mis. "30 orang · 45 menit". */
