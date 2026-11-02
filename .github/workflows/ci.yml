@@ -96,6 +96,13 @@ jobs:
       - name: Founder access gate (pengaman admin, super founder, komisi)
         run: npm run test:founder-access
 
+      - name: Route slug guard (outage 30 Okt — slug dinamis berbeda di level sama)
+        run: npm run test:route-slugs
+      - name: AKU SASTRAWAN gate (Premium tulis, baca/ekspor setelah premium berakhir)
+        run: npm run test:aku-sastrawan
+      - name: AKU SASTRAWAN bahasa (tidak boleh ada teks bahasa Inggris)
+        run: npm run test:aku-sastrawan-bahasa
+
       - name: Lint
         run: npm run lint
 
