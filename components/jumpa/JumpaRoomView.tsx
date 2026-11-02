@@ -605,13 +605,22 @@ function ControlBar({
   const [ending, setEnding] = useState(false);
   const cancelEnd = useCallback(() => setEndAsk(false), []);
   const moreRef = useRef<HTMLButtonElement>(null);
-  const endFocus = useCallback(() => moreRef.current, []);
+  const endRef = useRef<HTMLButtonElement>(null);
+  const endFocus = useCallback(() => endRef.current ?? moreRef.current, []);
   const confirmEnd = async () => {
+    if (ending) return;
     setEnding(true);
-    const r = await moderate("END");
-    setEnding(false);
-    setEndAsk(false);
-    if (r.ok) toast("Ruang diakhiri.", "ok");
+    try {
+      const result = await moderate("END");
+      if (result.ok) {
+        setEndAsk(false);
+        toast("Ruang diakhiri.", "ok");
+      }
+    } catch {
+      toast("Ruang belum dapat diakhiri. Coba lagi.", "warn");
+    } finally {
+      setEnding(false);
+    }
   };
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
@@ -716,9 +725,9 @@ function ControlBar({
       {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
       {endAsk && (
         <ConfirmDialog
-          title="Akhiri ruang untuk semua?"
-          body="Semua peserta akan keluar dari ruang."
-          confirmLabel="Akhiri"
+          title="Akhiri ruang?"
+          body="Semua peserta akan keluar."
+          confirmLabel="Akhiri untuk semua"
           icon={<PhoneOff size={22} />}
           busy={ending}
           onConfirm={() => void confirmEnd()}
@@ -780,17 +789,8 @@ function ControlBar({
               <Flag size={20} /> Laporkan masalah
             </button>
             {canEnd && (
-              <button
-                type="button"
-                role="menuitem"
-                className="jumpa-menu-item"
-                data-danger="true"
-                onClick={() => {
-                  close();
-                  setEndAsk(true);
-                }}
-              >
-                <PhoneOff size={20} /> Akhiri untuk semua
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { close(); onLeave(); }}>
+                <PhoneOff size={20} /> Keluar sendiri
               </button>
             )}
           </div>
@@ -847,24 +847,19 @@ function ControlBar({
         </div>
         {wide && <span className="jumpa-dock-sep" aria-hidden />}
         <div className="jumpa-ctl jumpa-ctl-leave">
-          {/* Di ponsel, "Akhiri untuk semua" ada di menu Lainnya agar dock muat 360px. */}
-          {canEnd && wide && (
-            <button
-              type="button"
-              className="jumpa-key"
-              data-variant="leave"
-              aria-label="Akhiri ruang untuk semua"
-              onClick={() => setEndAsk(true)}
-            >
-              <PhoneOff size={22} />
-              {wide && <span className="jumpa-leave-text">Akhiri</span>}
-            </button>
-          )}
-          <button type="button" className="jumpa-key" data-variant="leave" aria-label="Keluar dari ruang" onClick={onLeave}>
+          <button
+            ref={endRef}
+            type="button"
+            className="jumpa-key"
+            data-variant="leave"
+            aria-label={canEnd ? "Akhiri ruang untuk semua" : "Keluar dari ruang"}
+            aria-haspopup={canEnd ? "dialog" : undefined}
+            onClick={canEnd ? () => setEndAsk(true) : onLeave}
+          >
             <PhoneOff size={22} />
-            {wide && <span className="jumpa-leave-text">Keluar</span>}
+            {wide && <span className="jumpa-leave-text">{canEnd ? "Akhiri" : "Keluar"}</span>}
           </button>
-          <span className="jumpa-ctl-label">Keluar</span>
+          <span className="jumpa-ctl-label">{canEnd ? "Akhiri" : "Keluar"}</span>
         </div>
       </nav>
     </div>

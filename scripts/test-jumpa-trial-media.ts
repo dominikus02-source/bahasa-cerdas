@@ -29,6 +29,9 @@ async function main() {
     assert.equal(evaluateJoin({ actor, room: { ...room, kind: "KELAS", openMeeting: false }, relation, activeOthers: 0, now }).ok, false);
     const host = { userId: "host", roomRole: "HOST" as const, effective: actor.role as "GURU" | "MURID" | "UMUM" };
     assert.ok(canModerate({ actor: host, action: "END", roomKind: "GURU" }).ok);
+    const target = { userId: "other", roomRole: "MEMBER" as const, effective: "MURID" as const };
+    assert.ok(canModerate({ actor: host, action: "MUTE_AUDIO", roomKind: "GURU", target }).ok);
+    assert.equal(canModerate({ actor: { ...host, roomRole: "MEMBER" }, action: "MUTE_AUDIO", roomKind: "GURU", target }).ok, false);
     assert.ok(canInvite({ actor: host, roomKind: "GURU", invite: { kind: "LINK" } }).ok);
     assert.equal(canModerate({ actor: { ...host, roomRole: "MEMBER" }, action: "END", roomKind: "GURU" }).ok, false);
   }

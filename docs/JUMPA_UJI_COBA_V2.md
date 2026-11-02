@@ -59,3 +59,9 @@ Beranda memakai dua tindakan jelas; lobi menampilkan judul, perangkat, batas rua
 Kontrol kamera/mik tetap terpisah; menu ponsel dapat digulir dengan tinggi maksimum, panel menjadi lembar bawah di HP dan panel samping di laptop. Struktur lama yang mengatur safe-area, target sentuh, dan teks terpotong pada judul tetap dipakai. Pemeriksaan visual, keyboard/fokus, dan perangkat nyata tetap menjadi gerbang penerimaan, bukan dinyatakan lulus melalui pembacaan kode saja.
 
 Rollback: gunakan commit sebelum V2 untuk membangun ulang web pada lingkungan yang sama, lalu pulihkan nilai batas peserta di environment. Tidak ada migrasi DB yang perlu dibatalkan. Kapasitas ruang yang sudah tersimpan tidak berubah otomatis ketika kode atau environment dipulihkan; tutup ruang uji tersebut dan buat ulang bila perlu. Jangan mengganti kode server media saat rapat aktif.
+
+## Kontrol pemandu
+
+Pemandu rapat baru dapat membisukan mikrofon lewat tombol langsung di baris peserta; server tetap memeriksa peran dan sasaran. Peserta biasa tidak mendapat tindakan tersebut. Membisukan tidak memberi pemandu izin menyalakan mikrofon peserta dari jauh.
+
+Tombol Akhiri berada di dock pada HP/laptop. Satu konfirmasi mengakhiri ruang untuk semua; Keluar sendiri tersedia di menu Lainnya. Peserta biasa melihat Keluar. Dialog tetap terbuka jika server menolak/gagal, menampilkan status sibuk, mencegah kirim ulang lewat tombol, dan menahan fokus selama permintaan berjalan. Tombol memakai primitif global; dock memakai token warna, radius dan bayangan global.

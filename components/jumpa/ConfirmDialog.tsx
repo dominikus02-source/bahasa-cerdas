@@ -7,7 +7,7 @@
  */
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import { createPortal } from "react-dom";
-import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 /**
  * Pemicu yang valid = elemen nyata yang masih ada. <body> berarti pemicu sudah
@@ -43,12 +43,12 @@ export default function ConfirmDialog({
 
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
-    cancelRef.current?.focus();
+    if (busy) boxRef.current?.focus(); else cancelRef.current?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); onCancel(); return; }
+      if (e.key === "Escape") { e.preventDefault(); if (!busy) onCancel(); return; }
       if (e.key !== "Tab" || !boxRef.current) return;
       const els = [...boxRef.current.querySelectorAll<HTMLElement>("button:not([disabled])")];
-      if (!els.length) return;
+      if (!els.length) { e.preventDefault(); boxRef.current.focus(); return; }
       const first = els[0], last = els[els.length - 1];
       if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
       else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
@@ -58,21 +58,19 @@ export default function ConfirmDialog({
       window.removeEventListener("keydown", onKey);
       pickReturnFocus(prev, document.body, returnFocus)?.focus?.();
     };
-  }, [onCancel, returnFocus]);
+  }, [onCancel, returnFocus, busy]);
 
   const host = (typeof document !== "undefined" && document.querySelector(".jumpa-scope")) || document.body;
   return createPortal(
     <div role="presentation">
-      <button type="button" tabIndex={-1} className="jumpa-scrim jumpa-in-fade fixed inset-0 z-[70]" aria-label="Batal" onClick={onCancel} />
-      <div ref={boxRef} role="alertdialog" aria-modal="true" aria-labelledby={`${id}-t`} aria-describedby={body ? `${id}-d` : undefined} className="jumpa-upgrade jumpa-confirm jumpa-in-pop">
+      <button type="button" tabIndex={-1} className="jumpa-scrim jumpa-in-fade fixed inset-0 z-[70]" aria-label="Batal" onClick={() => { if (!busy) onCancel(); }} />
+      <div ref={boxRef} tabIndex={-1} role="alertdialog" aria-modal="true" aria-busy={busy} aria-labelledby={`${id}-t`} aria-describedby={body ? `${id}-d` : undefined} className="jumpa-upgrade jumpa-confirm jumpa-in-pop">
         {icon && <span className="jumpa-confirm-icon" aria-hidden>{icon}</span>}
         <h2 id={`${id}-t`} className="text-lg font-extrabold">{title}</h2>
         {body && <p id={`${id}-d`} className="mt-1.5 text-sm text-[var(--jp-text-2)]">{body}</p>}
         <div className="mt-5 grid grid-cols-2 gap-2.5">
-          <button ref={cancelRef} type="button" className="jumpa-ghost" onClick={onCancel} disabled={busy}>Batal</button>
-          <button type="button" className="jumpa-confirm-danger" onClick={onConfirm} disabled={busy}>
-            {busy && <Loader2 size={18} className="animate-spin" aria-hidden />} {confirmLabel}
-          </button>
+          <Button ref={cancelRef} type="button" variant="secondary" onClick={onCancel} disabled={busy}>Batal</Button>
+          <Button type="button" variant="danger" onClick={onConfirm} loading={busy}>{confirmLabel}</Button>
         </div>
       </div>
     </div>,

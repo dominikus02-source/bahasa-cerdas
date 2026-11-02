@@ -34,6 +34,7 @@ import {
   VideoOff,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { canDeleteChat, canModerate, JUMPA_REPORT_CATEGORIES, type JumpaModerationAction, type ModerationActor } from "@/lib/jumpa/permissions";
 import { JUMPA_CHAT_MAX_LEN, JUMPA_CHAT_RETENTION_DAYS } from "@/lib/jumpa/caps";
 import { handQueue } from "@/lib/jumpa/signals";
@@ -264,7 +265,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
     const r = await moderate(action, target?.identity);
     setBusy(null);
     setOpenFor(null);
-    if (r.ok) toast("Berhasil.", "ok");
+    if (r.ok) toast(action === "MUTE_AUDIO" ? "Mikrofon dimatikan." : "Perubahan diterapkan.", "ok");
   };
 
   const roomToggles: Array<{ show: boolean; label: string; icon: ReactNode; action: JumpaModerationAction; on?: boolean }> = [
@@ -343,7 +344,11 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                     {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : meta.bcRole === "UMUM" ? "Umum" : "Murid"}</span>}
                   </span>
                 </span>
-                {p.isMicrophoneEnabled ? <Mic size={16} className="text-[var(--jp-text-3)]" aria-label="Mikrofon nyala" /> : <MicOff size={16} className="text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
+                {p.isMicrophoneEnabled && can("MUTE_AUDIO", p) ? (
+                  <Button type="button" variant="ghost" size="icon" aria-label={`Matikan mikrofon ${p.name || "peserta"}`} title="Matikan mikrofon" disabled={busy !== null} onClick={() => void run("MUTE_AUDIO", p)}>
+                    <MicOff size={18} />
+                  </Button>
+                ) : p.isMicrophoneEnabled ? <Mic size={16} className="text-[var(--jp-text-3)]" aria-label="Mikrofon nyala" /> : <MicOff size={16} className="text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
                 {canManageStage && (
                   <button type="button" className="jumpa-chip" disabled={busy !== null} onClick={() => void run(onStage ? "REMOVE_STAGE" : "ALLOW_STAGE", p)}>
                     {onStage ? "Turunkan dari panggung" : "Naikkan ke panggung"}
