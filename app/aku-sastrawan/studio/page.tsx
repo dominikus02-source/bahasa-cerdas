@@ -183,11 +183,11 @@ export default function StudioMenulisPage() {
   }, [isi, active, fokus]);
 
   useEffect(() => {
-    if (!fokus) return;
-    const k = (e: KeyboardEvent) => { if (e.key === "Escape") setFokus(false); };
+    if (!fokus && !menu) return;
+    const k = (e: KeyboardEvent) => { if (e.key === "Escape") { setMenu(false); setFokus(false); } };
     window.addEventListener("keydown", k);
     return () => window.removeEventListener("keydown", k);
-  }, [fokus]);
+  }, [fokus, menu]);
 
   const konteks = useCallback(() => {
     const kepala = [`Judul: ${judul.trim() || JUDUL_KOSONG}`, `Jenis: ${namaJenis(active?.genre ?? "CERPEN")}`, petaSebagaiTeks(sinopsis, peta)].filter(Boolean).join("\n");
