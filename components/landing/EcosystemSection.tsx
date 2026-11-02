@@ -4,9 +4,6 @@ import Link from "next/link";
 import { JalurCerdasIcon, GimIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 import {
   GraduationCap,
-  BookOpen,
-  Gamepad2,
-  PenLine,
   ArrowUpRight,
   ArrowLeftRight,
 } from "lucide-react";
