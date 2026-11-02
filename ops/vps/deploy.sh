@@ -35,26 +35,9 @@ install -d -m 755 "$CONFIG_DIR/caddy.d"
 cd ops/vps
 COMPOSE=(docker compose --env-file "$CONFIG_DIR/stack.env")
 
-echo "==> Building web"
-"${COMPOSE[@]}" build web
-
-echo "==> Starting Redis + web"
-"${COMPOSE[@]}" up -d redis web
-
-echo "==> Waiting for application readiness"
-for i in {1..40}; do
-  if curl -fsS --max-time 5 http://127.0.0.1:3000/api/health \
-    | jq -e '.status == "ok" and .db == "up"' >/dev/null; then
-    echo "Web health OK"
-    break
-  fi
-  if [[ "$i" -eq 40 ]]; then
-    echo "Web health check failed" >&2
-    "${COMPOSE[@]}" ps
-    exit 1
-  fi
-  sleep 3
-done
+# Build → schema backup → migrate (before swap) → force-recreate → health →
+# automatic rollback to the previous image. See deploy-web.sh.
+REPO_DIR="$REPO_DIR" BC_CONFIG_DIR="$CONFIG_DIR" bash ./deploy-web.sh
 
 if [[ "${ENABLE_CRON:-0}" == "1" ]]; then
   echo "==> Building + starting VPS scheduler"
