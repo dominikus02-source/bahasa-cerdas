@@ -112,9 +112,9 @@ export default function AIToolsSection() {
                   aria-label={`${tool.title} — ${tool.description}`}
                 >
                   <div
-                    className={`w-12 h-12 rounded-xl ${tool.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
+                    className={`w-12 h-12 rounded-xl ${tool.title === "NARA" ? "" : tool.color} flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
                   >
-                    <Icon size={24} aria-hidden="true" />
+                    <Icon size={tool.title === "NARA" ? 44 : 24} aria-hidden="true" />
                   </div>
                   <h3 className="text-lg font-display font-bold text-zinc-900 mb-2.5 group-hover:text-primary transition-colors">
                     {tool.title}
