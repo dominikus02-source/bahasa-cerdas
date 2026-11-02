@@ -103,6 +103,9 @@ jobs:
       - name: AKU SASTRAWAN bahasa (tidak boleh ada teks bahasa Inggris)
         run: npm run test:aku-sastrawan-bahasa
 
+      - name: Approved BahasaCerdas icons guard
+        run: node scripts/test-bc-approved-icons.cjs
+
       - name: Lint
         run: npm run lint
 

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Users, MessageCircle, Calendar, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
+import { KomunitasIcon } from "@/components/shared/FeatureIcons";
 import KomunitasMgmpCard from "@/components/landing/KomunitasMgmpCard";
 import type { MgmpMedia } from "@/lib/site-settings";
 
@@ -21,10 +22,10 @@ const features = [
     color: "bg-amber-50 text-amber-600",
   },
   {
-    icon: Users,
+    icon: KomunitasIcon,
     title: "MGMP Digital",
     description: "Musyawarah Guru Mata Pelajaran secara digital. Kolaborasi lintas sekolah dan kota.",
-    color: "bg-emerald-50 text-emerald-600",
+    color: "",
   },
 ];
 
@@ -129,7 +130,7 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
                     className="flex items-start gap-4"
                   >
                     <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center shrink-0 mt-0.5`}>
-                      <Icon size={20} />
+                      <Icon size={f.color ? 20 : 40} />
                     </div>
                     <div>
                       <h4 className="font-semibold text-zinc-900 mb-1">{f.title}</h4>
