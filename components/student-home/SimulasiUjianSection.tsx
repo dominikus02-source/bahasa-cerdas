@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { BigtIcon } from "@/components/shared/FeatureIcons";
 import { BookOpenCheck, Ear, FileText, Globe2 } from "lucide-react";
 
 const ITEMS = [
@@ -27,7 +28,7 @@ const ITEMS = [
     label: "BIGT",
     desc: "Latihan bahasa Indonesia tingkat internasional",
     cta: "Mulai",
-    icon: Globe2,
+    icon: BigtIcon,
     accent: "text-bc-success bg-bc-success-soft",
   },
   {
