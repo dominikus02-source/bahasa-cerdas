@@ -12,6 +12,7 @@ import { AIBCHomeCard } from "@/components/student-home/AIBCHomeCard";
 import { RuangBelajarSection } from "@/components/student-home/RuangBelajarSection";
 import { SimulasiUjianSection } from "@/components/student-home/SimulasiUjianSection";
 import { RecentWorksSection } from "@/components/student-home/RecentWorksSection";
+import { AkuSastrawanHomeCard } from "@/components/student-home/AkuSastrawanHomeCard";
 import { StudentDailyInspiration } from "@/components/student-home/StudentDailyInspiration";
 import JumpaLaunchBanner from "@/components/jumpa/JumpaLaunchBanner";
 import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
@@ -73,6 +74,7 @@ function HomeContent() {
         <MentorHomeCard />
       </section>
 
+      <AkuSastrawanHomeCard />
       <RuangBelajarSection />
       <SimulasiUjianSection />
       <StudentDailyInspiration />
