@@ -207,7 +207,7 @@ check("Reduced motion: indikator pembicara tanpa animasi tapi tetap terlihat", /
 check("jumpa.css tanpa hex hardcode (THEME RULE)", !/#[0-9a-fA-F]{3,8}\b/.test(css))
 const ui = ["components/jumpa/JumpaLobby.tsx", "components/jumpa/JumpaRoomView.tsx", "components/jumpa/ParticipantTile.tsx", "components/jumpa/JumpaApp.tsx"].map(read).join("\n")
 check("UI JUMPA tanpa bg-white/text-slate-900/hex", !/bg-white|text-slate-900|bg-\[#/.test(ui))
-check("Label kontrol Bahasa Indonesia", ["Mikrofon", "Kamera", "Lainnya", "Keluar", "Gabung sekarang"].every((l) => ui.includes(l)))
+check("Label kontrol Bahasa Indonesia", ["Mikrofon", "Kamera", "Lainnya", "Keluar", "Gabung"].every((l) => ui.includes(l)))
 const compose = read("ops/vps/docker-compose.yml")
 check("Compose: livekit profile jumpa, 2 CPU / 1.5 GB", compose.includes('profiles: ["jumpa"]') && compose.includes("cpus: 2.0\n    mem_limit: 1536m"))
 check("Compose: 7880 hanya localhost", compose.includes('"127.0.0.1:7880:7880"'))

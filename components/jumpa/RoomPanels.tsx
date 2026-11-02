@@ -457,7 +457,7 @@ export function InvitePanel() {
     if (!r.ok) return toast(r.message, "warn");
     if (typeof r.data.path === "string") {
       await copy(`${window.location.origin}${r.data.path}`, "link");
-      toast(isUmumRoom ? "Tautan undangan (24 jam) tersalin." : "Tautan undangan guru (24 jam) tersalin.", "ok");
+      toast("Tautan tersalin.", "ok");
       return;
     }
     setDone((s) => new Set(s).add(key));
@@ -565,7 +565,7 @@ export function ReportPanel({ onDone }: { onDone: () => void }) {
     });
     setSending(false);
     if (!r.ok) return toast(r.message, "warn");
-    toast(self.bcRole === "MURID" ? "Laporan terkirim ke guru kelas & admin. Terima kasih sudah berani melapor." : "Laporan terkirim ke admin.", "ok");
+    toast("Laporan terkirim.", "ok");
     onDone();
   };
 

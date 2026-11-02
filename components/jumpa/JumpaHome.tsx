@@ -50,7 +50,6 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
       </header>
       <section className="py-4">
         <h1 className="text-2xl font-bold">Halo, {displayName.split(" ")[0]}</h1>
-        <p className="mt-2 text-bc-text-2">Bertemu, berbicara, dan belajar bersama.</p>
         <p className="mt-2 text-sm text-bc-text-3">Uji coba bersama · {limits.maxParticipants} peserta · {limits.maxDurationMin} menit per ruang</p>
       </section>
       {error && <p role="alert" className="text-sm text-bc-danger">{error}</p>}

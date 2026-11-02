@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Crown, Loader2, RotateCcw } from "lucide-react";
-import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
+import { Loader2, RotateCcw } from "lucide-react";
+import { type JumpaTierView } from "@/lib/jumpa/tiers";
 import type { EndedReason, JumpaRoomInfo, JumpaSelf } from "./room-controller";
 import type { LeaveReason } from "./JumpaRoomView";
 import JumpaLobby from "./JumpaLobby";
@@ -147,8 +147,6 @@ export default function JumpaApp(props: JumpaAppProps) {
   }
 
   if (phase.name === "left" && (phase.reason === "left" || phase.reason === "ended")) {
-    const timeUp = phase.reason === "ended" && phase.ended === "TIME_LIMIT";
-    const upsell = timeUp && props.tier.canUpgrade && props.tier.upgradeUrl;
     return (
       <main className="mx-auto grid min-h-[100dvh] w-full max-w-md place-items-center px-4 py-8">
         <PostMeeting
@@ -158,11 +156,6 @@ export default function JumpaApp(props: JumpaAppProps) {
           fallbackHref={props.dashboardHref}
           extra={
             <>
-              {upsell && (
-                <a href={props.tier.upgradeUrl!} className="jumpa-primary jumpa-primary-premium w-full">
-                  <Crown size={18} /> Premium: {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit
-                </a>
-              )}
               {phase.reason === "left" && (
                 <button type="button" className="jumpa-ghost w-full" onClick={() => { phaseRef.current = "lobby"; setPhase({ name: "lobby" }); }}>
                   <RotateCcw size={16} /> Gabung lagi
@@ -176,8 +169,6 @@ export default function JumpaApp(props: JumpaAppProps) {
   }
 
   if (phase.name === "left") {
-    const timeUp = phase.reason === "ended" && phase.ended === "TIME_LIMIT";
-    const upsell = timeUp && props.tier.canUpgrade && props.tier.upgradeUrl;
     return (
       <main className="grid min-h-[100dvh] place-items-center px-4">
         <div className="jumpa-card jumpa-in-up w-full max-w-sm p-6 text-center">
@@ -186,17 +177,7 @@ export default function JumpaApp(props: JumpaAppProps) {
           <p className="mt-2 text-sm text-[var(--jp-text-2)]">
             {phase.reason === "ended" ? ENDED_TEXT[phase.ended ?? "HOST"] : props.title}
           </p>
-          {upsell && (
-            <div className="jumpa-plan-card mt-4 text-left">
-              <p className="text-sm">Premium: kelas {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxDurationMin} menit · {JUMPA_TIERS.PREMIUM.rooms.KELAS.maxParticipants} peserta.</p>
-            </div>
-          )}
           <div className="mt-6 flex flex-col gap-3">
-            {upsell && (
-              <a href={props.tier.upgradeUrl!} className="jumpa-primary jumpa-primary-premium">
-                <Crown size={18} /> Lihat Premium
-              </a>
-            )}
             {phase.reason !== "removed" && phase.reason !== "ended" && (
               <button
                 type="button"

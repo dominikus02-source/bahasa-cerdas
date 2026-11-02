@@ -51,3 +51,11 @@ Tes lokal mencakup batas seragam lintas paket/jenis, akses kelas privat, non-Jun
 SSR beranda diuji untuk input dan konsistensi render. Pemeriksaan browser visual belum dapat dijalankan: Chromium tidak tersedia dan unduhan browser gagal di lingkungan pemeriksaan. Integrasi staging, 20/150 koneksi media nyata, serta reproduksi error uji pengguna belum dilakukan. #206/#208 masih memerlukan validasi isolasi runtime. PR tetap draft sampai bukti tersebut tersedia.
 
 Hasil akhir lokal: `npm run build` lulus; TypeScript lulus; ESLint tanpa error (dua peringatan img yang sudah ada pada pengaturan). Sebelas suite JUMPA lulus: 844 pemeriksaan pada sembilan suite bernomor, pemeriksaan bahasa, serta suite kebijakan media/visibilitas. Sesi LiveKit terintegrasi pada suite token dilewati karena endpoint pengujian tidak diisi.
+
+## Pemeriksaan teks dan tata letak
+
+Beranda memakai dua tindakan jelas; lobi menampilkan judul, perangkat, batas ruang dan Gabung. Label webinar serta klaim "hanya anggota terdaftar" dihapus dari lobi. Pengaturan menyebut Batas ruang; Latar samar diletakkan bersama pilihan latar, tanpa badge Premium atau tombol terkunci. Pesan laporan dan salin tautan dipersingkat. Ruang penuh menyebut kapasitas, bukan paket. Menu Grid/Pembicara memakai label pendek. Tidak ada klaim kestabilan atau kualitas yang belum diuji.
+
+Kontrol kamera/mik tetap terpisah; menu ponsel dapat digulir dengan tinggi maksimum, panel menjadi lembar bawah di HP dan panel samping di laptop. Struktur lama yang mengatur safe-area, target sentuh, dan teks terpotong pada judul tetap dipakai. Pemeriksaan visual, keyboard/fokus, dan perangkat nyata tetap menjadi gerbang penerimaan, bukan dinyatakan lulus melalui pembacaan kode saja.
+
+Rollback: gunakan commit sebelum V2 untuk membangun ulang web pada lingkungan yang sama, lalu pulihkan nilai batas peserta di environment. Tidak ada migrasi DB yang perlu dibatalkan. Kapasitas ruang yang sudah tersimpan tidak berubah otomatis ketika kode atau environment dipulihkan; tutup ruang uji tersebut dan buat ulang bila perlu. Jangan mengganti kode server media saat rapat aktif.

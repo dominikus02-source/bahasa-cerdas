@@ -282,11 +282,6 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
             <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[.16em] text-[var(--jp-accent)]">
               <span className="jumpa-live-dot" role="img" aria-label="Berlangsung" />
               JUMPA
-              {info.mode === "WEBINAR" && (
-                <span className="rounded-full border border-[var(--jp-accent)]/30 bg-[var(--jp-accent)]/10 px-2 py-0.5 text-[9px] font-extrabold tracking-[.12em] text-[var(--jp-accent)]">
-                  WEBINAR INTERAKTIF
-                </span>
-              )}
               <span className="hidden font-semibold normal-case tracking-normal text-[var(--jp-text-3)] sm:inline">dari BahasaCerdas</span>
               {info.isLocked && <Lock size={12} aria-label="Ruang terkunci" className="text-[var(--clr-warning)]" />}
             </p>
@@ -773,11 +768,11 @@ function ControlBar({
             )}
             <p className="px-4 pb-1 pt-2 text-[11px] font-bold uppercase tracking-[.14em] text-[var(--jp-text-3)]">Tata letak</p>
             <button type="button" role="menuitemradio" aria-checked={layout === "grid"} className="jumpa-menu-item" onClick={() => { onLayout("grid"); close(); }}>
-              <LayoutGrid size={20} /> Grid, semua sama besar
+              <LayoutGrid size={20} /> Grid
               {layout === "grid" && <Check size={18} className="ml-auto" />}
             </button>
             <button type="button" role="menuitemradio" aria-checked={layout === "speaker"} className="jumpa-menu-item" onClick={() => { onLayout("speaker"); close(); }}>
-              <Presentation size={20} /> Pembicara, fokus yang bicara
+              <Presentation size={20} /> Pembicara
               {layout === "speaker" && <Check size={18} className="ml-auto" />}
             </button>
             <div className="my-1 h-px bg-[var(--jp-line)]" />

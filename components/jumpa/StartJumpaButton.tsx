@@ -16,7 +16,6 @@ export default function StartJumpaButton({ groupId, className = "", variant = "s
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [upgradeUrl, setUpgradeUrl] = useState<string | null>(null);
 
   if (!JUMPA_ENABLED) return null;
 
@@ -32,8 +31,6 @@ export default function StartJumpaButton({ groupId, className = "", variant = "s
       const body = (await res.json().catch(() => null)) as { url?: string; error?: string; code?: string; upgradeUrl?: string } | null;
       if (!res.ok || !body?.url) {
         setError(body?.error ?? "Gagal membuat ruang JUMPA.");
-        // Fase 3: kuota harian paket Gratis habis → tawarkan Premium.
-        setUpgradeUrl(body?.code === "TIER_DAILY_LIMIT" && typeof body.upgradeUrl === "string" && body.upgradeUrl.startsWith("/") ? body.upgradeUrl : null);
         setBusy(false);
         return;
       }
@@ -51,11 +48,6 @@ export default function StartJumpaButton({ groupId, className = "", variant = "s
         {busy ? <Loader2 size={18} className="animate-spin" /> : <Video size={18} />} {label}
       </button>
       {error && <p role="alert" className="text-xs text-[var(--clr-danger)]">{error}</p>}
-      {upgradeUrl && (
-        <a href={upgradeUrl} className="text-xs font-semibold text-[var(--clr-accent-strong)] underline-offset-2 hover:underline">
-          Lihat paket Premium
-        </a>
-      )}
     </div>
   );
 }

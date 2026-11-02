@@ -17,7 +17,7 @@ function view(code: string | null, message: string | null, scheduledAt: string |
   switch (code) {
     case "NOT_STARTED": {
       const open = scheduledAt ? new Date(new Date(scheduledAt).getTime() - JUMPA_EARLY_JOIN_MIN * 60_000) : null;
-      return { icon: Clock, title: "JUMPA belum dibuka", body: open ? `Dibuka pukul ${formatWibTime(open)}. Halaman ini akan terbuka sendiri.` : "Tunggu pemandu memulai." };
+      return { icon: Clock, title: "JUMPA belum dibuka", body: open ? `Dibuka pukul ${formatWibTime(open)}. Halaman diperbarui otomatis.` : "Tunggu pemandu memulai." };
     }
     case "ROOM_CANCELLED":
       return { icon: CalendarX2, title: "JUMPA dibatalkan", body: "Cek jadwal terbaru di riwayat.", history: true };
@@ -27,7 +27,7 @@ function view(code: string | null, message: string | null, scheduledAt: string |
     case "ROOM_LOCKED":
       return { icon: Lock, title: "Ruang dikunci", body: "Tunggu pemandu membukanya.", retry: true };
     case "ROOM_FULL":
-      return { icon: Users, title: "Ruang penuh", body: `Batas paket ${max} orang. Coba lagi saat ada yang keluar.`, retry: true };
+      return { icon: Users, title: "Ruang penuh", body: `Kapasitas ${max} peserta. Coba lagi nanti.`, retry: true };
     case "NOT_INVITED":
     case "NOT_GROUP_MEMBER":
     case "NOT_COMMUNITY_MEMBER":

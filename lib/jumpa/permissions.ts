@@ -347,7 +347,7 @@ export function publishSourcesFor(
   const base: JumpaPublishSource[] = ["camera", "microphone"];
   if (!ctx) return base;
   const screen: JumpaPublishSource[] = ["screen_share", "screen_share_audio"];
-  if (effective === "GURU") return [...base, ...screen];
+  if (ctx.kind === "GURU" || effective === "GURU") return [...base, ...screen];
   if (effective === "UMUM") return ctx.kind === "UMUM" ? [...base, ...screen] : base;
   if (ctx.kind === "KELAS" && ctx.allowMuridScreenShare) return [...base, ...screen];
   if (ctx.kind === "MURID" && roomRole === "HOST") return [...base, ...screen];

@@ -35,7 +35,9 @@ async function main() {
   assert.equal(evaluateJoin({ actor: { ...actors[1], isJunior: true }, room, relation, activeOthers: 0, now }).ok, false);
   const grants = await Promise.all(Array.from({ length: 20 }, async (_, i) => {
     const role = actors[i % actors.length].role as "GURU" | "MURID" | "UMUM";
-    return buildJoinGrant("meeting", publishSourcesFor("MEMBER", role, { kind: "GURU", allowMuridScreenShare: false }));
+    const sources = publishSourcesFor("MEMBER", role, { kind: "GURU", allowMuridScreenShare: false });
+    assert.ok(sources.includes("screen_share"));
+    return buildJoinGrant("meeting", sources);
   }));
   for (const grant of grants) {
     assert.equal(grant.canPublish, true); assert.ok(grant.canPublishSources?.includes(1)); assert.ok(grant.canPublishSources?.includes(2));
