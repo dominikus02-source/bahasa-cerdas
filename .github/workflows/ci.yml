@@ -102,6 +102,8 @@ jobs:
         run: npm run test:aku-sastrawan
       - name: AKU SASTRAWAN bahasa (tidak boleh ada teks bahasa Inggris)
         run: npm run test:aku-sastrawan-bahasa
+      - name: AKU SASTRAWAN Peta Cerita (rancangan aman di kolom sinopsis)
+        run: npm run test:aku-sastrawan-peta
 
       - name: Approved BahasaCerdas icons guard
         run: node scripts/test-bc-approved-icons.cjs
