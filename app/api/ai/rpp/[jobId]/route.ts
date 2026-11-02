@@ -5,6 +5,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
 import { getJobStatus } from "@/lib/ai-queue";
+import { scrubAiProviderNames } from "@/lib/ai/public-ai-sanitize";
 
 export async function GET(
   _req: NextRequest,
@@ -18,7 +19,8 @@ export async function GET(
     const job = await getJobStatus(jobId);
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 });
 
-    return NextResponse.json(job);
+    // Kerahasiaan teknologi AI: job lama bisa menyimpan pesan berisi nama penyedia.
+    return NextResponse.json({ ...job, error: scrubAiProviderNames(job.error) });
   } catch (error) {
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }

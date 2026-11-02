@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
+import { AI_PUBLIC_ASSISTANT_NAME, AI_PUBLIC_PERSONA } from "@/lib/ai/ai-confidentiality";
 import { Loader2, Sparkles, CheckCircle2, AlertTriangle, RotateCw, X, ArrowRight, StopCircle, FileText, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -630,7 +631,7 @@ function SubSection({ label, items }: { label: string; items?: string[] }) {
   );
 }
 
-export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamingModel = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPdf, exportPdfState = "idle", exportError, resultSource, savedResultId }: AgentResultPanelProps) {
+export function AgentResultPanel({ agentId, result, loading, error, errorCode, requestId, isStreaming = false, streamingText = "", streamingProvider = "", streamProgress = "", streamCancelled = false, streamIncomplete = false, onCancelStream, onRegenerate, onClear, onSuggestedAgent, onSave, saveState = "idle", saveError, onExportDocx, exportDocxState = "idle", onExportPdf, exportPdfState = "idle", exportError, resultSource, savedResultId }: AgentResultPanelProps) {
   if (loading) {
     if (isStreaming && (streamingText || streamProgress || streamingProvider)) {
       return (
@@ -640,7 +641,8 @@ export function AgentResultPanel({ agentId, result, loading, error, errorCode, r
               <div className="flex items-center gap-2">
                 <Loader2 className="w-4 h-4 animate-spin text-emerald-500" />
                 <span className="text-xs text-gray-500">
-                  {streamingProvider}/{streamingModel || "..."}
+                  {/* Kerahasiaan teknologi AI: jangan tampilkan nama penyedia/model. */}
+                  {AI_PUBLIC_PERSONA} · {AI_PUBLIC_ASSISTANT_NAME}
                 </span>
                 {streamProgress && (
                   <span className="text-xs text-gray-400 ml-1">{streamProgress}</span>

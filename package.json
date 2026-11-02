@@ -118,6 +118,8 @@
     "test:mrr-truth": "npx tsx scripts/test-mrr-truth.ts",
     "test:password-reset": "npx tsx scripts/test-password-reset-flow.ts",
     "test:aku-sastrawan": "npx tsx scripts/test-aku-sastrawan-access.ts",
+    "test:no-ai-provider": "npx tsx scripts/test-no-ai-provider-leak.ts",
+    "test:no-ai-provider-bundle": "npx tsx scripts/test-no-ai-provider-bundle.ts",
     "test:route-slugs": "npx tsx scripts/test-route-slugs.ts",
     "test:aku-sastrawan-bahasa": "npx tsx scripts/test-aku-sastrawan-bahasa.ts",
     "test:founder-health": "npx tsx scripts/test-founder-health.ts",

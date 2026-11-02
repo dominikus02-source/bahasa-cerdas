@@ -17,6 +17,8 @@
  *   AI_PROVIDER_PRIORITY    — Comma-separated priority override (default: deepseek,groq,gemini)
  */
 
+import { AI_CONFIDENTIALITY_INSTRUCTION } from "@/lib/ai/ai-confidentiality";
+
 export interface ProviderRequest {
   model: string;
   messages: { role: "system" | "user" | "assistant"; content: string }[];
@@ -39,6 +41,26 @@ export interface ProviderResponse {
 }
 
 export type ProviderName = "deepseek" | "groq" | "gemini";
+
+/**
+ * Kerahasiaan teknologi AI (keputusan founder 2 Nov 2026): setiap permintaan
+ * ke penyedia mana pun membawa instruksi agar AI tidak pernah menyebut
+ * model/penyedia/perusahaan pembuatnya. Ditambahkan ke pesan system pertama
+ * (atau sebagai pesan system baru bila belum ada). Idempoten.
+ */
+export function withAiConfidentiality(req: ProviderRequest): ProviderRequest {
+  const messages = req.messages ?? [];
+  if (messages.some((m) => m.role === "system" && m.content.includes(AI_CONFIDENTIALITY_INSTRUCTION))) {
+    return req;
+  }
+  const idx = messages.findIndex((m) => m.role === "system");
+  if (idx === -1) {
+    return { ...req, messages: [{ role: "system", content: AI_CONFIDENTIALITY_INSTRUCTION }, ...messages] };
+  }
+  const next = messages.slice();
+  next[idx] = { ...next[idx], content: `${next[idx].content}\n\n${AI_CONFIDENTIALITY_INSTRUCTION}` };
+  return { ...req, messages: next };
+}
 
 // ─── Multi-key rotation ───────────────────────────────────
 // Env var boleh berisi beberapa key dipisah koma: "key1,key2,key3".
@@ -629,6 +651,7 @@ export async function streamProviderText(
   onDelta: (text: string) => void,
   options?: { providerPriority?: ProviderName[] }
 ): Promise<ProviderStreamResult> {
+  req = withAiConfidentiality(req);
   const priority = options?.providerPriority?.length ? options.providerPriority : loadPriority();
   const errors: string[] = [];
 
@@ -745,6 +768,7 @@ const PROVIDER_CALLERS: Record<ProviderName, (req: ProviderRequest, apiKey: stri
  * Throws on failure — caller handles fallback.
  */
 export async function callProvider(req: ProviderRequest): Promise<ProviderResponse> {
+  req = withAiConfidentiality(req);
   const provider = getProviderForModel(req.model);
   if (!provider) throw new Error(`Unknown model: ${req.model}`);
   const caller = PROVIDER_CALLERS[provider];
@@ -759,6 +783,7 @@ export async function callProvider(req: ProviderRequest): Promise<ProviderRespon
  * Sanitizes errors — never leaks raw API responses.
  */
 export async function callWithFallback(req: ProviderRequest): Promise<ProviderResponse> {
+  req = withAiConfidentiality(req);
   const priority = loadPriority();
   const errors: string[] = [];
 

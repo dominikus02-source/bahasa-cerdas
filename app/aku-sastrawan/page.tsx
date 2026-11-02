@@ -120,7 +120,7 @@ export default async function AkuSastrawanPage() {
             </span>
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            Ruang menulis premium untuk mengembangkan cerpen dan novel, menyimpan naskah pribadi, serta meminta masukan Pendamping Menulis AI (DeepSeek). Kurikulum interaktif dengan pelacakan progres, Studio Menulis, dan manajemen bab Novel sudah tersedia.
+            Ruang menulis premium untuk mengembangkan cerpen dan novel, menyimpan naskah pribadi, serta meminta masukan Pendamping Menulis AI (NARA). Kurikulum interaktif dengan pelacakan progres, Studio Menulis, dan manajemen bab Novel sudah tersedia.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link

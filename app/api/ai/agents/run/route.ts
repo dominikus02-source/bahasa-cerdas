@@ -18,6 +18,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { publicAiMeta, scrubAiProviderNames } from "@/lib/ai/public-ai-sanitize";
 import { getUser } from "@/lib/supabase/server";
 import "@/src/ai";
 import { getAgent } from "@/src/ai/core/agent-registry";
@@ -221,17 +222,17 @@ export async function POST(req: NextRequest) {
       agentId: canonicalAgentId,
       output: result.output,
       text: result.text,
-      error: result.success ? null : (result.error || GENERIC_ERROR),
+      error: result.success ? null : (scrubAiProviderNames(result.error) || GENERIC_ERROR),
       code: errorCode,
-      warnings: result.warnings || [],
+      warnings: (result.warnings || []).map((w) => (typeof w === "string" ? scrubAiProviderNames(w) : w)),
       qualityScore: result.qualityScore || 0,
-      provider: result.provider || "none",
-      model: result.model || "unknown",
+      // Kerahasiaan teknologi AI: penyedia/model asli hanya di log server.
+      ...publicAiMeta(),
       latencyMs: result.latencyMs || 0,
       metadata: {
         agentId: canonicalAgentId,
         toolLabel: agentLabel,
-        model: result.model || "unknown",
+        model: publicAiMeta().model,
         createdAt: new Date().toISOString(),
         requestId,
       },

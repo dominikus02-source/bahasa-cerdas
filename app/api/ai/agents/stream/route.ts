@@ -23,14 +23,17 @@ import { runAgentStream, type StreamEvent } from "@/src/ai/core/agent-stream-run
 import { checkAndPrepareDeduction, deductCreditsAtomic, ensureMonthlyLedger } from "@/lib/ai-gateway/quota-checker";
 import type { AgentRunContext } from "@/src/ai/core/agent-types";
 import { umumGuruToolForbidden } from "@/lib/auth/umum-guard";
+import { scrubAiProviderNames, toPublicStreamEvent } from "@/lib/ai/public-ai-sanitize";
 
 // Streaming generasi panjang — jangan diputus default timeout serverless
 export const maxDuration = 300;
 
 const QUOTA_ERROR_MSG = "Credit AI Anda sudah habis. Upgrade atau tunggu periode berikutnya.";
 
+// Kerahasiaan teknologi AI: setiap event dinetralkan (provider/model diganti
+// nilai netral, pesan error dibersihkan) sebelum dikirim ke klien.
 function eventToSSE(event: StreamEvent): string {
-  return `data: ${JSON.stringify(event)}\n\n`;
+  return `data: ${JSON.stringify(toPublicStreamEvent(event))}\n\n`;
 }
 
 export async function POST(req: NextRequest) {
@@ -182,7 +185,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error("[AI Agents Stream] Unhandled error:", error);
-    const msg = error instanceof Error ? error.message : "Internal server error";
+    const msg = error instanceof Error ? scrubAiProviderNames(error.message) : "Internal server error";
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

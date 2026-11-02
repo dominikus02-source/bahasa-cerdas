@@ -106,11 +106,17 @@ jobs:
       - name: Approved BahasaCerdas icons guard
         run: node scripts/test-bc-approved-icons.cjs
 
+      - name: Kerahasiaan penyedia AI (teks UI, respons API, instruksi sistem)
+        run: npm run test:no-ai-provider
+
       - name: Lint
         run: npm run lint
 
       - name: Build
         run: npm run build
+
+      - name: Kerahasiaan penyedia AI (bundle publik .next/static)
+        run: npm run test:no-ai-provider-bundle
 
       - name: Build realtime game server
         working-directory: game-server

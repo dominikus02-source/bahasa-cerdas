@@ -3,6 +3,8 @@
 // Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
 // pemanggil baru — gunakan POST /api/ai/agents/run dengan agentId yang sesuai.
 import { NextRequest, NextResponse } from "next/server";
+import { withConfidentialityPrompt } from "@/lib/ai/ai-confidentiality";
+import { scrubAiProviderNames } from "@/lib/ai/public-ai-sanitize";
 import { getUser } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
@@ -86,7 +88,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
         method: "POST",
         headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
         body: JSON.stringify({
-          contents: [{ parts: [{ text: prompt }] }],
+          contents: [{ parts: [{ text: withConfidentialityPrompt(prompt) }] }],
           generationConfig: { temperature: 0.7, maxOutputTokens: 8192 },
         }),
         signal: AbortSignal.timeout(AI_TIMEOUT),
@@ -106,7 +108,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
         body: JSON.stringify({
           model: "deepseek-chat",
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }],
           max_tokens: 8000, temperature: 0.7,
         }),
         signal: AbortSignal.timeout(AI_TIMEOUT),
@@ -126,7 +128,7 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
         body: JSON.stringify({
           model: "openai/gpt-oss-20b",
-          messages: [{ role: "user", content: prompt }],
+          messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }],
           max_tokens: 5000, temperature: 0.7,
         }),
         signal: AbortSignal.timeout(AI_TIMEOUT),
@@ -144,7 +146,10 @@ Isi semua field untuk topik "${t}" dan kelas ${k}. Gunakan Bahasa Indonesia.`;
   if (!content) await callGroq();
 
   if (!content) {
-    await failJob(jobId, `Semua AI provider gagal: ${errors.join("; ")}`);
+    // Kerahasiaan teknologi AI: pesan job dibaca klien lewat /api/ai/rpp/[jobId];
+    // detail penyedia hanya di log server.
+    console.error("[ai/rpp] All AI providers failed:", errors);
+    await failJob(jobId, "Layanan AI sedang sibuk. Silakan coba lagi sebentar.");
     return;
   }
 
@@ -179,7 +184,7 @@ export async function POST(req: NextRequest) {
     // Process async — don't block response
     processRPP(job.id, { ...body, userId: user.id }).catch(e => {
       console.error("AI RPP background job failed:", e);
-      failJob(job.id, e instanceof Error ? e.message : "Unknown error");
+      failJob(job.id, e instanceof Error ? scrubAiProviderNames(e.message) : "Unknown error");
     });
 
     return NextResponse.json({ jobId: job.id, status: "PENDING" }, { status: 202 });
