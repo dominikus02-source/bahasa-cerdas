@@ -232,7 +232,7 @@ function QuickActions() {
               <div className={`bc-media-scrim ${action.scrim}`} />
               <div className="relative z-10 flex h-full min-h-[142px] flex-col p-3 sm:min-h-[168px] sm:p-4">
                 <span className="bc-media-chip grid h-9 w-9 place-items-center rounded-bc-icon sm:h-10 sm:w-10">
-                  <Icon size={38} />
+                  <Icon size={action.label === "Dasbor Murid" ? 24 : 40} />
                 </span>
                 <div className="mt-auto pt-3 sm:pt-5">
                   <div className="flex items-end justify-between gap-2 sm:gap-3">
