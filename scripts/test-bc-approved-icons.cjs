@@ -21,7 +21,7 @@ for (const [key, filename] of Object.entries(assets)) {
   assert.deepEqual([...bytes.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], `Invalid PNG: ${filename}`);
   const w = bytes.readUInt32BE(16), h = bytes.readUInt32BE(20);
   assert.ok(w >= 300 && h >= 300 && w <= 1024 && h <= 1024, `Unexpected icon dimensions: ${filename} ${w}x${h}`);
-  assert.ok(source.includes(`"${filename}"`), `Icon not mapped: ${key}`);
+  assert.ok(source.includes(`/feature-icons/${filename}`), `Icon not mapped: ${key}`);
   console.log(`OK ${key.padEnd(13)} ${w}x${h}`);
 }
 const expectedUsage = [
