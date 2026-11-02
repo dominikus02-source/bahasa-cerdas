@@ -46,7 +46,7 @@ export function ArenaHomeSection() {
             className="px-btn-ghost flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2.5"
             aria-label="Masuk Arena"
           >
-            <GimIcon size={15} />
+            <GimIcon size={28} />
             Arena
           </Link>
           <Link
