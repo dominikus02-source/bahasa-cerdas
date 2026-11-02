@@ -1,11 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowLeft, BookOpen, Check, CloudOff, Download, LoaderCircle, Lock, Plus, Trash2 } from "lucide-react";
 import { KonfirmasiHapusDialog, KATA_KONFIRMASI_HAPUS } from "@/components/aku-sastrawan/KonfirmasiHapusDialog";
-import { ArrowLeft, Plus, Save, Trash2, BookOpen, Download, Lock } from "lucide-react";
+import { useAutosave, bacaCadangan, hapusCadangan } from "@/components/aku-sastrawan/studio/useAutosave";
+import { hitungKata } from "@/lib/aku-sastrawan/peta-cerita";
 
 type Chapter = { id: string; title: string; content: string; orderIndex: number; wordCount: number };
+type Muatan = { title: string; content: string };
+
 export default function NovelChaptersPage({ params }: { params: Promise<{ projectId: string }> }) {
   const [projectId, setProjectId] = useState("");
   const [chapters, setChapters] = useState<Chapter[]>([]);
@@ -15,89 +19,187 @@ export default function NovelChaptersPage({ params }: { params: Promise<{ projec
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [sibuk, setSibuk] = useState(false);
   const [notice, setNotice] = useState("");
   const [hapusTerbuka, setHapusTerbuka] = useState(false);
   const [hapusGalat, setHapusGalat] = useState("");
+  const [cadangan, setCadangan] = useState<Muatan | null>(null);
+  const isiRef = useRef<HTMLTextAreaElement>(null);
   const tutupDialogHapus = useCallback(() => { setHapusTerbuka(false); setHapusGalat(""); }, []);
   const active = chapters.find((c) => c.id === activeId);
-  const dirty = Boolean(active && (title !== active.title || body !== active.content));
-  const confirmDiscard = () => !dirty || window.confirm("Ada perubahan yang belum disimpan. Buang perubahan ini?");
-  const load = useCallback(async (id: string) => {
+
+  const nilai = useMemo<Muatan>(() => ({ title, content: body }), [title, body]);
+  const simpanBab = useCallback(async (m: Muatan, { keepalive, kunci }: { keepalive: boolean; kunci: string }) => {
+    const babId = kunci.replace(/^bab:/, "");
+    if (!projectId || !babId) return;
+    const kirim = JSON.stringify(m);
+    const res = await fetch(`/api/aku-sastrawan/projects/${projectId}/chapters/${babId}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: kirim, keepalive: keepalive && kirim.length < 60_000,
+    });
+    if (!res.ok) throw new Error("gagal");
+    const data = await res.json().catch(() => null) as { chapter?: Chapter } | null;
+    const c = data?.chapter;
+    if (c) setChapters((list) => list.map((x) => (x.id === c.id ? { ...x, title: c.title, wordCount: c.wordCount, content: m.content } : x)));
+  }, [projectId]);
+  const simpan = useAutosave<Muatan>({ kunci: activeId ? `bab:${activeId}` : null, nilai, aktif: canWrite && !!activeId, simpan: simpanBab });
+
+  const { tetapkanAwal } = simpan;
+  const pilih = useCallback((c: Chapter | undefined) => {
+    setCadangan(null);
+    if (!c) { setActiveId(""); setTitle(""); setBody(""); return; }
+    const salinan = bacaCadangan<Muatan>(`bab:${c.id}`)?.nilai;
+    if (salinan && (salinan.title !== c.title || salinan.content !== c.content)) setCadangan(salinan);
+    else if (salinan) hapusCadangan(`bab:${c.id}`);
+    tetapkanAwal({ title: c.title, content: c.content });
+    setTitle(c.title); setBody(c.content); setActiveId(c.id);
+  }, [tetapkanAwal]);
+
+  const load = useCallback(async (id: string, pilihId?: string) => {
     const res = await fetch(`/api/aku-sastrawan/projects/${id}/chapters`, { cache: "no-store" });
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || data.error || "Bab gagal dimuat.");
-    setChapters(data.chapters);
+    const list = data.chapters as Chapter[];
+    setChapters(list);
     setCanWrite(data.canWrite !== false);
     if (typeof data.upgradeUrl === "string") setUpgradeUrl(data.upgradeUrl);
-    if (data.chapters.length) {
-      const first = data.chapters[0] as Chapter;
-      setActiveId((current) => current && data.chapters.some((c: Chapter) => c.id === current) ? current : first.id);
-    } else { setActiveId(""); setTitle(""); setBody(""); }
-  }, []);
-  useEffect(() => { let cancelled = false; params.then(({ projectId: id }) => { if (cancelled) return; setProjectId(id); load(id).catch((e) => setNotice(e.message)).finally(() => { if (!cancelled) setLoading(false); }); }); return () => { cancelled = true; }; }, [params, load]);
-  useEffect(() => { if (!active) return; setTitle(active.title); setBody(active.content); }, [activeId, active?.title, active?.content]);
+    pilih(list.find((c) => c.id === pilihId) ?? list[0]);
+  }, [pilih]);
+
   useEffect(() => {
-    if (!dirty) return;
-    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
-    window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
+    let batal = false;
+    params.then(({ projectId: id }) => {
+      if (batal) return;
+      setProjectId(id);
+      load(id).catch((e) => setNotice(e.message)).finally(() => { if (!batal) setLoading(false); });
+    });
+    return () => { batal = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
+
+  useEffect(() => {
+    const el = isiRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.max(el.scrollHeight, window.innerHeight * 0.5)}px`;
+  }, [body, activeId]);
+
+  const amankan = async () => {
+    if (!canWrite || !activeId) return true;
+    if (await simpan.simpanSekarang()) return true;
+    return window.confirm("Perubahan terakhir belum sampai ke server, tetapi tersalin di perangkat ini. Tetap lanjut?");
+  };
+  const gantiBab = async (c: Chapter) => { if (c.id === activeId || !(await amankan())) return; pilih(c); };
+
   async function createChapter() {
-    if (!projectId || !confirmDiscard()) return;
-    setSaving(true); setNotice("");
+    if (!projectId || sibuk || !(await amankan())) return;
+    setSibuk(true); setNotice("");
     try {
       const res = await fetch(`/api/aku-sastrawan/projects/${projectId}/chapters`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title: `Bab ${chapters.length + 1}` }) });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || data.error || "Bab belum dapat dibuat.");
-      await load(projectId); setActiveId(data.chapter.id); setNotice("Bab baru dibuat.");
+      await load(projectId, data.chapter.id);
+      window.setTimeout(() => isiRef.current?.focus(), 50);
     } catch (e) { setNotice(e instanceof Error ? e.message : "Bab belum dapat dibuat."); }
-    finally { setSaving(false); }
-  }
-  async function saveChapter() {
-    if (!active || saving) return;
-    setSaving(true); setNotice("");
-    try {
-      const res = await fetch(`/api/aku-sastrawan/projects/${projectId}/chapters/${active.id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ title, content: body }) });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || data.error || "Bab belum tersimpan.");
-      setChapters((current) => current.map((c) => c.id === active.id ? data.chapter : c)); setNotice("Bab tersimpan ke akun BahasaCerdas.");
-    } catch (e) { setNotice(e instanceof Error ? e.message : "Bab belum tersimpan."); }
-    finally { setSaving(false); }
+    finally { setSibuk(false); }
   }
   async function deleteChapter() {
-    if (!active || saving) return;
-    setSaving(true); setHapusGalat("");
+    if (!active || sibuk) return;
+    setSibuk(true); setHapusGalat("");
     try {
       const res = await fetch(`/api/aku-sastrawan/projects/${projectId}/chapters/${active.id}`, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ konfirmasi: KATA_KONFIRMASI_HAPUS }) });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) { setHapusGalat(data.message || data.error || "Bab belum dihapus."); return; }
       setHapusTerbuka(false);
-      await load(projectId); setNotice("Bab dihapus.");
+      setActiveId("");
+      await load(projectId);
     } catch { setHapusGalat("Koneksi bermasalah. Bab belum dihapus."); }
-    finally { setSaving(false); }
+    finally { setSibuk(false); }
   }
-  const count = body.trim() ? body.trim().split(/\s+/u).length : 0;
-  return <main className="min-h-screen bg-background text-foreground">
-    <header className="border-b border-border px-4 py-4 sm:px-6"><div className="mx-auto flex max-w-7xl items-center justify-between"><Link href="/aku-sastrawan/studio" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground"><ArrowLeft size={16}/> Kembali ke Studio Menulis</Link><span className="text-xs text-muted-foreground">Manuskrip novel</span></div></header>
-    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-widest text-primary">AKU SASTRAWAN · NOVEL</p><h1 className="mt-2 text-3xl font-black">Bab-bab novelmu.</h1><p className="mt-2 text-sm text-muted-foreground">Bangun manuskrip sedikit demi sedikit, satu bab pada satu waktu.</p></div><div className="flex flex-wrap gap-2">{projectId && <a href={`/api/aku-sastrawan/projects/${projectId}/export`} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-semibold"><Download size={16}/> Unduh .txt</a>}<button onClick={createChapter} disabled={saving || loading || !canWrite} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60"><Plus size={16}/> Tambah bab</button></div></div>
-      {!canWrite && !loading && <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 text-sm"><p className="flex items-center gap-2 text-amber-800 dark:text-amber-200"><Lock size={15}/> Mode baca: bab-bab novelmu tetap aman dan bisa diunduh. Aktifkan Premium untuk menulis lagi.</p><Link href={upgradeUrl} className="inline-flex min-h-9 items-center rounded-full bg-primary px-4 text-xs font-bold text-primary-foreground">Aktifkan Premium</Link></div>}
-      {notice && <p role="status" className="mb-4 rounded-xl border border-border bg-muted/40 p-3 text-sm">{notice}</p>}
-      <div className="grid gap-5 lg:grid-cols-[260px_1fr]">
-        <aside className="rounded-2xl border border-border bg-card p-3"><h2 className="px-2 pb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Daftar bab ({chapters.length})</h2>{loading ? <p className="p-3 text-sm text-muted-foreground">Memuat bab…</p> : chapters.length ? chapters.map((chapter) => <button key={chapter.id} onClick={() => { if (chapter.id !== activeId && confirmDiscard()) setActiveId(chapter.id); }} className={`mb-1 w-full rounded-xl p-3 text-left ${chapter.id === activeId ? "bg-primary/10" : "hover:bg-muted"}`}><span className="block text-xs text-muted-foreground">Bab {chapter.orderIndex}</span><span className="mt-1 block truncate text-sm font-semibold">{chapter.title}</span><span className="mt-1 block text-xs text-muted-foreground">{chapter.wordCount} kata</span></button>) : <div className="p-3 text-sm leading-6 text-muted-foreground"><BookOpen size={20} className="mb-2"/>Belum ada bab. Tekan “Tambah bab” untuk mulai.</div>}</aside>
-        <section className="overflow-hidden rounded-3xl border border-border bg-card">{active ? <><div className="border-b border-border p-4 sm:p-6"><label htmlFor="chapter-title" className="text-xs font-bold text-muted-foreground">JUDUL BAB</label><input id="chapter-title" readOnly={!canWrite} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={160} className="mt-2 w-full bg-transparent text-2xl font-black outline-none" placeholder="Misalnya: Pertemuan pertama"/></div><div className="border-b border-border bg-muted/30 px-4 py-3 text-xs text-muted-foreground">{count} kata · Bab {active.orderIndex}{dirty ? " · Belum disimpan" : " · Tersimpan"}</div><textarea readOnly={!canWrite} value={body} onChange={(e) => setBody(e.target.value)} className="min-h-[60vh] w-full resize-y bg-card px-5 py-6 font-serif text-lg leading-8 outline-none sm:px-8 sm:py-8" placeholder="Mulai tulis bab ini…"/><div className="flex flex-wrap justify-between gap-3 border-t border-border px-4 py-4"><button onClick={() => { setHapusGalat(""); setHapusTerbuka(true); }} disabled={saving || !canWrite} title={canWrite ? undefined : "Hapus bab memerlukan Premium aktif"} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-border px-4 text-sm font-semibold disabled:opacity-50"><Trash2 size={15}/> Hapus bab</button><button onClick={saveChapter} disabled={saving || !canWrite} className="inline-flex min-h-10 items-center gap-2 rounded-full bg-primary px-4 text-sm font-bold text-primary-foreground disabled:opacity-60"><Save size={15}/>{saving ? "Menyimpan…" : "Simpan bab"}</button></div></> : <div className="p-8 text-sm text-muted-foreground">{loading ? "Memuat manuskrip…" : "Buat bab pertama untuk mulai menulis novel."}</div>}</section>
+
+  const st = simpan.status;
+  const kata = hitungKata(body);
+  const kembali = projectId ? `/aku-sastrawan/studio?karya=${encodeURIComponent(projectId)}` : "/aku-sastrawan/studio";
+
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-30 bg-background/85 backdrop-blur">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:px-6">
+          <Link href={kembali} onClick={(e) => { if (simpan.belumTersimpan) { e.preventDefault(); void amankan().then((ok) => { if (ok) window.location.href = kembali; }); } }} className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-2.5 text-sm text-muted-foreground transition hover:text-foreground"><ArrowLeft size={16} /> Naskah</Link>
+          <div className="flex items-center gap-1">
+            <span className="mr-1 inline-flex items-center gap-1.5 text-xs text-muted-foreground" role="status" aria-live="polite">
+              {!canWrite ? (<><Lock size={13} /> Mode baca</>)
+                : !activeId ? null
+                : st === "gagal" ? (<button onClick={() => void simpan.simpanSekarang()} className="inline-flex items-center gap-1.5 text-destructive"><CloudOff size={13} /> Belum tersimpan · Coba lagi</button>)
+                : st === "tersimpan" ? (<><Check size={13} /> Tersimpan</>)
+                : (<><LoaderCircle size={13} className="animate-spin" /> Menyimpan…</>)}
+            </span>
+            {projectId && <a href={`/api/aku-sastrawan/projects/${projectId}/export`} onClick={() => void simpan.simpanSekarang()} aria-label="Unduh .txt" className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-3 text-sm text-muted-foreground transition hover:text-foreground"><Download size={16} /><span className="hidden sm:inline">Unduh .txt</span></a>}
+            {canWrite && <button onClick={() => void createChapter()} disabled={sibuk || loading} className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90 disabled:opacity-60"><Plus size={15} /> Tambah bab</button>}
+          </div>
+        </div>
+        {!canWrite && !loading && (
+          <div className="border-t border-border/60"><p className="mx-auto flex max-w-6xl flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 text-xs text-muted-foreground">Bab-bab novelmu aman — bisa dibaca dan diunduh. <Link href={upgradeUrl} className="font-semibold text-foreground underline underline-offset-4">Aktifkan Premium untuk menulis lagi</Link></p></div>
+        )}
+      </header>
+
+      <div className="mx-auto grid max-w-6xl gap-8 px-4 pb-32 pt-6 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-12">
+        <nav aria-label="Daftar bab" className="lg:sticky lg:top-20 lg:self-start">
+          <p className="hidden px-2 pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground lg:block">Bab · {chapters.length}</p>
+          {loading ? <p className="px-2 text-sm text-muted-foreground">Memuat bab…</p> : chapters.length ? (
+            <ul className="-mx-1 flex gap-1.5 overflow-x-auto pb-1 lg:mx-0 lg:block lg:space-y-0.5 lg:overflow-visible">
+              {chapters.map((c) => (
+                <li key={c.id} className="shrink-0">
+                  <button onClick={() => void gantiBab(c)} aria-current={c.id === activeId ? "true" : undefined} className={`w-full rounded-xl px-3 py-2 text-left text-sm transition ${c.id === activeId ? "bg-muted text-foreground" : "text-muted-foreground hover:text-foreground"}`}>
+                    <span className="block whitespace-nowrap lg:truncate"><span className="tabular-nums">{c.orderIndex}.</span> {c.title}</span>
+                    <span className="hidden text-xs opacity-70 lg:block">{c.wordCount.toLocaleString("id-ID")} kata</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </nav>
+
+        <section className="min-w-0">
+          {notice && <p role="status" className="mx-auto mb-6 max-w-[680px] rounded-xl bg-muted/40 px-4 py-3 text-sm">{notice}</p>}
+          {active ? (
+            <article className="mx-auto w-full max-w-[680px]">
+              {cadangan && canWrite && (
+                <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-sm">
+                  <span className="text-muted-foreground">Ada salinan bab ini yang belum tersimpan di perangkat ini.</span>
+                  <span className="flex gap-2">
+                    <button onClick={() => { setTitle(cadangan.title); setBody(cadangan.content); setCadangan(null); }} className="rounded-full bg-foreground px-3 py-1.5 text-xs font-semibold text-background">Pulihkan</button>
+                    <button onClick={() => { hapusCadangan(`bab:${activeId}`); setCadangan(null); }} className="rounded-full px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground">Abaikan</button>
+                  </span>
+                </div>
+              )}
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Bab {active.orderIndex}</p>
+              <input id="chapter-title" readOnly={!canWrite} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={160} aria-label="Judul bab" placeholder="Judul bab" className="mt-3 w-full bg-transparent font-display text-[30px] leading-tight tracking-tight outline-none placeholder:text-muted-foreground/40 sm:text-[38px]" />
+              <textarea ref={isiRef} readOnly={!canWrite} value={body} onChange={(e) => setBody(e.target.value)} onBlur={() => { if (canWrite) void simpan.simpanSekarang(); }} aria-label="Isi bab" placeholder={canWrite ? "Mulai tulis bab ini…" : ""} className="mt-8 w-full resize-none overflow-hidden bg-transparent font-display text-[19px] leading-[1.85] outline-none placeholder:text-muted-foreground/40 sm:text-[20px]" />
+              <div className="mt-10 flex items-center justify-between border-t border-border/60 pt-4 text-xs text-muted-foreground">
+                <span className="tabular-nums">{kata.toLocaleString("id-ID")} kata</span>
+                {canWrite && <button onClick={() => { setHapusGalat(""); setHapusTerbuka(true); }} disabled={sibuk} className="inline-flex items-center gap-1.5 transition hover:text-destructive"><Trash2 size={13} /> Hapus bab</button>}
+              </div>
+            </article>
+          ) : !loading && (
+            <div className="mx-auto max-w-[680px] py-16 text-center">
+              <BookOpen size={22} className="mx-auto text-muted-foreground" />
+              <p className="mt-4 font-display text-2xl">Belum ada bab.</p>
+              <p className="mt-2 text-sm text-muted-foreground">{canWrite ? "Tambah bab pertama untuk mulai." : "Novel ini belum memiliki bab."}</p>
+            </div>
+          )}
+        </section>
       </div>
-    </div>
-    <KonfirmasiHapusDialog
-      open={hapusTerbuka}
-      judul="Hapus bab ini secara permanen?"
-      deskripsi={`“${active?.title || "Bab tanpa judul"}” akan dihapus dari manuskrip dan tidak dapat dipulihkan. Unduh .txt terlebih dahulu bila ingin menyimpan salinan.`}
-      peringatan={dirty ? "Ada perubahan yang belum disimpan di bab ini." : undefined}
-      sibuk={saving}
-      galat={hapusGalat}
-      onBatal={tutupDialogHapus}
-      onHapus={() => void deleteChapter()}
-    />
-  </main>;
+
+      <KonfirmasiHapusDialog
+        open={hapusTerbuka}
+        judul="Hapus bab ini secara permanen?"
+        deskripsi={`“${active?.title || "Bab tanpa judul"}” akan dihapus dari manuskrip dan tidak dapat dipulihkan. Unduh .txt terlebih dahulu bila ingin menyimpan salinan.`}
+        peringatan={simpan.belumTersimpan ? "Ada perubahan yang belum tersimpan di bab ini." : undefined}
+        sibuk={sibuk}
+        galat={hapusGalat}
+        onBatal={tutupDialogHapus}
+        onHapus={() => void deleteChapter()}
+      />
+    </main>
+  );
 }

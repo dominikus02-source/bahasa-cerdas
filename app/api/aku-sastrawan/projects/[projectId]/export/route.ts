@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getUser } from "@/lib/supabase/server";
+import { bacaSinopsis, petaSebagaiTeks } from "@/lib/aku-sastrawan/peta-cerita";
 
 export const runtime = "nodejs";
 
@@ -26,7 +27,10 @@ export async function GET(_request: NextRequest, context: Context) {
   if (!project) return NextResponse.json({ error: "Karya tidak ditemukan." }, { status: 404 });
 
   const parts = [project.title, ""];
-  if (project.synopsis?.trim()) parts.push("Sinopsis:", project.synopsis.trim(), "");
+  // Sinopsis + Peta Cerita (tersimpan berversi di kolom synopsis) → teks rapi, bukan JSON mentah.
+  const { sinopsis, peta } = bacaSinopsis(project.synopsis);
+  const rancangan = petaSebagaiTeks(sinopsis, peta);
+  if (rancangan) parts.push(rancangan, "", "———", "");
   if (project.content.trim()) parts.push(project.content.trim(), "");
   for (const chapter of project.chapters) {
     parts.push(`Bab ${chapter.orderIndex}: ${chapter.title}`, "", chapter.content.trim(), "");
