@@ -14,6 +14,7 @@ import {
   ArrowRight,
   ArrowLeftRight,
 } from "lucide-react";
+import { BigtIcon, NaraIcon, AksaraIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 import BatikDecor from "@/components/landing/batik-decor";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 
@@ -21,11 +22,11 @@ const tools = [
   { icon: LayoutDashboard, label: "Kelasku", color: "bg-emerald-50 text-emerald-600" },
   { icon: BookOpen, label: "Materi Ajar", color: "bg-red-50 text-primary" },
   { icon: FileText, label: "Bank Soal", color: "bg-amber-50 text-amber-600" },
-  { icon: ClipboardCheck, label: "Asesmen", color: "bg-blue-50 text-blue-600" },
+  { icon: BigtIcon, label: "Asesmen", color: "" },
   { icon: BookMarked, label: "Buku Nilai", color: "bg-violet-50 text-violet-600" },
-  { icon: Sparkles, label: "AI untuk Guru", color: "bg-cyan-50 text-cyan-600" },
-  { icon: PenLine, label: "Perangkat Ajar", color: "bg-rose-50 text-rose-600" },
-  { icon: Store, label: "Toko Karya", color: "bg-sky-50 text-sky-600" },
+  { icon: NaraIcon, label: "AI untuk Guru", color: "" },
+  { icon: AksaraIcon, label: "Perangkat Ajar", color: "" },
+  { icon: TokoKaryaIcon, label: "Toko Karya", color: "" },
 ];
 
 export default function TeacherSection() {
@@ -52,7 +53,7 @@ export default function TeacherSection() {
                   className="flex flex-col items-center gap-2.5 p-5 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 hover:shadow transition-all"
                 >
                   <div className={`w-10 h-10 rounded-xl ${t.color} flex items-center justify-center`}>
-                    <Icon size={20} aria-hidden="true" />
+                    <Icon size={t.color ? 20 : 40} aria-hidden="true" />
                   </div>
                   <span className="text-xs font-semibold text-zinc-700 text-center leading-snug">
                     {t.label}
