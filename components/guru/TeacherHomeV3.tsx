@@ -9,17 +9,14 @@ import { KomunitasIcon, AksaraIcon, NaraIcon } from "@/components/shared/Feature
 import {
   ArrowRight,
   Award,
-  Bot,
   CheckCircle2,
   Circle,
-  FilePenLine,
   GraduationCap,
   Lightbulb,
   MonitorPlay,
   Quote,
   Sparkles,
   Trophy,
-  Users,
   type LucideIcon,
 } from "lucide-react";
 import { GuruBerkarya } from "@/components/guru/GuruBerkarya";
