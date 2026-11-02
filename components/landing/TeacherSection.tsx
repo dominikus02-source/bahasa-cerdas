@@ -6,11 +6,7 @@ import {
   LayoutDashboard,
   BookOpen,
   FileText,
-  ClipboardCheck,
   BookMarked,
-  Sparkles,
-  Store,
-  PenLine,
   ArrowRight,
   ArrowLeftRight,
 } from "lucide-react";
