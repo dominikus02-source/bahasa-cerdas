@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import { toPublicAgentResult } from "@/lib/ai/public-ai-sanitize";
 import { db as prisma } from "@/lib/db";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
@@ -56,7 +57,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json({ success: true, data: saved }, { status: 201 });
+    // Kerahasiaan teknologi AI: provider/model tersimpan tidak dikirim apa adanya.
+    return NextResponse.json({ success: true, data: toPublicAgentResult(saved) }, { status: 201 });
   } catch (error) {
     console.error("[AI Saved] POST error:", error);
     return NextResponse.json({ error: "Gagal menyimpan." }, { status: 500 });
@@ -93,7 +95,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      data: items,
+      data: items.map((item) => toPublicAgentResult(item)),
       nextCursor,
       hasMore,
     });

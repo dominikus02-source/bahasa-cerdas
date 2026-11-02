@@ -31,6 +31,7 @@ const MentorOutputSchema = z.object({
   encouragement: z.string(),
 });
 import { callWithFallback, ProviderChainFailedError } from "@/src/ai/core/provider";
+import { publicAiMeta } from "@/lib/ai/public-ai-sanitize";
 import { recordProviderFailure, recordProviderSuccess } from "@/lib/ai-gateway/circuit-breaker";
 
 // Rate limit config for mentor
@@ -186,7 +187,7 @@ export async function POST(req: NextRequest) {
 
     // ── Step 9: Log usage ──
     const durationMs = Date.now() - startTime;
-    console.log(`[Mentor] requestId=${requestId} user=${user.id} provider=${provider} duration=${durationMs}ms`);
+    console.log(`[Mentor] requestId=${requestId} user=${user.id} provider=${provider} model=${model} duration=${durationMs}ms`);
 
     // ── Step 10: Return response ──
     return NextResponse.json({
@@ -194,8 +195,8 @@ export async function POST(req: NextRequest) {
       data: response,
       metadata: {
         requestId,
-        provider,
-        model,
+        // Kerahasiaan teknologi AI: penyedia/model asli hanya di log server.
+        ...publicAiMeta(),
         latencyMs: durationMs,
       },
     });

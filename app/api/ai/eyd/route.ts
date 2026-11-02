@@ -3,6 +3,7 @@
 // Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
 // pemanggil baru — gunakan POST /api/ai/agents/run dengan agentId yang sesuai.
 import { NextRequest, NextResponse } from "next/server";
+import { withConfidentialityPrompt } from "@/lib/ai/ai-confidentiality";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { logLegacyUsage } from "@/src/ai/core/usage-logger";
@@ -131,7 +132,7 @@ Hanya output JSON, tanpa markdown.`;
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
           body: JSON.stringify({
             model: "deepseek-chat",
-            messages: [{ role: "user", content: prompt }],
+            messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }],
             max_tokens: 8000,
             temperature: 0.3,
           }),
@@ -160,7 +161,7 @@ Hanya output JSON, tanpa markdown.`;
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
             model: "openai/gpt-oss-20b",
-            messages: [{ role: "user", content: prompt }],
+            messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }],
             max_tokens: 8000,
             temperature: 0.3,
           }),
@@ -188,7 +189,7 @@ Hanya output JSON, tanpa markdown.`;
           method: "POST",
           headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
+            contents: [{ parts: [{ text: withConfidentialityPrompt(prompt) }] }],
             generationConfig: { temperature: 0.3, maxOutputTokens: 8000 },
           }),
           signal: AbortSignal.timeout(AI_TIMEOUT),

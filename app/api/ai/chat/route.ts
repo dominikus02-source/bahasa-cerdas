@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import { AI_CONFIDENTIALITY_INSTRUCTION } from "@/lib/ai/ai-confidentiality";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { buildBahasaCerdasIdentityInstruction } from "@/lib/ai/knowledge/bahasa-cerdas-identity";
 
@@ -78,7 +79,7 @@ export async function POST(req: NextRequest) {
     const chatMessages = [
       {
         role: "system",
-        content: `${SYSTEM_PROMPT}\n\n${modeInstruction}\n\n${buildBahasaCerdasIdentityInstruction()}`,
+        content: `${SYSTEM_PROMPT}\n\n${modeInstruction}\n\n${buildBahasaCerdasIdentityInstruction()}\n\n${AI_CONFIDENTIALITY_INSTRUCTION}`,
       },
       {
         role: "assistant",

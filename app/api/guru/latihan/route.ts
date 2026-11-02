@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { withConfidentialityPrompt } from "@/lib/ai/ai-confidentiality";
 import { db } from "@/lib/db";
 import { checkAIQuota, recordAIUsage } from "@/lib/premium";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -270,7 +271,7 @@ Hanya output JSON array.`;
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
           body: JSON.stringify({
             model: "deepseek-chat",
-            messages: [{ role: "user", content: prompt }],
+            messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }],
             max_tokens: 8000,
             temperature: 0.7,
           }),
@@ -295,7 +296,7 @@ Hanya output JSON array.`;
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
           body: JSON.stringify({
             model: "openai/gpt-oss-20b",
-            messages: [{ role: "user", content: prompt }],
+            messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }],
             max_tokens: 8000,
             temperature: 0.7,
           }),
@@ -319,7 +320,7 @@ Hanya output JSON array.`;
           method: "POST",
           headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
           body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }],
+            contents: [{ parts: [{ text: withConfidentialityPrompt(prompt) }] }],
             generationConfig: { temperature: 0.7, maxOutputTokens: 8000 },
           }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
@@ -337,7 +338,9 @@ Hanya output JSON array.`;
     }
 
     if (!content) {
-      return NextResponse.json({ error: `Semua AI provider gagal: ${errors.join("; ")}.` }, { status: 500 });
+      // Kerahasiaan teknologi AI: detail penyedia hanya di log server.
+      console.error("[guru/latihan] All AI providers failed:", errors);
+      return NextResponse.json({ error: "Layanan AI sedang sibuk. Silakan coba lagi sebentar." }, { status: 500 });
     }
 
     const tokens = content.length;

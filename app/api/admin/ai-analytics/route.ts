@@ -367,6 +367,9 @@ async function adminGET(req: NextRequest) {
         recentSavedResults,
         errors,
         notes,
+        // Label penyedia dikirim dari server (khusus admin) agar nama penyedia
+        // AI tidak tertanam di bundle JavaScript klien yang bisa diunduh publik.
+        providerOptions: ADMIN_PROVIDER_OPTIONS,
       },
     });
   } catch (err: any) {
@@ -378,5 +381,12 @@ async function adminGET(req: NextRequest) {
     }, { status: 500 });
   }
 }
+
+const ADMIN_PROVIDER_OPTIONS: { value: string; label: string }[] = [
+  { value: "deepseek", label: "DeepSeek" },
+  { value: "groq", label: "Groq" },
+  { value: "gemini", label: "Gemini" },
+  { value: "unknown", label: "Tidak Diketahui" },
+];
 
 export const GET = withAdmin(adminGET, { route: "/api/admin/ai-analytics", method: "GET" });

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUser } from "@/lib/supabase/server";
+import { toPublicAgentResult } from "@/lib/ai/public-ai-sanitize";
 import { db as prisma } from "@/lib/db";
 
 export async function GET(
@@ -22,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: "Anda tidak memiliki akses ke riwayat ini." }, { status: 403 });
     }
 
-    return NextResponse.json({ success: true, data: saved });
+    return NextResponse.json({ success: true, data: toPublicAgentResult(saved) });
   } catch (error) {
     console.error("[AI Saved] GET by id error:", error);
     return NextResponse.json({ error: "Gagal memuat riwayat." }, { status: 500 });
@@ -69,7 +70,7 @@ export async function PATCH(
       data: updateData,
     });
 
-    return NextResponse.json({ success: true, data: updated });
+    return NextResponse.json({ success: true, data: toPublicAgentResult(updated) });
   } catch (error) {
     console.error("[AI Saved] PATCH error:", error);
     return NextResponse.json({ error: "Gagal memperbarui." }, { status: 500 });

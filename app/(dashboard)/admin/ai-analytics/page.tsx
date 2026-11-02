@@ -93,6 +93,7 @@ interface AnalyticsData {
   recentSavedResults: RecentSavedResult[];
   errors: ErrorInsight[];
   notes: string[];
+  providerOptions?: { value: string; label: string }[];
 }
 
 const AGENT_LABELS: Record<string, string> = {
@@ -120,12 +121,6 @@ const ERROR_LABELS: Record<string, string> = {
   UNKNOWN_ERROR: "Gagal Lain",
 };
 
-const PROVIDER_LABELS: Record<string, string> = {
-  deepseek: "DeepSeek",
-  groq: "Groq",
-  gemini: "Gemini",
-  unknown: "Tidak Diketahui",
-};
 
 export default function AdminAIAnalyticsPage() {
   const [range, setRange] = useState<Range>("7d");
@@ -226,9 +221,10 @@ export default function AdminAIAnalyticsPage() {
           className="px-3 py-1.5 text-xs bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-600 dark:text-slate-300"
         >
           <option value="">Semua Provider</option>
-          <option value="deepseek">DeepSeek</option>
-          <option value="groq">Groq</option>
-          <option value="gemini">Gemini</option>
+          {/* Daftar penyedia datang dari API admin — tidak di-hardcode di bundle klien. */}
+          {(data?.providerOptions ?? []).filter((o) => o.value !== "unknown").map((o) => (
+            <option key={o.value} value={o.value}>{o.label}</option>
+          ))}
         </select>
       </div>
 
@@ -335,7 +331,7 @@ export default function AdminAIAnalyticsPage() {
                 <tbody>
                   {providerUsage.map((p) => (
                     <tr key={p.provider} className="border-b border-slate-50 hover:bg-slate-50 dark:bg-slate-800/50/50">
-                      <td className="py-2.5 font-medium text-slate-800 dark:text-slate-200">{PROVIDER_LABELS[p.provider] || p.provider}</td>
+                      <td className="py-2.5 font-medium text-slate-800 dark:text-slate-200">{data?.providerOptions?.find((o) => o.value === p.provider)?.label || p.provider}</td>
                       <td className="py-2.5 text-right text-slate-600 dark:text-slate-300">{p.totalRequests}</td>
                       <td className="py-2.5 text-right text-red-500 dark:text-red-400">{p.failed}</td>
                       <td className="py-2.5 text-right text-slate-500 dark:text-slate-400">{p.avgLatency != null ? `${p.avgLatency}ms` : "—"}</td>

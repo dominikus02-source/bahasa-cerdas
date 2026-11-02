@@ -67,7 +67,8 @@ test("guru/ai-bc redirect ke /arena/ai untuk non-guru", () => guruAiBc.includes(
 test("route memakai streamProviderText", () => route.includes("streamProviderText"));
 test("AI BC memilih model DeepSeek secara eksplisit", () => route.includes('DEEPSEEK_MODEL || "deepseek-flash"'));
 test("AI BC mengunci provider ke DeepSeek", () => route.includes('providerPriority: ["deepseek"]'));
-test("AI BC mempertahankan jawaban parsial jika stream terputus", () => route.includes("if (streamedText.trim())") && route.includes('type: "done", provider: usedProvider || "groq"'));
+test("AI BC mempertahankan jawaban parsial jika stream terputus", () => route.includes("if (streamedText.trim())") && route.includes('type: "done", ...publicAiMeta()'));
+test("AI BC tidak mengirim nama penyedia/model asli ke klien (kerahasiaan)", () => !/sse\(\{[^}]*provider: usedProvider/.test(route) && !/type: "done", provider, model/.test(route));
 test("stream Groq memakai batas waktu dari request", () => provider.includes("Math.min(8000, req.timeoutMs)") && provider.includes("Math.min(10000, req.timeoutMs)"));
 test("watchdog menegakkan batas total meski stream terus mengirim chunk", () => provider.includes("if (sisaTotal <= 0)") && provider.includes("controller.abort();"));
 test("stream Groq mendukung rotasi beberapa API key", () => provider.includes('nextKey("GROQ_API_KEY", keys)'));

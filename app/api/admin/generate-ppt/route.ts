@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { withConfidentialityPrompt } from "@/lib/ai/ai-confidentiality";
+import { scrubAiProviderNames } from "@/lib/ai/public-ai-sanitize";
 import { db } from "@/lib/db";
 import pptxgen from "pptxgenjs";
 import { withAdmin } from "@/lib/admin/guard";
@@ -163,7 +165,7 @@ HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDO
             model: "deepseek-chat",
             messages: [
               { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
-              { role: "user", content: prompt }
+              { role: "user", content: withConfidentialityPrompt(prompt) }
             ],
             max_tokens: 8000,
             temperature: 0.7,
@@ -184,7 +186,9 @@ HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDO
     // Fallback to Groq
     if (!aiContent) {
       if (!GROQ_API_KEY) {
-        return NextResponse.json({ error: "GROQ_API_KEY not configured." }, { status: 500 });
+        // Kerahasiaan teknologi AI: nama penyedia hanya di log server.
+        console.error("[generate-ppt] fallback AI key not configured");
+        return NextResponse.json({ error: "Layanan AI cadangan belum dikonfigurasi." }, { status: 500 });
       }
       try {
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
@@ -194,7 +198,7 @@ HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDO
             model: "openai/gpt-oss-120b",
             messages: [
               { role: "system", content: "You are a JSON-only API. Always respond with valid JSON. Never include explanations, markdown, or text outside the JSON object." },
-              { role: "user", content: prompt }
+              { role: "user", content: withConfidentialityPrompt(prompt) }
             ],
             max_tokens: 8000,
             temperature: 0.7,
@@ -207,16 +211,16 @@ HARUS JSON VALID. Tidak ada teks lain di luar JSON. Semua teks dalam BAHASA INDO
         } else {
           const errorText = await res.text();
           console.error("Groq API error:", res.status, errorText);
-          return NextResponse.json({ error: `Groq API error: ${res.status} ${errorText}` }, { status: 500 });
+          return NextResponse.json({ error: `Layanan AI gagal merespons (HTTP ${res.status}).` }, { status: 500 });
         }
       } catch (e) {
         console.error("AI generation failed:", e);
-        return NextResponse.json({ error: "Gagal generate konten AI: " + (e instanceof Error ? e.message : "Unknown error") }, { status: 500 });
+        return NextResponse.json({ error: "Gagal generate konten AI: " + (e instanceof Error ? scrubAiProviderNames(e.message) : "Unknown error") }, { status: 500 });
       }
     }
 
     if (!aiContent) {
-      return NextResponse.json({ error: "Semua AI provider gagal menghasilkan konten." }, { status: 500 });
+      return NextResponse.json({ error: "Layanan AI sedang sibuk. Silakan coba lagi sebentar." }, { status: 500 });
     }
 
     console.log("Step 1 complete: AI content received, length:", aiContent.length);

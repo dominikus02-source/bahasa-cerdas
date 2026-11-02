@@ -30,6 +30,8 @@ import { getUser } from "@/lib/supabase/server";
 import { checkInput } from "@/src/ai/core/guardrails";
 import { checkAgentRateLimit } from "@/src/ai/core/rate-limit";
 import { streamProviderText } from "@/src/ai/core/provider";
+// Kerahasiaan teknologi AI: event SSE ke klien hanya memuat penyedia/model netral.
+import { publicAiMeta } from "@/lib/ai/public-ai-sanitize";
 import { logUsage } from "@/src/ai/core/usage-logger";
 import {
   buildChatHistory,
@@ -129,7 +131,7 @@ export async function POST(req: NextRequest) {
           );
           usedProvider = result.provider;
           usedModel = result.model;
-          controller.enqueue(encoder.encode(sse({ type: "done", provider: result.provider, model: result.model })));
+          controller.enqueue(encoder.encode(sse({ type: "done", ...publicAiMeta() })));
           controller.close();
         } catch (e) {
           const message = e instanceof Error ? e.message : "unknown";
@@ -137,10 +139,10 @@ export async function POST(req: NextRequest) {
           // Jika Groq sudah mengirim sebagian jawaban, pertahankan teks itu di UI.
           // Jangan mengubahnya menjadi error yang membuat klien membuang seluruh draf.
           if (streamedText.trim()) {
-            controller.enqueue(encoder.encode(sse({ type: "done", provider: usedProvider || "groq", model: usedModel || null })));
+            controller.enqueue(encoder.encode(sse({ type: "done", ...publicAiMeta() })));
           } else {
             controller.enqueue(encoder.encode(sse({ type: "error", message: AI_BC_ERROR })));
-            controller.enqueue(encoder.encode(sse({ type: "done", provider: usedProvider || null, model: usedModel || null })));
+            controller.enqueue(encoder.encode(sse({ type: "done", provider: null, model: null })));
           }
           controller.close();
         } finally {

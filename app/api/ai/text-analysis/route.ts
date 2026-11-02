@@ -3,6 +3,7 @@
 // Endpoint dipertahankan sementara untuk kompatibilitas; jangan tambahkan
 // pemanggil baru — gunakan POST /api/ai/agents/run dengan agentId yang sesuai.
 import { NextRequest, NextResponse } from "next/server";
+import { withConfidentialityPrompt } from "@/lib/ai/ai-confidentiality";
 import { getUser } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { logLegacyUsage } from "@/src/ai/core/usage-logger";
@@ -220,7 +221,7 @@ Hanya output JSON, tanpa markdown.`;
         const res = await fetch("https://api.deepseek.com/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${DEEPSEEK_API_KEY}` },
-          body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.3 }),
+          body: JSON.stringify({ model: "deepseek-chat", messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }], max_tokens: 4000, temperature: 0.3 }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
@@ -234,7 +235,7 @@ Hanya output JSON, tanpa markdown.`;
         const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${GROQ_API_KEY}` },
-          body: JSON.stringify({ model: "openai/gpt-oss-20b", messages: [{ role: "user", content: prompt }], max_tokens: 4000, temperature: 0.3 }),
+          body: JSON.stringify({ model: "openai/gpt-oss-20b", messages: [{ role: "user", content: withConfidentialityPrompt(prompt) }], max_tokens: 4000, temperature: 0.3 }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
@@ -248,7 +249,7 @@ Hanya output JSON, tanpa markdown.`;
         const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
           method: "POST",
           headers: { "Content-Type": "application/json", "X-goog-api-key": GEMINI_API_KEY },
-          body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 4000 } }),
+          body: JSON.stringify({ contents: [{ parts: [{ text: withConfidentialityPrompt(prompt) }] }], generationConfig: { temperature: 0.3, maxOutputTokens: 4000 } }),
           signal: AbortSignal.timeout(AI_TIMEOUT),
         });
         const json = await res.json();
