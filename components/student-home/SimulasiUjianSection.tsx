@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { BigtIcon } from "@/components/shared/FeatureIcons";
-import { BookOpenCheck, Ear, FileText, Globe2 } from "lucide-react";
+import { BookOpenCheck, Ear, FileText } from "lucide-react";
 
 const ITEMS = [
   {
