@@ -300,7 +300,7 @@ export default function StudioMenulisPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       {rancangan}
-      <header className={`sticky top-0 z-30 bg-background/85 backdrop-blur transition-all duration-300 ${fokus ? "pointer-events-none -translate-y-full opacity-0" : ""}`}>
+      <header className={`sticky top-0 z-30 border-b bg-background/85 backdrop-blur transition-all duration-300 ${laci ? "border-transparent lg:border-border" : "border-transparent"} ${fokus ? "pointer-events-none -translate-y-full opacity-0" : ""}`}>
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-3 sm:px-6">
           <button onClick={() => void keDaftar()} className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-2.5 text-sm text-muted-foreground transition hover:text-foreground"><ArrowLeft size={16} /> Karyamu</button>
           <div className="flex items-center gap-0.5 sm:gap-1">
