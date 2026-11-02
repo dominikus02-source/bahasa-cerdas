@@ -96,6 +96,9 @@ jobs:
       - name: Founder access gate (pengaman admin, super founder, komisi)
         run: npm run test:founder-access
 
+      - name: Approved BahasaCerdas icons guard
+        run: node scripts/test-bc-approved-icons.cjs
+
       - name: Lint
         run: npm run lint
 
