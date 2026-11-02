@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Users, MessageCircle, Calendar, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
+import { KomunitasIcon } from "@/components/shared/FeatureIcons";
 import KomunitasMgmpCard from "@/components/landing/KomunitasMgmpCard";
 import type { MgmpMedia } from "@/lib/site-settings";
 
@@ -21,10 +22,10 @@ const features = [
     color: "bg-amber-50 text-amber-600",
   },
   {
-    icon: Users,
+    icon: KomunitasIcon,
     title: "MGMP Digital",
     description: "Musyawarah Guru Mata Pelajaran secara digital. Kolaborasi lintas sekolah dan kota.",
-    color: "bg-emerald-50 text-emerald-600",
+    color: "",
   },
 ];
 
