@@ -9,6 +9,7 @@ import {
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
   LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3, PenLine, Baby
 } from "lucide-react"
+import { GimIcon, TokoKaryaIcon, NaraIcon, BigtIcon, AksaraIcon } from "@/components/shared/FeatureIcons"
 import { createClient } from "@/lib/supabase/client"
 import { useRouter } from "next/navigation"
 import { NotificationBell } from "./NotificationBell"
@@ -22,21 +23,19 @@ interface NavItem {
 }
 
 const NAV: NavItem[] = [
-  // ── MENU UTAMA (Teacher Experience v2) ──────────────────────────
   { label: "Beranda", href: "/guru/beranda", icon: <Home size={18} /> },
   { label: "Hasil Karya", href: "/guru/feed-karya", icon: <Star size={18} /> },
   { label: "KelasKu", href: "/guru/kelasku", icon: <GraduationCap size={18} /> },
   { label: "Bank Soal", href: "/guru/bank-soal", icon: <Database size={18} /> },
-  { label: "Arena", href: "/arena", icon: <Gamepad2 size={18} /> },
+  { label: "Arena", href: "/arena", icon: <GimIcon size={22} /> },
   { label: "Materi Ajar", href: "/guru/materi-ajar", icon: <Presentation size={18} /> },
   { label: "Buku Ajar", href: "/guru/panduan-guru", icon: <BookOpen size={18} /> },
-  // ── LANJUTAN ────────────────────────────────────────────────────
-  { label: "Toko Karya", href: "/guru/toko-karya", icon: <ShoppingBag size={18} /> },
-  { label: "Jelajahi Toko Karya", href: "/marketplace", icon: <ShoppingBag size={18} /> },
+  { label: "Toko Karya", href: "/guru/toko-karya", icon: <TokoKaryaIcon size={22} /> },
+  { label: "Jelajahi Toko Karya", href: "/marketplace", icon: <TokoKaryaIcon size={22} /> },
   { label: "Video Belajar", href: "/guru/video-belajar", icon: <Video size={18} /> },
-  { label: "Kuis Game", href: "/guru/game/lobby", icon: <Gamepad2 size={18} /> },
+  { label: "Kuis Game", href: "/guru/game/lobby", icon: <GimIcon size={22} /> },
   { label: "Rencana Pembelajaran", href: "/guru/ai-tools?tool=rpp-modul", icon: <FileText size={18} /> },
-  { label: "AI Tools", href: "/guru/ai-tools", icon: <Sparkles size={18} /> },
+  { label: "AI Tools", href: "/guru/ai-tools", icon: <NaraIcon size={22} /> },
   {
     label: "Simulasi",
     icon: <BarChart3 size={18} />,
@@ -50,7 +49,7 @@ const NAV: NavItem[] = [
   { label: "Hasil Murid", href: "/guru/hasil-simulasi", icon: <TrendingUp size={18} /> },
   { label: "Tinjau Menulis & Berbicara", href: "/guru/tinjau-simulasi", icon: <PenLine size={18} /> },
   { label: "Dokumen Latihan Murid", href: "/guru/dokumen-latihan", icon: <Star size={18} /> },
-  { label: "BIGT", href: "/guru/bigt", icon: <ExternalLink size={18} /> },
+  { label: "BIGT", href: "/guru/bigt", icon: <BigtIcon size={22} /> },
   { label: "Data Siswa", href: "/guru/data-siswa", icon: <Users size={18} /> },
   {
     label: "Olimpiade",
@@ -61,10 +60,8 @@ const NAV: NavItem[] = [
     ]
   },
   { label: "Komunitas", href: "/guru/komunitas", icon: <Users size={18} /> },
-  // Arena Junior = dasbor murid TK–SD. Guru bukan anggota kelas, jadi tautan ini
-  // membuka mode pratinjau (lihat lib/arena-junior/kurikulum.ts).
   { label: "Arena Junior (TK–SD)", href: "/junior", icon: <Baby size={18} /> },
-  { label: "AKSARA", href: "/guru/artikel", icon: <FileText size={18} /> },
+  { label: "AKSARA", href: "/guru/artikel", icon: <AksaraIcon size={22} /> },
   { label: "Pengaturan", href: "/guru/pengaturan", icon: <Settings size={18} /> },
 ]
 
@@ -127,18 +124,13 @@ export function GuruSidebar({ user }: Props) {
           </div>
           <div className="min-w-0 flex-1">
             <p className="flex items-center gap-1.5 text-sm font-semibold text-gray-900 dark:text-slate-100 truncate">{user.fullName}<VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} badgeKind={user.badgeKind} size={14} /></p>
-
           </div>
           <NotificationBell />
         </div>
         {user.xp !== undefined && (
           <div className="flex items-center gap-3 mt-2 text-xs">
-            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400">
-              <Flame size={12} /> {user.streak || 0}
-            </span>
-            <span className="flex items-center gap-1 text-violet-600 dark:text-violet-400">
-              <Zap size={12} /> {user.xp.toLocaleString()} XP
-            </span>
+            <span className="flex items-center gap-1 text-amber-600 dark:text-amber-400"><Flame size={12} /> {user.streak || 0}</span>
+            <span className="flex items-center gap-1 text-violet-600 dark:text-violet-400"><Zap size={12} /> {user.xp.toLocaleString()} XP</span>
           </div>
         )}
       </Link>
@@ -152,9 +144,7 @@ export function GuruSidebar({ user }: Props) {
               <div key={item.label}>
                 <button
                   onClick={() => setExpanded(e => ({ ...e, [item.label]: !e[item.label] }))}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-1 ${
-                    hasActive ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50" : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 hover:text-gray-800 dark:text-slate-200"
-                  }`}
+                  className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-1 ${hasActive ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50" : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 hover:text-gray-800 dark:text-slate-200"}`}
                 >
                   <span className={hasActive ? "text-emerald-500 dark:text-emerald-400" : "text-gray-400"}>{item.icon}</span>
                   <span className="flex-1 font-medium">{item.label}</span>
@@ -163,15 +153,7 @@ export function GuruSidebar({ user }: Props) {
                 {isOpen && (
                   <div className="ml-6 pl-3 border-l-2 border-gray-100 dark:border-slate-800 mb-1">
                     {item.children.map(child => (
-                      <Link
-                        key={child.href}
-                        href={child.href!}
-                        className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors ${
-                          child.href && isActive(child.href)
-                            ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 font-medium"
-                            : "text-gray-500 hover:text-gray-800 dark:text-slate-200 hover:bg-gray-50 dark:bg-slate-800/60"
-                        }`}
-                      >
+                      <Link key={child.href} href={child.href!} className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm mb-0.5 transition-colors ${child.href && isActive(child.href) ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 font-medium" : "text-gray-500 hover:text-gray-800 dark:text-slate-200 hover:bg-gray-50 dark:bg-slate-800/60"}`}>
                         {child.icon} {child.label}
                       </Link>
                     ))}
@@ -180,17 +162,8 @@ export function GuruSidebar({ user }: Props) {
               </div>
             )
           }
-
           return (
-            <Link
-              key={item.href}
-              href={item.href!}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-1 ${
-                isActive(item.href!)
-                  ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 font-semibold"
-                  : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 hover:text-gray-800 dark:text-slate-200"
-              }`}
-            >
+            <Link key={item.href} href={item.href!} className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-sm transition-all mb-1 ${isActive(item.href!) ? "text-emerald-700 dark:text-emerald-300 bg-emerald-50 font-semibold" : "text-gray-500 hover:bg-gray-50 dark:bg-slate-800/60 hover:text-gray-800 dark:text-slate-200"}`}>
               <span className={isActive(item.href!) ? "text-emerald-500 dark:text-emerald-400" : "text-gray-400"}>{item.icon}</span>
               {item.label}
             </Link>
@@ -211,20 +184,14 @@ export function GuruSidebar({ user }: Props) {
         <div className="mx-3 mb-3 p-3 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl border border-amber-100 dark:border-amber-900">
           <p className="text-xs font-semibold text-amber-800 mb-1">Upgrade ke PRO</p>
           <p className="text-[11px] text-amber-600 dark:text-amber-400 mb-2">500 kredit AI/bulan & jual karya berbayar</p>
-          <Link
-            href="/guru/pengaturan/premium"
-            className="block text-center text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg py-2 font-semibold hover:opacity-90 transition-opacity"
-          >
+          <Link href="/guru/pengaturan/premium" className="block text-center text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg py-2 font-semibold hover:opacity-90 transition-opacity">
             Mulai Rp 49.000/bln
           </Link>
         </div>
       )}
 
       <div className="p-3 border-t border-gray-100 dark:border-slate-800">
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-500 dark:text-slate-400 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-950/40 transition-colors"
-        >
+        <button onClick={handleLogout} className="w-full flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm text-gray-500 dark:text-slate-400 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-950/40 transition-colors">
           <LogOut size={16} />
           Keluar
         </button>
