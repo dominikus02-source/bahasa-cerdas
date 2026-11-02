@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { JalurCerdasIcon, BigtIcon, GimIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
+import { JalurCerdasIcon, GimIcon, TokoKaryaIcon } from "@/components/shared/FeatureIcons";
 import {
   GraduationCap,
   BookOpen,
@@ -25,7 +25,7 @@ const pillars = [
     chip: "Jalur Cerdas · Materi · Buku Panduan",
   },
   {
-    icon: BigtIcon,
+    icon: GraduationCap,
     label: "MENGAJAR",
     title: "Ruang untuk mengajar",
     description: "Kelasku, bank soal, dan penilaian.",
@@ -95,8 +95,8 @@ export default function EcosystemSection() {
                   aria-label={`${p.label} — ${p.title}. ${p.description}`}
                 >
                   <div className="flex items-start justify-between mb-5">
-                    <div className="w-12 h-12 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                      <Icon size={48} />
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ${p.label === "MENGAJAR" ? "bg-emerald-50 text-emerald-600" : ""}`}>
+                      <Icon size={p.label === "MENGAJAR" ? 24 : 48} />
                     </div>
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-100 text-[11px] font-bold tracking-widest text-zinc-500">
                       {p.label}
