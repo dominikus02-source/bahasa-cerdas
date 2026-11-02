@@ -1,7 +1,7 @@
 /**
  * Pilihan media terakhir, disimpan di localStorage (kunci tetap v1; field
  * baru Fase 3 dibaca dengan default sehingga data lama tetap sah).
- * Default: kamera NYALA, mikrofon NYALA, kualitas Otomatis.
+ * Default: kamera MATI, mikrofon MATI, kualitas Otomatis.
  */
 export type JumpaQuality = "auto" | "hemat" | "hd";
 
@@ -31,8 +31,8 @@ export interface JumpaMediaPrefs {
 
 export const JUMPA_PREFS_KEY = "bc-jumpa-media-v1";
 export const DEFAULT_MEDIA_PREFS: JumpaMediaPrefs = {
-  camera: true,
-  mic: true,
+  camera: false,
+  mic: false,
   quality: "auto",
   audioOnly: false,
   noiseSuppression: true,

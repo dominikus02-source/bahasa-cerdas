@@ -48,6 +48,7 @@ export function publishDefaults(pub: PublishPolicy): TrackPublishDefaults {
     audioPreset: pub.audio === "speech" ? AudioPresets.speech : AudioPresets.music,
     dtx: true,
     red: true,
+    stopMicTrackOnMute: true,
   };
 }
 
@@ -110,15 +111,17 @@ function applyRemote(pub: RemoteTrackPublication, audioOnly: boolean, q: Receive
   pub.setVideoQuality(q ? REMOTE_Q[q] : VideoQuality.HIGH);
 }
 
-async function republishCamera(room: Room, prefs: JumpaMediaPrefs, pub: PublishPolicy) {
+async function adjustCameraQuality(room: Room, prefs: JumpaMediaPrefs, pub: PublishPolicy) {
   // Opsi ruang dipakai bersama LocalParticipant (objek yang sama).
   Object.assign(room.options.publishDefaults ?? {}, publishDefaults(pub));
   Object.assign(room.options.videoCaptureDefaults ?? {}, captureOptions(pub, prefs));
   const lp = room.localParticipant;
-  const wasOn = lp.isCameraEnabled;
   const cam = lp.getTrackPublication(Track.Source.Camera);
-  if (cam?.track) await lp.unpublishTrack(cam.track, true);
-  if (wasOn) await lp.setCameraEnabled(true);
+  // Keep the publication and its mute state: quality changes must never
+  // republish a camera that the participant has just switched off.
+  if (lp.isCameraEnabled && cam?.track && "restartTrack" in cam.track) {
+    await cam.track.restartTrack(captureOptions(pub, prefs));
+  }
 }
 
 export function MediaProvider({ initial, device, tier, children }: { initial: JumpaMediaPrefs; device: DeviceClass; tier: JumpaTierView; children: ReactNode }) {
@@ -127,7 +130,6 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
   const [prefs, setPrefs] = useState(initial);
   const prefsRef = useRef(prefs);
   prefsRef.current = prefs;
-  const cameraBeforeAudioOnly = useRef(false);
   const { quality } = useConnectionQualityIndicator({ participant: room.localParticipant });
   const [degraded, setDegraded] = useState(false);
 
@@ -166,7 +168,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
     if (prefs.quality !== "auto") return;
     const effectiveQuality = degraded ? "hemat" : "auto";
     const nextPolicy = publishPolicy(effectiveQuality, device, tier.maxCameraHeight, tier.maxScreenHeight);
-    void republishCamera(room, prefs, nextPolicy).catch(() => {
+    void adjustCameraQuality(room, prefs, nextPolicy).catch(() => {
       toast("Kualitas kamera belum dapat disesuaikan. Coba matikan kamera sebentar.", "warn");
     });
   }, [degraded, prefs, room, device, tier.maxCameraHeight, tier.maxScreenHeight, toast]);
@@ -211,15 +213,12 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
           }
           if (patch.audioOnly !== undefined && patch.audioOnly !== prev.audioOnly) {
             if (next.audioOnly) {
-              cameraBeforeAudioOnly.current = lp.isCameraEnabled;
               if (lp.isCameraEnabled) await lp.setCameraEnabled(false);
               toast("Mode audio saja aktif.", "ok");
-            } else if (cameraBeforeAudioOnly.current) {
-              await lp.setCameraEnabled(true);
             }
           }
           if (patch.quality !== undefined && patch.quality !== prev.quality) {
-            await republishCamera(room, next, publishPolicy(next.quality, device, tier.maxCameraHeight, tier.maxScreenHeight));
+            await adjustCameraQuality(room, next, publishPolicy(next.quality, device, tier.maxCameraHeight, tier.maxScreenHeight));
           }
         } catch {
           toast("Gagal menerapkan pengaturan. Coba lagi.", "warn");

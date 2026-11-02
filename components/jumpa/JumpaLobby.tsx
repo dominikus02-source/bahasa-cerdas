@@ -96,9 +96,11 @@ function PackageRules({ tier }: { tier: JumpaTierView }) {
   return (
     <details className="jumpa-rules mt-3 w-full text-left text-sm">
       <summary className="flex cursor-pointer items-center gap-2 text-[var(--jp-text-2)] hover:text-[var(--jp-text-1)]">
-        <Info size={14} /> Aturan paket ruang ini
+        <Info size={14} /> Aturan ruang
       </summary>
       <div className="mt-2 space-y-2 text-xs text-[var(--jp-text-2)]">
+        <p>Nyalakan kamera dan mikrofon saat siap. Matikan mikrofon saat tidak berbicara. Gunakan angkat tangan untuk meminta giliran.</p>
+        <p>Pemandu dapat membisukan atau mengeluarkan peserta. Rekaman belum tersedia.</p>
         {isUmum ? (
           <div className="rounded-lg bg-[var(--jp-surface-2)] p-2">
             <div className="font-semibold text-[var(--jp-text-1)]">Ruang umum</div>

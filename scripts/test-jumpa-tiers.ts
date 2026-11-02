@@ -150,6 +150,7 @@ check("Koneksi lemah → kualitas kamera kirim ikut diturunkan", publishPolicy("
 check("Hemat Data di HP: pixelDensity 1", receivePolicy("hemat", android).pixelDensity === 1)
 
 console.log("\n7. Preferensi media")
+check("Pengguna baru masuk dengan kamera dan mikrofon mati", !parseMediaPrefs(null).camera && !parseMediaPrefs(null).mic)
 const old = parseMediaPrefs(JSON.stringify({ camera: false, mic: true }))
 check("Preferensi Fase 1/2 tetap terbaca (default field baru)", old.camera === false && old.quality === "auto" && old.audioOnly === false && old.noiseSuppression === true)
 check("Kualitas tak dikenal → auto", parseMediaPrefs(JSON.stringify({ quality: "ultra" })).quality === "auto")

@@ -22,7 +22,7 @@ import {
   useSwipe,
   useTracks,
 } from "@livekit/components-react";
-import { ConnectionQuality, ConnectionState, DisconnectReason, RoomEvent, Track } from "livekit-client";
+import { ConnectionQuality, ConnectionState, DisconnectReason, LocalVideoTrack, RoomEvent, Track } from "livekit-client";
 import {
   AudioWaveform,
   Check,
@@ -599,6 +599,7 @@ function ControlBar({
   const { info, self, myHand, toggleHand, react, moderate, toast } = useJumpa();
   const { prefs, update, device, tier } = useMedia();
   const [busy, setBusy] = useState<"mic" | "camera" | "screen" | null>(null);
+  const mediaBusy = useRef(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [endAsk, setEndAsk] = useState(false);
@@ -626,18 +627,23 @@ function ControlBar({
   const canEnd = (adult && self.roomRole === "HOST") || (info.kind === "MURID" && self.roomRole === "HOST");
 
   const toggleMic = async () => {
+    if (mediaBusy.current) return;
+    mediaBusy.current = true;
     setBusy("mic");
     try {
       const next = !isMicrophoneEnabled;
       await localParticipant.setMicrophoneEnabled(next);
       writeMediaPrefs({ mic: next });
     } catch {
-      // Error perangkat ditangani onMediaDeviceFailure di LiveKitRoom.
+      toast("Mikrofon belum dapat diubah. Periksa izin perangkat, lalu coba lagi.", "warn");
     } finally {
+      mediaBusy.current = false;
       setBusy(null);
     }
   };
   const toggleCamera = async () => {
+    if (mediaBusy.current) return;
+    mediaBusy.current = true;
     setBusy("camera");
     try {
       const next = !isCameraEnabled;
@@ -646,12 +652,15 @@ function ControlBar({
       await localParticipant.setCameraEnabled(next);
       writeMediaPrefs({ camera: next });
     } catch {
-      // idem
+      toast("Kamera belum dapat diubah. Periksa izin perangkat, lalu coba lagi.", "warn");
     } finally {
+      mediaBusy.current = false;
       setBusy(null);
     }
   };
   const toggleScreen = async () => {
+    if (mediaBusy.current) return;
+    mediaBusy.current = true;
     setBusy("screen");
     try {
       const s = publishPolicy(prefs.quality, device, tier.maxCameraHeight, tier.maxScreenHeight).screen;
@@ -664,6 +673,7 @@ function ControlBar({
     } catch {
       // Pengguna membatalkan dialog pilih layar — bukan error.
     } finally {
+      mediaBusy.current = false;
       setBusy(null);
     }
   };
@@ -672,11 +682,11 @@ function ControlBar({
   // Terapkan virtual background atau blur ke track kamera lokal.
   useEffect(() => {
     if (!isCameraEnabled) return;
-    let processor: any = null;
+    let processor: ReturnType<typeof BackgroundProcessor> | null = null;
     (async () => {
       try {
-        const track = localParticipant.getTrackPublication("camera" as any)?.track;
-        if (!track || track.kind !== "video") return;
+        const track = localParticipant.getTrackPublication(Track.Source.Camera)?.track;
+        if (!(track instanceof LocalVideoTrack)) return;
         const bg = backgroundById(prefs.background);
         const imageUrl = prefs.background === "custom" ? prefs.customBackgroundUrl : backgroundImageFor(bg, window.innerWidth);
         if (prefs.background === "blur") {
@@ -684,7 +694,8 @@ function ControlBar({
         } else if (imageUrl) {
           processor = BackgroundProcessor({ mode: "virtual-background", imagePath: imageUrl, assetPaths: BACKGROUND_ASSET_PATHS });
         } else {
-          processor = BackgroundProcessor({ mode: "disabled", assetPaths: BACKGROUND_ASSET_PATHS });
+          await track.stopProcessor();
+          return;
         }
         await track.setProcessor(processor);
       } catch (e) {
@@ -731,7 +742,7 @@ function ControlBar({
               {prefs.audioOnly && <Check size={18} className="ml-auto" />}
             </button>
             {canScreen && !wide && (
-              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy === "screen"} onClick={() => { close(); void toggleScreen(); }}>
+              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy !== null} onClick={() => { close(); void toggleScreen(); }}>
                 <MonitorUp size={20} className={isScreenShareEnabled ? "text-[var(--jp-accent)]" : undefined} />
                 {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
               </button>
@@ -787,9 +798,9 @@ function ControlBar({
       )}
       <nav aria-label="Kontrol ruang" className="jumpa-dock jumpa-in-up">
         <div className="jumpa-dock-group">
-          <MicKey on={isMicrophoneEnabled} busy={busy === "mic" || stageBlocked} onToggle={toggleMic} />
+          <MicKey on={isMicrophoneEnabled} busy={busy !== null || stageBlocked} onToggle={toggleMic} />
           <div className="jumpa-ctl">
-            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy === "camera" || stageBlocked}>
+            <button type="button" className="jumpa-key" data-off={!isCameraEnabled} aria-pressed={isCameraEnabled} aria-label={isCameraEnabled ? "Matikan kamera" : "Nyalakan kamera"} onClick={toggleCamera} disabled={busy !== null || stageBlocked}>
               {isCameraEnabled ? <Video size={22} /> : <VideoOff size={22} />}
             </button>
             <span className="jumpa-ctl-label">{isCameraEnabled ? "Kamera" : prefs.audioOnly ? "Audio saja" : "Kamera mati"}</span>
@@ -799,7 +810,7 @@ function ControlBar({
         <div className="jumpa-dock-group">
           {canScreen && wide && (
             <div className="jumpa-ctl">
-              <button type="button" className="jumpa-key" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy === "screen"}>
+              <button type="button" className="jumpa-key" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy !== null}>
                 <MonitorUp size={22} />
               </button>
               <span className="jumpa-ctl-label">{isScreenShareEnabled ? "Berhenti" : "Layar"}</span>
