@@ -9,6 +9,7 @@ import {
   BrainCircuit,
 } from "lucide-react";
 import Link from "next/link";
+import { NaraIcon } from "@/components/shared/FeatureIcons";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import BatikDecor from "@/components/landing/batik-decor";
@@ -56,7 +57,7 @@ const tools = [
     href: "/guru/ai-tools/text-analysis",
   },
   {
-    icon: BrainCircuit,
+    icon: NaraIcon,
     title: "NARA",
     description:
       "Tanya apa pun tentang Bahasa Indonesia dan diskusikan ide mengajar kapan saja bersama Nara, rekan Anda di BahasaCerdas.",
