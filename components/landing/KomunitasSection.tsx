@@ -130,7 +130,7 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
                     className="flex items-start gap-4"
                   >
                     <div className={`w-10 h-10 rounded-xl ${f.color} flex items-center justify-center shrink-0 mt-0.5`}>
-                      <Icon size={20} />
+                      <Icon size={f.color ? 20 : 40} />
                     </div>
                     <div>
                       <h4 className="font-semibold text-zinc-900 mb-1">{f.title}</h4>
