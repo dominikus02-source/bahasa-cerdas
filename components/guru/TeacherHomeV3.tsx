@@ -5,7 +5,7 @@ import JumpaBerandaCard from "@/components/jumpa/JumpaBerandaCard";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { KomunitasIcon, AksaraIcon, NaraIcon, BigtIcon } from "@/components/shared/FeatureIcons";
+import { KomunitasIcon, AksaraIcon, NaraIcon } from "@/components/shared/FeatureIcons";
 import {
   ArrowRight,
   Award,
@@ -83,7 +83,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     label: "Dasbor Murid",
     desc: "Lihat pengalaman BahasaCerdas dari sisi murid.",
     href: "/murid/beranda",
-    icon: BigtIcon,
+    icon: GraduationCap,
     image: PHOTO.studentLearning,
     scrim: "bc-media-scrim--4",
     imagePosition: "center 42%",
