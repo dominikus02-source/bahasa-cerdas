@@ -29,7 +29,7 @@ const ITEMS = [
     desc: "Latihan bahasa Indonesia tingkat internasional",
     cta: "Mulai",
     icon: BigtIcon,
-    accent: "text-bc-success bg-bc-success-soft",
+    accent: "",
   },
   {
     href: "/murid/dokumen-latihan",
@@ -65,7 +65,7 @@ export function SimulasiUjianSection() {
               <span
                 className={`w-8 h-8 flex items-center justify-center rounded-lg ${item.accent}`}
               >
-                <Icon size={16} strokeWidth={1.8} />
+                <Icon size={item.label === "BIGT" ? 30 : 16} strokeWidth={1.8} />
               </span>
               <div className="relative">
                 <h3 className="text-sm font-medium text-[var(--px-text)]">{item.label}</h3>
