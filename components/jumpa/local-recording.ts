@@ -43,6 +43,7 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
   let context: AudioContext | undefined;
   let destination: MediaStreamAudioDestinationNode | undefined;
   let recorder: MediaRecorder | undefined;
+  let silence: ConstantSourceNode | undefined;
   let stopped = false;
   const sources = new Map<string, MediaStreamAudioSourceNode>();
   const events = [RoomEvent.TrackSubscribed, RoomEvent.TrackUnsubscribed, RoomEvent.TrackMuted, RoomEvent.TrackUnmuted, RoomEvent.LocalTrackPublished, RoomEvent.LocalTrackUnpublished, RoomEvent.ParticipantDisconnected];
@@ -52,6 +53,8 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     for (const source of sources.values()) source.disconnect();
     sources.clear();
     display.getTracks().forEach((track) => { track.onended = null; track.stop(); });
+    silence?.stop();
+    silence?.disconnect();
     destination?.stream.getTracks().forEach((track) => track.stop());
     void context?.close().catch(() => undefined);
   };
@@ -88,6 +91,11 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     await context.resume();
     if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
     destination = context.createMediaStreamDestination();
+    // Keep audio time flowing even when everyone is muted.
+    silence = context.createConstantSource();
+    silence.offset.value = 0;
+    silence.connect(destination);
+    silence.start();
     syncAudio();
     for (const event of events) room.on(event, syncAudio);
     const stream = new MediaStream([...display.getVideoTracks(), ...destination.stream.getAudioTracks()]);

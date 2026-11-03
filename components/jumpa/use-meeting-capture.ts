@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useRoomContext } from "@livekit/components-react";
 import { RoomEvent, type RemoteParticipant } from "livekit-client";
 import { parseParticipantMeta } from "./format";
+import { drawCaptureLabels, normalizeCaptureColors } from "./capture-colors";
 import { useMedia } from "./media-controller";
 import { useJumpa } from "./room-controller";
 import { downloadCapture, isRecordingNotice, RECORDING_TOPIC, startLocalRecording } from "./local-recording";
@@ -16,6 +17,8 @@ export function useMeetingCapture(canRecord: boolean) {
   const { toast } = useJumpa();
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [downloadReady, setDownloadReady] = useState(false);
+  const pendingFile = useRef<Blob | null>(null);
   const [photoBusy, setPhotoBusy] = useState(false);
   const [supported, setSupported] = useState(false);
   const [remoteRecording, setRemoteRecording] = useState(false);
@@ -59,29 +62,41 @@ export function useMeetingCapture(canRecord: boolean) {
   useEffect(() => {
     if (!recording) return;
     const notify = () => { void announce(true).catch(() => { session.current?.stop(); toast("Rekaman dihentikan karena koneksi terputus.", "warn"); }); };
-    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+
     room.on(RoomEvent.ParticipantConnected, notify);
     room.on(RoomEvent.Reconnected, notify);
     const timer = window.setInterval(notify, 10_000);
-    window.addEventListener("beforeunload", warn);
-    return () => { room.off(RoomEvent.ParticipantConnected, notify); room.off(RoomEvent.Reconnected, notify); window.clearInterval(timer); window.removeEventListener("beforeunload", warn); };
+
+    return () => { room.off(RoomEvent.ParticipantConnected, notify); room.off(RoomEvent.Reconnected, notify); window.clearInterval(timer); };
   }, [recording, room, announce, toast]);
 
   useEffect(() => { setRecordingActive(recording); return () => setRecordingActive(false); }, [recording, setRecordingActive]);
   useEffect(() => { if (!canRecord) { abort.current?.abort(); session.current?.stop(); } }, [canRecord]);
 
+  useEffect(() => {
+    if (!recording && !downloadReady) return;
+    const warn = (event: BeforeUnloadEvent) => { event.preventDefault(); event.returnValue = ""; };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [recording, downloadReady]);
+  const save = useCallback(() => {
+    const blob = pendingFile.current;
+    if (!blob) return;
+    try { downloadCapture(blob, "JUMPA-rekaman"); pendingFile.current = null; setDownloadReady(false); toast("Unduhan rekaman dimulai.", "ok"); }
+    catch { toast("Rekaman belum dapat diunduh. Coba lagi.", "warn"); }
+  }, [toast]);
   const stop = useCallback(() => { session.current?.stop(); }, []);
   const start = useCallback(async () => {
-    if (!allowed.current || pending.current || session.current) return;
+    if (!allowed.current || pendingFile.current || pending.current || session.current) return;
     pending.current = true;
     setBusy(true);
     const controller = new AbortController();
     abort.current = controller;
     try {
       const next = await startLocalRecording(room, controller.signal, {
-        onComplete: (blob) => { downloadCapture(blob, "JUMPA-rekaman"); if (mounted.current) toast("Rekaman siap disimpan di perangkat.", "ok"); },
-        onLimit: () => { if (mounted.current) toast("Batas 250 MB tercapai. Rekaman dihentikan dan disimpan.", "warn"); },
-        onError: () => { if (mounted.current) toast("Rekaman terhenti. Bagian yang tersedia akan disimpan.", "warn"); },
+        onComplete: (blob) => { if (mounted.current) { pendingFile.current = blob; setDownloadReady(true); toast("Rekaman siap diunduh.", "ok"); } else downloadCapture(blob, "JUMPA-rekaman"); },
+        onLimit: () => { if (mounted.current) toast("Batas 250 MB tercapai. Rekaman siap diunduh.", "warn"); },
+        onError: () => { if (mounted.current) toast("Rekaman terhenti. Unduh bagian yang tersedia.", "warn"); },
         onStopped: () => {
           session.current = null;
           void announce(false).catch(() => undefined);
@@ -111,12 +126,13 @@ export function useMeetingCapture(canRecord: boolean) {
       if (!element) throw new Error("CAPTURE_MISSING");
       const { default: html2canvas } = await import("html2canvas");
       const area = Math.max(1, element.clientWidth * element.clientHeight);
-      const canvas = await html2canvas(element, { useCORS: true, backgroundColor: null, logging: false, scale: Math.min(2, window.devicePixelRatio || 1, Math.sqrt(8_000_000 / area)) });
+      const canvas = await html2canvas(element, { useCORS: true, backgroundColor: null, logging: false, onclone: normalizeCaptureColors, scale: Math.min(2, window.devicePixelRatio || 1, Math.sqrt(8_000_000 / area)) });
+      drawCaptureLabels(canvas, element);
       const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob((value) => value ? resolve(value) : reject(new Error("CAPTURE_EMPTY")), "image/png"));
       downloadCapture(blob, "JUMPA-foto");
       if (mounted.current) toast("Foto tampilan siap disimpan.", "ok");
-    } catch { if (mounted.current) toast("Foto belum dapat disimpan. Coba lagi setelah video tampil.", "warn"); }
+    } catch (error) { console.warn("JUMPA_CAPTURE_FAILED", error); if (mounted.current) toast("Foto belum dapat disimpan. Coba lagi setelah video tampil.", "warn"); }
     finally { photoPending.current = false; if (mounted.current) setPhotoBusy(false); }
   }, [toast]);
-  return { recording, remoteRecording, busy, photoBusy, supported, start, stop, photo };
+  return { recording, remoteRecording, busy, photoBusy, downloadReady, supported, start, stop, save, photo };
 }

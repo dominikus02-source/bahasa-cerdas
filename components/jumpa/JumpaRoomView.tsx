@@ -624,6 +624,10 @@ function ControlBar({
   const endFocus = useCallback(() => endRef.current ?? moreRef.current, []);
   const confirmEnd = async () => {
     if (ending) return;
+    if (capture.recording || capture.downloadReady) {
+      capture.stop(); setEndAsk(false);
+      toast("Unduh rekaman sebelum mengakhiri ruang.", "warn"); return;
+    }
     setEnding(true);
     try {
       const result = await moderate("END");
@@ -737,10 +741,11 @@ function ControlBar({
 
   return (
     <div className="jumpa-dock-wrap">
-      {(capture.recording || capture.remoteRecording) && <div role="status" className="mx-auto mb-2 flex max-w-xl flex-wrap items-center justify-center gap-2 rounded-bc-ctl border border-bc-line bg-bc-surface-2 px-3 py-2 text-sm">
+      {(capture.recording || capture.remoteRecording || capture.downloadReady) && <div role="status" className="mx-auto mb-2 flex max-w-xl flex-wrap items-center justify-center gap-2 rounded-bc-ctl border border-bc-line bg-bc-surface-2 px-3 py-2 text-sm">
         <CircleDot size={16} className="text-bc-danger" aria-hidden />
-        <span>{capture.recording ? "Rekaman di perangkatmu berlangsung" : "Pemandu sedang merekam"}</span>
-        {capture.recording && <Button type="button" variant="secondary" size="sm" onClick={capture.stop}>Hentikan dan simpan</Button>}
+        <span>{capture.recording ? "Rekaman di perangkatmu berlangsung" : capture.downloadReady ? "Rekaman siap diunduh" : "Pemandu sedang merekam"}</span>
+        {capture.recording && <Button type="button" variant="secondary" size="sm" onClick={capture.stop}>Hentikan rekaman</Button>}
+        {capture.downloadReady && <Button type="button" variant="primary" size="sm" onClick={capture.save}>Unduh rekaman</Button>}
       </div>}
       {recordAsk && <ConfirmDialog destructive={false} title="Mulai rekaman?" body="Pilih layar atau tab JUMPA. Gambar dari layar yang dipilih dan suara rapat akan direkam. Peserta mendapat indikator rekaman. File disimpan di perangkatmu, hingga 250 MB per rekaman." confirmLabel="Pilih layar dan rekam" icon={<CircleDot size={22} />} onCancel={() => setRecordAsk(false)} onConfirm={() => { setRecordAsk(false); void capture.start(); }} returnFocus={() => moreRef.current} />}
       {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
@@ -787,9 +792,9 @@ function ControlBar({
               <Camera size={20} /> {capture.photoBusy ? "Menyiapkan foto…" : "Foto tampilan"}
             </button>
             {self.roomRole !== "MEMBER" && <>
-              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={!capture.supported || capture.busy || !connected} onClick={() => { close(); if (capture.recording) capture.stop(); else setRecordAsk(true); }}>
+              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={!capture.supported || capture.busy || capture.downloadReady || !connected} onClick={() => { close(); if (capture.recording) capture.stop(); else setRecordAsk(true); }}>
                 {capture.recording ? <Square size={20} /> : <CircleDot size={20} />}
-                {capture.recording ? "Hentikan dan simpan rekaman" : capture.busy ? "Menyiapkan rekaman…" : "Rekam di perangkat"}
+                {capture.recording ? "Hentikan rekaman" : capture.busy ? "Menyiapkan rekaman…" : "Rekam di perangkat"}
               </button>
               {!capture.supported && <p className="px-4 py-1 text-xs text-bc-text-2">Untuk merekam, gunakan browser laptop yang mendukung perekaman layar.</p>}
             </>}
@@ -820,7 +825,7 @@ function ControlBar({
               <Flag size={20} /> Laporkan masalah
             </button>
             {canEnd && (
-              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { close(); onLeave(); }}>
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { close(); if (capture.recording || capture.downloadReady) { capture.stop(); toast("Unduh rekaman sebelum keluar.", "warn"); return; } onLeave(); }}>
                 <PhoneOff size={20} /> Keluar sendiri
               </button>
             )}
