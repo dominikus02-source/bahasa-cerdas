@@ -333,15 +333,15 @@ export default function KelasKuPage() {
     return (
       <div className="bc-classroom p-0 sm:p-4 md:p-6 lg:p-8">
         <div className="max-w-5xl mx-auto space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="min-w-0">
               <h1 className="text-2xl font-bold text-[var(--clr-text)]">Kelasku</h1>
               <p className="text-sm text-[var(--clr-text-2)] mt-0.5">Bagikan materi, tugas, latihan, dan pengumuman ke kelasmu.</p>
             </div>
-            <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
-              <div className="relative col-span-2 min-w-0 sm:w-56 sm:flex-none">
+            <div className="grid grid-cols-2 gap-2 lg:flex lg:items-center">
+              <div className="relative col-span-2 min-w-0 lg:w-56 lg:flex-none">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--clr-text-3)]" />
-                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari kelas..." className="bc-input pl-10 text-sm" aria-label="Cari kelas" />
+                <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari kelas..." className="bc-input !pl-10 text-sm" aria-label="Cari kelas" />
               </div>
               <button type="button" onClick={() => setShowCreate(true)} className="bc-btn-secondary min-h-11 text-sm shrink-0 justify-center">
                 <Plus size={18} /> Buat Kelas
@@ -381,7 +381,7 @@ export default function KelasKuPage() {
               </button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
               {filteredGroups.map((g) => (
                 <div key={g.id} className={`bc-card overflow-hidden transition-colors bc-class-tint-${stableClassTint(g.id)}`}>
                   {/* Header tinted — identitas visual kelas (deterministik) */}
@@ -405,7 +405,7 @@ export default function KelasKuPage() {
                     <div className="flex items-center gap-3 rounded-xl border border-[var(--clr-border)] px-3 py-2.5" style={{ background: "var(--clr-surface-2)" }}>
                       <div className="flex-1 min-w-0">
                         <p className="text-[11px] font-bold uppercase tracking-wider text-[var(--clr-text-3)]">Kode Kelas</p>
-                        <p className="bc-class-code truncate">{g.accessCode}</p>
+                        <p className="bc-class-code break-all">{g.accessCode}</p>
                       </div>
                       <button
                         type="button"

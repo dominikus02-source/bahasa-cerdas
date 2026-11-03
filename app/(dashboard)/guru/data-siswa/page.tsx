@@ -158,10 +158,10 @@ export default function DataSiswaPage() {
           <p className="text-sm text-gray-400 mt-1">Buat kelas di menu KelasKu dan undang siswa</p>
         </div>
       ) : (
-        <div className="grid gap-4">
+        <div className="grid grid-cols-1 gap-4">
           {filtered.map((s) => (
-            <Card key={s.id} className="p-4">
-              <div className="flex items-center gap-4">
+            <Card key={s.id} className="min-w-0 p-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 {/* No. Absen — prominent circle badge */}
                 <div className="shrink-0 flex flex-col items-center gap-1">
                   <div className="w-12 h-12 rounded-full bg-violet-100 border-2 border-violet-300 flex items-center justify-center">
@@ -172,8 +172,8 @@ export default function DataSiswaPage() {
                   <span className="text-[10px] font-medium text-gray-400">Absen</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold">{s.fullName}</p>
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <p className="min-w-0 font-semibold [overflow-wrap:anywhere]">{s.fullName}</p>
                     <RankChip rank={rankFromLevel(levelFromXp(s.xp || 0))} size={12} showTitle={false} compact />
                     {s.groupName && (
                       <span className="inline-flex items-center text-[11px] font-medium text-gray-500 bg-gray-100 rounded-full px-2 py-0.5">
@@ -181,7 +181,7 @@ export default function DataSiswaPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-4 mt-1 text-xs text-gray-500">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-0.5 mt-1 text-xs text-gray-500">
                     <span>Level {s.level || 1}</span>
                     <span>🔥 {s.streak || 0} streak</span>
                     <span>Terakhir: {s.lastActiveAt ? new Date(s.lastActiveAt).toLocaleDateString("id") : "-"}</span>
@@ -202,7 +202,7 @@ export default function DataSiswaPage() {
                     </button>
                   </div>
                 </div>
-                <div className="text-right">
+                <div className="shrink-0 text-right">
                   <p className="text-lg font-bold text-blue-600">{(s.xp || 0).toLocaleString()}</p>
                   <p className="text-xs text-gray-500">XP Total</p>
                 </div>
