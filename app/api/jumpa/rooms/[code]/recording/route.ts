@@ -21,7 +21,7 @@ async function authorize(request: Request, context: Context) {
   try {
     const ctx = await loadRoomContext(code, user);
     if (!ctx || !ctx.decision.ok) return { response: jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan."), eligible: false };
-    const eligible = canManageRecording(ctx.view.tier, ctx.decision.roomRole === "HOST");
+    const eligible = canManageRecording(ctx.view.tier, ctx.decision.roomRole === "HOST") && ctx.view.recordingTierVerified;
     return { response: null, eligible };
   } catch {
     return { response: jumpaError(503, "RECORDING_UNAVAILABLE", "Status rekaman belum dapat diperiksa."), eligible: false };

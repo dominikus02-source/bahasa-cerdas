@@ -6,7 +6,7 @@ const adapter = read("lib/jumpa/recording-egress.ts");
 const policy = read("lib/jumpa/recording-policy.ts");
 assert.match(route, /await getUser\(\)/, "status endpoint wajib autentikasi");
 assert.match(route, /ctx\.decision\.ok/, "status endpoint wajib otorisasi ruang");
-assert.match(route, /canManageRecording\(ctx\.view\.tier, ctx\.decision\.roomRole === "HOST"\)/);
+assert.match(route, /canManageRecording\(ctx\.view\.tier, ctx\.decision\.roomRole === "HOST"\) && ctx\.view\.recordingTierVerified/);
 assert.match(route, /available: false, recording: false/, "status tidak boleh mengaku aktif");
 assert.match(route, /export async function POST\(request: Request, context: Context\) \{\s*return rejectMutation\(request, context\)/);
 assert.match(route, /export async function DELETE\(request: Request, context: Context\) \{\s*return rejectMutation\(request, context\)/);
