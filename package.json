@@ -470,6 +470,7 @@
     "framer-motion": "^11.18.2",
     "googleapis": "^176.0.0",
     "html2canvas": "^1.4.1",
+    "jszip": "^3.10.2",
     "livekit-client": "^2.23.0",
     "livekit-server-sdk": "^2.19.1",
     "lucide-react": "^0.453.0",

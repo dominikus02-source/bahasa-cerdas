@@ -95,7 +95,7 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
         <ul className="mt-2 space-y-2 text-sm text-bc-text-2">
           <li>Kamu mengatur kamera dan mikrofon sendiri.</li>
           <li>Pemandu dapat membisukan, mengeluarkan peserta, atau mengunci ruang.</li>
-          <li>Rekaman belum tersedia.</li>
+          <li>Foto tampilan tersedia di menu Lainnya. Pemandu dapat merekam di browser laptop yang mendukung.</li>
         </ul>
       </section>
     </main>

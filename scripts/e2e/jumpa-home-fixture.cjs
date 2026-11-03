@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const artifacts=process.env.JUMPA_QA_DIR||fs.mkdtempSync(path.join(require('os').tmpdir(),'jumpa-home-qa-'));fs.mkdirSync(artifacts,{recursive:true});
-const root = process.cwd();
+const root = process.cwd().replaceAll("\\", "/");
 const esbuild = require(path.join(root,'node_modules/esbuild'));
 const http = require('http');
 (async()=>{
@@ -16,7 +16,7 @@ const server=http.createServer((req,res)=>{res.setHeader('content-type',req.url=
 const {chromium}=require(path.join(root,'node_modules/playwright'));
 let browser;
 try{
-browser=await chromium.launch({executablePath:process.env.CHROME||undefined,headless:true,args:['--no-sandbox','--no-zygote','--single-process','--disable-gpu','--disable-software-rasterizer']});
+browser=await chromium.launch({executablePath:process.env.CHROME||undefined,headless:true,args:process.platform==='linux'?['--no-sandbox','--no-zygote','--single-process','--disable-gpu','--disable-software-rasterizer']:[]});
 for(const width of [360,1280]){
 const page=await browser.newPage({viewport:{width,height:900},colorScheme:'dark'});const errors=[];page.on('pageerror',e=>errors.push(e.message));await page.goto('http://127.0.0.1:'+server.address().port);await page.getByRole('heading',{name:'Mulai ruang baru'}).waitFor();
 if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('horizontal overflow '+width);

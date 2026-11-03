@@ -1,0 +1,51 @@
+name: JUMPA recording gate
+on:
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: jumpa-recording-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      # Browser test tools only; no production runtime dependency is added.
+      - run: npm install --no-save --package-lock=false playwright@1.60.0 esbuild@0.28.2
+      - run: npx playwright install --with-deps chromium
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: Select installed Chromium
+        run: echo "CHROME=$(node -e 'process.stdout.write(require("playwright").chromium.executablePath())')" >> "$GITHUB_ENV"
+      - name: Prove the tester rejects missing timeslices
+        env:
+          JUMPA_QA_DIR: qa-artifacts/mutation
+          JUMPA_QA_SCENARIOS: kill
+          JUMPA_QA_MUTATE_NO_TIMESLICE: '1'
+        run: |
+          set +e
+          node scripts/e2e/jumpa-recording-gate.cjs
+          code=$?
+          set -e
+          test "$code" = 1
+          node - <<'JS'
+          const r = require('./qa-artifacts/mutation/results.json');
+          if (r.results.length !== 3 || r.results.some(x => x.ok || !String(x.error).includes('RECORDING_CHECKPOINT_EMPTY'))) process.exit(1);
+          JS
+      - name: Gate 1 component scenarios (does not certify full meeting UI)
+        env:
+          JUMPA_QA_DIR: qa-artifacts/recording
+        run: node scripts/e2e/jumpa-recording-gate.cjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: jumpa-recording-evidence
+          path: qa-artifacts/
+          retention-days: 14

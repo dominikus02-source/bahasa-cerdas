@@ -1,0 +1,187 @@
+{
+  "scope": "real recorder, mocked room transport",
+  "policy": {
+    "repeats": 3,
+    "timesliceMs": 5000,
+    "recordMs": 6400,
+    "frameAllowanceMs": 150,
+    "maxCrashLossMs": 7000
+  },
+  "mutation": false,
+  "results": [
+    {
+      "scenario": "quota",
+      "repeat": 1,
+      "ok": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "diagnostic": {
+        "events": [],
+        "storage": {
+          "quota": 10737485184,
+          "usage": 66944,
+          "usageDetails": {
+            "indexedDB": 66944
+          }
+        }
+      }
+    },
+    {
+      "scenario": "quota",
+      "repeat": 2,
+      "ok": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "diagnostic": {
+        "events": [],
+        "storage": {
+          "quota": 10737493247,
+          "usage": 75007,
+          "usageDetails": {
+            "indexedDB": 75007
+          }
+        }
+      }
+    },
+    {
+      "scenario": "quota",
+      "repeat": 3,
+      "ok": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 10000ms exceeded.",
+      "diagnostic": {
+        "events": [],
+        "storage": {
+          "quota": 10737490396,
+          "usage": 72156,
+          "usageDetails": {
+            "indexedDB": 72156
+          }
+        }
+      }
+    },
+    {
+      "scenario": "crash",
+      "repeat": 1,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 000002886a065d00] File ended prematurely at pos. 12730 (0x31ba)\r\n[opus @ 000002886a06ff00] Error parsing Opus packet header.",
+      "expectedMs": 6402.79999999702,
+      "durationMs": 4914,
+      "packetEndMs": 4979,
+      "lossMs": 1423.7999999970198,
+      "bytes": 12730,
+      "checkpoint": {
+        "id": "5d470249-b9e5-426c-bb5f-a90849a5bad6",
+        "createdAt": 1793678855457,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3b\\crash-1.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "crash",
+      "repeat": 2,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 0000024cce3e5d00] File ended prematurely at pos. 12730 (0x31ba)\r\n[opus @ 0000024cce3eff00] Error parsing Opus packet header.",
+      "expectedMs": 6402.099999997765,
+      "durationMs": 4893,
+      "packetEndMs": 4958,
+      "lossMs": 1444.0999999977648,
+      "bytes": 12730,
+      "checkpoint": {
+        "id": "4784962a-cc94-4de7-8e5f-385d59e3f4ef",
+        "createdAt": 1793678868201,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3b\\crash-2.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "crash",
+      "repeat": 3,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 000001d6e9d55d00] File ended prematurely at pos. 12571 (0x311b)\r\n[opus @ 000001d6e9d5ff00] Error parsing Opus packet header.",
+      "expectedMs": 6414.89999999851,
+      "durationMs": 4948,
+      "packetEndMs": 4962,
+      "lossMs": 1452.8999999985099,
+      "bytes": 12571,
+      "checkpoint": {
+        "id": "ed6b088c-cb18-4300-a67b-8fe906312e74",
+        "createdAt": 1793678880790,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3b\\crash-3.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "kill",
+      "repeat": 1,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 000001da74075d00] File ended prematurely at pos. 12585 (0x3129)\r\n[opus @ 000001da7407ff00] Error parsing Opus packet header.",
+      "expectedMs": 6403,
+      "durationMs": 4952,
+      "packetEndMs": 5018,
+      "lossMs": 1385,
+      "bytes": 12585,
+      "checkpoint": {
+        "id": "6e7f6a85-bd6c-4431-a2f3-2d3d85a56f0d",
+        "createdAt": 1793678893242,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3b\\kill-1.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "kill",
+      "repeat": 2,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 0000017a9bdd5d00] File ended prematurely at pos. 12585 (0x3129)\r\n[opus @ 0000017a9bddff00] Error parsing Opus packet header.",
+      "expectedMs": 6410.300000000745,
+      "durationMs": 4962,
+      "packetEndMs": 5028,
+      "lossMs": 1382.300000000745,
+      "bytes": 12585,
+      "checkpoint": {
+        "id": "89a119e3-ce13-4383-b8c8-25ee06e889fb",
+        "createdAt": 1793678902368,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3b\\kill-2.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "kill",
+      "repeat": 3,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 00000128b3f55d00] File ended prematurely at pos. 12746 (0x31ca)\r\n[opus @ 00000128b3f5ff00] Error parsing Opus packet header.",
+      "expectedMs": 6407.599999997765,
+      "durationMs": 5014,
+      "packetEndMs": 5079.000000000001,
+      "lossMs": 1328.599999997764,
+      "bytes": 12746,
+      "checkpoint": {
+        "id": "e5d297e7-879c-48f8-8e79-e70e9c1a5390",
+        "createdAt": 1793678911763,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3b\\kill-3.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    }
+  ]
+}

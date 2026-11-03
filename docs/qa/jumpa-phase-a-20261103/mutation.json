@@ -1,0 +1,58 @@
+{
+  "scope": "real recorder, mocked room transport",
+  "policy": {
+    "repeats": 3,
+    "timesliceMs": 5000,
+    "recordMs": 6400,
+    "frameAllowanceMs": 150,
+    "maxCrashLossMs": 7000
+  },
+  "mutation": true,
+  "results": [
+    {
+      "scenario": "kill",
+      "repeat": 1,
+      "ok": false,
+      "error": "Error: page.evaluate: Error: RECORDING_CHECKPOINT_EMPTY\n    at Module.restoreRecordingCheckpoint (http://127.0.0.1:62007/module.js:35147:29)\n    at async eval (eval at evaluate (:302:30), <anonymous>:5:24)\n    at async <anonymous>:328:30",
+      "diagnostic": {
+        "storage": {
+          "quota": 10737421111,
+          "usage": 2871,
+          "usageDetails": {
+            "indexedDB": 2871
+          }
+        }
+      }
+    },
+    {
+      "scenario": "kill",
+      "repeat": 2,
+      "ok": false,
+      "error": "Error: page.evaluate: Error: RECORDING_CHECKPOINT_EMPTY\n    at Module.restoreRecordingCheckpoint (http://127.0.0.1:62007/module.js:35147:29)\n    at async eval (eval at evaluate (:302:30), <anonymous>:5:24)\n    at async <anonymous>:328:30",
+      "diagnostic": {
+        "storage": {
+          "quota": 10737421111,
+          "usage": 2871,
+          "usageDetails": {
+            "indexedDB": 2871
+          }
+        }
+      }
+    },
+    {
+      "scenario": "kill",
+      "repeat": 3,
+      "ok": false,
+      "error": "Error: page.evaluate: Error: RECORDING_CHECKPOINT_EMPTY\n    at Module.restoreRecordingCheckpoint (http://127.0.0.1:62007/module.js:35147:29)\n    at async eval (eval at evaluate (:302:30), <anonymous>:5:24)\n    at async <anonymous>:328:30",
+      "diagnostic": {
+        "storage": {
+          "quota": 10737421111,
+          "usage": 2871,
+          "usageDetails": {
+            "indexedDB": 2871
+          }
+        }
+      }
+    }
+  ]
+}

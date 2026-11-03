@@ -1,0 +1,307 @@
+{
+  "scope": "real recorder, mocked room transport",
+  "policy": {
+    "repeats": 3,
+    "timesliceMs": 5000,
+    "recordMs": 6400,
+    "frameAllowanceMs": 150,
+    "maxCrashLossMs": 7000
+  },
+  "mutation": false,
+  "results": [
+    {
+      "scenario": "close",
+      "repeat": 1,
+      "ok": false,
+      "ffprobeErrors": "[opus @ 000001ae82edff80] Error parsing Opus packet header.",
+      "expectedMs": 6404.800000000745,
+      "durationMs": 6467,
+      "packetEndMs": 6532.999999999999,
+      "lossMs": -128.19999999925403,
+      "bytes": 16330,
+      "checkpoint": {
+        "id": "363660b4-72cf-49e3-9a41-4b2c4faf2543",
+        "createdAt": 1793678527179,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\close-1.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "close",
+      "repeat": 2,
+      "ok": false,
+      "ffprobeErrors": "[opus @ 00000251a1d5ff80] Error parsing Opus packet header.",
+      "expectedMs": 6417.39999999851,
+      "durationMs": 6443,
+      "packetEndMs": 6502.999999999999,
+      "lossMs": -85.6000000014892,
+      "bytes": 16183,
+      "checkpoint": {
+        "id": "c0d17de2-7b1b-4c3f-adce-5a2396926ee8",
+        "createdAt": 1793678534630,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\close-2.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "close",
+      "repeat": 3,
+      "ok": false,
+      "ffprobeErrors": "[opus @ 0000013bef97ff80] Error parsing Opus packet header.",
+      "expectedMs": 6402.5,
+      "durationMs": 6466,
+      "packetEndMs": 6489.999999999999,
+      "lossMs": -87.49999999999909,
+      "bytes": 16330,
+      "checkpoint": {
+        "id": "041b4201-065d-40b7-94c1-0292892960a8",
+        "createdAt": 1793678542112,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\close-3.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "reload",
+      "repeat": 1,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 00000240737b5cc0] File ended prematurely at pos. 12585 (0x3129)\r\n[opus @ 00000240737bff80] Error parsing Opus packet header.",
+      "expectedMs": 6405.699999999255,
+      "durationMs": 4964,
+      "packetEndMs": 5029.000000000001,
+      "lossMs": 1376.699999999254,
+      "bytes": 12585,
+      "checkpoint": {
+        "id": "6370cb01-e372-49e7-9497-c7a222f54e1e",
+        "createdAt": 1793678549561,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3\\reload-1.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "reload",
+      "repeat": 2,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 0000021524cc5cc0] File ended prematurely at pos. 12585 (0x3129)\r\n[opus @ 0000021524ccff80] Error parsing Opus packet header.",
+      "expectedMs": 6402.900000002235,
+      "durationMs": 4950,
+      "packetEndMs": 5016,
+      "lossMs": 1386.9000000022352,
+      "bytes": 12585,
+      "checkpoint": {
+        "id": "342b852a-9c11-4ca4-a934-6df64ac4bad1",
+        "createdAt": 1793678556824,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3\\reload-2.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "reload",
+      "repeat": 3,
+      "ok": false,
+      "ffprobeErrors": "[matroska,webm @ 000001833d195cc0] File ended prematurely at pos. 12571 (0x311b)\r\n[opus @ 000001833d19ff80] Error parsing Opus packet header.",
+      "expectedMs": 6404.5,
+      "durationMs": 4954,
+      "packetEndMs": 5019,
+      "lossMs": 1385.5,
+      "bytes": 12571,
+      "checkpoint": {
+        "id": "4a7f58fc-deef-43c3-a28d-93b909da00a9",
+        "createdAt": 1793678564080,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "ownerId": "qa-recorder",
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle3\\reload-3.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "end",
+      "repeat": 1,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "ffprobeErrors": "[opus @ 000001bf95aefe00] Error parsing Opus packet header.",
+      "expectedMs": 6561.300000000745,
+      "durationMs": 6443,
+      "packetEndMs": 6502.999999999999,
+      "lossMs": 58.30000000074597,
+      "bytes": 16183,
+      "checkpoint": {
+        "id": "3fba14aa-7dfd-46ba-9101-2ae2266b31a9",
+        "createdAt": 1793678571473,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\end-1.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "end",
+      "repeat": 2,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "ffprobeErrors": "[opus @ 00000163cb08fe00] Error parsing Opus packet header.",
+      "expectedMs": 6540.89999999851,
+      "durationMs": 6440,
+      "packetEndMs": 6500,
+      "lossMs": 40.899999998509884,
+      "bytes": 16183,
+      "checkpoint": {
+        "id": "e431a6eb-8752-42cb-9bb8-226f0a89a39d",
+        "createdAt": 1793678578850,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\end-2.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "end",
+      "repeat": 3,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "ffprobeErrors": "[opus @ 00000128e89ffe00] Error parsing Opus packet header.",
+      "expectedMs": 6537.400000002235,
+      "durationMs": 6466,
+      "packetEndMs": 6532,
+      "lossMs": 5.400000002235174,
+      "bytes": 16330,
+      "checkpoint": {
+        "id": "29c97306-145b-42a4-9701-a4b90ee0e3b7",
+        "createdAt": 1793678586169,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\end-3.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "offline",
+      "repeat": 1,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "ffprobeErrors": "[opus @ 000002c93fe7ff80] Error parsing Opus packet header.",
+      "expectedMs": 6563.300000000745,
+      "durationMs": 6466,
+      "packetEndMs": 6531.000000000001,
+      "lossMs": 32.30000000074415,
+      "bytes": 16330,
+      "checkpoint": {
+        "id": "529a384a-1527-4301-9b44-ec519588424a",
+        "createdAt": 1793678593537,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\offline-1.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "offline",
+      "repeat": 2,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "ffprobeErrors": "[opus @ 00000160201fff80] Error parsing Opus packet header.",
+      "expectedMs": 6544.300000000745,
+      "durationMs": 6448,
+      "packetEndMs": 6508,
+      "lossMs": 36.30000000074506,
+      "bytes": 16183,
+      "checkpoint": {
+        "id": "642681f0-771d-4038-bd1c-a160c2577dbf",
+        "createdAt": 1793678600901,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\offline-2.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "offline",
+      "repeat": 3,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "ffprobeErrors": "[opus @ 000002116e71ff80] Error parsing Opus packet header.",
+      "expectedMs": 6697.300000000745,
+      "durationMs": 6402,
+      "packetEndMs": 6467.000000000001,
+      "lossMs": 230.30000000074415,
+      "bytes": 262516,
+      "checkpoint": {
+        "id": "c803fd16-ec85-44db-8896-39fbf2a56e34",
+        "createdAt": 1793678608578,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "ownerId": "qa-recorder",
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle3\\offline-3.webm",
+      "reason": "FFPROBE_DECODE_ERROR"
+    },
+    {
+      "scenario": "quota",
+      "repeat": 1,
+      "ok": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded."
+    },
+    {
+      "scenario": "quota",
+      "repeat": 2,
+      "ok": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded."
+    },
+    {
+      "scenario": "quota",
+      "repeat": 3,
+      "ok": false,
+      "error": "TimeoutError: page.waitForFunction: Timeout 30000ms exceeded."
+    }
+  ]
+}

@@ -21,7 +21,7 @@ export function shouldReceiveTrack(input: {
   pageVisible: boolean;
 }): boolean {
   // Suara tetap terdengar walaupun pembicara di luar halaman grid.
-  if (input.kind === "audio") return input.source !== "screen_share_audio" || (input.pageVisible && input.screenVisible);
+  if (input.kind === "audio") return true;
   if (input.kind !== "video" || !input.pageVisible || !input.visible) return false;
   return input.source === "screen_share" || !input.audioOnly;
 }
