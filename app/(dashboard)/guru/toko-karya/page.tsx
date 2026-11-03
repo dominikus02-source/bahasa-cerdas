@@ -369,14 +369,14 @@ export default function TokoKaryaPage() {
 
       {/* ── Tabs ───────────────────────────────────────────────────── */}
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="karya">
+        <TabsList className="mb-6 grid h-auto w-full grid-cols-3 sm:inline-flex sm:h-9 sm:w-auto">
+          <TabsTrigger value="karya" className="px-2 text-xs sm:px-3 sm:text-sm">
             <Package className="h-4 w-4 mr-1.5" /> Karya Saya
           </TabsTrigger>
-          <TabsTrigger value="pendapatan">
+          <TabsTrigger value="pendapatan" className="px-2 text-xs sm:px-3 sm:text-sm">
             <DollarSign className="h-4 w-4 mr-1.5" /> Pendapatan
           </TabsTrigger>
-          <TabsTrigger value="jelajahi">
+          <TabsTrigger value="jelajahi" className="px-2 text-xs sm:px-3 sm:text-sm">
             <ExternalLink className="h-4 w-4 mr-1.5" /> Marketplace
           </TabsTrigger>
         </TabsList>

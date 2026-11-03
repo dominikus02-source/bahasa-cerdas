@@ -176,7 +176,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                 textClassName="text-sm"
                 className="shrink-0 shadow-md"
               />
-              <span className="hidden min-w-0 text-left md:block">
+              <span className="hidden min-w-0 text-left lg:block">
                 <span className="flex items-center gap-1.5">
                   <span className="max-w-[190px] truncate text-xs font-bold text-slate-800 dark:text-slate-100">
                     {user.fullName}

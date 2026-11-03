@@ -134,7 +134,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
   return (
     <div className="px-5 pb-10 sm:px-6 relative z-10">
       {/* Glow ambient — halus, theme-aware */}
-      <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] h-[280px] rounded-full opacity-40 dark:opacity-60 blur-3xl"
+      <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[420px] max-w-full h-[280px] rounded-full opacity-40 dark:opacity-60 blur-3xl"
         style={{ background: "radial-gradient(circle, rgba(124,58,237,0.28) 0%, transparent 70%)" }} />
 
       {/* ── HEADER ── */}
