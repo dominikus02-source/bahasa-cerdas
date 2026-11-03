@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createAdminClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
-import { accountContext, reauthenticate, AccountError, readAccountBody, accountFailure } from "@/lib/account/security";
+import { accountContext, reauthenticate, AccountError, readAccountBody, accountFailure, describeError } from "@/lib/account/security";
 import { anonymizeAccount } from "@/lib/account/deletion";
 
 export async function DELETE(req: NextRequest) {
+  let userId: string | undefined;
   try {
     const { supabase, user } = await accountContext(req);
+    userId = user.id;
     const body = await readAccountBody(req);
     if (body.confirmation !== "HAPUS AKUN") throw new AccountError("Ketik HAPUS AKUN untuk melanjutkan.");
     const key = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SERVICE_ROLE_KEY;
@@ -17,7 +19,10 @@ export async function DELETE(req: NextRequest) {
     try {
       const admin = createAdminClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, key, { auth: { persistSession: false, autoRefreshToken: false } });
       const { data: verifiedAccount, error: adminError } = await admin.auth.admin.getUserById(user.id);
-      if (adminError || verifiedAccount.user?.id !== user.id) throw new AccountError("Penghapusan akun belum tersedia. Hubungi pengelola.", 503);
+      if (adminError || verifiedAccount.user?.id !== user.id) {
+        console.error(`[account] delete admin lookup failed user=${user.id} error=${adminError ? describeError(adminError) : "id-mismatch"}`);
+        throw new AccountError("Penghapusan akun belum tersedia. Hubungi pengelola.", 503);
+      }
       // Preflight the ownership query before changing application data. Storage
       // deletion must use its API, never DELETE directly from storage.objects.
       const objects = await db.$queryRaw<{ bucket_id: string; name: string }[]>`SELECT bucket_id, name FROM storage.objects WHERE owner_id = ${user.id} OR owner = ${user.id}::uuid OR (COALESCE(owner_id, '') = '' AND owner IS NULL AND split_part(name, '/', 2) = ${account.id})`;
@@ -34,7 +39,8 @@ export async function DELETE(req: NextRequest) {
         if (revokeError) throw revokeError;
         const { error } = await admin.auth.admin.deleteUser(user.id);
         if (error) throw error;
-      } catch {
+      } catch (cleanupError) {
+        console.error(`[account] delete cleanup failed after anonymize user=${user.id} app=${account.id} error=${describeError(cleanupError)}`);
         // Tombstone already denies app access, even for unexpired JWTs. The
         // same endpoint can safely retry cleanup using the still-valid JWT.
         throw new AccountError("Akun sudah dinonaktifkan, tetapi penghapusan akhir belum selesai. Ulangi penghapusan atau hubungi pengelola.", 503);
@@ -42,5 +48,5 @@ export async function DELETE(req: NextRequest) {
       await supabase.auth.signOut({ scope: "local" });
       return NextResponse.json({ message: "Akun telah dihapus.", signOut: true });
     } finally { await cleanup(); }
-  } catch (error) { const f = accountFailure(error); return NextResponse.json({ error: f.error }, { status: f.status }); }
+  } catch (error) { const f = accountFailure(error, { route: "account.delete", userId }); return NextResponse.json({ error: f.error }, { status: f.status }); }
 }
