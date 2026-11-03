@@ -158,15 +158,15 @@ async function main() {
     assert(off?.status === "dev", "flag JUMPA mati: kartu tidak menautkan ke 404 (status pengembangan)");
   }
   assert(byKey.NARA?.status === undefined, "NARA siap: tanpa status pengembangan");
-  assert(byKey.MAIN_BERSAMA?.status === "dev" && byKey.AKU_SASTRAWAN?.status === "dev", "MAIN BERSAMA & AKU SASTRAWAN tetap berstatus pengembangan");
+  assert(byKey.MAIN_BERSAMA?.status === "dev" && byKey.AKU_SASTRAWAN?.status === undefined, "MAIN BERSAMA berstatus pengembangan; AKU SASTRAWAN siap");
   assert(byKey.JALUR_CERDAS?.href === "/arena/jalur-cerdas", "JALUR CERDAS → /arena/jalur-cerdas");
   assert(byKey.BIGT?.external === true && /^https:\/\//.test(byKey.BIGT?.href ?? ""), "BIGT = tautan eksternal https");
   assert(byKey.AKSARA?.href === "/artikel" && byKey.TOKO_KARYA?.href === "/marketplace", "AKSARA → /artikel, TOKO KARYA → /marketplace");
-  assert(prod.AKU_SASTRAWAN_HREF === "/umum/aku-sastrawan" && byKey.AKU_SASTRAWAN?.href === prod.AKU_SASTRAWAN_HREF, "AKU SASTRAWAN memakai satu konstanta /umum/aku-sastrawan");
+  assert(prod.AKU_SASTRAWAN_HREF === "/aku-sastrawan" && byKey.AKU_SASTRAWAN?.href === prod.AKU_SASTRAWAN_HREF, "AKU SASTRAWAN memakai satu konstanta → /aku-sastrawan");
   assert((code("app/umum/page.tsx").match(/aku-sastrawan/g) ?? []).length === 0, "halaman /umum tidak meng-hardcode tautan AKU SASTRAWAN");
   const roles = R("lib/auth/roles.ts");
   for (const p of prod.UMUM_PRODUCTS as any[]) {
-    if (p.external || p.href.startsWith("/umum") || p.href === "/jumpa" || p.href === "/main-bersama" || p.href === "/artikel" || p.href === "/marketplace") continue;
+    if (p.external || p.href.startsWith("/umum") || p.href === "/jumpa" || p.href === "/main-bersama" || p.href === "/artikel" || p.href === "/marketplace" || p.href === "/aku-sastrawan") continue;
     assert(roles.isUmumArenaPath(p.href), `kartu ${p.key} (${p.href}) dapat diakses UMUM di Arena`);
   }
 

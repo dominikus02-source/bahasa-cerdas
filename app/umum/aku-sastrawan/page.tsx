@@ -1,22 +1,11 @@
-import type { Metadata } from "next";
-import { Feather } from "lucide-react";
-import { ComingSoon } from "@/components/umum/ComingSoon";
-
-export const metadata: Metadata = {
-  title: "Aku Sastrawan — BahasaCerdas",
-  robots: { index: false, follow: false },
-};
+import { redirect } from "next/navigation";
+import { AKU_SASTRAWAN_HREF } from "@/lib/umum/products";
 
 /**
- * AKU SASTRAWAN untuk pengguna umum — halaman belum dibangun.
- * Sengaja TIDAK menautkan ke /murid/katastra (area murid). Statis & publik.
+ * AKU SASTRAWAN untuk pengguna umum kini memakai halaman asli (/aku-sastrawan).
+ * Rute lama ini hanya meneruskan; /aku-sastrawan sendiri yang mewajibkan login
+ * dan memeriksa Premium di server (termasuk mode baca/unduh setelah Premium berakhir).
  */
 export default function AkuSastrawanPage() {
-  return (
-    <ComingSoon
-      title="Aku Sastrawan"
-      icon={Feather}
-      description="Ruang menulis dan berkarya sastra untuk pengguna umum sedang kami siapkan. Nantikan segera."
-    />
-  );
+  redirect(AKU_SASTRAWAN_HREF);
 }
