@@ -21,6 +21,9 @@ const esbuild=require('esbuild'); const {chromium}=require('playwright');
     return true;
    });
    await page.waitForTimeout(3500);
+   if(process.env.JUMPA_QA_MUTATE_DROP_SEGMENTS==='1') {
+    await page.evaluate(async()=>{ const mod=await import('/module.js'); const sessions=await mod.listRecordingCheckpoints(); for(const s of sessions) await (await import('/module.js')).deleteRecordingCheckpoint(s.id); });
+   }
    const escaped=profile.replaceAll("'","''");
    const pids=cp.execFileSync('powershell.exe',['-NoProfile','-Command',`Get-CimInstance Win32_Process -Filter "Name = 'chrome.exe'" | Where-Object { $_.CommandLine -like '*${escaped}*' -and $_.CommandLine -notlike '*--type=*' } | Select-Object -ExpandProperty ProcessId`],{encoding:'utf8'}).trim().split(/\s+/).filter(Boolean);
    if(!pids.length)throw Error('NO_CHROME_PID');

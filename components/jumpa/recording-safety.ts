@@ -1,5 +1,5 @@
 import { appendRecordingChunk, completeRecordingCheckpoint, createRecordingCheckpoint } from "./recording-checkpoint";
-export { listRecordingCheckpoints, restoreRecordingCheckpoint, restoreLatestSafetyArchive } from "./recording-checkpoint";
+export { listRecordingCheckpoints, restoreRecordingCheckpoint, restoreLatestSafetyArchive, deleteRecordingCheckpoint } from "./recording-checkpoint";
 
 /**
  * Recovery track: each completed WebM segment has its own container metadata.
