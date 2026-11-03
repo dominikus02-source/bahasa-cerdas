@@ -230,3 +230,7 @@ jobs:
         run: |
           shellcheck -x ops/vps/lib-prev-image.sh ops/vps/deploy-web.sh scripts/ci/test-deploy-web-prev.sh
           bash scripts/ci/test-deploy-web-prev.sh
+
+  jumpa-recording-recovery:
+    name: JUMPA recording recovery
+    uses: ./.github/workflows/jumpa-recording-gate.yml

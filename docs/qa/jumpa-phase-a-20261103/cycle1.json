@@ -1,0 +1,196 @@
+{
+  "scope": "real recorder, mocked room transport",
+  "policy": {
+    "repeats": 3,
+    "timesliceMs": 5000,
+    "recordMs": 6400,
+    "frameAllowanceMs": 150,
+    "maxCrashLossMs": 7000
+  },
+  "mutation": false,
+  "results": [
+    {
+      "scenario": "close",
+      "repeat": 1,
+      "ok": false,
+      "expectedMs": 6408.60000000149,
+      "durationMs": null,
+      "packetEndMs": 6347,
+      "lossMs": 61.600000001490116,
+      "bytes": 15938,
+      "checkpoint": {
+        "id": "33d5ab97-9b60-487c-9cb4-e8a68d73895f",
+        "createdAt": 1793678333450,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle1\\close-1.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "close",
+      "repeat": 2,
+      "ok": false,
+      "expectedMs": 6401.5,
+      "durationMs": null,
+      "packetEndMs": 6468.999999999999,
+      "lossMs": -67.49999999999909,
+      "bytes": 16158,
+      "checkpoint": {
+        "id": "c1394f6e-a1a3-4610-a897-d05523828664",
+        "createdAt": 1793678340903,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle1\\close-2.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "close",
+      "repeat": 3,
+      "ok": false,
+      "expectedMs": 6406,
+      "durationMs": null,
+      "packetEndMs": 6359.999999999999,
+      "lossMs": 46.00000000000091,
+      "bytes": 16155,
+      "checkpoint": {
+        "id": "0b04d193-49f9-48b3-8162-a400d619ae10",
+        "createdAt": 1793678348512,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle1\\close-3.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "reload",
+      "repeat": 1,
+      "ok": false,
+      "expectedMs": 6418.5,
+      "durationMs": null,
+      "packetEndMs": 5083,
+      "lossMs": 1335.5,
+      "bytes": 12721,
+      "checkpoint": {
+        "id": "c837d45e-16ef-46f1-baf1-0033ee5bc590",
+        "createdAt": 1793678356048,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle1\\reload-1.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "reload",
+      "repeat": 2,
+      "ok": false,
+      "expectedMs": 6401.800000000745,
+      "durationMs": null,
+      "packetEndMs": 5080,
+      "lossMs": 1321.800000000745,
+      "bytes": 12721,
+      "checkpoint": {
+        "id": "687db79b-442b-4640-89d7-231289a4301f",
+        "createdAt": 1793678363382,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle1\\reload-2.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "reload",
+      "repeat": 3,
+      "ok": false,
+      "expectedMs": 6401.699999999255,
+      "durationMs": null,
+      "packetEndMs": 5080,
+      "lossMs": 1321.699999999255,
+      "bytes": 12721,
+      "checkpoint": {
+        "id": "0c9df60d-887b-40a0-9206-5f69d3a444dd",
+        "createdAt": 1793678370713,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": false,
+        "chunks": 1
+      },
+      "file": "F:\\jumpa-gate-cycle1\\reload-3.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "end",
+      "repeat": 1,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "expectedMs": 6503.5,
+      "durationMs": null,
+      "packetEndMs": 6415,
+      "lossMs": 88.5,
+      "bytes": 16170,
+      "checkpoint": {
+        "id": "2bc248b2-2fc0-4e3c-a46a-61f77ef1a77e",
+        "createdAt": 1793678378069,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle1\\end-1.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "end",
+      "repeat": 2,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "expectedMs": 6538.89999999851,
+      "durationMs": null,
+      "packetEndMs": 6544.000000000001,
+      "lossMs": -5.100000001491026,
+      "bytes": 16319,
+      "checkpoint": {
+        "id": "682aca98-7e6a-4be3-a912-871937faafa0",
+        "createdAt": 1793678385454,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle1\\end-2.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    },
+    {
+      "scenario": "end",
+      "repeat": 3,
+      "ok": false,
+      "events": [
+        "complete",
+        "stopped"
+      ],
+      "expectedMs": 6515.300000000745,
+      "durationMs": null,
+      "packetEndMs": 6516.999999999999,
+      "lossMs": -1.6999999992540324,
+      "bytes": 16172,
+      "checkpoint": {
+        "id": "5c055642-5977-4fa0-9c34-3bafe8f70174",
+        "createdAt": 1793678392801,
+        "mimeType": "video/webm;codecs=vp8,opus",
+        "completed": true,
+        "chunks": 2
+      },
+      "file": "F:\\jumpa-gate-cycle1\\end-3.webm",
+      "reason": "FFPROBE_DURATION_INVALID"
+    }
+  ]
+}

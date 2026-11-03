@@ -1,12 +1,11 @@
 name: JUMPA recording gate
 on:
-  pull_request:
-  push:
-    branches: [release/jumpa-qa, 'fix/jumpa-phase-a-*']
+  workflow_call:
+  workflow_dispatch:
 permissions:
   contents: read
 concurrency:
-  group: jumpa-recording-${{ github.ref }}
+  group: jumpa-recording-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
   recovery:
