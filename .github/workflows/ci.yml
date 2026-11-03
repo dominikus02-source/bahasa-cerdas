@@ -47,6 +47,9 @@ jobs:
       - name: Notification panel position regression
         run: npm run test:notif-panel
 
+      - name: Guru materi fileType enum regression
+        run: npm run test:guru-materi-filetype
+
       - name: Login UX regression
         run: npm run test:login-ux
 
