@@ -23,6 +23,7 @@ export default function ConfirmDialog({
   confirmLabel,
   icon,
   busy = false,
+  destructive = true,
   onConfirm,
   onCancel,
   returnFocus,
@@ -32,6 +33,7 @@ export default function ConfirmDialog({
   confirmLabel: string;
   icon?: ReactNode;
   busy?: boolean;
+  destructive?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
   /** Tujuan fokus saat ditutup bila pemicu sudah hilang (mis. item menu). */
@@ -70,7 +72,7 @@ export default function ConfirmDialog({
         {body && <p id={`${id}-d`} className="mt-1.5 text-sm text-[var(--jp-text-2)]">{body}</p>}
         <div className="mt-5 grid grid-cols-2 gap-2.5">
           <Button ref={cancelRef} type="button" variant="secondary" onClick={onCancel} disabled={busy}>Batal</Button>
-          <Button type="button" variant="danger" onClick={onConfirm} loading={busy}>{confirmLabel}</Button>
+          <Button type="button" variant={destructive ? "danger" : "primary"} onClick={onConfirm} loading={busy}>{confirmLabel}</Button>
         </div>
       </div>
     </div>,

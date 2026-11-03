@@ -97,7 +97,7 @@ function PackageRules({ tier }: { tier: JumpaTierView }) {
       <div className="mt-2 space-y-2 text-xs text-bc-text-2">
         <p>{tierLimitsText(tier)}. Semua peserta mengatur kamera dan mikrofon sendiri.</p>
         <p>Matikan mikrofon saat tidak berbicara. Pemandu dapat membisukan, mengeluarkan peserta, atau mengunci ruang.</p>
-        <p>Rekaman belum tersedia.</p>
+        <p>Foto tampilan tersedia di menu Lainnya. Pemandu dapat merekam di browser laptop yang mendukung.</p>
       </div>
     </details>
   );

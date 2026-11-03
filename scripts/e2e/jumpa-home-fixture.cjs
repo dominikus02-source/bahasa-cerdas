@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const artifacts=process.env.JUMPA_QA_DIR||fs.mkdtempSync(path.join(require('os').tmpdir(),'jumpa-home-qa-'));fs.mkdirSync(artifacts,{recursive:true});
-const root = process.cwd();
+const root = process.cwd().replaceAll("\\", "/");
 const esbuild = require(path.join(root,'node_modules/esbuild'));
 const http = require('http');
 (async()=>{
