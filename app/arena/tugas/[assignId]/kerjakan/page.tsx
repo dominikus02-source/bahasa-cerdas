@@ -191,7 +191,7 @@ export default function KerjakanTugasPage() {
   const nextPhase = steps[steps.indexOf(phase) + 1]
 
   return (
-    <div className="owns-bottom-bar min-h-screen bg-[#F7F6FF] dark:bg-slate-950 pb-28">
+    <div className="owns-bottom-bar min-h-screen bg-[var(--clr-violet-soft)] dark:bg-slate-950 pb-28">
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-gray-100 dark:border-slate-800 px-4 py-3 flex items-center gap-3">
         <Link href="/arena/tugas" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="min-w-0">
