@@ -1,0 +1,17 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+const read = (path: string) => readFileSync(path, "utf8");
+const route = read("app/api/jumpa/rooms/[code]/recording/route.ts");
+const adapter = read("lib/jumpa/recording-egress.ts");
+const policy = read("lib/jumpa/recording-policy.ts");
+assert.match(route, /await getUser\(\)/, "status endpoint wajib autentikasi");
+assert.match(route, /ctx\.decision\.ok/, "status endpoint wajib otorisasi ruang");
+assert.match(route, /canManageRecording\(ctx\.view\.tier, ctx\.decision\.roomRole === "HOST"\)/);
+assert.match(route, /available: false, recording: false/, "status tidak boleh mengaku aktif");
+assert.match(route, /export async function POST\(\)[\s\S]*RECORDING_NOT_READY/);
+assert.match(route, /export async function DELETE\(\)[\s\S]*RECORDING_NOT_READY/);
+assert.match(adapter, /JUMPA_RECORDING_ENABLED !== "1"/, "egress default mati");
+assert.match(adapter, /new S3Upload/, "output harus storage privat");
+assert.doesNotMatch(adapter, /NEXT_PUBLIC_/, "jangan bocorkan kredensial ke browser");
+assert.match(policy, /tier === "PREMIUM" && isHost/);
+console.log("Guard rekaman: 10 pemeriksaan lulus.");
