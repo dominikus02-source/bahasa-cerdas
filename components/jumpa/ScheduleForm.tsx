@@ -123,7 +123,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
 
   if (done) {
     return (
-      <section className="jumpa-card jumpa-lobby-info jumpa-in-up text-center" aria-live="polite">
+      <section className="jumpa-in-up rounded-bc-card border border-bc-line bg-bc-surface p-6 text-center shadow-sm" aria-live="polite">
         <span className="jumpa-empty-icon mx-auto" aria-hidden>{done.cancelled ? <Trash2 size={26} /> : <CalendarCheck size={26} />}</span>
         <h1 className="mt-3 text-xl font-extrabold">{done.cancelled ? "JUMPA dibatalkan" : editing ? "Jadwal diperbarui" : "JUMPA terjadwal"}</h1>
         <p className="mt-1 text-sm text-[var(--jp-text-2)]">{done.title}</p>
@@ -146,10 +146,10 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
   const otherGroups = data.groups.filter((g) => g.id !== groupId);
 
   return (
-    <form onSubmit={submit} className="jumpa-card jumpa-lobby-info jumpa-in-up grid gap-4" noValidate>
+    <form onSubmit={submit} className="jumpa-in-up grid gap-5 rounded-bc-card border border-bc-line bg-bc-surface p-4 shadow-sm sm:p-6" noValidate>
       <div>
-        <h1 className="text-2xl font-extrabold">{editing ? "Ubah jadwal" : "Jadwalkan JUMPA"}</h1>
-        <p className="mt-1 text-sm text-[var(--jp-text-2)]">{editing ? editing.title : "Penerima dapat notifikasi dan pengingat 10 menit sebelumnya."}</p>
+        <h2 className="text-base font-bold text-bc-text">Detail jadwal</h2>
+        <p className="mt-1 text-sm text-bc-text-2">{editing ? editing.title : "Peserta menerima notifikasi dan pengingat 10 menit sebelumnya."}</p>
       </div>
 
       {!editing && (
@@ -184,7 +184,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
         </>
       )}
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <label className="jumpa-field min-w-0">
           <span className="jumpa-field-label">Tanggal</span>
           <input type="date" className="jumpa-input jumpa-date w-full" value={date} min={today} onChange={(e) => setDate(e.target.value)} required />
