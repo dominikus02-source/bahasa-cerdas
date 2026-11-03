@@ -38,3 +38,10 @@ Eksperimen tambahan interval 350 ms untuk close tab: durasi 2,621 / 2,607 / 2,53
 **Akar masalah:** saat tab ditutup/refresh, perekam segmen aktif dapat dihentikan sebelum `onstop` menulis final WebM ke IndexedDB. Menyimpan lebih sering tidak menjamin seluruh durasi. Saat browser crash, browser lokal tidak dapat memberi jaminan 100% frame terakhir. Untuk jaminan tanpa kehilangan saat host putus, dibutuhkan Egress server-side dan pengujian integrasi. Kontrak Premium Egress sudah ada tetapi belum diaktifkan.
 
 **Keputusan:** Gerbang 1 **GAGAL**, tidak boleh lanjut ke Fase B, C, D atau merge/deploy. Masih perlu tes UI JUMPA asli, penyimpanan penuh E2E, dan penyelesaian arsitektur agar syarat rekaman utuh dapat dibuktikan. Tidak ada perubahan produksi.
+
+
+## Lanjutan: fail-safe unduhan saat storage penuh
+
+Commit `1a81c4b451b3c6e8f85fa2939a6206107ac76b57` memperbaiki `components/jumpa/local-recording.ts`: kegagalan menulis/finalisasi checkpoint IndexedDB tidak lagi membatalkan `callbacks.onComplete(blob)` ketika blob utama masih tersedia di RAM. Kesalahan checkpoint tetap dilaporkan melalui `onError`; unduhan pengguna tetap ditawarkan. Perubahan ini tidak menyelamatkan blob jika browser sudah mati.
+
+**Status tes: BELUM TERUJI setelah commit** karena perangkat Remote Desktop Commander `DESKTOP-2NM1AUE` offline saat eksekusi. Jangan mengutip hasil typecheck/lint/build dari commit lama sebagai validasi commit ini. Perintah validasi saat PC kembali online: `npm run typecheck`, `npx eslint components/jumpa/local-recording.ts`, `npm run build`, `node scripts/e2e/jumpa-recording-quota.cjs`, dan ulangi semua mode `JUMPA_QA_SCENARIO` 3×; tes storage penuh UI JUMPA tetap harus ditambahkan. **Gerbang 1 tetap GAGAL.**
