@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Safe web release, called by deploy.sh from ops/vps (deploy lock already held).
-#   1. keep the running image as bahasacerdas/web:prev-<stamp>
+#   1. keep the running image as bahasacerdas/web:prev-<stamp> (lib-prev-image.sh:
+#      if its ID vanished, commit the running container; else newest prev-*)
 #   2. build the new image
 #   3. pg_dump --schema-only backup
 #   4. prisma migrate deploy (only when the ledger has no gaps) — BEFORE the swap
@@ -49,8 +50,10 @@ ready() {  # bcrollback.sh check + the old deploy.sh db==up check
 }
 
 echo "==> Keeping previous web image"
-PREV="$(docker inspect -f '{{.Image}}' "$CONTAINER" 2>/dev/null || true)"
-if [[ -n "$PREV" ]]; then docker tag "$PREV" "$IMAGE:prev-$STAMP"; echo "previous image: $IMAGE:prev-$STAMP"; else echo "no running web container; rollback unavailable for this deploy"; fi
+# shellcheck source=ops/vps/lib-prev-image.sh
+source "$(dirname "${BASH_SOURCE[0]}")/lib-prev-image.sh"
+keep_previous_image "$CONTAINER" "$IMAGE" "$STAMP"
+PREV="$PREV_REF"
 
 echo "==> Building web"
 "${COMPOSE[@]}" build web
@@ -99,13 +102,19 @@ fi
 echo "==> Starting Redis + new web"
 "${COMPOSE[@]}" up -d redis
 "${COMPOSE[@]}" up -d --no-deps --no-build --force-recreate web
-if ready; then echo "Web health OK"; exit 0; fi
+if ready; then
+  echo "Web health OK"
+  # Pin the image now live under its own tag: another build re-pointing
+  # $IMAGE:$TAG can then never orphan it, and the next deploy can roll back.
+  docker tag "$IMAGE:$TAG" "$IMAGE:prev-$STAMP-live" && echo "live image pinned: $IMAGE:prev-$STAMP-live" || echo "WARNING: could not pin live image tag" >&2
+  exit 0
+fi
 
 echo "Web health check FAILED" >&2
 "${COMPOSE[@]}" ps web >&2 || true
 docker logs --tail 80 "$CONTAINER" >&2 || true
 [[ -n "$PREV" ]] || die "no previous image to roll back to; operator intervention required"
-echo "==> Rolling back web to $IMAGE:prev-$STAMP" >&2
+echo "==> Rolling back web to $PREV" >&2
 docker tag "$IMAGE:$TAG" "$IMAGE:failed-$STAMP" || true
 docker tag "$PREV" "$IMAGE:$TAG"
 "${COMPOSE[@]}" up -d --no-deps --no-build --force-recreate web || true

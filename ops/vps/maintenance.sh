@@ -30,6 +30,8 @@ docker ps --filter name=novelify-prod-novelify-1 --format '{{.Names}} {{.Status}
 
 echo "=== docker cleanup ==="
 docker container prune -f --filter until=168h
+# Dangling (untagged) images only — never add -a: the running web image and
+# the bahasacerdas/web:prev-* rollback tags must survive (test-deploy-web-prev.sh).
 docker image prune -f --filter until=168h
 # BuildKit cache can grow quickly during image-heavy VPS deploys. Keep only
 # the last 24 hours of cache; deployed images and running containers are not
