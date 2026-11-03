@@ -223,4 +223,10 @@ jobs:
         run: |
           bash -n ops/vps/deploy.sh
           bash -n ops/vps/deploy-web.sh
+          bash -n ops/vps/lib-prev-image.sh
           bash -n ops/vps/bcrollback.sh
+
+      - name: Deploy rollback image (shellcheck + simulated missing image)
+        run: |
+          shellcheck -x ops/vps/lib-prev-image.sh ops/vps/deploy-web.sh scripts/ci/test-deploy-web-prev.sh
+          bash scripts/ci/test-deploy-web-prev.sh
