@@ -48,7 +48,7 @@ function QuestionList({ questions, answers, setAnswers }: {
               value={(answers[q.id] as string) ?? ""}
               onChange={e => setAnswers(a => ({ ...a, [q.id]: e.target.value }))}
               placeholder="Ketik jawaban..."
-              className="w-full rounded-xl border-2 border-gray-200 dark:border-slate-700 focus:border-violet-500 focus:outline-none p-3 text-sm"
+              className="w-full rounded-xl border-2 border-gray-200 dark:border-slate-700 focus:border-violet-500 focus:outline-none p-3 text-sm bg-white dark:bg-slate-900 text-gray-900 dark:text-slate-100"
             />
           ) : (
             <div className="space-y-2">
@@ -58,7 +58,7 @@ function QuestionList({ questions, answers, setAnswers }: {
                   <button
                     key={oi}
                     onClick={() => setAnswers(a => ({ ...a, [q.id]: oi }))}
-                    className={`w-full flex items-center gap-2.5 text-left p-3 rounded-xl border-2 text-sm transition-all ${selected ? "border-violet-500 bg-violet-50 font-medium" : "border-gray-200 dark:border-slate-700 hover:border-violet-300"}`}
+                    className={`w-full flex items-center gap-2.5 text-left p-3 rounded-xl border-2 text-sm transition-all ${selected ? "border-violet-500 bg-violet-50 dark:bg-violet-950/40 font-medium text-gray-900 dark:text-slate-100" : "border-gray-200 dark:border-slate-700 hover:border-violet-300 text-gray-700 dark:text-slate-200"}`}
                   >
                     <span className={`inline-flex items-center justify-center w-6 h-6 rounded-lg text-xs font-bold shrink-0 ${selected ? "bg-violet-500 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500"}`}>{String.fromCharCode(65 + oi)}</span>
                     {opt}
@@ -191,7 +191,7 @@ export default function KerjakanTugasPage() {
   const nextPhase = steps[steps.indexOf(phase) + 1]
 
   return (
-    <div className="owns-bottom-bar min-h-screen bg-[#F7F6FF] pb-28">
+    <div className="owns-bottom-bar min-h-screen bg-[#F7F6FF] dark:bg-slate-950 pb-28">
       <div className="sticky top-0 z-10 bg-white/90 dark:bg-slate-900/90 backdrop-blur border-b border-gray-100 dark:border-slate-800 px-4 py-3 flex items-center gap-3">
         <Link href="/arena/tugas" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="min-w-0">
@@ -202,7 +202,7 @@ export default function KerjakanTugasPage() {
 
       {phase !== "done" && steps.length > 1 && (
         <div className="flex items-center gap-1.5 px-4 pt-3">
-          {steps.map((p) => <div key={p} className={`h-1.5 flex-1 rounded-full ${phase === p ? "bg-violet-500" : "bg-violet-100"}`} />)}
+          {steps.map((p) => <div key={p} className={`h-1.5 flex-1 rounded-full ${phase === p ? "bg-violet-500" : "bg-violet-100 dark:bg-slate-800"}`} />)}
         </div>
       )}
 
@@ -238,7 +238,7 @@ export default function KerjakanTugasPage() {
                 {m.contoh.length > 0 && (
                   <div className="mt-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-100 dark:border-amber-900 rounded-xl p-3">
                     <p className="text-[11px] font-bold text-amber-600 dark:text-amber-400 uppercase mb-1">Contoh</p>
-                    {m.contoh.map((c, j) => <p key={j} className="text-sm text-amber-800">{c}</p>)}
+                    {m.contoh.map((c, j) => <p key={j} className="text-sm text-amber-800 dark:text-amber-200">{c}</p>)}
                   </div>
                 )}
                 {m.catatan && <p className="mt-2 text-xs text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950/40 rounded-lg p-2">{m.catatan}</p>}
@@ -247,7 +247,7 @@ export default function KerjakanTugasPage() {
             {data.belajar.rangkuman.length > 0 && (
               <div className="bg-emerald-50 dark:bg-emerald-950/40 rounded-2xl border border-emerald-100 dark:border-emerald-900 p-4">
                 <h3 className="font-bold text-emerald-700 dark:text-emerald-300 mb-2">Rangkuman</h3>
-                <ul className="space-y-1.5">{data.belajar.rangkuman.map((r, i) => <li key={i} className="flex gap-2 text-sm text-emerald-800"><CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />{r}</li>)}</ul>
+                <ul className="space-y-1.5">{data.belajar.rangkuman.map((r, i) => <li key={i} className="flex gap-2 text-sm text-emerald-800 dark:text-emerald-200"><CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" />{r}</li>)}</ul>
               </div>
             )}
           </div>
@@ -257,9 +257,9 @@ export default function KerjakanTugasPage() {
         {phase === "latihan" && (
           <div className="space-y-4">
             {data.reading && (
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700/70 p-4">
+              <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4">
                 <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5">Bacaan</p>
-                <p className="text-sm text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">{data.reading.text}</p>
+                <p className="text-sm text-slate-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap break-words">{data.reading.text}</p>
               </div>
             )}
             {!hasLatihan ? <p className="text-center text-gray-400 py-10 text-sm">Tidak ada latihan.</p>
@@ -282,7 +282,7 @@ export default function KerjakanTugasPage() {
             )}
 
             {/* Upload hasil praktik → guru review */}
-            <div className="bg-white dark:bg-slate-800/90 rounded-2xl border-2 border-dashed border-violet-200 p-4">
+            <div className="bg-white dark:bg-slate-800/90 rounded-2xl border-2 border-dashed border-violet-200 dark:border-violet-800 p-4">
               <h3 className="font-bold text-gray-900 dark:text-slate-100 mb-1 flex items-center gap-2"><Upload className="w-4 h-4 text-violet-500" /> Unggah Hasil Praktik</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400 mb-3">Foto atau dokumen hasil kerjamu. Guru akan menilai secara manual.</p>
               {data.submission?.praktikDinilai ? (
@@ -301,12 +301,12 @@ export default function KerjakanTugasPage() {
                       <span className="text-[11px] text-gray-400">{formatFileSize(praktikFileSize)}</span>
                     )}
                   </div>
-                  <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1"><Clock size={12} /> Menunggu review</span>
+                  <span className="text-[11px] text-amber-600 dark:text-amber-400 font-semibold flex items-center gap-1 shrink-0 whitespace-nowrap"><Clock size={12} /> Menunggu dinilai</span>
                   <button onClick={() => fileRef.current?.click()} className="text-[11px] text-gray-400 underline shrink-0">Ganti</button>
                 </div>
               ) : (
                 <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                  className="w-full py-3 rounded-xl bg-violet-50 text-violet-700 dark:text-violet-300 font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60">
+                  className="w-full py-3 rounded-xl bg-violet-50 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-60">
                   {uploading ? <><Loader2 className="w-4 h-4 animate-spin" /> Mengunggah...</> : <><Upload className="w-4 h-4" /> Pilih Berkas</>}
                 </button>
               )}
@@ -355,7 +355,7 @@ export default function KerjakanTugasPage() {
             )}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-6">
               <Link href="/arena/tugas" className="inline-flex items-center justify-center px-6 py-3 bg-violet-600 text-white rounded-xl text-sm font-bold">Kembali ke Tugas</Link>
-              <Link href="/arena/jalur-cerdas" className="inline-flex items-center justify-center px-6 py-3 border-2 border-violet-300 text-violet-700 dark:text-violet-300 rounded-xl text-sm font-bold hover:bg-violet-50 transition-colors">Lanjutkan Belajar</Link>
+              <Link href="/arena/jalur-cerdas" className="inline-flex items-center justify-center px-6 py-3 border-2 border-violet-300 dark:border-violet-700 text-violet-700 dark:text-violet-300 rounded-xl text-sm font-bold hover:bg-violet-50 dark:hover:bg-violet-950/40 transition-colors">Lanjutkan Belajar</Link>
             </div>
           </div>
         )}

@@ -114,15 +114,15 @@ export default function MateriAjarPage() {
 
   return (
     <div>
-        <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div className="mb-5 flex flex-col gap-4 sm:mb-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Presentation className="text-emerald-500" size={28} />
               Bank Rencana Pembelajaran
             </h1>
             <p className="text-gray-500 mt-1">Cari Rencana Pembelajaran sesuai tema, unduh, atau buat sendiri dengan AI</p>
           </div>
-          <div className="grid w-full gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
+          <div className="grid w-full gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3 lg:w-auto lg:shrink-0">
             <button onClick={() => setShowUpload(true)}
               className="flex min-h-11 w-full items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold sm:w-auto hover:bg-emerald-700 transition-colors">
               <Upload size={16} /> Unggah Rencana Pembelajaran
