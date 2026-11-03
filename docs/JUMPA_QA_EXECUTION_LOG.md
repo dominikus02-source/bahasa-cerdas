@@ -62,3 +62,22 @@ PR dokumentasi ini tidak mengubah aplikasi. Setiap bug P0 ditindaklanjuti sebaga
 **Keputusan otomatis:** Gerbang 1 tidak memiliki bukti lulus; Fase 3–8 **tidak dijalankan**, tidak ada load test staging, merge, deploy, atau rollback. Bukan kegagalan setelah 3 siklus perbaikan; statusnya *blocked, belum diuji*, bukan PASS maupun klaim 3 kali FAIL. Perlu implementasi durable dan eksekusi 12 tes untuk melanjutkan.
 
 **Perangkat nyata:** BELUM DIUJI. **Kapasitas aman terbukti 100+/150:** BELUM TERBUKTI. **Batas produksi:** tidak diubah.
+
+
+## Fase 1–2 — eksperimen pemulihan (3 November 2026, Windows Chrome)
+
+**PR perbaikan terisolasi:** #223 (draft, basis PR #220), commit `169ccf86`. Tidak di-merge ke main atau dideploy.
+
+**Penguji:** `scripts/e2e/jumpa-checkpoint.cjs`, Chrome Playwright persistent profile, MediaRecorder video canvas sintetis 320×180, Windows `taskkill /PID ... /T /F` untuk menghentikan proses Chrome, restart dengan profil sama, pembacaan IndexedDB, ekstraksi ZIP dan `ffprobe` tiap segmen. **Bukan** pengujian UI rapat JUMPA penuh, bukan kamera/mikrofon fisik, dan bukan tes 4 skenario lengkap. Periode rekam yang disimulasikan 3,5 detik. Kriteria penguji tambahan ditetapkan sebelum uji terakhir: durasi segmen yang berhasil dipulihkan secara total minimal 3,0 detik dari 3,5 detik; kriteria utama Gerbang 1 (100% rekaman utuh pada 4 skenario ×3) tidak berubah.
+
+| Percobaan | Hasil nyata | Interpretasi |
+|---|---|---|
+| Baseline raw chunks IndexedDB, 3 kali | 0/3; `ffprobe duration=N/A`, file ended prematurely, ukuran 5182/5035/5181 byte | GAGAL: container belum finalized |
+| Segmen finalized 1,5 detik, kill+restart, 3 kali | 3/3 file segmen terbaca; durasi total setelah ZIP 2,740 / 2,729 / 2,719 detik | GAGAL kriteria durasi ≥3,0 detik |
+| Segmen finalized 0,75 detik, kill+restart, 3 kali | 3/3 arsip dipulihkan, 5 segmen per arsip; total durasi 3,343 / 3,437 / 3,405 detik; `ffprobe` dapat membaca segmen | PASS **hanya subtes pemulihan sebagian**, BUKAN Gerbang 1 |
+| TypeScript | `npm run typecheck` -> `TYPECHECK_PASS` setelah `prisma generate` | PASS untuk commit kerja lokal |
+| ESLint file tersentuh | `eslint components/jumpa/recording-checkpoint.ts ...` -> 0 error, 0 warning | PASS untuk file tersentuh |
+
+**Risiko tersisa yang memblokir Gerbang 1:** bagian terakhir rekaman yang belum difinalisasi saat kill masih dapat hilang; tes hanya canvas sintetis, belum menguji close tab, offline, end room dan recovery melalui UI lengkap ×3; mutasi penguji belum dijalankan; rekaman backup memerlukan encoder kedua dan menyimpan video lokal di IndexedDB (kuota, privasi, retensi, dan performa perlu diperiksa); archive ZIP bukan satu file video sambung. Tidak boleh menyatakan rekaman 100% utuh.
+
+**Keputusan gerbang:** **BELUM LULUS**. PR #223 tetap draft untuk iterasi dan review. Fase 3–8, merge, dan deploy **tidak dilakukan**; kapasitas produksi tidak diubah. Pekerjaan yang ada tidak memenuhi gerbang otomatis untuk maju.
