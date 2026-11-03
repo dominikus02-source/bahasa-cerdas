@@ -267,6 +267,7 @@ export default function PenilaianPage() {
       {/* Class Selector */}
       <div className="mb-5">
         <select
+          aria-label="Pilih kelas"
           value={selectedGroupId}
           onChange={e => setSelectedGroupId(e.target.value)}
           className="w-full max-w-md px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 appearance-none cursor-pointer"

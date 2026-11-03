@@ -48,7 +48,7 @@ export default function MateriDariGuruPage() {
   return (
     <div className="arena-page px-4 py-4">
       <div className="flex items-center gap-3 mb-5">
-        <Link href="/arena/tugas" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
+        <Link aria-label="Kembali ke Tugas" href="/arena/tugas" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow">
           <BookOpen className="w-5 h-5 text-white" />
         </div>

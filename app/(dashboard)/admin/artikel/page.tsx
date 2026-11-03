@@ -95,7 +95,7 @@ export default function AdminArtikelPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/admin" className="p-2 hover:bg-slate-100 dark:bg-slate-800/70 rounded-lg">
+        <Link aria-label="Kembali ke Dasbor Admin" href="/admin" className="p-2 hover:bg-slate-100 dark:bg-slate-800/70 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
         </Link>
         <div>

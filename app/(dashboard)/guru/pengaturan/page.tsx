@@ -84,7 +84,7 @@ export default function GuruPengaturanPage() {
       <div className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1.5">Nama Bank</label>
-          <select value={rekening.bank} onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))} className="w-full h-11 px-4 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-green-500 outline-none" required>
+          <select aria-label="Nama Bank" value={rekening.bank} onChange={(e) => setRekening((p) => ({ ...p, bank: e.target.value }))} className="w-full h-11 px-4 rounded-lg border border-slate-200 bg-white focus:ring-2 focus:ring-green-500 outline-none" required>
             <option value="">Pilih bank...</option>
             <option value="bca">Bank Central Asia (BCA)</option>
             <option value="mandiri">Bank Mandiri</option>

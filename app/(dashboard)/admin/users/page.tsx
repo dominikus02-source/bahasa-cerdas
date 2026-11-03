@@ -115,14 +115,14 @@ export default function AdminUsersPage() {
                 className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400" />
             </div>
 
-            <select value={roleFilter} onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
+            <select aria-label="Filter peran" value={roleFilter} onChange={e => { setRoleFilter(e.target.value); setPage(1); }}
               className="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
               <option value="">Semua Role</option>
               <option value="MURID">Murid</option>
               <option value="GURU">Guru</option>
             </select>
 
-            <select value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
+            <select aria-label="Filter status" value={statusFilter} onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
               className="px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20">
               <option value="">Semua Status</option>
               <option value="free">Free</option>

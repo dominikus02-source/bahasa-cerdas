@@ -87,6 +87,7 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
             />
           </div>
           <select
+            aria-label="Filter jenis karya"
             value={type}
             onChange={(e) => setType(e.target.value)}
             className="rounded-xl border border-bc-line px-4 py-2.5 text-sm bg-bc-surface focus:border-primary focus:outline-none"
@@ -96,6 +97,7 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
             ))}
           </select>
           <select
+            aria-label="Urutkan karya"
             value={sort}
             onChange={(e) => setSort(e.target.value)}
             className="rounded-xl border border-bc-line px-4 py-2.5 text-sm bg-bc-surface focus:border-primary focus:outline-none"

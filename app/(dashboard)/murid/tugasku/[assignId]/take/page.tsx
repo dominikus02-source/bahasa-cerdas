@@ -207,7 +207,7 @@ export default function QuizTakePage({ params }: { params: Promise<{ assignId: s
     <div className="p-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <Link href={tugasHref} className="p-2 hover:bg-slate-100 dark:bg-slate-800/70 rounded-lg">
+        <Link aria-label="Kembali ke Tugasku" href={tugasHref} className="p-2 hover:bg-slate-100 dark:bg-slate-800/70 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600 dark:text-slate-300" />
         </Link>
         <div className="text-center">

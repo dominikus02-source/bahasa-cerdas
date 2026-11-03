@@ -194,7 +194,7 @@ export default function AdminPaymentsPage() {
             className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90 w-64"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
+        <select aria-label="Filter status pembayaran" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
           <option value="">Semua Status</option>
           <option value="SUCCESS">Sukses</option>
           <option value="PENDING">Menunggu</option>
@@ -202,7 +202,7 @@ export default function AdminPaymentsPage() {
           <option value="CANCELLED">Batal</option>
           <option value="EXPIRED">Kadaluarsa</option>
         </select>
-        <select value={planFilter} onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }} className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
+        <select aria-label="Filter paket" value={planFilter} onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }} className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
           <option value="">Semua Paket</option>
           <option value="GURU_PRO_MONTHLY">Bulanan</option>
           <option value="GURU_PRO_YEARLY">Tahunan</option>
@@ -214,7 +214,7 @@ export default function AdminPaymentsPage() {
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-800/90 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabel pembayaran">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
