@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { uploadFileServer } from "@/lib/upload";
 import {
   MATERI_CONTENT_TYPE,
+  MATERI_DB_SEMUA_TIPE,
+  MATERI_DB_TYPE,
   MATERI_FOLDER_TYPES,
   MATERI_MAX_BYTES,
   MATERI_SEMUA_TIPE,
@@ -11,12 +13,21 @@ import {
   MATERI_TYPE_LABEL,
   materiExtFromName,
   materiFileTypeFromExt,
+  materiFolderTypes,
+  type MateriFileType,
 } from "@/lib/materi/file-types";
 import { isTeacherOrStudent } from "@/lib/teacher/students";
 import { awardGuruXp } from "@/lib/gamification/teacher-xp";
 
-// Folder guru: PowerPoint / Word / PDF — dikelompokkan dari fileType.
-const FOLDER_TYPES: Record<string, string[]> = MATERI_FOLDER_TYPES;
+// Folder guru: PowerPoint / Word / PDF — dikelompokkan dari fileType (nilai enum DB).
+const FOLDER_TYPES = MATERI_FOLDER_TYPES;
+
+// Angka dari query string: bukan angka / di luar batas → nilai bawaan (bukan NaN ke Prisma).
+function angkaQuery(v: string | null, bawaan: number, min: number, maks: number): number {
+  const n = Number.parseInt(v ?? "", 10);
+  if (!Number.isFinite(n)) return bawaan;
+  return Math.min(maks, Math.max(min, n));
+}
 
 // SECURITY (M2b): identitas HANYA dari sesi Supabase (cookie). supabaseId dari
 // query/formData/body TIDAK dipakai lagi — dulu siapa pun yang tahu supabaseId
@@ -80,13 +91,13 @@ const PUT_EDITABLE_FIELDS = [
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "20");
+    const page = angkaQuery(searchParams.get("page"), 1, 1, 10_000);
+    const limit = angkaQuery(searchParams.get("limit"), 20, 1, 100);
     const q = (searchParams.get("q") || "").trim();
     const grade = (searchParams.get("grade") || "").trim();
     const subject = (searchParams.get("subject") || "").trim();
     const tema = (searchParams.get("tema") || "").trim();
-    const sort = searchParams.get("sort") || "recent"; // "recent" | "popular"
+    const sort = searchParams.get("sort") === "popular" ? "popular" : "recent";
     const folder = (searchParams.get("folder") || "").trim().toUpperCase(); // "PPT" | "PDF"
 
     const auth = await resolveSessionGuru();
@@ -118,11 +129,12 @@ export async function GET(req: NextRequest) {
     if (and.length) countsWhere.AND = [...and];
 
     // Folder guru: PPT / PDF (dari fileType). Selalu filter hanya tipe ini.
-    if (folder && FOLDER_TYPES[folder]) {
-      and.push({ fileType: { in: FOLDER_TYPES[folder] } });
+    const tipeFolder = folder ? materiFolderTypes(folder) : null;
+    if (tipeFolder) {
+      and.push({ fileType: { in: tipeFolder } });
     } else {
       // Tanpa filter folder spesifik: tampilkan semua tipe materi ajar.
-      and.push({ fileType: { in: MATERI_SEMUA_TIPE } });
+      and.push({ fileType: { in: MATERI_DB_SEMUA_TIPE } });
     }
 
     const where: any = { OR: [{ isPublished: true }, { uploaderId: dbUser.id }] };
@@ -215,7 +227,7 @@ export async function POST(req: NextRequest) {
 
       fileUrl = uploadResult.url;
       fileKey = uploadResult.key;
-      fileType = materiType;
+      fileType = MATERI_DB_TYPE[materiType];
     } else {
       // Client-side pre-uploaded — use provided metadata
       fileUrl = (formData.get("fileUrl") as string | null) || null;
@@ -223,7 +235,7 @@ export async function POST(req: NextRequest) {
       fileType = (formData.get("fileType") as string | null) || null;
       const invalid = validatePreUploadedFile({ fileUrl, fileKey, fileType, authId: auth.authId, dbUserId: dbUser.id });
       if (invalid) return NextResponse.json({ error: invalid }, { status: 400 });
-      if (fileType) fileType = fileType.toUpperCase();
+      if (fileType) fileType = MATERI_DB_TYPE[fileType.toUpperCase() as MateriFileType];
     }
 
     const materi = await db.materi.create({

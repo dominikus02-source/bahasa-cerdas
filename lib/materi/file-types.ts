@@ -12,6 +12,8 @@
  * diturunkan dari ekstensi — bukan dari `File.type`.
  */
 
+import type { FileType } from "@prisma/client";
+
 export const MATERI_ALLOWED_EXTENSIONS = ["pdf", "ppt", "pptx", "doc", "docx"] as const;
 
 export type MateriExtension = (typeof MATERI_ALLOWED_EXTENSIONS)[number];
@@ -44,15 +46,42 @@ export const MATERI_CONTENT_TYPE: Record<MateriFileType, string> = {
   DOCX: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 };
 
-/** Semua nilai `Materi.fileType` yang sah — dipakai filter Prisma. */
+/** Semua tipe berkas (menurut ekstensi) yang diterima saat unggah. */
 export const MATERI_SEMUA_TIPE: MateriFileType[] = ["PDF", "PPT", "PPTX", "DOC", "DOCX"];
 
-/** Folder tampilan guru → tipe berkas di dalamnya. */
-export const MATERI_FOLDER_TYPES: Record<string, MateriFileType[]> = {
-  PPT: ["PPT", "PPTX"],
-  DOC: ["DOC", "DOCX"],
+/**
+ * Tipe berkas → nilai enum `FileType` di database.
+ *
+ * PENTING: enum `FileType` (prisma/schema.prisma, dan DB produksi) hanya punya
+ * PDF | DOCX | PPTX | XLSX | MP4 | ZIP — tidak ada PPT/DOC. Mengirim "PPT"/"DOC"
+ * ke Prisma (filter `in` atau `create`) memicu PrismaClientValidationError →
+ * daftar materi guru gagal dimuat (500). Format lama .ppt/.doc disimpan dalam
+ * keluarga yang sama (PPTX/DOCX); ekstensi aslinya tetap ada di fileKey/fileUrl.
+ * Tipe `FileType` membuat TypeScript menolak nilai di luar enum.
+ */
+export const MATERI_DB_TYPE: Record<MateriFileType, FileType> = {
+  PDF: "PDF",
+  PPT: "PPTX",
+  PPTX: "PPTX",
+  DOC: "DOCX",
+  DOCX: "DOCX",
+};
+
+/** Semua nilai `Materi.fileType` materi ajar yang sah di DB — dipakai filter Prisma. */
+export const MATERI_DB_SEMUA_TIPE: FileType[] = ["PDF", "PPTX", "DOCX"];
+
+/** Folder tampilan guru → nilai enum DB di dalamnya (dipakai filter Prisma). */
+export const MATERI_FOLDER_TYPES: Record<"PPT" | "DOC" | "PDF", FileType[]> = {
+  PPT: ["PPTX"],
+  DOC: ["DOCX"],
   PDF: ["PDF"],
 };
+
+export function materiFolderTypes(folder: string): FileType[] | null {
+  return Object.prototype.hasOwnProperty.call(MATERI_FOLDER_TYPES, folder)
+    ? MATERI_FOLDER_TYPES[folder as keyof typeof MATERI_FOLDER_TYPES]
+    : null;
+}
 
 export function materiExtFromName(name: string): MateriExtension | null {
   const ext = (name.split(".").pop() || "").trim().toLowerCase();
