@@ -58,7 +58,8 @@ export function buildRoomOptions(prefs: JumpaMediaPrefs, device: DeviceClass, ti
   const pub = publishPolicy(prefs.quality, device, tier.maxCameraHeight, tier.maxScreenHeight);
   const recv = receivePolicy(prefs.quality, device);
   return {
-    adaptiveStream: { pixelDensity: recv.pixelDensity },
+    // Visibility subscriptions below own background pausing, including recording.
+    adaptiveStream: { pixelDensity: recv.pixelDensity, pauseVideoInBackground: false },
     dynacast: true,
     disconnectOnPageLeave: true,
     videoCaptureDefaults: captureOptions(pub, prefs),

@@ -8,6 +8,9 @@ import { isOpenMeeting } from "../lib/jumpa/trial-policy";
 import { VisibleTracks, shouldReceiveTrack } from "../components/jumpa/visible-subscriptions";
 import { applyServerMediaCommand } from "../components/jumpa/server-media";
 import { encodeSignal, parseServerSignal, JUMPA_TOPICS } from "../lib/jumpa/signals";
+import { buildRoomOptions } from "../components/jumpa/media-controller";
+import { DEFAULT_MEDIA_PREFS } from "../components/jumpa/media-prefs";
+import { tierView } from "../lib/jumpa/tiers";
 import { isRecordingNotice } from "../components/jumpa/local-recording";
 import { mediaErrorMessage, withDefaultDeviceFallback } from "../components/jumpa/media-errors";
 
@@ -23,6 +26,8 @@ async function main() {
   assert.equal(isRecordingNotice(new TextEncoder().encode('{"recording":"true"}'), "HOST"), null);
   assert.equal(isRecordingNotice(new Uint8Array(257), "HOST"), null);
   assert.equal(isRecordingNotice(new TextEncoder().encode('{"recording":false}'), "HOST"), false);
+  const options = buildRoomOptions(DEFAULT_MEDIA_PREFS, { mobile: false, ios: false, android: false, lowEnd: false }, tierView({ tier: "FREE", kind: "GURU", maxParticipants: 30, maxDurationMin: 45, viewerIsGuruCreator: true }));
+  assert.equal(typeof options.adaptiveStream === "object" && options.adaptiveStream.pauseVideoInBackground, false);
   const now = new Date("2026-11-02T14:00:00Z");
   const actors: JumpaActor[] = ["GURU", "MURID", "UMUM"].map(role => ({ role: role as JumpaActor["role"], isFounder: false, isJunior: false, umumEnabled: true }));
   const room = { kind: "GURU" as const, mode: "MEETING" as const, openMeeting: true, status: "LIVE" as const, isLocked: false, startedAt: now, maxDurationMin: 120, maxParticipants: 30 };
