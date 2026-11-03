@@ -17,7 +17,7 @@
  *
  * Usage: npx tsx scripts/test-role-umum.ts
  */
-import { readFileSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { resolve } from "path";
 import Module from "module";
 
@@ -341,8 +341,9 @@ async function main() {
   // tombol kembali ke /umum. Izin ruang tetap default-deny di server (di atas).
   assert(/isUmum\(user\.role\) \? UMUM_HOME/.test(src("app/jumpa/page.tsx")) && !/ComingSoon/.test(src("app/jumpa/page.tsx")), "/jumpa untuk UMUM menampilkan beranda JUMPA (tanpa status pengembangan), kembali ke /umum");
   assert(/isUmum\(user\.role\)/.test(src("app/main-bersama/page.tsx")), "/main-bersama untuk UMUM menampilkan status pengembangan");
-  const aku = code("app/umum/aku-sastrawan/page.tsx");
-  assert(/ComingSoon/.test(aku) && !/\/murid\/katastra/.test(aku), "/umum/aku-sastrawan coming-soon, tanpa tautan ke /murid/katastra");
+  const aku = code("app/umum/aku-sastrawan/route.ts");
+  assert(/status: 307/.test(aku) && /Location: AKU_SASTRAWAN_HREF/.test(aku) && !existsSync(resolve(process.cwd(), "app/umum/aku-sastrawan/page.tsx")) && !/ComingSoon/.test(aku) && !/\/murid\/katastra/.test(aku), "/umum/aku-sastrawan meneruskan ke halaman asli AKU SASTRAWAN (bukan 'segera hadir'), tanpa tautan ke /murid/katastra");
+  assert(/AKU_SASTRAWAN_HREF = "\/aku-sastrawan"/.test(src("lib/umum/products.ts")), "kartu AKU SASTRAWAN dasbor UMUM → /aku-sastrawan");
   assert(/Sedang dalam pengembangan/.test(src("components/umum/ComingSoon.tsx")), "ComingSoon menampilkan 'Sedang dalam pengembangan'");
 
   // ═══ 10. Toko Karya (pembelian karya) tidak diblokir peran ═══

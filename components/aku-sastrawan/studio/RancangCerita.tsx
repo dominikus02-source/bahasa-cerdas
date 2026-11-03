@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, BookOpen, Feather, LoaderCircle, Sparkles } from
 import { BATAS_PETA, type PetaCerita } from "@/lib/aku-sastrawan/peta-cerita";
 import { IsianAlur, IsianGenre, IsianLatar, IsianSudut, IsianTeks, IsianTokoh } from "./PetaFields";
 import { tanyaNara, type HasilNara } from "./nara";
+import { NaraMarkdown } from "./NaraMarkdown";
 
 export type JenisKarya = "CERPEN" | "NOVEL";
 
@@ -136,8 +137,8 @@ export function RancangCerita({
                 {ideSibuk ? "NARA sedang berpikir…" : "Minta ide ke NARA"}
               </button>
               {hasilIde && (
-                <div className={`mt-4 animate-fade-in rounded-2xl border p-4 text-sm leading-7 ${hasilIde.ok ? "border-border bg-muted/40" : "border-bc-warning/30 bg-bc-warning-soft text-bc-text"}`} role="status">
-                  {hasilIde.ok ? <p className="whitespace-pre-wrap">{hasilIde.teks}</p> : <p>{hasilIde.pesan}</p>}
+                <div data-testid="nara-ide" className={`mt-4 animate-fade-in rounded-2xl border p-4 text-sm leading-7 ${hasilIde.ok ? "border-border bg-muted/40" : "border-bc-warning/30 bg-bc-warning-soft text-bc-text"}`} role="status">
+                  {hasilIde.ok ? <NaraMarkdown teks={hasilIde.teks} /> : <p>{hasilIde.pesan}</p>}
                   {hasilIde.ok && <p className="mt-2 text-xs text-muted-foreground">Ide hanya usulan — pakai yang cocok dengan suaramu.</p>}
                 </div>
               )}

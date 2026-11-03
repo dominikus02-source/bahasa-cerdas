@@ -12,8 +12,8 @@ import { canUseFounderDashboardSwitcher } from "@/lib/auth/founder-access";
  * - UMUM → dikembalikan untuk dirender
  *
  * Dipanggil per halaman (bukan di layout) karena layout tidak dirender ulang
- * saat navigasi klien, dan supaya /umum/aku-sastrawan tetap halaman publik
- * "Sedang dalam pengembangan". Tujuan redirect tidak pernah kembali ke /umum
+ * saat navigasi klien (/umum/aku-sastrawan hanya meneruskan ke /aku-sastrawan,
+ * yang menggerbangi sendiri). Tujuan redirect tidak pernah kembali ke /umum
  * untuk peran non-UMUM → tanpa loop.
  *
  * Catatan flag: ENABLE_ROLE_UMUM hanya mengatur PENDAFTARAN UMUM baru. Akun

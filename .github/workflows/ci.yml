@@ -108,6 +108,10 @@ jobs:
         run: npm run test:aku-sastrawan-bahasa
       - name: AKU SASTRAWAN Peta Cerita (rancangan aman di kolom sinopsis)
         run: npm run test:aku-sastrawan-peta
+      - name: AKU SASTRAWAN ekspor (.txt, PDF, Word — milik sendiri, tetap ada setelah Premium berakhir)
+        run: npm run test:aku-sastrawan-ekspor
+      - name: AKU SASTRAWAN Pendamping (Markdown aman, Bahasa Indonesia penuh)
+        run: npm run test:aku-sastrawan-pendamping
 
       - name: Approved BahasaCerdas icons guard
         run: node scripts/test-bc-approved-icons.cjs

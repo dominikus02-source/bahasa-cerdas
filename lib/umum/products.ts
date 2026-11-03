@@ -7,10 +7,9 @@
 import { JUMPA_ENABLED } from "@/lib/features";
 
 /**
- * AKU SASTRAWAN — sengaja menunjuk ke halaman status "Sedang dalam
- * pengembangan" milik dasbor UMUM. Halaman penuh sedang dibangun terpisah
- * (PR #183, rute /aku-sastrawan). Setelah #183 rilis, cukup ubah konstanta
- * ini (mis. ke "/aku-sastrawan") — tidak ada tempat lain yang perlu diubah.
+ * AKU SASTRAWAN — halaman asli /aku-sastrawan (wajib login; gerbang Premium
+ * dan mode baca/unduh setelah Premium berakhir diperiksa di server).
+ * /umum/aku-sastrawan hanya meneruskan ke konstanta ini.
  */
 export const AKU_SASTRAWAN_HREF = "/aku-sastrawan";
 
@@ -104,7 +103,7 @@ export const UMUM_PRODUCTS: readonly UmumProduct[] = [
     key: "AKU_SASTRAWAN",
     name: "AKU SASTRAWAN",
     label: "Ruang kreatif",
-    description: "Kurikulum cerpen & novel, Writing Studio, dan AI Writing Coach.",
+    description: "Kurikulum cerpen & novel, Studio Menulis, dan Pendamping Menulis AI.",
     href: AKU_SASTRAWAN_HREF,
   },
 ];

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, Compass, Download, Layers3, LoaderCircle, Lock, Maximize2, Minimize2, MoreHorizontal, Plus, Sparkles, Trash2, CloudOff } from "lucide-react";
+import { ArrowLeft, Check, Compass, Download, FileText, FileType2, Layers3, LoaderCircle, Lock, Maximize2, Minimize2, MoreHorizontal, Plus, Sparkles, Trash2, CloudOff } from "lucide-react";
 import { KonfirmasiHapusDialog, KATA_KONFIRMASI_HAPUS } from "@/components/aku-sastrawan/KonfirmasiHapusDialog";
 import { useAutosave, bacaCadangan, hapusCadangan } from "@/components/aku-sastrawan/studio/useAutosave";
 import { Laci } from "@/components/aku-sastrawan/studio/Laci";
@@ -11,6 +11,7 @@ import { NaraPanel } from "@/components/aku-sastrawan/studio/NaraPanel";
 import { PetaCeritaPanel } from "@/components/aku-sastrawan/studio/PetaCeritaPanel";
 import { RancangCerita, type JenisKarya } from "@/components/aku-sastrawan/studio/RancangCerita";
 import { bacaSinopsis, hitungKata, petaKosong, petaSebagaiTeks, tulisSinopsis, type PetaCerita } from "@/lib/aku-sastrawan/peta-cerita";
+import { FORMAT_EKSPOR, tautanEkspor } from "@/lib/aku-sastrawan/ekspor/format";
 
 type Project = {
   id: string;
@@ -318,11 +319,14 @@ export default function StudioMenulisPage() {
               {menu && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setMenu(false)} aria-hidden />
-                  <div className="absolute right-0 z-20 mt-1 w-56 animate-fade-in overflow-hidden rounded-2xl border border-border bg-card p-1.5 text-sm shadow-xl" role="menu">
+                  <div className="absolute right-0 z-20 mt-1 w-60 animate-fade-in overflow-hidden rounded-2xl border border-border bg-card p-1.5 text-sm shadow-xl" role="menu">
                     {canWrite && <button role="menuitem" onClick={() => { setMenu(false); setRancang({ terbuka: true, langkah: 1 }); }} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left hover:bg-muted"><Compass size={15} /> Rancang Cerita</button>}
                     <button role="menuitem" onClick={() => { setMenu(false); setLaci(null); setFokus(true); }} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left hover:bg-muted sm:hidden"><Maximize2 size={15} /> Mode fokus</button>
                     {active.genre === "NOVEL" && <button role="menuitem" onClick={() => { setMenu(false); void amankan().then((ok) => { if (ok) router.push(`/aku-sastrawan/novel/${active.id}`); }); }} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left hover:bg-muted"><Layers3 size={15} /> Kelola bab</button>}
-                    <a role="menuitem" href={`/api/aku-sastrawan/projects/${active.id}/export`} onClick={() => { setMenu(false); void simpan.simpanSekarang(); }} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 hover:bg-muted"><Download size={15} /> Unduh .txt</a>
+                    <div className="my-1 h-px bg-border" />
+                    {FORMAT_EKSPOR.map((f) => { const url = tautanEkspor(active.id, f.format); return (
+                      <a key={f.format} role="menuitem" href={url} download data-testid={`unduh-${f.format}`} onClick={(e) => { e.preventDefault(); setMenu(false); void simpan.simpanSekarang().finally(() => { window.location.href = url; }); }} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 hover:bg-muted">{f.format === "pdf" ? <FileText size={15} /> : f.format === "docx" ? <FileType2 size={15} /> : <Download size={15} />}<span className="flex flex-col leading-tight"><span>{f.label}</span><span className="text-xs text-muted-foreground">{f.ket}</span></span></a>
+                    ); })}
                     {canWrite && <><div className="my-1 h-px bg-border" /><button role="menuitem" onClick={() => { setMenu(false); setHapusGalat(""); setHapusTerbuka(true); }} className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-destructive hover:bg-destructive/10"><Trash2 size={15} /> Hapus karya</button></>}
                   </div>
                 </>
@@ -388,7 +392,7 @@ export default function StudioMenulisPage() {
       <KonfirmasiHapusDialog
         open={hapusTerbuka}
         judul="Hapus karya ini secara permanen?"
-        deskripsi={`“${judul.trim() || JUDUL_KOSONG}” beserta seluruh isinya${active.genre === "NOVEL" ? " dan semua babnya" : ""} akan dihapus dan tidak dapat dipulihkan. Unduh .txt dulu bila ingin menyimpan salinan.`}
+        deskripsi={`“${judul.trim() || JUDUL_KOSONG}” beserta seluruh isinya${active.genre === "NOVEL" ? " dan semua babnya" : ""} akan dihapus dan tidak dapat dipulihkan. Unduh PDF, Word, atau .txt dulu bila ingin menyimpan salinan.`}
         peringatan={simpan.belumTersimpan ? "Ada perubahan yang belum tersimpan di karya ini." : undefined}
         sibuk={hapusSibuk}
         galat={hapusGalat}

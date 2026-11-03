@@ -50,7 +50,7 @@ const publicPaths = [
 // tautan undangan kembali ke ruang yang sama setelah login.
 // /umum (dasbor UMUM) menggerbangi sendiri per halaman lewat requireUmumPage()
 // dengan ?next= agar pengunjung kembali ke dasbornya setelah login;
-// /umum/aku-sastrawan sengaja tetap publik.
+// /umum/aku-sastrawan hanya meneruskan ke /aku-sastrawan (yang mewajibkan login).
 const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/", "/umum"];
 
 // Dashboard routes that require onboarding

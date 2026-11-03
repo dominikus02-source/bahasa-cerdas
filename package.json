@@ -123,6 +123,8 @@
     "test:no-ai-provider-bundle": "npx tsx scripts/test-no-ai-provider-bundle.ts",
     "test:route-slugs": "npx tsx scripts/test-route-slugs.ts",
     "test:aku-sastrawan-bahasa": "npx tsx scripts/test-aku-sastrawan-bahasa.ts",
+    "test:aku-sastrawan-ekspor": "npx tsx scripts/test-aku-sastrawan-ekspor.ts",
+    "test:aku-sastrawan-pendamping": "npx tsx scripts/test-aku-sastrawan-pendamping.tsx",
     "test:aku-sastrawan-peta": "npx tsx scripts/test-aku-sastrawan-peta.ts",
     "test:founder-health": "npx tsx scripts/test-founder-health.ts",
     "test:investor-growth": "npx tsx scripts/test-investor-growth.ts",
