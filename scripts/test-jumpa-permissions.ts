@@ -209,7 +209,7 @@ const ui = ["components/jumpa/JumpaLobby.tsx", "components/jumpa/JumpaRoomView.t
 check("UI JUMPA tanpa bg-white/text-slate-900/hex", !/bg-white|text-slate-900|bg-\[#/.test(ui))
 check("Label kontrol Bahasa Indonesia", ["Mikrofon", "Kamera", "Lainnya", "Keluar", "Gabung"].every((l) => ui.includes(l)))
 const compose = read("ops/vps/docker-compose.yml")
-check("Compose: livekit profile jumpa, 2 CPU / 1.5 GB", compose.includes('profiles: ["jumpa"]') && compose.includes("cpus: 2.0\n    mem_limit: 1536m"))
+check("Compose: livekit profile jumpa, 2 CPU / 1.5 GB", compose.includes('profiles: ["jumpa"]') && compose.replace(/\r\n/g, "\n").includes("cpus: 2.0\n    mem_limit: 1536m"))
 check("Compose: 7880 hanya localhost", compose.includes('"127.0.0.1:7880:7880"'))
 check("Caddy situs JUMPA opsional via import glob", read("ops/vps/Caddyfile").includes("import /etc/caddy/conf.d/*.caddy") && read("ops/vps/caddy/jumpa.caddy").includes("jumpa.bahasacerdas.com"))
 

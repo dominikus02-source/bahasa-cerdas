@@ -124,7 +124,8 @@ export function validateSchedule(input: ScheduleInput): ScheduleCheck<{ startsAt
   if (!Number.isFinite(d) || d < JUMPA_SCHEDULE_MIN_DURATION || d % 5 !== 0) return no("BAD_DURATION", "Durasi tidak valid.");
   const max = limitsFor(input.tier, input.kind).maxDurationMin;
   if (d > max) return no("DURATION_OVER_LIMIT", `Durasi paketmu maksimal ${max} menit.`);
-  if (!input.hasAudience) return no("NO_AUDIENCE", "Pilih kelas, komunitas, atau orang yang diundang.");
+  // Ruang guru dapat dijadwalkan tanpa penerima; tautan dibagikan setelah dibuat.
+  if (input.kind === "KELAS" && !input.hasAudience) return no("NO_AUDIENCE", "Pilih kelas untuk jadwal kelas.");
   return { ok: true, startsAt, durationMin: d };
 }
 

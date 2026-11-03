@@ -96,7 +96,7 @@ for (const lbl of ['aria-label="Topik ruang"']) {
 }
 check("Kode ruang pakai maxLength", home.includes("maxLength={200}"))
 const form = read(`${dir}/ScheduleForm.tsx`)
-check("Form jadwal: judul & cari orang pakai maxLength", form.includes("maxLength={80}") && form.includes("maxLength={60}"))
+check("Form jadwal sederhana: judul dibatasi dan pencarian orang dihapus", form.includes("maxLength={80}") && !form.includes("maxLength={60}") && !form.includes("communityId"))
 
 console.log("\n3. Safari iOS: input ≥16px di layar sentuh")
 const css = read(`${dir}/jumpa.css`)
