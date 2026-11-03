@@ -1,4 +1,6 @@
 import { RoomEvent, Track, type Room } from "livekit-client";
+import { appendRecordingChunk, completeRecordingCheckpoint, createRecordingCheckpoint } from "./recording-checkpoint";
+import { startRecordingSafetySegments } from "./recording-safety";
 
 export const RECORDING_TOPIC = "jumpa.recording";
 export const MAX_RECORDING_BYTES = 250 * 1024 * 1024;
@@ -20,7 +22,7 @@ export function downloadCapture(blob: Blob, prefix: string): void {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  const extension = blob.type.includes("png") ? "png" : blob.type.includes("mp4") ? "mp4" : "webm";
+  const extension = blob.type.includes("zip") ? "zip" : blob.type.includes("png") ? "png" : blob.type.includes("mp4") ? "mp4" : "webm";
   link.download = `${prefix}-${new Date().toISOString().replace(/[:.]/g, "-")}.${extension}`;
   document.body.appendChild(link);
   link.click();
@@ -44,10 +46,12 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
   let destination: MediaStreamAudioDestinationNode | undefined;
   let recorder: MediaRecorder | undefined;
   let silence: ConstantSourceNode | undefined;
+  let safety: { stop: () => void } | undefined;
   let stopped = false;
   const sources = new Map<string, MediaStreamAudioSourceNode>();
   const events = [RoomEvent.TrackSubscribed, RoomEvent.TrackUnsubscribed, RoomEvent.TrackMuted, RoomEvent.TrackUnmuted, RoomEvent.LocalTrackPublished, RoomEvent.LocalTrackUnpublished, RoomEvent.ParticipantDisconnected];
   const cleanup = () => {
+    safety?.stop();
     for (const event of events) room.off(event, syncAudio);
     signal.removeEventListener("abort", stop);
     for (const source of sources.values()) source.disconnect();
@@ -102,22 +106,31 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     const mimeType = recordingMimeType();
     recorder = new MediaRecorder(stream, { ...(mimeType ? { mimeType } : {}), videoBitsPerSecond: 1_500_000, audioBitsPerSecond: 96_000 });
     const chunks: Blob[] = [];
+    const checkpointId = await createRecordingCheckpoint(recorder.mimeType || mimeType || "video/webm");
+    let writes = Promise.resolve();
+    let index = 0;
     let bytes = 0;
     recorder.ondataavailable = ({ data }) => {
       if (!data.size) return;
       chunks.push(data);
+      const currentIndex = index++;
+      writes = writes.then(() => appendRecordingChunk(checkpointId, currentIndex, data));
       bytes += data.size;
       if (bytes >= MAX_RECORDING_BYTES && recorder?.state === "recording") { callbacks.onLimit(); stop(); }
     };
     recorder.onerror = () => { callbacks.onError(); stop(); };
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: recorder?.mimeType || mimeType || "video/webm" });
-      try { if (blob.size) callbacks.onComplete(blob); } catch { callbacks.onError(); } finally { finish(); }
+      void writes.then(async () => {
+        await completeRecordingCheckpoint(checkpointId, blob.type);
+        if (blob.size) callbacks.onComplete(blob);
+      }).catch(() => callbacks.onError()).finally(finish);
     };
     display.getVideoTracks().forEach((track) => { track.onended = stop; });
     signal.addEventListener("abort", stop, { once: true });
     if (signal.aborted || display.getVideoTracks().every((track) => track.readyState === "ended")) throw new DOMException("Cancelled", "AbortError");
     recorder.start(1000);
+    safety = startRecordingSafetySegments(stream, () => { callbacks.onError(); stop(); });
     return { stop, isActive: () => recorder?.state === "recording" };
   } catch (error) { finish(); throw error; }
 }

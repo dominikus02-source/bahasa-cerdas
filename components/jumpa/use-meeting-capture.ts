@@ -8,6 +8,7 @@ import { drawCaptureLabels, normalizeCaptureColors } from "./capture-colors";
 import { useMedia } from "./media-controller";
 import { useJumpa } from "./room-controller";
 import { downloadCapture, isRecordingNotice, RECORDING_TOPIC, startLocalRecording } from "./local-recording";
+import { listRecordingCheckpoints, restoreRecordingCheckpoint, restoreLatestSafetyArchive } from "./recording-checkpoint";
 
 export function useMeetingCapture(canRecord: boolean) {
   const { setRecordingActive } = useMedia();
@@ -15,6 +16,8 @@ export function useMeetingCapture(canRecord: boolean) {
   allowed.current = canRecord;
   const room = useRoomContext();
   const { toast } = useJumpa();
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
   const [recording, setRecording] = useState(false);
   const [busy, setBusy] = useState(false);
   const [downloadReady, setDownloadReady] = useState(false);
@@ -33,6 +36,16 @@ export function useMeetingCapture(canRecord: boolean) {
 
   useEffect(() => {
     mounted.current = true;
+    void (async () => {
+      const archive = await restoreLatestSafetyArchive();
+      const sessions = await listRecordingCheckpoints();
+      const last = sessions.sort((a, b) => b.createdAt - a.createdAt)[0];
+      const blob = archive ?? (last ? await restoreRecordingCheckpoint(last.id) : null);
+      if (!blob || !mounted.current || pendingFile.current) return;
+      pendingFile.current = blob;
+      setDownloadReady(true);
+      toastRef.current(archive ? "Bagian rekaman yang terselamatkan siap diunduh sebagai ZIP." : "Rekaman sebelumnya ditemukan. Unduh dan periksa hasilnya.", "warn");
+    })().catch(() => undefined);
     setSupported(Boolean(typeof navigator.mediaDevices?.getDisplayMedia === "function" && typeof MediaRecorder !== "undefined" && typeof AudioContext !== "undefined"));
     return () => { mounted.current = false; abort.current?.abort(); session.current?.stop(); };
   }, []);
@@ -94,7 +107,7 @@ export function useMeetingCapture(canRecord: boolean) {
     abort.current = controller;
     try {
       const next = await startLocalRecording(room, controller.signal, {
-        onComplete: (blob) => { if (mounted.current) { pendingFile.current = blob; setDownloadReady(true); toast("Rekaman siap diunduh.", "ok"); } else downloadCapture(blob, "JUMPA-rekaman"); },
+        onComplete: (blob) => { if (mounted.current) { pendingFile.current = blob; setDownloadReady(true); toast("Rekaman siap diunduh.", "ok"); } },
         onLimit: () => { if (mounted.current) toast("Batas 250 MB tercapai. Rekaman siap diunduh.", "warn"); },
         onError: () => { if (mounted.current) toast("Rekaman terhenti. Unduh bagian yang tersedia.", "warn"); },
         onStopped: () => {
