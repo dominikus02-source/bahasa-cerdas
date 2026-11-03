@@ -1,4 +1,5 @@
 /** Browser-local recording checkpoint. No network upload and no secrets. */
+import { assertRecordingStorageAvailable } from "./recording-quota";
 const DB_NAME = "jumpa-recording-checkpoints";
 const STORE = "chunks";
 const META = "sessions";
@@ -44,6 +45,7 @@ export async function createRecordingCheckpoint(mimeType: string, groupId?: stri
 }
 
 export async function appendRecordingChunk(id: string, index: number, chunk: Blob): Promise<void> {
+  await assertRecordingStorageAvailable(chunk.size);
   await transact(STORE, "readwrite", (store) => store.put(chunk, [id, String(index).padStart(10, "0")].join(":")));
 }
 
@@ -104,4 +106,41 @@ export async function restoreLatestSafetyArchive(): Promise<Blob | null> {
   }
   zip.file("PETUNJUK.txt", "Rekaman pemulihan JUMPA. Setiap bagian merupakan video tersendiri yang sudah difinalisasi. Bagian yang sedang direkam saat browser berhenti paksa mungkin tidak tersimpan.\n");
   return zip.generateAsync({ type: "blob", compression: "STORE" });
+}
+
+/** Explicit user-requested cleanup; never delete recordings without a click. */
+export async function deleteRecordingGroup(groupId: string): Promise<number> {
+  if (!groupId) throw new Error("RECORDING_GROUP_REQUIRED");
+  const sessions = await listRecordingCheckpoints();
+  const matches = sessions.filter((session) => session.groupId === groupId);
+  for (const session of matches) await deleteRecordingCheckpoint(session.id);
+  return matches.length;
+}
+
+export interface RecordingRecoverySummary {
+  groupId: string;
+  createdAt: number;
+  segments: number;
+  completed: boolean;
+}
+
+export async function listRecoverableRecordingGroups(): Promise<RecordingRecoverySummary[]> {
+  const sessions = await listRecordingCheckpoints();
+  const groups = new Map<string, RecordingRecoverySummary>();
+  for (const session of sessions) {
+    if (!session.groupId) continue;
+    const current = groups.get(session.groupId);
+    if (!current) groups.set(session.groupId, {
+      groupId: session.groupId,
+      createdAt: session.createdAt,
+      segments: session.completed ? 1 : 0,
+      completed: session.completed,
+    });
+    else {
+      current.createdAt = Math.min(current.createdAt, session.createdAt);
+      current.segments += Number(session.completed);
+      current.completed &&= session.completed;
+    }
+  }
+  return [...groups.values()].sort((a, b) => b.createdAt - a.createdAt);
 }
