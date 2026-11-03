@@ -4367,11 +4367,36 @@ model JumpaRoom {
   messages     JumpaChatMessage[]
   reports      JumpaReport[]
   notices      JumpaNotice[]
+  recordings   JumpaRecording[]
 
   @@index([createdById])
   @@index([groupId])
   @@index([status])
   @@index([status, scheduledAt])
+}
+
+/// Metadata rekaman privat; tidak pernah menyimpan kredensial S3 atau URL publik.
+/// Status: STARTING | RECORDING | STOPPING | READY | FAILED.
+model JumpaRecording {
+  id          String    @id @default(cuid())
+  roomId      String
+  startedById String
+  stoppedById String?
+  egressId    String?   @unique
+  objectKey   String?   @unique
+  status      String    @default("STARTING")
+  errorCode   String?
+  sizeBytes   BigInt?
+  startedAt   DateTime  @default(now())
+  stoppedAt   DateTime?
+  readyAt     DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  room JumpaRoom @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@index([roomId, createdAt])
+  @@index([status, createdAt])
 }
 
 model JumpaParticipant {

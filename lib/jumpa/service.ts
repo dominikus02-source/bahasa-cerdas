@@ -378,6 +378,8 @@ export interface RoomView {
   endsAt: string | null;
   /** Fase 3: paket ruang (dari pembuat, saat dibuat). */
   tier: JumpaTier;
+  /** Rekaman membutuhkan bukti Premium eksplisit; fallback ruang lama ditolak. */
+  recordingTierVerified: boolean;
   /** Alur jadwal: jam mulai (ISO) bila terjadwal. */
   scheduledAt: string | null;
   endReason: string | null;
@@ -511,6 +513,7 @@ export async function loadRoomContext(
       maxDurationMin: room.maxDurationMin,
       endsAt: endsAt ? endsAt.toISOString() : null,
       tier: tierFromCreatedMetadata(created?.metadata),
+      recordingTierVerified: Boolean(created?.metadata && typeof created.metadata === "object" && !Array.isArray(created.metadata) && (created.metadata as { tier?: unknown }).tier === "PREMIUM"),
       scheduledAt: room.scheduledAt ? room.scheduledAt.toISOString() : null,
       endReason: room.endReason,
       groupId: room.groupId,
