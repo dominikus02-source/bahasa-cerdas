@@ -123,7 +123,7 @@ export default function PageNavbar() {
                 className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 focus-ring ${
                   pathname === link.href || pathname.startsWith(link.href + "/")
                     ? "text-primary bg-primary-light/50"
-                    : "text-zinc-600 hover:text-primary hover:bg-primary-light/50"
+                    : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-primary-light/50"
                 }`}
               >
                 {link.label}

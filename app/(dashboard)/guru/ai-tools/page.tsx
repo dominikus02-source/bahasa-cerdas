@@ -68,7 +68,7 @@ export default async function AIToolsPage({
             </a>
             <a
               href="/guru/ai-tools?agent=feedback"
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-pink-50 text-pink-600 hover:bg-pink-100 border border-pink-100 transition-all"
+              className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-full bg-pink-50 text-pink-700 hover:bg-pink-100 border border-pink-100 transition-all"
             >
               Feedback Siswa
             </a>

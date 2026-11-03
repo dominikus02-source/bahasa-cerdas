@@ -58,7 +58,7 @@ export default function PageFooter() {
               </div>
               <div>
                 <span className="text-xl font-bold text-white">BahasaCerdas</span>
-                <p className="text-xs text-zinc-500">Ekosistem Belajar Bahasa Indonesia</p>
+                <p className="text-xs text-zinc-400">Ekosistem Belajar Bahasa Indonesia</p>
               </div>
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed mb-5 max-w-sm">
@@ -112,15 +112,15 @@ export default function PageFooter() {
 
       <div className="border-t border-zinc-800">
         <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-zinc-500">
+          <p className="text-xs text-zinc-400">
             &copy; {new Date().getFullYear()} BahasaCerdas. Ekosistem Belajar Bahasa Indonesia.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-600">
-            <Link href="/kebijakan-privasi" className="hover:text-zinc-400 transition-colors focus-ring rounded">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-400">
+            <Link href="/kebijakan-privasi" className="hover:text-zinc-200 transition-colors focus-ring rounded">
               Privasi
             </Link>
             <span aria-hidden="true">&bull;</span>
-            <Link href="/syarat-ketentuan" className="hover:text-zinc-400 transition-colors focus-ring rounded">
+            <Link href="/syarat-ketentuan" className="hover:text-zinc-200 transition-colors focus-ring rounded">
               Ketentuan
             </Link>
             <span aria-hidden="true">&bull;</span>

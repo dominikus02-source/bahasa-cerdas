@@ -233,7 +233,7 @@ export default function ArenaTulisPage() {
                 type="button"
                 onClick={() => setCoverMode(mode)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  coverMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
+                  coverMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300 hover:bg-gray-200"
                 }`}
               >
                 {mode === "upload" ? "Upload" : "Pakai Link"}
@@ -322,7 +322,7 @@ export default function ArenaTulisPage() {
                     type="button"
                     onClick={() => setPhotoMode(mode)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                      photoMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-500 hover:bg-gray-200"
+                      photoMode === mode ? "bg-violet-600 text-white" : "bg-gray-100 dark:bg-slate-800/80 text-gray-600 dark:text-slate-300 hover:bg-gray-200"
                     }`}
                   >
                     {mode === "upload" ? "Upload" : "Pakai Link"}

@@ -19,11 +19,11 @@
   --clr-border-strong: #d4d7e0;
   --clr-text: #16181d;
   --clr-text-2: #5b6270;
-  --clr-text-3: #64748b;
+  --clr-text-3: #5e6a7d;   /* P1 kontras: ≥4.5:1 di surface-2/latar abu (dulu #64748b ≈4.4) */
   --clr-accent: #059669;
   --clr-accent-strong: #047857;
   --clr-accent-soft: #ecfdf5;
-  --clr-success: #059669;
+  --clr-success: #047857;  /* P1 kontras: teks sukses di putih/soft ≥5:1 */
   --clr-success-soft: #ecfdf5;
   --clr-warning: #d97706;
   --clr-warning-strong: #b45309;
@@ -65,6 +65,7 @@
   --clr-info-soft: #15233f;
 
   --clr-on-brand: var(--clr-bg);         /* gelap: ikon/teks gelap di atas gradien terang */
+  --clr-primary-text: #f87171;           /* gelap: text-primary (merah merek) agar terbaca di latar gelap */
   --clr-focus: var(--clr-accent);
   --clr-scrim: color-mix(in srgb, #000000 62%, transparent);
 }
@@ -179,7 +180,7 @@
   --clr-accent: #2563eb;
   --clr-accent-strong: #1d4ed8;
   --clr-accent-soft: #eff6ff;
-  --clr-info: #0284c7;
+  --clr-info: #0369a1;   /* P1 kontras: teks/tombol biru guru ≥5.5:1 (dulu #0284c7 ≈3.9) */
   --clr-info-soft: #f0f9ff;
   --clr-aud: #2563eb;
   --clr-aud-strong: #1d4ed8;
@@ -294,6 +295,13 @@
   --bc-media-cta-hover: #ffffff;
   --bc-media-line: color-mix(in srgb, #60a5fa 22%, transparent);
   --bc-media-dim: color-mix(in srgb, #020617 26%, transparent);
+}
+
+/* Arena Gim — kartu "Segera Hadir" (gelap). Dulu redup lewat opacity-70 pada
+   seluruh kartu → teks gagal kontras; kini hanya gambar yang diredupkan. */
+:root {
+  --clr-game-soon: #12101f;
+  --clr-game-line-soon: rgba(124, 58, 237, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
