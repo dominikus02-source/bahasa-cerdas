@@ -28,6 +28,7 @@ import {
 import type { JumpaTierView } from "@/lib/jumpa/tiers";
 import { publishPolicy, receivePolicy, type DeviceClass, type PublishPolicy, type ReceivePolicy } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
+import { VisibleTracks, shouldReceiveTrack, observeVisibleTrack as observeTile } from "./visible-subscriptions";
 import { useJumpa } from "./room-controller";
 
 export function captureOptions(pub: PublishPolicy, prefs: JumpaMediaPrefs): VideoCaptureOptions {
@@ -48,6 +49,7 @@ export function publishDefaults(pub: PublishPolicy): TrackPublishDefaults {
     audioPreset: pub.audio === "speech" ? AudioPresets.speech : AudioPresets.music,
     dtx: true,
     red: true,
+    stopMicTrackOnMute: true,
   };
 }
 
@@ -79,6 +81,7 @@ interface MediaCtl {
   degraded: boolean;
   quality: ConnectionQuality;
   tier: JumpaTierView;
+  observeVisibleTrack: (sid: string, element: HTMLElement) => () => void;
 }
 
 const MediaCtx = createContext<MediaCtl | null>(null);
@@ -96,29 +99,18 @@ export function useMediaOptional(): MediaCtl | null {
 
 const REMOTE_Q = { low: VideoQuality.LOW, medium: VideoQuality.MEDIUM } as const;
 
-function applyRemote(pub: RemoteTrackPublication, audioOnly: boolean, q: ReceivePolicy["remoteQuality"]) {
-  if (pub.kind !== Track.Kind.Video) return;
-  if (pub.source === Track.Source.ScreenShare) {
-    if (!pub.isSubscribed) pub.setSubscribed(true);
-    return;
-  }
-  if (audioOnly) {
-    if (pub.isSubscribed) pub.setSubscribed(false);
-    return;
-  }
-  if (!pub.isSubscribed) pub.setSubscribed(true);
-  pub.setVideoQuality(q ? REMOTE_Q[q] : VideoQuality.HIGH);
-}
 
-async function republishCamera(room: Room, prefs: JumpaMediaPrefs, pub: PublishPolicy) {
+async function adjustCameraQuality(room: Room, prefs: JumpaMediaPrefs, pub: PublishPolicy) {
   // Opsi ruang dipakai bersama LocalParticipant (objek yang sama).
   Object.assign(room.options.publishDefaults ?? {}, publishDefaults(pub));
   Object.assign(room.options.videoCaptureDefaults ?? {}, captureOptions(pub, prefs));
   const lp = room.localParticipant;
-  const wasOn = lp.isCameraEnabled;
   const cam = lp.getTrackPublication(Track.Source.Camera);
-  if (cam?.track) await lp.unpublishTrack(cam.track, true);
-  if (wasOn) await lp.setCameraEnabled(true);
+  // Keep the publication and its mute state: quality changes must never
+  // republish a camera that the participant has just switched off.
+  if (lp.isCameraEnabled && cam?.track && "restartTrack" in cam.track) {
+    await cam.track.restartTrack(captureOptions(pub, prefs));
+  }
 }
 
 export function MediaProvider({ initial, device, tier, children }: { initial: JumpaMediaPrefs; device: DeviceClass; tier: JumpaTierView; children: ReactNode }) {
@@ -127,9 +119,11 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
   const [prefs, setPrefs] = useState(initial);
   const prefsRef = useRef(prefs);
   prefsRef.current = prefs;
-  const cameraBeforeAudioOnly = useRef(false);
   const { quality } = useConnectionQualityIndicator({ participant: room.localParticipant });
   const [degraded, setDegraded] = useState(false);
+  const refreshSubscriptions = useRef<() => void>(() => undefined);
+  const [visibleTracks] = useState(() => new VisibleTracks(() => refreshSubscriptions.current()));
+  const observeVisibleTrack = useCallback((sid: string, element: HTMLElement) => observeTile(visibleTracks, sid, element), [visibleTracks]);
 
   // Koneksi lemah di mode Otomatis → turunkan kualitas terima sementara.
   useEffect(() => {
@@ -166,28 +160,44 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
     if (prefs.quality !== "auto") return;
     const effectiveQuality = degraded ? "hemat" : "auto";
     const nextPolicy = publishPolicy(effectiveQuality, device, tier.maxCameraHeight, tier.maxScreenHeight);
-    void republishCamera(room, prefs, nextPolicy).catch(() => {
+    void adjustCameraQuality(room, prefs, nextPolicy).catch(() => {
       toast("Kualitas kamera belum dapat disesuaikan. Coba matikan kamera sebentar.", "warn");
     });
   }, [degraded, prefs, room, device, tier.maxCameraHeight, tier.maxScreenHeight, toast]);
 
-  // Kebijakan langganan video peserta lain.
+  // Jangan menerima semua kamera lalu menyembunyikannya. Mulai tanpa
+  // autoSubscribe; hanya tile yang terlihat berlangganan video. Suara tetap aktif.
   useEffect(() => {
     const run = () => {
-      for (const p of room.remoteParticipants.values()) {
-        for (const pub of p.trackPublications.values()) applyRemote(pub, prefs.audioOnly, recv.remoteQuality);
+      const pageVisible = document.visibilityState !== "hidden";
+      for (const participant of room.remoteParticipants.values()) {
+        const screenVisible = [...participant.videoTrackPublications.values()].some((pub) => pub.source === Track.Source.ScreenShare && visibleTracks.has(pub.trackSid));
+        for (const pub of participant.trackPublications.values()) {
+          const wanted = shouldReceiveTrack({ kind: pub.kind, source: pub.source, visible: visibleTracks.has(pub.trackSid), screenVisible, audioOnly: prefs.audioOnly, pageVisible });
+          // isDesired juga mencakup permintaan yang masih dalam perjalanan.
+          if (pub.isDesired !== wanted) pub.setSubscribed(wanted);
+          if (wanted && pub.kind === Track.Kind.Video) pub.setVideoQuality(recv.remoteQuality ? REMOTE_Q[recv.remoteQuality] : VideoQuality.HIGH);
+        }
       }
     };
+    refreshSubscriptions.current = run;
     run();
-    const onPublished = (pub: RemoteTrackPublication) => applyRemote(pub, prefs.audioOnly, recv.remoteQuality);
-    const onSubscribed = (_t: RemoteTrack, pub: RemoteTrackPublication) => applyRemote(pub, prefs.audioOnly, recv.remoteQuality);
+    const onPublished = (_pub: RemoteTrackPublication) => run();
+    const onSubscribed = (_track: RemoteTrack, _pub: RemoteTrackPublication) => run();
     room.on(RoomEvent.TrackPublished, onPublished);
     room.on(RoomEvent.TrackSubscribed, onSubscribed);
+    room.on(RoomEvent.Connected, run);
+    room.on(RoomEvent.Reconnected, run);
+    document.addEventListener("visibilitychange", run);
     return () => {
+      refreshSubscriptions.current = () => undefined;
       room.off(RoomEvent.TrackPublished, onPublished);
       room.off(RoomEvent.TrackSubscribed, onSubscribed);
+      room.off(RoomEvent.Connected, run);
+      room.off(RoomEvent.Reconnected, run);
+      document.removeEventListener("visibilitychange", run);
     };
-  }, [room, prefs.audioOnly, recv.remoteQuality]);
+  }, [room, prefs.audioOnly, recv.remoteQuality, visibleTracks]);
 
   const update = useCallback(
     (patch: Partial<JumpaMediaPrefs>) => {
@@ -211,15 +221,12 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
           }
           if (patch.audioOnly !== undefined && patch.audioOnly !== prev.audioOnly) {
             if (next.audioOnly) {
-              cameraBeforeAudioOnly.current = lp.isCameraEnabled;
               if (lp.isCameraEnabled) await lp.setCameraEnabled(false);
               toast("Mode audio saja aktif.", "ok");
-            } else if (cameraBeforeAudioOnly.current) {
-              await lp.setCameraEnabled(true);
             }
           }
           if (patch.quality !== undefined && patch.quality !== prev.quality) {
-            await republishCamera(room, next, publishPolicy(next.quality, device, tier.maxCameraHeight, tier.maxScreenHeight));
+            await adjustCameraQuality(room, next, publishPolicy(next.quality, device, tier.maxCameraHeight, tier.maxScreenHeight));
           }
         } catch {
           toast("Gagal menerapkan pengaturan. Coba lagi.", "warn");
@@ -229,6 +236,6 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
     [room, device, tier.maxCameraHeight, tier.maxScreenHeight, toast],
   );
 
-  const value = useMemo<MediaCtl>(() => ({ prefs, update, device, recv, degraded, quality, tier }), [prefs, update, device, recv, degraded, quality, tier]);
+  const value = useMemo<MediaCtl>(() => ({ prefs, update, device, recv, degraded, quality, tier, observeVisibleTrack }), [prefs, update, device, recv, degraded, quality, tier, observeVisibleTrack]);
   return <MediaCtx.Provider value={value}>{children}</MediaCtx.Provider>;
 }

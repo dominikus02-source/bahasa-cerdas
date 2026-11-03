@@ -55,7 +55,7 @@ export default async function JumpaRoomPage({
   // judul/nama pemandu, hanya pesan penolakan. Akun sekolah boleh membuka
   // ruang UMUM (tautan/kode) — judul tampil hanya bila boleh masuk.
   const isUmumRoom = ctx.room.kind === "UMUM";
-  const crossed = isUmumRoom ? !ctx.decision.ok && ctx.effective !== "UMUM" : ctx.effective === "UMUM";
+  const crossed = !ctx.decision.ok;
   // Perlindungan murid: pengingat di lobi saat murid membuka ruang akun umum.
   const umumNotice = isUmumRoom && ctx.effective === "MURID" && ctx.decision.ok
     ? "Ruang ini dibuat akun umum, bukan kelasmu. Jangan bagikan data pribadi (nomor HP, alamat, sekolah). Kalau ada yang membuatmu tidak nyaman, keluar dan tekan Laporkan."

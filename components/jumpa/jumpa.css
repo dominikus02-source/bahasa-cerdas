@@ -1542,3 +1542,33 @@ html:not(.dark) .jumpa-scope {
 
 /* ── Tab nonaktif (mis. Kelas tanpa kelas) ── */
 .jumpa-seg-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+
+/* Kontrol rapat memakai permukaan dan radius tema global. */
+.jumpa-dock {
+  background: var(--clr-surface);
+  border-color: var(--clr-border);
+  border-radius: var(--bc-r-card);
+  box-shadow: var(--bc-shadow-1);
+}
+.jumpa-dock .jumpa-key {
+  border-radius: var(--bc-r-ctl);
+  box-shadow: none;
+}
+.jumpa-dock .jumpa-key:not([data-on="true"]):not([data-off="true"]):not([data-variant="leave"]) {
+  color: var(--clr-text);
+  background: var(--clr-surface-2);
+  border-color: var(--clr-border);
+}
+.jumpa-dock .jumpa-key[data-variant="leave"] {
+  background: var(--clr-danger);
+  box-shadow: none;
+}
+
+/* Panel dan dialog harus menutup konten di belakang agar teks tetap terbaca. */
+.jumpa-sheet.jumpa-glass,
+.jumpa-panel.jumpa-glass,
+.jumpa-upgrade.jumpa-confirm {
+  background: var(--clr-surface);
+  border-color: var(--clr-border);
+  box-shadow: var(--bc-shadow-3);
+}

@@ -202,7 +202,7 @@ export default function ScheduleForm({ data, initialGroupId, editing, backHref }
             <button key={d} type="button" role="radio" aria-checked={duration === d} className="jumpa-chip jumpa-dur" onClick={() => setDuration(d)}>{minutesLabel(d)}</button>
           ))}
         </div>
-        <span className="jumpa-field-note">Paket {data.tier === "PREMIUM" ? "Premium" : "Gratis"}: maks {minutesLabel(data.limits[kind])}</span>
+        <span className="jumpa-field-note">Maksimal {minutesLabel(data.limits[kind])}</span>
       </fieldset>
 
       {!editing && (

@@ -13,13 +13,13 @@ export interface JumpaCaps {
 }
 
 /**
- * Batas PENUH per jenis ruang (= paket Premium; MURID gratis sebagai default).
+ * Batas fallback konservatif (= Free). Pembuatan ruang memakai server-limits.ts.
  * Fase 3: angka hidup di lib/jumpa/tiers.ts — paket Gratis memakai
  * limitsFor("FREE", kind). Jangan menulis angka di sini.
  */
 export const JUMPA_CAPS: Record<JumpaKind, JumpaCaps> = {
-  KELAS: { ...JUMPA_TIERS.PREMIUM.rooms.KELAS },
-  GURU: { ...JUMPA_TIERS.PREMIUM.rooms.GURU },
+  KELAS: { ...JUMPA_TIERS.FREE.rooms.KELAS },
+  GURU: { ...JUMPA_TIERS.FREE.rooms.GURU },
   MURID: { ...JUMPA_MURID_FREE },
   UMUM: { ...JUMPA_UMUM_TIERS.UMUM_FREE.room },
 };

@@ -1,5 +1,7 @@
 "use client";
 
+import { applyServerMediaCommand } from "./server-media";
+
 /**
  * JUMPA Fase 2 — state ruang di sisi klien (obrolan, tangan, reaksi,
  * status host, toast). Hidup di dalam <LiveKitRoom>.
@@ -188,12 +190,13 @@ export function JumpaRoomProvider({ initial, self, children }: { initial: JumpaR
             break;
           case "mod.muted":
             toast(MUTE_TEXT[server.source], "warn");
-            if (server.source === "screen_share") void localParticipant.setScreenShareEnabled(false).catch(() => undefined);
+            void applyServerMediaCommand(room, server).catch(() => toast("Perangkat belum dapat dimatikan. Matikan secara manual.", "warn"));
             break;
           case "mod.removed":
             break; // ditangani onDisconnected (PARTICIPANT_REMOVED)
           case "room.ended":
             endedReasonRef.current = server.reason;
+            void applyServerMediaCommand(room, server).catch(() => toast("Ruang sudah diakhiri. Keluar dari ruang ini.", "warn"));
             break;
           case "room.locked":
             setInfo((i) => ({ ...i, isLocked: server.locked }));

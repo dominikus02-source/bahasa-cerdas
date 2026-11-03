@@ -6,8 +6,8 @@
  * menerapkan perubahan lewat onChange (switchActiveDevice, terbitkan ulang).
  */
 import { useEffect, useState } from "react";
-import { Camera, Crown, Headphones, Lock, Mic, Sparkles, AudioWaveform, Leaf, Gauge, MonitorPlay } from "lucide-react";
-import { JUMPA_TIERS, type JumpaTierView } from "@/lib/jumpa/tiers";
+import { Camera, Headphones, Mic, Sparkles, AudioWaveform, Leaf, Gauge, MonitorPlay } from "lucide-react";
+import { type JumpaTierView } from "@/lib/jumpa/tiers";
 import { QUALITY_LABEL } from "./media-policy";
 import type { JumpaMediaPrefs, JumpaQuality } from "./media-prefs";
 import { JUMPA_BACKGROUNDS } from "./backgrounds";
@@ -89,7 +89,6 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
   useEffect(() => setSpeakerOk(supportsSpeakerSelect()), []);
   const setDevice = (kind: Kind, id: string) => onChange({ devices: { ...prefs.devices, [kind]: id } });
   const hdLabel = `${tier.maxCameraHeight}p`;
-  const blurAvailable = JUMPA_TIERS.PREMIUM.features.backgroundBlur && tier.tier === "PREMIUM";
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 pb-5 pt-1">
@@ -135,42 +134,22 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
           on={prefs.noiseSuppression}
           onToggle={() => onChange({ noiseSuppression: !prefs.noiseSuppression })}
           label="Peredam bising"
-          hint="Redam kipas, motor, dan kelas ramai."
+          hint="Kurangi suara di sekitar."
           icon={<Mic size={18} />}
         />
-        <div className="jumpa-setting-row" aria-disabled={!blurAvailable}>
-          <span className="jumpa-setting-icon" aria-hidden><Sparkles size={18} /></span>
-          <span className="min-w-0 flex-1 text-left">
-            <span className="flex items-center gap-2 text-sm font-semibold">
-              Latar blur <span className="jumpa-tier" data-tier="PREMIUM"><Crown size={11} aria-hidden /> Premium</span>
-            </span>
-            <span className="block text-xs text-[var(--jp-text-3)]">{blurAvailable ? "Samarkan latar kamera." : "Khusus pengguna Premium."}</span>
-          </span>
-          {blurAvailable ? (
-            <button
-              type="button"
-              onClick={() => onChange({ background: prefs.background === "blur" ? "none" : "blur" as any })}
-              className="jumpa-switch"
-              data-on={prefs.background === "blur"}
-              aria-pressed={prefs.background === "blur"}
-            >
-              <span className="jumpa-switch-knob" />
-            </button>
-          ) : (
-            <Lock size={16} className="text-[var(--jp-text-3)]" aria-label="Premium" />
-          )}
-        </div>
+
       </section>
 
 
       <section aria-labelledby="jp-set-bg">
         <h3 id="jp-set-bg" className="jumpa-section-label">Latar ruang</h3>
+        <Switch on={prefs.background === "blur"} onToggle={() => onChange({ background: prefs.background === "blur" ? "none" : "blur" })} label="Latar samar" hint="Samarkan latar kamera." icon={<Sparkles size={18} />} />
         <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {JUMPA_BACKGROUNDS.map((bg) => (
             <button
               key={bg.id}
               type="button"
-              onClick={() => onChange({ background: bg.id as any })}
+              onClick={() => onChange({ background: bg.id })}
               className="jumpa-bg-option"
               data-selected={prefs.background === bg.id}
               aria-pressed={prefs.background === bg.id}
@@ -203,17 +182,13 @@ export default function SettingsPanel({ prefs, onChange, tier, refreshKey = 0, d
       </section>
 
       <section aria-labelledby="jp-set-t">
-        <h3 id="jp-set-t" className="jumpa-section-label">Paket ruang ini</h3>
+        <h3 id="jp-set-t" className="jumpa-section-label">Batas ruang</h3>
         <div className="jumpa-plan-card">
           <div className="flex items-center justify-between gap-2">
             <TierBadge tier={tier} />
             <span className="text-sm text-[var(--jp-text-2)]">{tierLimitsText(tier)} · {hdLabel}</span>
           </div>
-          {tier.canUpgrade && tier.upgradeUrl && (
-            <a href={tier.upgradeUrl} target="_blank" rel="noopener" className="jumpa-chip mt-3">
-              <Crown size={14} /> Lihat Premium
-            </a>
-          )}
+
         </div>
       </section>
     </div>

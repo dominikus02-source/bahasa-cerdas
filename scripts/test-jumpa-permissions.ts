@@ -75,7 +75,7 @@ check("[Fase 2] Murid anggota kelas boleh buat MURID", canCreateRoom({ actor: mu
 check("[Fase 2] Murid tanpa kelas tidak boleh buat MURID", !canCreateRoom({ actor: murid, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Junior tidak boleh buat MURID", !canCreateRoom({ actor: junior, kind: "MURID", group: null, allowedKinds: all }).ok)
 check("[Fase 2] Guru tidak boleh buat MURID", !canCreateRoom({ actor: guru, kind: "MURID", group: null, allowedKinds: all }).ok)
-check("[Fase 2] Murid tidak boleh buat GURU", !canCreateRoom({ actor: murid, kind: "GURU", group: null, allowedKinds: all }).ok)
+check("Murid non-Junior boleh buat rapat", canCreateRoom({ actor: murid, kind: "GURU", group: null, allowedKinds: all }).ok)
 
 console.log("\n3. Masuk ruang KELAS")
 const creator = join({ relation: { isCreator: true } })
@@ -126,8 +126,8 @@ check("Murid tidak masuk ruang GURU", !join({ actor: murid, room: groom, relatio
 console.log("\n6. Sumber publish & caps")
 check("Tanpa konteks (pemanggil Fase 1) publish = kamera + mikrofon saja", JSON.stringify(publishSourcesFor("MEMBER", "MURID")) === '["camera","microphone"]')
 check("Tanpa konteks, host pun tanpa screen share", !publishSourcesFor("HOST", "GURU").includes("screen_share" as never))
-check("Caps MURID 8 org / 60 mnt", JUMPA_CAPS.MURID.maxParticipants === 8 && JUMPA_CAPS.MURID.maxDurationMin === 60)
-check("Caps KELAS 50 org / 120 mnt", capsFor("KELAS").maxParticipants === 50 && capsFor("KELAS").maxDurationMin === 120)
+check("Caps MURID 30 org / 45 mnt", JUMPA_CAPS.MURID.maxParticipants === 30 && JUMPA_CAPS.MURID.maxDurationMin === 45)
+check("Caps KELAS 30 org / 45 mnt", capsFor("KELAS").maxParticipants === 30 && capsFor("KELAS").maxDurationMin === 45)
 check("isPastDuration tepat di batas = belum lewat", !isPastDuration(new Date(NOW.getTime() - 60 * 60_000), 60, NOW))
 
 console.log("\n7. Kode ruang")
@@ -142,13 +142,13 @@ console.log("\n8. CSP & preferensi media")
 check("CSP origin default jumpa.bahasacerdas.com", JSON.stringify(livekitCspOrigins("wss://jumpa.bahasacerdas.com")) === '["wss://jumpa.bahasacerdas.com","https://jumpa.bahasacerdas.com"]')
 check("CSP origin ikut URL VPS lain", livekitCspOrigins("wss://media.contoh.id/").includes("wss://media.contoh.id"))
 check("CSP abaikan URL non-ws", livekitCspOrigins("https://x.y").length === 0 && livekitCspOrigins("bukan url").length === 0)
-check("Default media: kamera NYALA, mik NYALA", DEFAULT_MEDIA_PREFS.camera && DEFAULT_MEDIA_PREFS.mic)
+check("Default media: kamera MATI, mik MATI", !DEFAULT_MEDIA_PREFS.camera && !DEFAULT_MEDIA_PREFS.mic)
 // Fase 3: prefs punya field tambahan (kualitas, perangkat, dll.) → bandingkan kamera/mik saja.
 const camMic = (p: { camera: boolean; mic: boolean }) => JSON.stringify({ camera: p.camera, mic: p.mic })
-check("Prefs kosong → default", camMic(parseMediaPrefs(null)) === JSON.stringify({ camera: true, mic: true }))
+check("Prefs kosong → default", camMic(parseMediaPrefs(null)) === JSON.stringify({ camera: false, mic: false }))
 check("Prefs tersimpan dibaca", camMic(parseMediaPrefs('{"camera":false,"mic":true}')) === JSON.stringify({ camera: false, mic: true }))
-check("Prefs rusak → default", parseMediaPrefs("{rusak").camera === true)
-check("Prefs tipe salah → default per field", camMic(parseMediaPrefs('{"camera":"no","mic":false}')) === JSON.stringify({ camera: true, mic: false }))
+check("Prefs rusak → default", parseMediaPrefs("{rusak").camera === false)
+check("Prefs tipe salah → default per field", camMic(parseMediaPrefs('{"camera":"no","mic":false}')) === JSON.stringify({ camera: false, mic: false }))
 
 console.log("\n9. Helper UI")
 check("initials", initials("Siti Nur Aisyah") === "SA" && initials("budi") === "B" && initials("  ") === "?")
@@ -170,8 +170,8 @@ console.log("\n9b. Panggung webinar");
 const hostActor = { userId: "guru-host", roomRole: "HOST" as const, effective: "GURU" as const };
 const cohostActor = { userId: "guru-cohost", roomRole: "COHOST" as const, effective: "GURU" as const };
 const memberTarget = { userId: "murid-1", roomRole: "MEMBER" as const, effective: "MURID" as const };
-check("Pemandu utama dapat menaikkan peserta webinar ke panggung", canModerate({ actor: hostActor, action: "ALLOW_STAGE", roomKind: "GURU", target: memberTarget }).ok);
-check("Pemandu utama dapat menurunkan peserta dari panggung", canModerate({ actor: hostActor, action: "REMOVE_STAGE", roomKind: "GURU", target: memberTarget }).ok);
+check("Alur panggung lama dinonaktifkan", !canModerate({ actor: hostActor, action: "ALLOW_STAGE", roomKind: "GURU", target: memberTarget }).ok);
+check("Pemandu tidak mencabut izin media lewat alur panggung lama", !canModerate({ actor: hostActor, action: "REMOVE_STAGE", roomKind: "GURU", target: memberTarget }).ok);
 check("Wakil pemandu tidak dapat mengatur panggung", !canModerate({ actor: cohostActor, action: "ALLOW_STAGE", roomKind: "GURU", target: memberTarget }).ok);
 check("Pemandu tidak dapat mengatur panggung di rapat biasa", !canModerate({ actor: hostActor, action: "ALLOW_STAGE", roomKind: "KELAS", target: memberTarget }).ok);
 check("Peserta biasa tidak dapat memberi izin panggung", !canModerate({ actor: { ...memberTarget, userId: "murid-2" }, action: "ALLOW_STAGE", roomKind: "GURU", target: { ...memberTarget, userId: "murid-3" } }).ok);
@@ -207,7 +207,7 @@ check("Reduced motion: indikator pembicara tanpa animasi tapi tetap terlihat", /
 check("jumpa.css tanpa hex hardcode (THEME RULE)", !/#[0-9a-fA-F]{3,8}\b/.test(css))
 const ui = ["components/jumpa/JumpaLobby.tsx", "components/jumpa/JumpaRoomView.tsx", "components/jumpa/ParticipantTile.tsx", "components/jumpa/JumpaApp.tsx"].map(read).join("\n")
 check("UI JUMPA tanpa bg-white/text-slate-900/hex", !/bg-white|text-slate-900|bg-\[#/.test(ui))
-check("Label kontrol Bahasa Indonesia", ["Mikrofon", "Kamera", "Lainnya", "Keluar", "Gabung sekarang"].every((l) => ui.includes(l)))
+check("Label kontrol Bahasa Indonesia", ["Mikrofon", "Kamera", "Lainnya", "Keluar", "Gabung"].every((l) => ui.includes(l)))
 const compose = read("ops/vps/docker-compose.yml")
 check("Compose: livekit profile jumpa, 2 CPU / 1.5 GB", compose.includes('profiles: ["jumpa"]') && compose.includes("cpus: 2.0\n    mem_limit: 1536m"))
 check("Compose: 7880 hanya localhost", compose.includes('"127.0.0.1:7880:7880"'))

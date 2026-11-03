@@ -276,7 +276,7 @@ export async function sendChat(user: JumpaUserLike, code: string, rawContent: un
   const me = await actorInRoom(user, room);
   if (!me) return NOT_IN_ROOM;
   // Pemandu dewasa (guru di ruang sekolah, atau akun UMUM di ruang UMUM) tetap bisa menulis saat obrolan dimatikan.
-  const isGuruHost = (room.kind === "UMUM" ? me.actor.effective === "UMUM" : me.actor.effective === "GURU") && me.actor.roomRole !== "MEMBER";
+  const isGuruHost = (room.kind === "GURU" || (room.kind === "UMUM" ? me.actor.effective === "UMUM" : me.actor.effective === "GURU")) && me.actor.roomRole !== "MEMBER";
   if (!room.chatEnabled && !isGuruHost) return fail(423, "CHAT_DISABLED", "Obrolan sedang dimatikan oleh pemandu.");
 
   const v = sanitizeChatContent(rawContent);
@@ -422,7 +422,7 @@ export async function inviteCandidates(user: JumpaUserLike, code: string): Promi
   if (!h.ok) return h;
   const { room, actor } = h;
   // Ruang UMUM hanya dibagikan lewat tautan/kode (tanpa direktori pengguna).
-  const base = room.kind === "UMUM"
+  const base = room.kind === "UMUM" || room.kind === "GURU"
     ? canInvite({ actor, roomKind: room.kind, invite: { kind: "LINK" } })
     : canInvite({ actor, roomKind: room.kind, invite: { kind: "USER", targetEffective: "GURU" } });
   if (!base.ok) return fail(403, base.code, base.message);

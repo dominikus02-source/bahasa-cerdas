@@ -34,6 +34,7 @@ import {
   VideoOff,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { canDeleteChat, canModerate, JUMPA_REPORT_CATEGORIES, type JumpaModerationAction, type ModerationActor } from "@/lib/jumpa/permissions";
 import { JUMPA_CHAT_MAX_LEN, JUMPA_CHAT_RETENTION_DAYS } from "@/lib/jumpa/caps";
 import { handQueue } from "@/lib/jumpa/signals";
@@ -111,7 +112,7 @@ export function ChatPanel() {
   const [sending, setSending] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const actor: ModerationActor = { userId: self.userId, roomRole: self.roomRole, effective: self.bcRole };
-  const isGuruHost = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER";
+  const isGuruHost = (info.kind === "GURU" || (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU")) && self.roomRole !== "MEMBER";
   const canWrite = info.chatEnabled || isGuruHost;
 
   useEffect(() => {
@@ -243,7 +244,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
     }).ok;
   };
   const isHostish = self.roomRole !== "MEMBER";
-  const canInviteAny = (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU") && isHostish && info.kind !== "MURID";
+  const canInviteAny = (info.kind === "GURU" || (info.kind === "UMUM" ? self.bcRole === "UMUM" : self.bcRole === "GURU")) && isHostish && info.kind !== "MURID";
 
   const queue = useMemo(() => {
     const byId = new Map(participants.map((p) => [p.identity, p]));
@@ -264,7 +265,7 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
     const r = await moderate(action, target?.identity);
     setBusy(null);
     setOpenFor(null);
-    if (r.ok) toast("Berhasil.", "ok");
+    if (r.ok) toast(action === "MUTE_AUDIO" ? "Mikrofon dimatikan." : "Perubahan diterapkan.", "ok");
   };
 
   const roomToggles: Array<{ show: boolean; label: string; icon: ReactNode; action: JumpaModerationAction; on?: boolean }> = [
@@ -340,10 +341,14 @@ export function PeoplePanel({ onInvite }: { onInvite: () => void }) {
                   <span className="mt-0.5 flex gap-1">
                     {meta.roomRole === "HOST" && <span className="jumpa-badge" data-role="HOST">Pemandu</span>}
                     {meta.roomRole === "COHOST" && <span className="jumpa-badge" data-role="HOST">Wakil pemandu</span>}
-                    {meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : meta.bcRole === "UMUM" ? "Umum" : "Murid"}</span>}
+                    {info.kind !== "GURU" && meta.bcRole && <span className="jumpa-badge" data-role={meta.bcRole}>{meta.bcRole === "GURU" ? "Guru" : meta.bcRole === "UMUM" ? "Umum" : "Murid"}</span>}
                   </span>
                 </span>
-                {p.isMicrophoneEnabled ? <Mic size={16} className="text-[var(--jp-text-3)]" aria-label="Mikrofon nyala" /> : <MicOff size={16} className="text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
+                {p.isMicrophoneEnabled && can("MUTE_AUDIO", p) ? (
+                  <Button type="button" variant="ghost" size="icon" aria-label={`Matikan mikrofon ${p.name || "peserta"}`} title="Matikan mikrofon" disabled={busy !== null} onClick={() => void run("MUTE_AUDIO", p)}>
+                    <MicOff size={18} />
+                  </Button>
+                ) : p.isMicrophoneEnabled ? <Mic size={16} className="text-[var(--jp-text-3)]" aria-label="Mikrofon nyala" /> : <MicOff size={16} className="text-[var(--jp-danger)]" aria-label="Mikrofon mati" />}
                 {canManageStage && (
                   <button type="button" className="jumpa-chip" disabled={busy !== null} onClick={() => void run(onStage ? "REMOVE_STAGE" : "ALLOW_STAGE", p)}>
                     {onStage ? "Turunkan dari panggung" : "Naikkan ke panggung"}
@@ -410,9 +415,9 @@ export function InvitePanel() {
   const { info, self, api, toast } = useJumpa();
   const base = `/api/jumpa/rooms/${encodeURIComponent(info.code)}/invites`;
   const isUmumRoom = info.kind === "UMUM";
-  const canInvite = (isUmumRoom ? self.bcRole === "UMUM" : self.bcRole === "GURU") && self.roomRole !== "MEMBER" && info.kind !== "MURID";
+  const canInvite = (info.kind === "GURU" || (isUmumRoom ? self.bcRole === "UMUM" : self.bcRole === "GURU")) && self.roomRole !== "MEMBER" && info.kind !== "MURID";
   // Ruang UMUM: tanpa pencarian pengguna — dibagikan lewat tautan/kode saja.
-  const canSearch = canInvite && !isUmumRoom;
+  const canSearch = canInvite && !isUmumRoom && self.bcRole === "GURU";
   const [cands, setCands] = useState<Candidates | null>(null);
   const [copied, setCopied] = useState<"room" | "link" | null>(null);
   const [q, setQ] = useState("");
@@ -457,7 +462,7 @@ export function InvitePanel() {
     if (!r.ok) return toast(r.message, "warn");
     if (typeof r.data.path === "string") {
       await copy(`${window.location.origin}${r.data.path}`, "link");
-      toast(isUmumRoom ? "Tautan undangan (24 jam) tersalin." : "Tautan undangan guru (24 jam) tersalin.", "ok");
+      toast("Tautan tersalin.", "ok");
       return;
     }
     setDone((s) => new Set(s).add(key));
@@ -489,8 +494,8 @@ export function InvitePanel() {
             : info.kind === "KELAS"
               ? "Hanya murid kelas ini & yang diundang yang bisa masuk."
               : isUmumRoom
-                ? "Akun umum yang punya tautan atau kode ini bisa masuk."
-                : "Hanya guru anggota komunitas & yang diundang yang bisa masuk."}
+                ? "Peserta dengan akun BahasaCerdas dapat bergabung lewat kode."
+                : "Bagikan tautan kepada peserta yang kamu undang."}
         </p>
         {canInvite && cands?.canLink && (
           <button type="button" className="jumpa-menu-item !px-3" disabled={busy !== null} onClick={() => void invite("link", { kind: "LINK" })}>
@@ -565,7 +570,7 @@ export function ReportPanel({ onDone }: { onDone: () => void }) {
     });
     setSending(false);
     if (!r.ok) return toast(r.message, "warn");
-    toast(self.bcRole === "MURID" ? "Laporan terkirim ke guru kelas & admin. Terima kasih sudah berani melapor." : "Laporan terkirim ke admin.", "ok");
+    toast("Laporan terkirim.", "ok");
     onDone();
   };
 

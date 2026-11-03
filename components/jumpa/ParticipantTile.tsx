@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { VideoTrack, isTrackReference, useConnectionQualityIndicator, useIsMuted, useIsSpeaking, type TrackReferenceOrPlaceholder } from "@livekit/components-react";
 import { ConnectionQuality, Track, TrackEvent, type TrackPublication } from "livekit-client";
 import { AudioLines, MicOff, MonitorUp, WifiLow } from "lucide-react";
@@ -15,7 +15,7 @@ interface Props {
   screen?: boolean;
 }
 
-const ROLE_LABEL = { HOST: "Pemandu", GURU: "Guru", MURID: "Murid", UMUM: "Umum" } as const;
+const ROLE_LABEL = { COHOST: "Wakil pemandu", HOST: "Pemandu", GURU: "Guru", MURID: "Murid", UMUM: "Umum" } as const;
 
 function firstName(name: string): string {
   return name.trim().split(/\s+/)[0] || name;
@@ -53,6 +53,13 @@ function Tile({ trackRef, compact = false, screen = false }: Props) {
   const participant = trackRef.participant;
   const speaking = useIsSpeaking(participant);
   const media = useMediaOptional();
+  const tileRef = useRef<HTMLDivElement>(null);
+  const observe = media?.observeVisibleTrack;
+  const sid = trackRef.publication?.trackSid;
+  useEffect(() => {
+    if (participant.isLocal || !sid || !tileRef.current || !observe) return;
+    return observe(sid, tileRef.current);
+  }, [participant.isLocal, sid, observe]);
   const noMirror = participant.isLocal && isImageBackground(media?.prefs.background);
   const cameraMuted = useIsMuted(trackRef);
   const micMuted = useIsMuted({ participant, source: Track.Source.Microphone });
@@ -64,7 +71,7 @@ function Tile({ trackRef, compact = false, screen = false }: Props) {
 
   if (screen) {
     return (
-      <div className="jumpa-tile h-full w-full" data-screen="true">
+      <div ref={tileRef} className="jumpa-tile h-full w-full" data-screen="true">
         {isTrackReference(trackRef) && <VideoTrack trackRef={trackRef} />}
         <span className="jumpa-nameplate">
           <MonitorUp size={14} className="shrink-0 text-[var(--jp-accent)]" />
@@ -75,11 +82,11 @@ function Tile({ trackRef, compact = false, screen = false }: Props) {
   }
 
   const talking = speaking && !micMuted;
-  const role: keyof typeof ROLE_LABEL | null = meta.roomRole === "HOST" ? "HOST" : meta.bcRole;
+  const role: keyof typeof ROLE_LABEL | null = meta.roomRole === "HOST" ? "HOST" : meta.roomRole === "COHOST" ? "COHOST" : media?.tier.kind === "GURU" ? null : meta.bcRole;
   const label = participant.isLocal ? `${name} (Kamu)` : name;
 
   return (
-    <div className="jumpa-tile h-full w-full" data-speaking={talking} data-local={participant.isLocal} data-no-mirror={noMirror || undefined} data-compact={compact} title={label}>
+    <div ref={tileRef} className="jumpa-tile h-full w-full" data-speaking={talking} data-local={participant.isLocal} data-no-mirror={noMirror || undefined} data-compact={compact} title={label}>
       {showVideo ? (
         <VideoTrack trackRef={trackRef} />
       ) : (
