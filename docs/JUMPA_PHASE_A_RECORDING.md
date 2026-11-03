@@ -20,3 +20,21 @@ Gerbang 1 memerlukan semua skenario wajib ×3 dengan artefak rekaman utuh dan du
 1. Playwright fixture integrasi JUMPA: close tab, refresh, offline, kill browser, storage penuh; 3× masing-masing; simpan file/ffprobe/log dan pastikan penguji negatif gagal.
 2. Perbaiki flow UI untuk memilih dan menghapus sesi pemulihan; tes privasi dan kuota dengan profil baru.
 3. Typecheck, lint, build, CI; jika seluruh gerbang lulus, lanjut Fase B. Jika tidak, laporkan blocker dan jangan deploy.
+
+## Gerbang 1 — pengujian tambahan (3 November 2026)
+
+**Kriteria tetap:** rekaman utuh 100%, semua skenario 3× berturut-turut. Tes fixture saat ini memakai canvas sintetis 3,5 detik dan mengukur total durasi klip ZIP via `ffprobe`. Ambang subtes lama ≥3,0 detik **lebih longgar** daripada kriteria Gerbang 1; subtes PASS tidak berarti Gerbang 1 PASS.
+
+| Skenario fixture | Durasi pemulihan 3 percobaan (detik) | Subtes ≥3,0 detik | Gerbang 1 |
+|---|---|---|---|
+| Close tab | 2,656 / 2,614 / 2,655 | 0/3 | GAGAL |
+| Refresh | 2,650 / 2,658 / 2,644 | 0/3 | GAGAL |
+| Offline sementara lalu browser ditutup | 2,620 / 2,612 / 2,692 | 0/3 | GAGAL |
+| Kill Chrome | 3,386 / 3,392 / 3,389 pada pengujian sebelumnya | 3/3 | **BELUM LULUS**: kehilangan sebagian durasi, bukan rekaman utuh |
+| Storage penuh | Tes quota mock 5/5 menolak write yang tidak aman | 5/5 unit | BELUM TERUJI end-to-end |
+
+Eksperimen tambahan interval 350 ms untuk close tab: durasi 2,621 / 2,607 / 2,531 detik (0/3). Interval 350 ms **dibatalkan** dan kembali ke 750 ms karena overhead MediaRecorder. Tes skenario tambahan sekarang tersedia lewat `JUMPA_QA_SCENARIO=close-tab|refresh|offline|crash node scripts/e2e/jumpa-checkpoint.cjs`.
+
+**Akar masalah:** saat tab ditutup/refresh, perekam segmen aktif dapat dihentikan sebelum `onstop` menulis final WebM ke IndexedDB. Menyimpan lebih sering tidak menjamin seluruh durasi. Saat browser crash, browser lokal tidak dapat memberi jaminan 100% frame terakhir. Untuk jaminan tanpa kehilangan saat host putus, dibutuhkan Egress server-side dan pengujian integrasi. Kontrak Premium Egress sudah ada tetapi belum diaktifkan.
+
+**Keputusan:** Gerbang 1 **GAGAL**, tidak boleh lanjut ke Fase B, C, D atau merge/deploy. Masih perlu tes UI JUMPA asli, penyimpanan penuh E2E, dan penyelesaian arsitektur agar syarat rekaman utuh dapat dibuktikan. Tidak ada perubahan produksi.

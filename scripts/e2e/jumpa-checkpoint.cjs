@@ -4,6 +4,8 @@ const esbuild=require('esbuild'); const {chromium}=require('playwright');
  const js=(await esbuild.build({entryPoints:['components/jumpa/recording-safety.ts'],bundle:true,write:false,format:'esm',platform:'browser'})).outputFiles[0].text;
  const server=http.createServer((req,res)=>{res.setHeader('Content-Type',req.url==='/module.js'?'application/javascript':'text/html');res.end(req.url==='/module.js'?js:'<html><body>JUMPA QA</body></html>')});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const url='http://127.0.0.1:'+server.address().port;
+ const scenario=process.env.JUMPA_QA_SCENARIO||'crash';
+ if(!['crash','close-tab','refresh','offline'].includes(scenario))throw Error('UNKNOWN_SCENARIO');
  let failures=0;const results=[];
  for(let i=0;i<3;i++){
   const profile=fs.mkdtempSync(path.join(os.tmpdir(),'jumpa-checkpoint-profile-'));
@@ -24,11 +26,16 @@ const esbuild=require('esbuild'); const {chromium}=require('playwright');
    if(process.env.JUMPA_QA_MUTATE_DROP_SEGMENTS==='1') {
     await page.evaluate(async()=>{ const mod=await import('/module.js'); const sessions=await mod.listRecordingCheckpoints(); for(const s of sessions) await (await import('/module.js')).deleteRecordingCheckpoint(s.id); });
    }
+   if(scenario==='offline') { await ctx.setOffline(true); await page.waitForTimeout(300); await ctx.setOffline(false); await ctx.close(); ctx=null; }
+   if(scenario==='refresh') { await page.reload(); await ctx.close();ctx=null; }
+   else if(scenario==='close-tab') { await page.close(); await ctx.close();ctx=null; }
+   else if(scenario==='crash') {
    const escaped=profile.replaceAll("'","''");
    const pids=cp.execFileSync('powershell.exe',['-NoProfile','-Command',`Get-CimInstance Win32_Process -Filter "Name = 'chrome.exe'" | Where-Object { $_.CommandLine -like '*${escaped}*' -and $_.CommandLine -notlike '*--type=*' } | Select-Object -ExpandProperty ProcessId`],{encoding:'utf8'}).trim().split(/\s+/).filter(Boolean);
    if(!pids.length)throw Error('NO_CHROME_PID');
    for(const pid of pids)cp.spawnSync('taskkill',['/PID',pid,'/T','/F'],{stdio:'ignore'});
    ctx=null;
+   }
    await new Promise(r=>setTimeout(r,800));
    ctx=await chromium.launchPersistentContext(profile,{channel:'chrome',headless:true});
    page=ctx.pages()[0]||await ctx.newPage();await page.goto(url);
