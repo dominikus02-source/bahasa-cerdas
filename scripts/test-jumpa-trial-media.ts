@@ -8,12 +8,26 @@ import { isOpenMeeting } from "../lib/jumpa/trial-policy";
 import { VisibleTracks, shouldReceiveTrack } from "../components/jumpa/visible-subscriptions";
 import { applyServerMediaCommand } from "../components/jumpa/server-media";
 import { encodeSignal, parseServerSignal, JUMPA_TOPICS } from "../lib/jumpa/signals";
+import { buildRoomOptions } from "../components/jumpa/media-controller";
+import { DEFAULT_MEDIA_PREFS } from "../components/jumpa/media-prefs";
+import { tierView } from "../lib/jumpa/tiers";
+import { isRecordingNotice } from "../components/jumpa/local-recording";
 import { mediaErrorMessage, withDefaultDeviceFallback } from "../components/jumpa/media-errors";
 
 async function main() {
   assert.equal(parseParticipantLimit(undefined), 30);
   assert.equal(parseParticipantLimit("150"), 150);
   for (const raw of ["abc", "0", "501", "100.5", "-1"]) assert.throws(() => parseParticipantLimit(raw));
+  const notice = new TextEncoder().encode(JSON.stringify({ recording: true }));
+  assert.equal(isRecordingNotice(notice, "HOST"), true);
+  assert.equal(isRecordingNotice(notice, "COHOST"), true);
+  assert.equal(isRecordingNotice(notice, "MEMBER"), null);
+  assert.equal(isRecordingNotice(notice, null), null);
+  assert.equal(isRecordingNotice(new TextEncoder().encode('{"recording":"true"}'), "HOST"), null);
+  assert.equal(isRecordingNotice(new Uint8Array(257), "HOST"), null);
+  assert.equal(isRecordingNotice(new TextEncoder().encode('{"recording":false}'), "HOST"), false);
+  const options = buildRoomOptions(DEFAULT_MEDIA_PREFS, { mobile: false, ios: false, android: false, lowEnd: false }, tierView({ tier: "FREE", kind: "GURU", maxParticipants: 30, maxDurationMin: 45, viewerIsGuruCreator: true }));
+  assert.equal(typeof options.adaptiveStream === "object" && options.adaptiveStream.pauseVideoInBackground, false);
   const now = new Date("2026-11-02T14:00:00Z");
   const actors: JumpaActor[] = ["GURU", "MURID", "UMUM"].map(role => ({ role: role as JumpaActor["role"], isFounder: false, isJunior: false, umumEnabled: true }));
   const room = { kind: "GURU" as const, mode: "MEETING" as const, openMeeting: true, status: "LIVE" as const, isLocked: false, startedAt: now, maxDurationMin: 120, maxParticipants: 30 };
@@ -73,7 +87,7 @@ async function main() {
   for (let i = 9; i < 13; i++) visible.set(String(i), tokens[i], true);
   assert.equal(receiving(), 4); assert.ok(changes > 0);
   assert.equal(shouldReceiveTrack({ kind: "audio", source: "microphone", visible: false, screenVisible: false, audioOnly: true, pageVisible: false }), true);
-  assert.equal(shouldReceiveTrack({ kind: "audio", source: "screen_share_audio", visible: false, screenVisible: false, audioOnly: false, pageVisible: true }), false);
+  assert.equal(shouldReceiveTrack({ kind: "audio", source: "screen_share_audio", visible: false, screenVisible: false, audioOnly: false, pageVisible: true }), true);
   assert.equal(shouldReceiveTrack({ kind: "video", source: "screen_share", visible: true, screenVisible: true, audioOnly: true, pageVisible: true }), true);
   const view = readFileSync("components/jumpa/JumpaRoomView.tsx", "utf8");
   assert.ok(view.includes("autoSubscribe: false"));
