@@ -20,3 +20,45 @@ Gerbang 1 memerlukan semua skenario wajib ×3 dengan artefak rekaman utuh dan du
 1. Playwright fixture integrasi JUMPA: close tab, refresh, offline, kill browser, storage penuh; 3× masing-masing; simpan file/ffprobe/log dan pastikan penguji negatif gagal.
 2. Perbaiki flow UI untuk memilih dan menghapus sesi pemulihan; tes privasi dan kuota dengan profil baru.
 3. Typecheck, lint, build, CI; jika seluruh gerbang lulus, lanjut Fase B. Jika tidak, laporkan blocker dan jangan deploy.
+
+## Eksekusi ulang dengan gerbang terbaru — 3 November 2026
+
+Branch integrasi `release/jumpa-qa` berasal dari main `59293b6f`.
+PR Fase A memakai branch `fix/jumpa-phase-a-gate`; dependensi prototipe #220/#223
+ikut dalam diff karena belum masuk main. Tidak ada push ke main.
+
+Pilihan arsitektur Free: (a), satu MediaRecorder dengan timeslice 5 detik.
+Potongan disimpan berurutan dari header pertama, transaksi IndexedDB strict
+memperbarui potongan dan jumlah secara atomik. Tidak memakai encoder safety kedua.
+Penyimpanan gagal menghentikan perekaman segera; cadangan kuota hanya boleh dipakai
+chunk akhir. Lifecycle meminta flush ketika tersembunyi dan stop saat pagehide.
+Metadata durasi berasal dari decoder media browser, bukan waktu dinding. Perbaikan
+metadata menolak container dengan seek table/ukuran segment yang belum didukung.
+
+`NEXT_PUBLIC_JUMPA_CAPTURE_ENABLED=1` hanya untuk build QA. Default mati; ini flag
+build-time sehingga mengganti env runtime saja tidak menyalakannya. Premium Egress
+belum diimplementasikan, tidak dipanggil, dan BELUM SIAP. Interface yang ada tetap
+menjadi desain awal. Tidak ada klaim upload progresif/resumable sudah tersedia.
+
+Penguji `scripts/e2e/jumpa-recording-gate.cjs` memakai recorder produksi asli,
+IndexedDB asli dan Chrome nyata dengan fake-media flags. Transport room disimulasikan:
+ini bukan bukti login QA, LiveKit end-to-end atau perangkat nyata. Tujuh skenario
+(close/reload/end/offline/quota/renderer crash/process kill) masing-masing tiga kali.
+`end` di sini memanggil stop recorder; aksi akhiri rapat penuh masih BELUM TERUJI.
+Durasi sumber 6,4 detik, timeslice 5 detik; batas hard-crash tetap <=7 detik.
+Untuk sumber sintetis 15fps, penguji mengunci toleransi encoder 150ms sebelum uji,
+serta mewajibkan penanda finalisasi graceful; ini tidak boleh ditafsirkan sebagai
+jaminan 100% detik terakhir. ffprobe harus mengembalikan durasi finite >0.
+Kesalahan decoder ffprobe juga dicatat dan menggagalkan penguji (ditambahkan saat
+audit harness, bukan pengurangan kriteria). Skenario gagal tetap memblokir fase B.
+
+Perintah QA:
+```
+node scripts/e2e/jumpa-recording-gate.cjs
+# Mutasi wajib exit 1 dan error RECORDING_CHECKPOINT_EMPTY, bukan error infra:
+JUMPA_QA_MUTATE_NO_TIMESLICE=1 JUMPA_QA_SCENARIOS=kill node scripts/e2e/jumpa-recording-gate.cjs
+```
+Windows PowerShell: atur variabel dengan `$env:NAMA='nilai'` sebelum perintah Node.
+CI mengunggah JSON hasil dan WebM sebagai artifact. Chrome/Chromium, Playwright
+1.60.0, esbuild 0.28.2, dan ffprobe diperlukan; alat browser hanya dipasang dalam
+job QA, tidak menambah dependensi runtime aplikasi.

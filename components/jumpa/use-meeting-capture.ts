@@ -8,12 +8,13 @@ import { drawCaptureLabels, normalizeCaptureColors } from "./capture-colors";
 import { useMedia } from "./media-controller";
 import { useJumpa } from "./room-controller";
 import { downloadCapture, isRecordingNotice, RECORDING_TOPIC, startLocalRecording } from "./local-recording";
-import { listRecordingCheckpoints, restoreRecordingCheckpoint, restoreLatestSafetyArchive } from "./recording-checkpoint";
+import { listRecordingCheckpoints, restoreRecordingCheckpoint } from "./recording-checkpoint";
 
 export function useMeetingCapture(canRecord: boolean) {
+  const enabled = process.env.NEXT_PUBLIC_JUMPA_CAPTURE_ENABLED === "1";
   const { setRecordingActive } = useMedia();
   const allowed = useRef(canRecord);
-  allowed.current = canRecord;
+  allowed.current = canRecord && enabled;
   const room = useRoomContext();
   const { toast } = useJumpa();
   const toastRef = useRef(toast);
@@ -36,21 +37,22 @@ export function useMeetingCapture(canRecord: boolean) {
 
   useEffect(() => {
     mounted.current = true;
+    if (!enabled) return;
     void (async () => {
-      const archive = await restoreLatestSafetyArchive();
-      const sessions = await listRecordingCheckpoints();
+      const sessions = (await listRecordingCheckpoints()).filter(item => item.ownerId === room.localParticipant.identity && !item.groupId);
       const last = sessions.sort((a, b) => b.createdAt - a.createdAt)[0];
-      const blob = archive ?? (last ? await restoreRecordingCheckpoint(last.id) : null);
+      const blob = last ? await restoreRecordingCheckpoint(last.id) : null;
       if (!blob || !mounted.current || pendingFile.current) return;
       pendingFile.current = blob;
       setDownloadReady(true);
-      toastRef.current(archive ? "Bagian rekaman yang terselamatkan siap diunduh sebagai ZIP." : "Rekaman sebelumnya ditemukan. Unduh dan periksa hasilnya.", "warn");
+      toastRef.current("Rekaman sebelumnya ditemukan. Unduh dan periksa hasilnya.", "warn");
     })().catch(() => undefined);
     setSupported(Boolean(typeof navigator.mediaDevices?.getDisplayMedia === "function" && typeof MediaRecorder !== "undefined" && typeof AudioContext !== "undefined"));
     return () => { mounted.current = false; abort.current?.abort(); session.current?.stop(); };
-  }, []);
+  }, [enabled, room]);
 
   useEffect(() => {
+    if (!enabled) return;
     const notices = new Map<string, number>();
     const refresh = () => {
       for (const [id, at] of notices) if (Date.now() - at > 35_000 || !room.remoteParticipants.has(id)) notices.delete(id);
@@ -70,7 +72,7 @@ export function useMeetingCapture(canRecord: boolean) {
     room.on(RoomEvent.ParticipantDisconnected, refresh);
     const timer = window.setInterval(refresh, 5000);
     return () => { window.clearInterval(timer); room.off(RoomEvent.DataReceived, receive); room.off(RoomEvent.ParticipantDisconnected, refresh); };
-  }, [room, toast]);
+  }, [enabled, room, toast]);
 
   useEffect(() => {
     if (!recording) return;
@@ -109,6 +111,7 @@ export function useMeetingCapture(canRecord: boolean) {
       const next = await startLocalRecording(room, controller.signal, {
         onComplete: (blob) => { if (mounted.current) { pendingFile.current = blob; setDownloadReady(true); toast("Rekaman siap diunduh.", "ok"); } },
         onLimit: () => { if (mounted.current) toast("Batas 250 MB tercapai. Rekaman siap diunduh.", "warn"); },
+        onStorageLow: () => { if (mounted.current) toast("Penyimpanan hampir penuh. Rekaman dihentikan; unduh hasilnya.", "warn"); },
         onError: () => { if (mounted.current) toast("Rekaman terhenti. Unduh bagian yang tersedia.", "warn"); },
         onStopped: () => {
           session.current = null;
@@ -129,7 +132,7 @@ export function useMeetingCapture(canRecord: boolean) {
   }, [room, announce, toast]);
 
   const photo = useCallback(async () => {
-    if (photoPending.current) return;
+    if (!enabled || photoPending.current) return;
     photoPending.current = true;
     setPhotoBusy(true);
     try {
@@ -146,6 +149,6 @@ export function useMeetingCapture(canRecord: boolean) {
       if (mounted.current) toast("Foto tampilan siap disimpan.", "ok");
     } catch (error) { console.warn("JUMPA_CAPTURE_FAILED", error); if (mounted.current) toast("Foto belum dapat disimpan. Coba lagi setelah video tampil.", "warn"); }
     finally { photoPending.current = false; if (mounted.current) setPhotoBusy(false); }
-  }, [toast]);
-  return { recording, remoteRecording, busy, photoBusy, downloadReady, supported, start, stop, save, photo };
+  }, [enabled, toast]);
+  return { enabled, recording, remoteRecording, busy, photoBusy, downloadReady, supported, start, stop, save, photo };
 }

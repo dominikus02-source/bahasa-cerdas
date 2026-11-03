@@ -1,4 +1,5 @@
 /** Browser-local recording checkpoint. No network upload and no secrets. */
+import { repairWebmDuration } from "../../lib/jumpa/webm-duration";
 import { assertRecordingStorageAvailable } from "./recording-quota";
 const DB_NAME = "jumpa-recording-checkpoints";
 const STORE = "chunks";
@@ -10,6 +11,8 @@ interface CheckpointSession {
   mimeType: string;
   completed: boolean;
   groupId?: string;
+  chunks?: number;
+  ownerId?: string;
 }
 
 function openDatabase(): Promise<IDBDatabase> {
@@ -38,15 +41,30 @@ async function transact<T>(store: string, mode: IDBTransactionMode, work: (objec
   });
 }
 
-export async function createRecordingCheckpoint(mimeType: string, groupId?: string): Promise<string> {
+export async function createRecordingCheckpoint(mimeType: string, groupId?: string, ownerId?: string): Promise<string> {
   const id = crypto.randomUUID();
-  await transact(META, "readwrite", (store) => store.put({ id, createdAt: Date.now(), mimeType, completed: false, groupId } satisfies CheckpointSession));
+  await transact(META, "readwrite", (store) => store.put({ id, createdAt: Date.now(), mimeType, completed: false, groupId, ownerId } satisfies CheckpointSession));
   return id;
 }
 
-export async function appendRecordingChunk(id: string, index: number, chunk: Blob): Promise<void> {
-  await assertRecordingStorageAvailable(chunk.size);
-  await transact(STORE, "readwrite", (store) => store.put(chunk, [id, String(index).padStart(10, "0")].join(":")));
+export async function appendRecordingChunk(id: string, index: number, chunk: Blob, finalChunk = false): Promise<void> {
+  if (!Number.isSafeInteger(index) || index < 0) throw new Error("RECORDING_INVALID_INDEX");
+  // The reserve is available for the last flush, never for continued recording.
+  if (!finalChunk) await assertRecordingStorageAvailable(chunk.size);
+  const db = await openDatabase();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction([STORE, META], "readwrite", { durability: "strict" });
+    const meta = tx.objectStore(META);
+    const request = meta.get(id);
+    request.onsuccess = () => {
+      const session = request.result as CheckpointSession | undefined;
+      if (!session || session.completed || (session.chunks ?? 0) !== index) { tx.abort(); return; }
+      tx.objectStore(STORE).put(chunk, id + ":" + String(index).padStart(10, "0"));
+      meta.put({ ...session, chunks: index + 1 });
+    };
+    tx.oncomplete = () => { db.close(); resolve(); };
+    tx.onerror = tx.onabort = () => { db.close(); reject(tx.error ?? new Error("RECORDING_CHUNK_ORDER")); };
+  });
 }
 
 export async function completeRecordingCheckpoint(id: string, mimeType: string): Promise<void> {
@@ -75,7 +93,8 @@ export async function restoreRecordingCheckpoint(id: string): Promise<Blob> {
     transaction.onerror = () => { db.close(); reject(transaction.error); };
   });
   if (!chunks.length) throw new Error("RECORDING_CHECKPOINT_EMPTY");
-  return new Blob(chunks, { type: session.mimeType });
+  if (session.chunks !== undefined && chunks.length !== session.chunks) throw new Error("RECORDING_CHECKPOINT_INCOMPLETE");
+  return repairWebmDuration(new Blob(chunks, { type: session.mimeType }));
 }
 
 export async function deleteRecordingCheckpoint(id: string): Promise<void> {

@@ -747,7 +747,7 @@ function ControlBar({
         {capture.recording && <Button type="button" variant="secondary" size="sm" onClick={capture.stop}>Hentikan rekaman</Button>}
         {capture.downloadReady && <Button type="button" variant="primary" size="sm" onClick={capture.save}>Unduh rekaman</Button>}
       </div>}
-      {recordAsk && <ConfirmDialog destructive={false} title="Mulai rekaman?" body="Pilih layar atau tab JUMPA. Gambar dari layar yang dipilih dan suara rapat akan direkam. Peserta mendapat indikator rekaman. File disimpan di perangkatmu, hingga 250 MB per rekaman." confirmLabel="Pilih layar dan rekam" icon={<CircleDot size={22} />} onCancel={() => setRecordAsk(false)} onConfirm={() => { setRecordAsk(false); void capture.start(); }} returnFocus={() => moreRef.current} />}
+      {recordAsk && <ConfirmDialog destructive={false} title="Mulai rekaman?" body="Pilih layar atau tab JUMPA. Gambar dari layar yang dipilih dan suara rapat akan direkam. Peserta mendapat indikator rekaman. Penyimpanan di perangkat bersifat upaya terbaik, hingga 250 MB. Penutupan browser dapat menghilangkan bagian terakhir. Unduh sebelum keluar." confirmLabel="Pilih layar dan rekam" icon={<CircleDot size={22} />} onCancel={() => setRecordAsk(false)} onConfirm={() => { setRecordAsk(false); void capture.start(); }} returnFocus={() => moreRef.current} />}
       {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
       {endAsk && (
         <ConfirmDialog
@@ -788,10 +788,10 @@ function ControlBar({
                 {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
               </button>
             )}
-            <button type="button" role="menuitem" className="jumpa-menu-item" disabled={capture.photoBusy} onClick={() => { close(); void capture.photo(); }}>
+            {capture.enabled && <button type="button" role="menuitem" className="jumpa-menu-item" disabled={capture.photoBusy} onClick={() => { close(); void capture.photo(); }}>
               <Camera size={20} /> {capture.photoBusy ? "Menyiapkan foto…" : "Foto tampilan"}
-            </button>
-            {self.roomRole !== "MEMBER" && <>
+            </button>}
+            {capture.enabled && self.roomRole !== "MEMBER" && <>
               <button type="button" role="menuitem" className="jumpa-menu-item" disabled={!capture.supported || capture.busy || capture.downloadReady || !connected} onClick={() => { close(); if (capture.recording) capture.stop(); else setRecordAsk(true); }}>
                 {capture.recording ? <Square size={20} /> : <CircleDot size={20} />}
                 {capture.recording ? "Hentikan rekaman" : capture.busy ? "Menyiapkan rekaman…" : "Rekam di perangkat"}

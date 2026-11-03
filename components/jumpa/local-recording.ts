@@ -1,6 +1,7 @@
 import { RoomEvent, Track, type Room } from "livekit-client";
 import { appendRecordingChunk, completeRecordingCheckpoint, createRecordingCheckpoint } from "./recording-checkpoint";
-import { startRecordingSafetySegments } from "./recording-safety";
+import { repairWebmDuration } from "../../lib/jumpa/webm-duration";
+import { assertRecordingStorageAvailable } from "./recording-quota";
 
 export const RECORDING_TOPIC = "jumpa.recording";
 export const MAX_RECORDING_BYTES = 250 * 1024 * 1024;
@@ -36,6 +37,7 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
   onLimit: () => void;
   onError: () => void;
   onStopped: () => void;
+  onStorageLow?: () => void;
 }): Promise<{ stop: () => void; isActive: () => boolean }> {
   const display = await navigator.mediaDevices.getDisplayMedia({
     video: { frameRate: { ideal: 15, max: 20 }, width: { ideal: 1280 }, height: { ideal: 720 } },
@@ -46,12 +48,17 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
   let destination: MediaStreamAudioDestinationNode | undefined;
   let recorder: MediaRecorder | undefined;
   let silence: ConstantSourceNode | undefined;
-  let safety: { stop: () => void } | undefined;
+  let quotaTimer: ReturnType<typeof setInterval> | undefined;
+  let stopping = false;
+  const flush = () => { if (document.visibilityState === "hidden" && recorder?.state === "recording") recorder.requestData(); };
+  const leavePage = (event: PageTransitionEvent) => { if (event.persisted) flush(); else stop(); };
   let stopped = false;
   const sources = new Map<string, MediaStreamAudioSourceNode>();
   const events = [RoomEvent.TrackSubscribed, RoomEvent.TrackUnsubscribed, RoomEvent.TrackMuted, RoomEvent.TrackUnmuted, RoomEvent.LocalTrackPublished, RoomEvent.LocalTrackUnpublished, RoomEvent.ParticipantDisconnected];
   const cleanup = () => {
-    safety?.stop();
+    if (quotaTimer) clearInterval(quotaTimer);
+    window.removeEventListener("pagehide", leavePage);
+    document.removeEventListener("visibilitychange", flush);
     for (const event of events) room.off(event, syncAudio);
     signal.removeEventListener("abort", stop);
     for (const source of sources.values()) source.disconnect();
@@ -69,7 +76,8 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     callbacks.onStopped();
   };
   function stop() {
-    if (stopped) return;
+    if (stopped || stopping) return;
+    stopping = true;
     if (recorder && recorder.state !== "inactive") recorder.stop();
     else if (!recorder) finish();
   }
@@ -91,6 +99,7 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
   }
   try {
     if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+    await assertRecordingStorageAvailable(2 * 1024 * 1024);
     context = new AudioContext();
     await context.resume();
     if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
@@ -106,15 +115,22 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     const mimeType = recordingMimeType();
     recorder = new MediaRecorder(stream, { ...(mimeType ? { mimeType } : {}), videoBitsPerSecond: 1_500_000, audioBitsPerSecond: 96_000 });
     const chunks: Blob[] = [];
-    const checkpointId = await createRecordingCheckpoint(recorder.mimeType || mimeType || "video/webm");
+    const checkpointId = await createRecordingCheckpoint(recorder.mimeType || mimeType || "video/webm", undefined, room.localParticipant.identity);
     let writes = Promise.resolve();
     let index = 0;
+    let writeFailed = false;
     let bytes = 0;
     recorder.ondataavailable = ({ data }) => {
       if (!data.size) return;
       chunks.push(data);
       const currentIndex = index++;
-      writes = writes.then(() => appendRecordingChunk(checkpointId, currentIndex, data));
+      const isFinal = stopping;
+      writes = writes.then(() => appendRecordingChunk(checkpointId, currentIndex, data, isFinal)).catch(() => {
+        writeFailed = true;
+        callbacks.onError();
+        stop();
+        // Keep the queue settled so the emergency final chunk can still be tried.
+      });
       bytes += data.size;
       if (bytes >= MAX_RECORDING_BYTES && recorder?.state === "recording") { callbacks.onLimit(); stop(); }
     };
@@ -122,15 +138,19 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: recorder?.mimeType || mimeType || "video/webm" });
       void writes.then(async () => {
-        await completeRecordingCheckpoint(checkpointId, blob.type);
-        if (blob.size) callbacks.onComplete(blob);
+        if (!writeFailed) await completeRecordingCheckpoint(checkpointId, blob.type);
+        if (blob.size) callbacks.onComplete(await repairWebmDuration(blob));
       }).catch(() => callbacks.onError()).finally(finish);
     };
     display.getVideoTracks().forEach((track) => { track.onended = stop; });
     signal.addEventListener("abort", stop, { once: true });
     if (signal.aborted || display.getVideoTracks().every((track) => track.readyState === "ended")) throw new DOMException("Cancelled", "AbortError");
-    recorder.start(1000);
-    safety = startRecordingSafetySegments(stream, () => { callbacks.onError(); stop(); });
+    window.addEventListener("pagehide", leavePage);
+    document.addEventListener("visibilitychange", flush);
+    quotaTimer = setInterval(() => {
+      void assertRecordingStorageAvailable(2 * 1024 * 1024).catch(() => { (callbacks.onStorageLow ?? callbacks.onError)(); stop(); });
+    }, 1000);
+    recorder.start(5000);
     return { stop, isActive: () => recorder?.state === "recording" };
   } catch (error) { finish(); throw error; }
 }
