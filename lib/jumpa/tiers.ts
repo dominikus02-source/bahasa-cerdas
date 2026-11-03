@@ -26,6 +26,7 @@ export interface JumpaTierDef {
   maxScreenHeight: JumpaVideoCap;
   /** Fitur premium (true = tersedia). Yang belum dibangun ditandai `soon`. */
   features: {
+    /** Rekaman lokal pada browser yang mendukung; bukan penyimpanan server. */
     recording: boolean;
     backgroundBlur: boolean;
   };
@@ -44,7 +45,7 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
     roomsPerDay: null,
     maxCameraHeight: 720,
     maxScreenHeight: 720,
-    features: { recording: false, backgroundBlur: true },
+    features: { recording: true, backgroundBlur: true },
   },
   PREMIUM: {
     label: "Premium",
@@ -55,7 +56,7 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
     roomsPerDay: null,
     maxCameraHeight: 720,
     maxScreenHeight: 720,
-    features: { recording: false, backgroundBlur: true },
+    features: { recording: true, backgroundBlur: true },
   },
 };
 
@@ -89,7 +90,7 @@ export const JUMPA_WEBINAR: JumpaRoomLimits = { maxParticipants: JUMPA_TRIAL.max
 export const JUMPA_WEBINAR_PER_WEEK = 1;
 
 /** Fitur premium yang sudah dijanjikan di UI tetapi belum tersedia. */
-export const JUMPA_PREMIUM_SOON = ["recording"] as const;
+export const JUMPA_PREMIUM_SOON = [] as const;
 
 /** Ke mana tombol "Lihat Premium" membawa guru (halaman langganan yang ada). */
 export const JUMPA_UPGRADE_URL = "/guru/berlangganan";

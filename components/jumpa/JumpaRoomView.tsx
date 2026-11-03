@@ -20,6 +20,8 @@ import {
   useParticipants,
   useSpeakingParticipants,
   useSwipe,
+  useStartAudio,
+  useRoomContext,
   useTracks,
 } from "@livekit/components-react";
 import { ConnectionQuality, ConnectionState, DisconnectReason, LocalVideoTrack, RoomEvent, Track } from "livekit-client";
@@ -46,6 +48,9 @@ import {
   PhoneOff,
   Presentation,
   Settings2,
+  Camera,
+  CircleDot,
+  Square,
   Share2,
   Sparkles,
   ThumbsUp,
@@ -56,6 +61,8 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useMeetingCapture } from "./use-meeting-capture";
 import { mediaErrorMessage, withDefaultDeviceFallback } from "./media-errors";
 import type { JumpaReaction } from "@/lib/jumpa/signals";
 import { JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN, type JumpaTierView } from "@/lib/jumpa/tiers";
@@ -252,6 +259,8 @@ function useOnline(): boolean {
 }
 
 function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNote: () => void }) {
+  const audioRoom = useRoomContext();
+  const { mergedProps: startAudioProps, canPlayAudio } = useStartAudio({ props: { type: "button" } });
   const wide = useIsWide();
   const [layoutChoice, setLayoutChoice] = useState<Layout | null>(null);
   const layout: Layout = layoutChoice ?? (wide ? "grid" : "speaker");
@@ -261,7 +270,7 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
   // Reconnecting penuh — keduanya harus menampilkan banner (uji go-live 18 Okt).
   const online = useOnline();
   const reconnecting = !online || state === ConnectionState.Reconnecting || state === ConnectionState.SignalReconnecting;
-  const { info, unread, hands, setChatVisible, self } = useJumpa();
+  const { info, unread, hands, setChatVisible, self, toast } = useJumpa();
   const { recv, tier } = useMedia();
   const [panel, setPanel] = useState<PanelName | null>(null);
   const handsCount = self.roomRole !== "MEMBER" ? hands.size : 0;
@@ -305,6 +314,10 @@ function RoomShell(props: ViewProps & { deviceNote: string | null; clearDeviceNo
       </header>
 
       <Toasts />
+      {!canPlayAudio && <div role="status" className="mx-auto mb-2 flex max-w-full flex-wrap items-center justify-center gap-2 px-4 text-sm">
+        <span>Belum terdengar suara?</span>
+        <Button {...startAudioProps} variant="secondary" size="sm" onClick={() => { void audioRoom.startAudio().catch(() => toast("Suara belum dapat diputar. Periksa keluaran suara, lalu coba lagi.", "warn")); }}>Aktifkan suara</Button>
+      </div>}
 
       {(reconnecting || state === ConnectionState.Connecting) && (
         <div role="status" className="jumpa-status jumpa-in-down">
@@ -599,6 +612,8 @@ function ControlBar({
   const { prefs, update, device, tier } = useMedia();
   const [busy, setBusy] = useState<ReadonlySet<"mic" | "camera" | "screen">>(new Set());
   const mediaBusy = useRef(new Set<"mic" | "camera" | "screen">());
+  const capture = useMeetingCapture(self.roomRole !== "MEMBER");
+  const [recordAsk, setRecordAsk] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [endAsk, setEndAsk] = useState(false);
@@ -609,6 +624,10 @@ function ControlBar({
   const endFocus = useCallback(() => endRef.current ?? moreRef.current, []);
   const confirmEnd = async () => {
     if (ending) return;
+    if (capture.recording || capture.downloadReady) {
+      capture.stop(); setEndAsk(false);
+      toast("Unduh rekaman sebelum mengakhiri ruang.", "warn"); return;
+    }
     setEnding(true);
     try {
       const result = await moderate("END");
@@ -722,6 +741,13 @@ function ControlBar({
 
   return (
     <div className="jumpa-dock-wrap">
+      {(capture.recording || capture.remoteRecording || capture.downloadReady) && <div role="status" className="mx-auto mb-2 flex max-w-xl flex-wrap items-center justify-center gap-2 rounded-bc-ctl border border-bc-line bg-bc-surface-2 px-3 py-2 text-sm">
+        <CircleDot size={16} className="text-bc-danger" aria-hidden />
+        <span>{capture.recording ? "Rekaman di perangkatmu berlangsung" : capture.downloadReady ? "Rekaman siap diunduh" : "Pemandu sedang merekam"}</span>
+        {capture.recording && <Button type="button" variant="secondary" size="sm" onClick={capture.stop}>Hentikan rekaman</Button>}
+        {capture.downloadReady && <Button type="button" variant="primary" size="sm" onClick={capture.save}>Unduh rekaman</Button>}
+      </div>}
+      {recordAsk && <ConfirmDialog destructive={false} title="Mulai rekaman?" body="Pilih layar atau tab JUMPA. Gambar dari layar yang dipilih dan suara rapat akan direkam. Peserta mendapat indikator rekaman. File disimpan di perangkatmu, hingga 250 MB per rekaman." confirmLabel="Pilih layar dan rekam" icon={<CircleDot size={22} />} onCancel={() => setRecordAsk(false)} onConfirm={() => { setRecordAsk(false); void capture.start(); }} returnFocus={() => moreRef.current} />}
       {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
       {endAsk && (
         <ConfirmDialog
@@ -762,6 +788,16 @@ function ControlBar({
                 {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
               </button>
             )}
+            <button type="button" role="menuitem" className="jumpa-menu-item" disabled={capture.photoBusy} onClick={() => { close(); void capture.photo(); }}>
+              <Camera size={20} /> {capture.photoBusy ? "Menyiapkan foto…" : "Foto tampilan"}
+            </button>
+            {self.roomRole !== "MEMBER" && <>
+              <button type="button" role="menuitem" className="jumpa-menu-item" disabled={!capture.supported || capture.busy || capture.downloadReady || !connected} onClick={() => { close(); if (capture.recording) capture.stop(); else setRecordAsk(true); }}>
+                {capture.recording ? <Square size={20} /> : <CircleDot size={20} />}
+                {capture.recording ? "Hentikan rekaman" : capture.busy ? "Menyiapkan rekaman…" : "Rekam di perangkat"}
+              </button>
+              {!capture.supported && <p className="px-4 py-1 text-xs text-bc-text-2">Untuk merekam, gunakan browser laptop yang mendukung perekaman layar.</p>}
+            </>}
             {canInvite && (
               <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("invite"); close(); }}>
                 <UserPlus size={20} /> Undang peserta
@@ -789,7 +825,7 @@ function ControlBar({
               <Flag size={20} /> Laporkan masalah
             </button>
             {canEnd && (
-              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { close(); onLeave(); }}>
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { close(); if (capture.recording || capture.downloadReady) { capture.stop(); toast("Unduh rekaman sebelum keluar.", "warn"); return; } onLeave(); }}>
                 <PhoneOff size={20} /> Keluar sendiri
               </button>
             )}

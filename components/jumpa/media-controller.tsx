@@ -58,7 +58,8 @@ export function buildRoomOptions(prefs: JumpaMediaPrefs, device: DeviceClass, ti
   const pub = publishPolicy(prefs.quality, device, tier.maxCameraHeight, tier.maxScreenHeight);
   const recv = receivePolicy(prefs.quality, device);
   return {
-    adaptiveStream: { pixelDensity: recv.pixelDensity },
+    // Visibility subscriptions below own background pausing, including recording.
+    adaptiveStream: { pixelDensity: recv.pixelDensity, pauseVideoInBackground: false },
     dynacast: true,
     disconnectOnPageLeave: true,
     videoCaptureDefaults: captureOptions(pub, prefs),
@@ -79,6 +80,7 @@ interface MediaCtl {
   device: DeviceClass;
   recv: ReceivePolicy;
   degraded: boolean;
+  setRecordingActive: (active: boolean) => void;
   quality: ConnectionQuality;
   tier: JumpaTierView;
   observeVisibleTrack: (sid: string, element: HTMLElement) => () => void;
@@ -121,6 +123,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
   prefsRef.current = prefs;
   const { quality } = useConnectionQualityIndicator({ participant: room.localParticipant });
   const [degraded, setDegraded] = useState(false);
+  const [recordingActive, setRecordingActive] = useState(false);
   const refreshSubscriptions = useRef<() => void>(() => undefined);
   const [visibleTracks] = useState(() => new VisibleTracks(() => refreshSubscriptions.current()));
   const observeVisibleTrack = useCallback((sid: string, element: HTMLElement) => observeTile(visibleTracks, sid, element), [visibleTracks]);
@@ -169,7 +172,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
   // autoSubscribe; hanya tile yang terlihat berlangganan video. Suara tetap aktif.
   useEffect(() => {
     const run = () => {
-      const pageVisible = document.visibilityState !== "hidden";
+      const pageVisible = document.visibilityState !== "hidden" || recordingActive;
       for (const participant of room.remoteParticipants.values()) {
         const screenVisible = [...participant.videoTrackPublications.values()].some((pub) => pub.source === Track.Source.ScreenShare && visibleTracks.has(pub.trackSid));
         for (const pub of participant.trackPublications.values()) {
@@ -197,7 +200,7 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
       room.off(RoomEvent.Reconnected, run);
       document.removeEventListener("visibilitychange", run);
     };
-  }, [room, prefs.audioOnly, recv.remoteQuality, visibleTracks]);
+  }, [room, prefs.audioOnly, recv.remoteQuality, visibleTracks, recordingActive]);
 
   const update = useCallback(
     (patch: Partial<JumpaMediaPrefs>) => {
@@ -236,6 +239,6 @@ export function MediaProvider({ initial, device, tier, children }: { initial: Ju
     [room, device, tier.maxCameraHeight, tier.maxScreenHeight, toast],
   );
 
-  const value = useMemo<MediaCtl>(() => ({ prefs, update, device, recv, degraded, quality, tier, observeVisibleTrack }), [prefs, update, device, recv, degraded, quality, tier, observeVisibleTrack]);
+  const value = useMemo<MediaCtl>(() => ({ prefs, update, device, recv, degraded, quality, tier, observeVisibleTrack, setRecordingActive }), [prefs, update, device, recv, degraded, quality, tier, observeVisibleTrack]);
   return <MediaCtx.Provider value={value}>{children}</MediaCtx.Provider>;
 }
