@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 import { GraduationCap } from "lucide-react";
-import AIFloatingButton from "@/components/shared/AIFloatingButton";
+import AIFloatingButton, { NaraHeaderLink } from "@/components/shared/AIFloatingButton";
 import { BackHome } from "@/components/shared/BackHome";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -192,6 +192,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                 </span>
               </span>
             </Link>
+            <NaraHeaderLink />
             <NotificationBell allHref="/guru/notifikasi" />
             <ThemeToggle />
             <ArenaLogoutButton variant="icon" to="/login" />
