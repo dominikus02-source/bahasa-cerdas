@@ -69,7 +69,8 @@ type Konten = {
       shortAnswer: { question: string; sampleAnswer: string; explanation: string }[]
       essay: { question: string; guidance: string; rubricNote: string }[]
     }
-    assessment: { diagnostic: { question: string; purpose: string }[]; formative: { method: string; criteria: string[] }[]; summative: { type: string; description: string }[] }
+    // Data buku panduan memakai dua bentuk: objek terstruktur atau daftar kalimat (string[]).
+    assessment: { diagnostic: ({ question: string; purpose: string } | string)[]; formative: ({ method: string; criteria: string[] } | string)[]; summative: ({ type: string; description: string } | string)[] }
     rubric: { aspects: { name: string; criteria: { level: string | number; description: string }[] }[] }
     differentiation: { support: string[]; regular?: string[]; challenge: string[] }
     remedial: string[]
@@ -225,6 +226,11 @@ export default function UnitPreviewPage() {
     return () => window.removeEventListener("keydown", handler)
   }, [presentMode, goTab])
 
+  // Baris tab bisa digeser di layar sempit — pastikan tab aktif selalu terlihat.
+  useEffect(() => {
+    document.querySelectorAll<HTMLElement>('[role="tab"][aria-selected="true"]').forEach(el => el.scrollIntoView({ block: "nearest", inline: "nearest" }))
+  }, [activeTab, presentTab, presentMode])
+
   const handleAssign = async () => {
     if (!data || selectedGroups.length === 0) return
     setAssignLoading(true)
@@ -283,24 +289,26 @@ export default function UnitPreviewPage() {
   )
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <div className="flex items-start gap-4 mb-6">
-        <button onClick={() => router.back()} className="p-2 hover:bg-slate-100 rounded-lg mt-1">
+    <div className="max-w-4xl mx-auto py-1 sm:p-6 pb-16 md:pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-start gap-3 sm:gap-4 mb-5 sm:mb-6">
+        <div className="flex items-start gap-2 sm:gap-4 flex-1 min-w-0">
+        <button onClick={() => router.back()} aria-label="Kembali" className="p-2 -ml-2 sm:ml-0 hover:bg-slate-100 rounded-lg mt-0.5 sm:mt-1 shrink-0">
           <ArrowLeft className="w-5 h-5 text-slate-500" />
         </button>
-        <div className="flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <Badge variant="outline" className="text-emerald-600 border-emerald-200 text-[10px]">{data.grade} — Semester {data.semester}</Badge>
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-1">
+            <Badge variant="outline" className="text-emerald-600 border-emerald-200 text-[10px] whitespace-nowrap">{data.grade} — Semester {data.semester}</Badge>
             {/* Elemen Capaian Pembelajaran (Kurikulum Merdeka). Dulu tertulis "KD" —
                 notasi Kompetensi Dasar dari Kurikulum 2013 yang sudah tidak berlaku. */}
-            <Badge variant="secondary" className="text-[10px] whitespace-normal text-left leading-snug">
+            <Badge variant="secondary" className="text-[10px] whitespace-normal text-left leading-snug max-w-full">
               CP: {data.kd || "-"}
             </Badge>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">{data.title}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight break-words">{data.title}</h1>
           <p className="text-sm text-slate-500 mt-1">{data.level?.title}</p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        </div>
+        <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 sm:shrink-0">
           <Button onClick={() => setPresentMode(true)} variant="outline" className="border-emerald-200 text-emerald-600 hover:bg-emerald-50">
             <Maximize2 className="w-4 h-4 mr-2" />
             Tayangkan
@@ -324,11 +332,11 @@ export default function UnitPreviewPage() {
         </Button>
       </div>
 
-      <div className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-6">
+      <div role="tablist" aria-label="Bagian bab" className="flex gap-1 bg-slate-100 rounded-xl p-1 mb-5 sm:mb-6 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabs.map(t => (
-          <button key={t.key} onClick={() => setActiveTab(t.key)}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-lg text-xs font-semibold transition-all ${activeTab === t.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
-            <t.icon className="w-4 h-4" />{t.label}
+          <button key={t.key} role="tab" aria-selected={activeTab === t.key} onClick={() => setActiveTab(t.key)}
+            className={`shrink-0 sm:flex-1 flex items-center justify-center gap-1.5 px-3 sm:px-2 py-2.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${activeTab === t.key ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"}`}>
+            <t.icon className="w-4 h-4 shrink-0" />{t.label}
             {t.count !== undefined && <span className="px-1.5 py-0.5 rounded-full bg-slate-200 text-[9px]">{t.count}</span>}
           </button>
         ))}
@@ -502,7 +510,7 @@ function BelajarContent({ content, ilustrasiUrls }: { content: Konten["belajar"]
           {m.catatan && (
             <div className="mt-3 bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-              <p className="text-sm text-blue-800">{m.catatan}</p>
+              <p className="text-sm text-blue-700">{m.catatan}</p>
             </div>
           )}
         </div>
@@ -530,7 +538,7 @@ function PraktikContent({ content }: { content: Praktik }) {
       <div className="text-sm text-slate-700 whitespace-pre-line leading-relaxed mb-4">{content.petunjuk ?? ""}</div>
       {(content.tips?.length ?? 0) > 0 && (
         <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-3">
-          <p className="text-xs font-semibold text-blue-800 mb-1 flex items-center gap-1"><Brain className="w-3.5 h-3.5" />Tips</p>
+          <p className="text-xs font-semibold text-blue-700 mb-1 flex items-center gap-1"><Brain className="w-3.5 h-3.5" />Tips</p>
           <ul className="space-y-1">{(content.tips ?? []).map((t, i) => <li key={i} className="text-sm text-blue-700 flex items-start gap-2"><span className="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1.5 shrink-0" />{t}</li>)}</ul>
         </div>
       )}
@@ -559,16 +567,16 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
   return (
     <div className="fixed inset-0 z-[100] bg-white flex flex-col">
       {/* Bar */}
-      <div className="px-6 py-3 border-b border-slate-200 flex items-center justify-between shrink-0 bg-white">
-        <div className="flex items-center gap-3 min-w-0">
-          <button onClick={onClose} className="p-1.5 hover:bg-slate-100 rounded-lg" title="Tutup (Esc)">
+      <div className="px-3 sm:px-6 py-2.5 sm:py-3 border-b border-slate-200 flex items-center justify-between gap-3 shrink-0 bg-white">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <button onClick={onClose} className="p-1.5 hover:bg-slate-100 rounded-lg shrink-0" title="Tutup (Esc)" aria-label="Tutup tayangan">
             <Minimize2 className="w-4 h-4 text-slate-500" />
           </button>
-          <div className="h-5 w-px bg-slate-200" />
-          <Badge variant="outline" className="text-emerald-600 border-emerald-200 text-[10px]">{data.grade} — Semester {data.semester}</Badge>
+          <div className="h-5 w-px bg-slate-200 shrink-0" />
+          <Badge variant="outline" className="hidden sm:inline-flex text-emerald-600 border-emerald-200 text-[10px] whitespace-nowrap shrink-0">{data.grade} — Semester {data.semester}</Badge>
           <span className="text-sm font-semibold text-slate-800 truncate">{data.title}</span>
         </div>
-        <div className="flex items-center gap-2 text-xs text-slate-400">
+        <div className="hidden md:flex items-center gap-2 text-xs text-slate-400 shrink-0">
           <kbd className="px-1.5 py-0.5 bg-slate-100 rounded text-[10px]">←</kbd><span className="hidden sm:inline">/</span><kbd className="px-1.5 py-0.5 bg-slate-100 rounded text-[10px]">→</kbd>
           <span className="hidden sm:inline">ganti bagian</span>
           <span className="mx-1">·</span>
@@ -581,24 +589,25 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
       </div>
 
       {/* Tab nav */}
-      <div className="px-6 py-2 border-b border-slate-100 flex items-center gap-1.5 shrink-0 bg-slate-50/50">
+      <div className="px-3 sm:px-6 py-2 border-b border-slate-100 flex items-center gap-1.5 shrink-0 bg-slate-50">
+        <div role="tablist" aria-label="Bagian tayangan" className="flex items-center gap-1.5 min-w-0 flex-1 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {tabs.map(t => (
-          <button key={t.key} onClick={() => setTab(t.key)}
-            className={`flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${tab === t.key ? "bg-white text-emerald-700 shadow-sm border border-emerald-200" : "text-slate-500 hover:text-slate-700"}`}>
-            <t.icon className="w-4 h-4" />{t.label}
+          <button key={t.key} role="tab" aria-selected={tab === t.key} onClick={() => setTab(t.key)}
+            className={`shrink-0 flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all border ${tab === t.key ? "bg-white text-emerald-700 shadow-sm border-emerald-200" : "border-transparent text-slate-500 hover:text-slate-700"}`}>
+            <t.icon className="w-4 h-4 shrink-0" />{t.label}
             {t.count !== undefined && <span className="px-1.5 py-0.5 rounded-full bg-slate-200 text-[10px] font-bold">{t.count}</span>}
           </button>
         ))}
-        <div className="flex-1" />
-        <button onClick={() => setShowAnswers(!showAnswers)}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${showAnswers ? "bg-emerald-100 text-emerald-700" : "text-slate-400 hover:text-slate-600"}`}>
+        </div>
+        <button onClick={() => setShowAnswers(!showAnswers)} aria-pressed={showAnswers}
+          className={`shrink-0 flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${showAnswers ? "bg-emerald-100 text-emerald-700" : "text-slate-400 hover:text-slate-600"}`}>
           {showAnswers ? <><EyeOff className="w-3.5 h-3.5" />Sembunyi</> : <><Eye className="w-3.5 h-3.5" />Jawaban</>}
         </button>
       </div>
 
       {/* Content — scrollable, large text */}
-      <div className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="max-w-3xl mx-auto text-lg space-y-6">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 py-5 sm:py-6">
+        <div className="max-w-3xl mx-auto text-base sm:text-lg space-y-6 break-words">
           {tab === "belajar" && (
             <div className="space-y-8">
               <div>
@@ -622,7 +631,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
                     const t = line.trim()
                     if (line === "---CONTOH---") return <div key={j} className="bg-amber-50 border border-amber-200 rounded-lg p-4"><p className="text-sm font-semibold text-amber-800 mb-2">Contoh:</p></div>
                     if (t.startsWith("[Ilustrasi:")) { const p = t.slice(11).trim().replace(/\]$/, ""); const u = ilustrasiUrls[p]; return <div key={j} className="my-3 rounded-xl overflow-hidden border border-violet-200 bg-violet-50">{u ? <img src={u} alt={p} className="w-full object-cover" loading="lazy" /> : <div className="flex items-center justify-center h-48 bg-violet-100 animate-pulse"><Loader2 className="w-6 h-6 text-violet-400 animate-spin" /></div>}<div className="flex items-center gap-2 px-4 py-2.5 bg-white/80 backdrop-blur-sm"><ImageIcon className="w-4 h-4 text-violet-500 shrink-0" /><p className="text-xs text-violet-700 italic">{p}</p></div></div> }
-                    if (c.includes(line)) return <p key={j} className="text-amber-900 bg-amber-50/50 -mt-2 px-4 py-1 rounded-lg">{line}</p>
+                    if (c.includes(line)) return <p key={j} className="text-amber-900 bg-amber-50 -mt-2 px-4 py-1 rounded-lg">{line}</p>
                     if (!line.trim()) return <div key={j} className="h-3" />
                     const isBullet = line.startsWith("•")
                     const isNumbered = /^\d+\./.test(line)
@@ -630,7 +639,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
                     if (isNumbered) { const m2 = line.match(/^(\d+)\.\s*(.*)/); if (m2) return <p key={j} className="flex items-start gap-3"><span className="w-7 h-7 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-sm font-bold shrink-0">{m2[1]}</span><span className="text-slate-800">{m2[2]}</span></p> }
                     return <p key={j} className="text-slate-800 leading-relaxed">{line}</p>
                   })})()}</div>
-                  {m.catatan && <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3"><Sparkles className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" /><p className="text-blue-800">{m.catatan}</p></div>}
+                  {m.catatan && <div className="mt-4 bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3"><Sparkles className="w-5 h-5 text-blue-500 mt-0.5 shrink-0" /><p className="text-blue-700">{m.catatan}</p></div>}
                 </div>
               ))}
               {(content.belajar.rangkuman?.length ?? 0) > 0 && (
@@ -663,7 +672,7 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
               <div className="text-slate-800 leading-relaxed whitespace-pre-line text-lg mb-6">{praktik.petunjuk ?? ""}</div>
               {(praktik.tips?.length ?? 0) > 0 && (
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                  <p className="font-semibold text-blue-800 mb-2 flex items-center gap-2"><Brain className="w-5 h-5" />Tips</p>
+                  <p className="font-semibold text-blue-700 mb-2 flex items-center gap-2"><Brain className="w-5 h-5" />Tips</p>
                   <ul className="space-y-2">{(praktik.tips ?? []).map((t, i) => <li key={i} className="flex items-start gap-3 text-blue-700"><span className="w-2 h-2 rounded-full bg-blue-400 mt-2 shrink-0" />{t}</li>)}</ul>
                 </div>
               )}
@@ -688,15 +697,15 @@ function PresentationView({ data, content, tab, setTab, showAnswers, setShowAnsw
       </div>
 
       {/* Bottom nav */}
-      <div className="px-6 py-3 border-t border-slate-200 flex items-center justify-between shrink-0 bg-white">
-        <button onClick={() => goTab(-1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
-          <ChevronLeft className="w-4 h-4" />Sebelumnya
+      <div className="px-3 sm:px-6 py-3 border-t border-slate-200 flex items-center justify-between gap-2 shrink-0 bg-white pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+        <button onClick={() => goTab(-1)} aria-label="Bagian sebelumnya" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
+          <ChevronLeft className="w-4 h-4" /><span className="hidden sm:inline">Sebelumnya</span>
         </button>
-        <span className="text-xs text-slate-400">
+        <span className="text-xs text-slate-400 truncate">
           {tab.charAt(0).toUpperCase() + tab.slice(1)} · {getTabOrder(content).indexOf(tab) + 1}/{getTabOrder(content).length}
         </span>
-        <button onClick={() => goTab(1)} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
-          Selanjutnya<ChevronRight className="w-4 h-4" />
+        <button onClick={() => goTab(1)} aria-label="Bagian selanjutnya" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-500 hover:bg-slate-100">
+          <span className="hidden sm:inline">Selanjutnya</span><ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
@@ -798,7 +807,7 @@ function PracticeQuizContent({ data, color, type, showAnswers, setShowAnswers }:
   }
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <p className="text-sm text-slate-500">{data.questions.length} soal</p>
         <Button variant="outline" size="sm" onClick={() => setShowAnswers(!showAnswers)} className={`text-xs ${showAnswers ? "text-emerald-600 border-emerald-200" : ""}`}>
           {showAnswers ? <><EyeOff className="w-3.5 h-3.5 mr-1" />Sembunyikan Jawaban</> : <><Eye className="w-3.5 h-3.5 mr-1" />Tampilkan Jawaban</>}
@@ -806,8 +815,8 @@ function PracticeQuizContent({ data, color, type, showAnswers, setShowAnswers }:
       </div>
       {data.stimulusText && (
         <div className="bg-blue-50 border border-blue-100 rounded-xl p-4">
-          <h3 className="font-bold text-blue-800 text-sm mb-2">{data.stimulusTitle || "Stimulus"}</h3>
-          <p className="text-sm text-blue-900 whitespace-pre-line leading-relaxed">{data.stimulusText}</p>
+          <h3 className="font-bold text-blue-700 text-sm mb-2">{data.stimulusTitle || "Stimulus"}</h3>
+          <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">{data.stimulusText}</p>
         </div>
       )}
       {data.questions.map((q, i) => {
@@ -816,8 +825,8 @@ function PracticeQuizContent({ data, color, type, showAnswers, setShowAnswers }:
         <div key={q.id} className="bg-white rounded-xl border border-slate-200 p-4">
           <div className="flex items-start gap-2 mb-2">
             <span className={`font-bold ${colorClasses}`}>{i + 1}.</span>
-            <span className="text-sm font-medium text-slate-900">{q.questionText}</span>
-            <span className={`ml-auto text-[10px] px-1.5 py-0.5 rounded-full font-medium ${difficultyBadge(q.difficulty)}`}>{q.difficulty}</span>
+            <span className="flex-1 min-w-0 text-sm font-medium text-slate-900 break-words">{q.questionText}</span>
+            <span className={`shrink-0 text-[10px] px-1.5 py-0.5 rounded-full font-medium ${difficultyBadge(q.difficulty)}`}>{q.difficulty}</span>
           </div>
           {q.skillTarget && <p className="text-[10px] text-slate-400 mb-2">Target: {q.skillTarget}</p>}
           {q.options ? (
@@ -838,7 +847,7 @@ function PracticeQuizContent({ data, color, type, showAnswers, setShowAnswers }:
           {showAnswers && q.explanation && (
             <div className="mt-2 bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-              <p className="text-sm text-blue-800">{q.explanation}</p>
+              <p className="text-sm text-blue-700">{q.explanation}</p>
             </div>
           )}
         </div>
@@ -860,16 +869,16 @@ function PracticePresentation({ data, color, type, showAnswers }: { data: NonNul
       <h2 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2"><BookOpen className={`w-6 h-6 ${colorClasses}`} />{type} ({data.questions.length} soal)</h2>
       {data.stimulusText && (
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
-          <h3 className="font-bold text-blue-800 text-lg mb-3">{data.stimulusTitle || "Stimulus"}</h3>
-          <p className="text-blue-900 whitespace-pre-line leading-relaxed text-lg">{data.stimulusText}</p>
+          <h3 className="font-bold text-blue-700 text-lg mb-3">{data.stimulusTitle || "Stimulus"}</h3>
+          <p className="text-slate-700 whitespace-pre-line leading-relaxed text-lg">{data.stimulusText}</p>
         </div>
       )}
       <div className="space-y-6">
         {data.questions.map((q, i) => (
-          <div key={q.id} className="bg-white border border-slate-200 rounded-xl p-5">
-            <div className="flex items-start gap-3 mb-3">
+          <div key={q.id} className="bg-white border border-slate-200 rounded-xl p-4 sm:p-5">
+            <div className="flex items-start gap-2 sm:gap-3 mb-3">
               <span className={`font-bold text-lg ${colorClasses}`}>{i + 1}.</span>
-              <span className="text-lg font-semibold text-slate-900 flex-1">{q.questionText}</span>
+              <span className="text-base sm:text-lg font-semibold text-slate-900 flex-1 min-w-0">{q.questionText}</span>
               <div className="flex items-center gap-2 shrink-0">
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${difficultyBadge(q.difficulty)}`}>{q.difficulty}</span>
               </div>
@@ -898,7 +907,7 @@ function PracticePresentation({ data, color, type, showAnswers }: { data: NonNul
             {showAnswers && q.explanation && (
               <div className="mt-3 bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-start gap-2">
                 <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-                <p className="text-sm text-blue-800">{q.explanation}</p>
+                <p className="text-sm text-blue-700">{q.explanation}</p>
               </div>
             )}
           </div>
@@ -945,7 +954,7 @@ function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
             <p className="text-xs text-slate-500 mt-1"><span className="font-medium">Manfaat:</span> {tc.textNature.lifeBenefits}</p>
             <div className="mt-2 bg-blue-50 border border-blue-100 rounded-lg p-3 flex items-start gap-2">
               <Sparkles className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
-              <p className="text-xs text-blue-800">{tc.textNature.distinction}</p>
+              <p className="text-xs text-blue-700">{tc.textNature.distinction}</p>
             </div>
           </div>
 
@@ -1146,13 +1155,13 @@ function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
       {guide.readingPractice && (
         <div className="bg-white rounded-xl border border-slate-200 p-5">
           <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><FileText className="w-4 h-4 text-indigo-500" />Latihan dan Kuis Berbasis Bacaan</h2>
-          <div className="bg-indigo-50 border border-indigo-100 rounded-lg p-4 mb-4">
-            <p className="text-xs font-semibold text-indigo-800 mb-2">{guide.readingPractice.stimulusTitle}</p>
-            <p className="text-sm text-indigo-900 whitespace-pre-line leading-relaxed">{guide.readingPractice.stimulusText}</p>
+          <div className="bg-blue-50 border border-blue-100 rounded-lg p-4 mb-4">
+            <p className="text-xs font-semibold text-blue-700 mb-2">{guide.readingPractice.stimulusTitle}</p>
+            <p className="text-sm text-slate-700 whitespace-pre-line leading-relaxed">{guide.readingPractice.stimulusText}</p>
           </div>
 
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-sm text-slate-800">Soal Pilihan Ganda ({guide.readingPractice.multipleChoice.length}), Isian Singkat ({guide.readingPractice.shortAnswer.length}), dan Uraian ({guide.readingPractice.essay.length})</h3>
+          <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <h3 className="font-semibold text-sm text-slate-800 min-w-0">Soal Pilihan Ganda ({guide.readingPractice.multipleChoice.length}), Isian Singkat ({guide.readingPractice.shortAnswer.length}), dan Uraian ({guide.readingPractice.essay.length})</h3>
             <Button variant="outline" size="sm" onClick={() => setShowKunci(v => !v)}>
               {showKunci ? <><EyeOff className="w-3.5 h-3.5 mr-1" />Sembunyikan Kunci</> : <><Eye className="w-3.5 h-3.5 mr-1" />Tampilkan Kunci</>}
             </Button>
@@ -1169,7 +1178,7 @@ function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
                     </p>
                   ))}
                 </div>
-                {showKunci && <p className="text-xs text-indigo-700 italic mt-1 ml-4">Pembahasan: {q.explanation}</p>}
+                {showKunci && <p className="text-xs text-blue-700 italic mt-1 ml-4">Pembahasan: {q.explanation}</p>}
               </li>
             ))}
           </ol>
@@ -1206,49 +1215,49 @@ function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
 
       <div className="bg-white rounded-xl border border-slate-200 p-5">
         <h2 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Target className="w-4 h-4 text-emerald-500" />Asesmen</h2>
-        {guide.assessment.diagnostic.length > 0 && (
+        {(guide.assessment?.diagnostic?.length ?? 0) > 0 && (
           <div className="mb-4">
             <h3 className="font-semibold text-sm text-slate-800 mb-2">Diagnostik</h3>
             <ul className="space-y-1">
               {guide.assessment.diagnostic.map((d, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700 bg-slate-50 rounded-lg p-2">
                   <span className="text-xs font-bold text-slate-400 shrink-0">Q{i + 1}</span>
-                  <div>
-                    <p className="text-sm">{d.question}</p>
-                    <p className="text-xs text-slate-400 italic">Tujuan: {d.purpose}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm">{typeof d === "string" ? d : d.question}</p>
+                    {typeof d !== "string" && d.purpose && <p className="text-xs text-slate-400 italic">Tujuan: {d.purpose}</p>}
                   </div>
                 </li>
               ))}
             </ul>
           </div>
         )}
-        {guide.assessment.formative.length > 0 && (
+        {(guide.assessment?.formative?.length ?? 0) > 0 && (
           <div className="mb-4">
             <h3 className="font-semibold text-sm text-slate-800 mb-2">Formatif</h3>
             <ul className="space-y-2">
               {guide.assessment.formative.map((f, i) => (
                 <li key={i} className="text-sm text-slate-700 bg-blue-50 rounded-lg p-2">
-                  <p className="font-medium text-blue-800">{f.method}</p>
-                  <ul className="space-y-0.5 mt-1">
+                  <p className="font-medium text-blue-700">{typeof f === "string" ? f : f.method}</p>
+                  {typeof f !== "string" && (f.criteria?.length ?? 0) > 0 && <ul className="space-y-0.5 mt-1">
                     {f.criteria.map((c, j) => (
                       <li key={j} className="flex items-start gap-1.5 text-xs text-blue-700">
                         <CheckCircle className="w-3 h-3 text-blue-400 mt-0.5 shrink-0" />{c}
                       </li>
                     ))}
-                  </ul>
+                  </ul>}
                 </li>
               ))}
             </ul>
           </div>
         )}
-        {guide.assessment.summative.length > 0 && (
+        {(guide.assessment?.summative?.length ?? 0) > 0 && (
           <div>
             <h3 className="font-semibold text-sm text-slate-800 mb-2">Sumatif</h3>
             <ul className="space-y-1">
               {guide.assessment.summative.map((s, i) => (
                 <li key={i} className="flex items-start gap-2 text-sm text-slate-700">
                   <CheckCircle className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                  <div><span className="font-medium">{s.type}:</span> {s.description}</div>
+                  <div className="min-w-0">{typeof s === "string" ? s : <><span className="font-medium">{s.type}:</span> {s.description}</>}</div>
                 </li>
               ))}
             </ul>
