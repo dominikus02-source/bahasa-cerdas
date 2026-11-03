@@ -171,6 +171,7 @@ export default function MateriAjarPage() {
           </div>
 
           <select
+            aria-label="Urutkan materi"
             value={sort}
             onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
             className="min-h-11 w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 sm:w-auto focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
@@ -182,12 +183,16 @@ export default function MateriAjarPage() {
           <div className="flex w-full overflow-hidden rounded-xl border border-gray-200 sm:w-auto">
             <button
               onClick={() => setViewMode("grid")}
+              aria-label="Tampilan kisi"
+              aria-pressed={viewMode === "grid"}
               className={`min-h-11 flex-1 p-2.5 sm:flex-none ${viewMode === "grid" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <Grid3x3 size={18} />
             </button>
             <button
               onClick={() => setViewMode("list")}
+              aria-label="Tampilan daftar"
+              aria-pressed={viewMode === "list"}
               className={`min-h-11 flex-1 p-2.5 sm:flex-none ${viewMode === "list" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <List size={18} />

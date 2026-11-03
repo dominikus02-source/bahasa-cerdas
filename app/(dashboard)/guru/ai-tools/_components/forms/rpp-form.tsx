@@ -138,13 +138,13 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Nama Guru</label>
-            <input type="text" value={teacherName} onChange={(e) => setTeacherName(e.target.value)}
+            <input aria-label="Nama Guru" type="text" value={teacherName} onChange={(e) => setTeacherName(e.target.value)}
               placeholder="Cth: Siti Nurhaliza, S.Pd."
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">NIP Guru</label>
-            <input type="text" value={nipGuru} onChange={(e) => setNipGuru(e.target.value)}
+            <input aria-label="NIP Guru" type="text" value={nipGuru} onChange={(e) => setNipGuru(e.target.value)}
               placeholder="Cth: 198507162010012001"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
@@ -152,13 +152,13 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Nama Sekolah</label>
-            <input type="text" value={schoolName} onChange={(e) => setSchoolName(e.target.value)}
+            <input aria-label="Nama Sekolah" type="text" value={schoolName} onChange={(e) => setSchoolName(e.target.value)}
               placeholder="Cth: SMPN 1 Jakarta"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Kepala Sekolah</label>
-            <input type="text" value={principalName} onChange={(e) => setPrincipalName(e.target.value)}
+            <input aria-label="Kepala Sekolah" type="text" value={principalName} onChange={(e) => setPrincipalName(e.target.value)}
               placeholder="Cth: Drs. Ahmad Fauzi, M.Pd."
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
@@ -166,13 +166,13 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">NIP Kepala Sekolah</label>
-            <input type="text" value={principalNip} onChange={(e) => setPrincipalNip(e.target.value)}
+            <input aria-label="NIP Kepala Sekolah" type="text" value={principalNip} onChange={(e) => setPrincipalNip(e.target.value)}
               placeholder="Cth: 197003152005011002"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Kota, Tanggal</label>
-            <input type="text" value={cityDate} onChange={(e) => setCityDate(e.target.value)}
+            <input aria-label="Kota, Tanggal" type="text" value={cityDate} onChange={(e) => setCityDate(e.target.value)}
               placeholder="Cth: Jakarta, 1 Juli 2025"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
@@ -180,13 +180,13 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Tahun Ajaran</label>
-            <input type="text" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}
+            <input aria-label="Tahun Ajaran" type="text" value={academicYear} onChange={(e) => setAcademicYear(e.target.value)}
               placeholder="Cth: 2025/2026"
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
           </div>
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1">Fase</label>
-            <select value={phase} onChange={(e) => handlePhaseChange(e.target.value)}
+            <select aria-label="Fase" value={phase} onChange={(e) => handlePhaseChange(e.target.value)}
               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
               {PHASE_OPTIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
             </select>
@@ -194,7 +194,7 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         </div>
         <div className="mt-3">
           <label className="block text-xs font-medium text-gray-600 mb-1">Semester</label>
-          <select value={semester} onChange={(e) => setSemester(e.target.value)}
+          <select aria-label="Semester" value={semester} onChange={(e) => setSemester(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
             {SEMESTER_OPTIONS.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
           </select>
@@ -204,12 +204,12 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Mata Pelajaran</label>
-          <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)}
+          <input aria-label="Mata Pelajaran" type="text" value={subject} onChange={(e) => setSubject(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Kelas</label>
-          <select value={grade} onChange={(e) => handleGradeChange(e.target.value)}
+          <select aria-label="Kelas" value={grade} onChange={(e) => handleGradeChange(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
             {gradeChoices.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
@@ -220,7 +220,7 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Kurikulum</label>
-          <select value={curriculum} onChange={(e) => setCurriculum(e.target.value)}
+          <select aria-label="Kurikulum" value={curriculum} onChange={(e) => setCurriculum(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
             {KURIKULUM_OPTIONS.map((k) => <option key={k.value} value={k.value}>{k.label}</option>)}
           </select>
@@ -232,14 +232,14 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Durasi</label>
-          <input type="text" value={duration} onChange={(e) => setDuration(e.target.value)}
+          <input aria-label="Durasi" type="text" value={duration} onChange={(e) => setDuration(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
         </div>
       </div>
 
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1">Topik</label>
-        <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)}
+        <input aria-label="Topik" type="text" value={topic} onChange={(e) => setTopic(e.target.value)}
           placeholder="Contoh: Teks Negosiasi"
           className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
       </div>
@@ -299,7 +299,7 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
       {curriculum === "Kurikulum Merdeka" && (
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Pemahaman Bermakna (opsional)</label>
-          <textarea
+          <textarea aria-label="Pemahaman Bermakna"
             value={meaningfulUnderstanding}
             onChange={(e) => setMeaningfulUnderstanding(e.target.value)}
             placeholder="Contoh: Siswa memahami bahwa negosiasi adalah keterampilan hidup yang membantu mencapai kesepakatan tanpa konflik"
@@ -344,7 +344,7 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Model Pembelajaran</label>
-              <select value={""} onChange={() => {}}
+              <select aria-label="Model Pembelajaran" value={""} onChange={() => {}}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 outline-none bg-white text-gray-400">
                 <option value="">Pilih model</option>
                 {MODEL_OPTIONS.map((m) => <option key={m} value={m}>{m}</option>)}
@@ -352,7 +352,7 @@ export function RPPForm({ onSubmit, loading }: RPPFormProps) {
             </div>
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1">Gaya Bahasa</label>
-              <select value={"praktis"}
+              <select aria-label="Gaya Bahasa" value={"praktis"}
                 className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 outline-none bg-white">
                 {LANGUAGE_STYLE_OPTIONS.map((l) => <option key={l.value} value={l.value}>{l.label}</option>)}
               </select>

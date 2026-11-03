@@ -249,7 +249,7 @@ export default function ArenaTokoKoinPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Link href="/arena" className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center text-gray-600 active:scale-90 transition-transform">
+          <Link aria-label="Kembali ke Arena" href="/arena" className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center text-gray-600 active:scale-90 transition-transform">
             <ArrowLeft size={18} />
           </Link>
           <div>

@@ -443,7 +443,7 @@ export default function MuridProfilePage() {
               <VerifiedBadge badgeKind={user.badgeKind} isFounder={user.isFounder} size={24} />
             </div>
           </div>
-          <button onClick={openSettings} className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-900/10 dark:border-white/10 px-3 py-2 text-xs font-bold text-bc-text-2 hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors">
+          <button onClick={openSettings} aria-label="Edit Profil" className="shrink-0 inline-flex items-center gap-1.5 rounded-xl border border-slate-900/10 dark:border-white/10 px-3 py-2 text-xs font-bold text-bc-text-2 hover:bg-slate-900/5 dark:hover:bg-white/5 transition-colors">
             <Settings size={15} /><span className="hidden sm:inline">Edit Profil</span>
           </button>
         </div>

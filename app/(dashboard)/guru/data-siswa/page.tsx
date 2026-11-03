@@ -106,6 +106,7 @@ export default function DataSiswaPage() {
           {groups.length > 0 && (
             <div className="shrink-0">
               <select
+                aria-label="Filter kelas"
                 value={selectedGroupId}
                 onChange={(e) => setSelectedGroupId(e.target.value)}
                 className="w-full sm:w-48 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 bg-white"

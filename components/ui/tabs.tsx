@@ -56,6 +56,7 @@ const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
     return (
     <div
       ref={ref}
+      role="tablist"
       className={cn(
         "inline-flex h-9 items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground",
         className

@@ -85,7 +85,7 @@ function KaryaCard({ a }: { a: KaryaItem }) {
 
   return (
     <article className="group overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all hover:border-violet-200 hover:shadow-md">
-      <Link href={`/artikel/${a.slug}`} className="block">
+      <Link href={`/artikel/${a.slug}`} aria-label={`Baca ${a.title}`} className="block">
         {a.coverImage ? (
           <div className="h-28 overflow-hidden">
             <SafeMediaImage

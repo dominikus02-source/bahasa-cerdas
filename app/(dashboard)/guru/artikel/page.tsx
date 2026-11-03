@@ -314,8 +314,8 @@ export default function GuruArtikelPage() {
                   </div>
                 </div>
                 <div className="flex gap-1 ml-4">
-                  <button onClick={() => handleEdit(a)} className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"><Edit2 size={16} /></button>
-                  <button onClick={() => handleDelete(a.id)} className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"><Trash2 size={16} /></button>
+                  <button onClick={() => handleEdit(a)} aria-label={`Ubah ${a.title}`} className="p-2 rounded-lg hover:bg-blue-50 text-blue-600 transition-colors"><Edit2 size={16} /></button>
+                  <button onClick={() => handleDelete(a.id)} aria-label={`Hapus ${a.title}`} className="p-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"><Trash2 size={16} /></button>
                 </div>
               </Card>
             ))}
