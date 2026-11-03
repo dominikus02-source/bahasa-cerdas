@@ -121,10 +121,16 @@ export async function startLocalRecording(room: Room, signal: AbortSignal, callb
     recorder.onerror = () => { callbacks.onError(); stop(); };
     recorder.onstop = () => {
       const blob = new Blob(chunks, { type: recorder?.mimeType || mimeType || "video/webm" });
-      void writes.then(async () => {
-        await completeRecordingCheckpoint(checkpointId, blob.type);
-        if (blob.size) callbacks.onComplete(blob);
-      }).catch(() => callbacks.onError()).finally(finish);
+      // A full or unavailable IndexedDB must not discard the valid in-memory
+      // recording. Preserve the user-download path even if the safety copy fails.
+      void writes.then(() => completeRecordingCheckpoint(checkpointId, blob.type))
+        .catch(() => callbacks.onError())
+        .then(() => {
+          if (blob.size) callbacks.onComplete(blob);
+          else callbacks.onError();
+        })
+        .catch(() => callbacks.onError())
+        .finally(finish);
     };
     display.getVideoTracks().forEach((track) => { track.onended = stop; });
     signal.addEventListener("abort", stop, { once: true });
