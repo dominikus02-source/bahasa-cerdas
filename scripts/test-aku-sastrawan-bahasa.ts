@@ -19,6 +19,7 @@ const ROOTS = [
   "app/api/aku-sastrawan",
   "components/aku-sastrawan",
   "components/student-home/AkuSastrawanHomeCard.tsx",
+  "components/guru/GuruAkuSastrawanCard.tsx",
   "lib/aku-sastrawan",
 ];
 

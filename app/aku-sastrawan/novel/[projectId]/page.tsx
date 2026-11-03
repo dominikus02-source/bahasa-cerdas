@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, BookOpen, Check, CloudOff, Download, LoaderCircle, Lock, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, BookOpen, Check, CloudOff, LoaderCircle, Lock, Plus, Trash2 } from "lucide-react";
 import { KonfirmasiHapusDialog, KATA_KONFIRMASI_HAPUS } from "@/components/aku-sastrawan/KonfirmasiHapusDialog";
 import { useAutosave, bacaCadangan, hapusCadangan } from "@/components/aku-sastrawan/studio/useAutosave";
+import { MenuUnduh } from "@/components/aku-sastrawan/studio/MenuUnduh";
 import { hitungKata } from "@/lib/aku-sastrawan/peta-cerita";
 
 type Chapter = { id: string; title: string; content: string; orderIndex: number; wordCount: number };
@@ -133,7 +134,7 @@ export default function NovelChaptersPage({ params }: { params: Promise<{ projec
                 : st === "tersimpan" ? (<><Check size={13} /> Tersimpan</>)
                 : (<><LoaderCircle size={13} className="animate-spin" /> Menyimpan…</>)}
             </span>
-            {projectId && <a href={`/api/aku-sastrawan/projects/${projectId}/export`} onClick={() => void simpan.simpanSekarang()} aria-label="Unduh .txt" className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-3 text-sm text-muted-foreground transition hover:text-foreground"><Download size={16} /><span className="hidden sm:inline">Unduh .txt</span></a>}
+            {projectId && <MenuUnduh projectId={projectId} sebelumUnduh={() => simpan.simpanSekarang()} />}
             {canWrite && <button onClick={() => void createChapter()} disabled={sibuk || loading} className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90 disabled:opacity-60"><Plus size={15} /> Tambah bab</button>}
           </div>
         </div>

@@ -4,11 +4,13 @@ import { rateLimitRoute } from "@/lib/rate-limit";
 import { akuSastrawanPremiumRequired, canWriteAkuSastrawan } from "@/lib/aku-sastrawan/access";
 import { callWithFallback, ProviderChainFailedError } from "@/src/ai/core/provider";
 import { AI_CONFIDENTIALITY_INSTRUCTION } from "@/lib/ai/ai-confidentiality";
+import { indonesiakanIstilah, INSTRUKSI_PENDAMPING } from "@/lib/aku-sastrawan/instruksi-pendamping";
 
 export const runtime = "nodejs";
 export const maxDuration = 30;
 
-const SYSTEM = `Kamu adalah Pendamping Menulis AI AKU SASTRAWAN, pendamping penulis cerpen dan novel Indonesia. Bantu penulis mempertajam ide, premis, karakter, konflik, sudut pandang, adegan, dialog, struktur, dan revisi. Jangan mengambil alih suara penulis: jelaskan alasan saran, tawarkan pilihan, dan pertahankan gaya serta maksud penulis. Berikan umpan balik yang spesifik, hangat, jujur, dan membangun. Jika diminta menilai naskah, pisahkan kekuatan, hal yang perlu dikembangkan, dan langkah revisi yang konkret. Jangan menjanjikan penerbitan atau keberhasilan komersial. Selalu jawab dalam Bahasa Indonesia yang baik dan alami, termasuk judul bagian dan istilah teknis (gunakan istilah seperti "sudut pandang", "alur", "tokoh", dan "adegan"), meskipun penulis bertanya dalam bahasa lain. Kutipan langsung dari naskah penulis boleh dibiarkan apa adanya. Jangan mengarang isi naskah yang tidak diberikan. Untuk naskah panjang, fokus pada cuplikan yang disediakan dan sarankan pengerjaan bertahap.
+// Instruksi & jaring pengaman bahasa: lib/aku-sastrawan/instruksi-pendamping.ts (diuji).
+const SYSTEM = `${INSTRUKSI_PENDAMPING}
 
 ${AI_CONFIDENTIALITY_INSTRUCTION}`;
 
@@ -52,7 +54,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Kerahasiaan teknologi AI: jangan kirim nama penyedia/model ke klien.
-    return NextResponse.json({ reply: result.content.trim() });
+    return NextResponse.json({ reply: indonesiakanIstilah(result.content.trim()) });
   } catch (error) {
     if (error instanceof ProviderChainFailedError) {
       // Semua penyedia AI gagal/tidak dikonfigurasi: layanan sementara tidak tersedia, bukan bug server.

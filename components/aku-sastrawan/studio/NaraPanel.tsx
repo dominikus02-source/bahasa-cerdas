@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { LoaderCircle, Lock, Sparkles } from "lucide-react";
 import { tanyaNara, type HasilNara } from "./nara";
+import { NaraMarkdown } from "./NaraMarkdown";
 
 const CEPAT: { nama: string; prompt: string }[] = [
   { nama: "Kekuatan & kelemahan", prompt: "Sebutkan kekuatan utama naskah ini dan tiga hal terpenting untuk diperbaiki. Ringkas dan spesifik." },
@@ -60,9 +61,9 @@ export function NaraPanel({ bisaMenulis, upgradeUrl, track, konteks, adaNaskah }
         </button>
       </div>
       {hasil && (
-        <div role="status" className={`animate-fade-in rounded-2xl border p-4 text-sm leading-7 ${hasil.ok ? "border-border bg-muted/30" : "border-bc-warning/30 bg-bc-warning-soft text-bc-text"}`}>
-          {hasil.ok ? <p className="whitespace-pre-wrap">{hasil.teks}</p> : <p>{hasil.pesan}</p>}
-          {hasil.ok && <p className="mt-3 text-xs text-muted-foreground">Naskahmu tidak diubah.</p>}
+        <div role="status" data-testid="nara-jawaban" className={`animate-fade-in rounded-2xl border p-4 text-sm leading-7 sm:p-5 ${hasil.ok ? "border-border bg-muted/30" : "border-bc-warning/30 bg-bc-warning-soft text-bc-text"}`}>
+          {hasil.ok ? <NaraMarkdown teks={hasil.teks} /> : <p>{hasil.pesan}</p>}
+          {hasil.ok && <p className="mt-4 border-t border-border/60 pt-3 text-xs text-muted-foreground">Naskahmu tidak diubah.</p>}
         </div>
       )}
     </div>

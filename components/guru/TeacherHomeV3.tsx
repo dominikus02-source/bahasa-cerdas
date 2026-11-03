@@ -20,6 +20,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { GuruBerkarya } from "@/components/guru/GuruBerkarya";
+import { GuruAkuSastrawanCard } from "@/components/guru/GuruAkuSastrawanCard";
 import GuruBadgeGrid from "@/components/guru/GuruBadgeGrid";
 import BannerProgramGuruCerdas from "@/components/public/BannerProgramGuruCerdas";
 import { MISI_GURU } from "@/lib/guru/misi-guru";
@@ -409,7 +410,7 @@ export default function TeacherHomeV3({
   /** Kunci per pengguna untuk mengingat banner JUMPA yang ditutup. */
   userKey?: string | null;
 }) {
-  // Urutan: sapaan + misi → JUMPA → pintasan → promo → pengumuman/kompetisi → karya → lencana/quote/tips.
+  // Urutan: sapaan + misi → JUMPA → pintasan → AKU SASTRAWAN → promo → pengumuman/kompetisi → karya → lencana/quote/tips.
   return (
     <div className="mx-auto w-full max-w-[1320px] space-y-5 sm:space-y-6">
       <div className="grid grid-cols-1 gap-4 sm:gap-5 xl:grid-cols-[minmax(0,1.6fr)_minmax(320px,.7fr)]">
@@ -422,6 +423,8 @@ export default function TeacherHomeV3({
       <JumpaBerandaCard role="GURU" />
 
       <QuickActions />
+
+      <GuruAkuSastrawanCard />
 
       <BannerProgramGuruCerdas />
 

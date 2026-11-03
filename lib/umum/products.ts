@@ -104,7 +104,7 @@ export const UMUM_PRODUCTS: readonly UmumProduct[] = [
     key: "AKU_SASTRAWAN",
     name: "AKU SASTRAWAN",
     label: "Ruang kreatif",
-    description: "Kurikulum cerpen & novel, Writing Studio, dan AI Writing Coach.",
+    description: "Kurikulum cerpen & novel, Studio Menulis, dan Pendamping Menulis AI.",
     href: AKU_SASTRAWAN_HREF,
   },
 ];
