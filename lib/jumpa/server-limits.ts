@@ -1,4 +1,5 @@
 /** Runtime server only: identical room limits for every account. */
+import { limitsFor, type JumpaTier } from "./tiers";
 import { JUMPA_TRIAL } from "./trial-policy";
 export function parseParticipantLimit(raw: string | undefined): number {
   if (!raw?.trim()) return JUMPA_TRIAL.maxParticipants;
@@ -7,6 +8,7 @@ export function parseParticipantLimit(raw: string | undefined): number {
   }
   return Number(raw);
 }
-export function jumpaRoomLimits() {
-  return { maxParticipants: parseParticipantLimit(process.env.JUMPA_MAX_PARTICIPANTS), maxDurationMin: JUMPA_TRIAL.maxDurationMin };
+export function jumpaRoomLimits(tier: JumpaTier = "FREE") {
+  const plan = limitsFor(tier, "GURU");
+  return { maxParticipants: Math.min(plan.maxParticipants, parseParticipantLimit(process.env.JUMPA_MAX_PARTICIPANTS)), maxDurationMin: plan.maxDurationMin };
 }

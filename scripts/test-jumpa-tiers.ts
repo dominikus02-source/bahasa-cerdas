@@ -3,20 +3,33 @@ import { strict as assert } from "node:assert";
 import { readFileSync } from "node:fs";
 import { limitsFor, cameraCapFor, screenCapFor, checkDailyQuota, tierView, startOfJakartaDay, startOfJakartaWeek } from "../lib/jumpa/tiers";
 import { JUMPA_TRIAL } from "../lib/jumpa/trial-policy";
-import { JUMPA_CAPS } from "../lib/jumpa/caps";
+import { jumpaRoomLimits } from "../lib/jumpa/server-limits";
+import { tierForRoomKind } from "../lib/jumpa/entitlement";
 import { classifyDevice, publishPolicy, receivePolicy } from "../components/jumpa/media-policy";
 import { DEFAULT_MEDIA_PREFS, parseMediaPrefs } from "../components/jumpa/media-prefs";
 let passed = 0;
 function check(label: string, condition: boolean) { assert.ok(condition, label); passed++; }
 for (const tier of ["FREE", "PREMIUM"] as const) for (const kind of ["KELAS", "GURU", "MURID", "UMUM"] as const) {
   const cap = limitsFor(tier, kind);
-  check(`${tier}/${kind}: 30 peserta / 120 menit`, cap.maxParticipants === 30 && cap.maxDurationMin === 120);
-  check(`${tier}/${kind}: caps konsisten`, JUMPA_CAPS[kind].maxParticipants === cap.maxParticipants && JUMPA_CAPS[kind].maxDurationMin === cap.maxDurationMin);
+  check(`${tier}/${kind}: batas sesuai paket`, cap.maxParticipants === (tier === "FREE" ? 30 : 150) && cap.maxDurationMin === (tier === "FREE" ? 45 : 240));
+  check(`${tier}/${kind}: caps konsisten`, JSON.stringify(cap) === JSON.stringify(limitsFor(tier, "GURU")));
   check(`${tier}/${kind}: kualitas sama`, cameraCapFor(tier, kind) === 720 && screenCapFor(tier, kind) === 720);
   check(`${tier}/${kind}: tanpa kuota harian produk`, checkDailyQuota(tier, kind, 100).ok);
   check(`${tier}/${kind}: payload webinar tidak mengubah batas`, JSON.stringify(limitsFor(tier, kind, true)) === JSON.stringify(cap));
   const view = tierView({ tier, kind, ...cap, viewerIsGuruCreator: true });
-  check(`${tier}/${kind}: tanpa upsell`, !view.canUpgrade && view.upgradeUrl === null && view.label === JUMPA_TRIAL.label);
+  check(`${tier}/${kind}: tanpa upsell`, !view.canUpgrade && view.upgradeUrl === null && view.label === (tier === "FREE" ? "Free" : "Premium"));
+}
+const previousLimit = process.env.JUMPA_MAX_PARTICIPANTS;
+try {
+  delete process.env.JUMPA_MAX_PARTICIPANTS;
+  check("Premium dibatasi kapasitas operasional default", jumpaRoomLimits("PREMIUM").maxParticipants === 30);
+  process.env.JUMPA_MAX_PARTICIPANTS = "150";
+  check("Premium dapat 150 setelah kapasitas server dikonfigurasi", jumpaRoomLimits("PREMIUM").maxParticipants === 150);
+  check("Free tetap 30 pada server besar", jumpaRoomLimits("FREE").maxParticipants === 30);
+  check("Premium murid berlaku pada semua jenis ruang", tierForRoomKind("MURID_PREMIUM", "GURU") === "PREMIUM");
+} finally {
+  if (previousLimit === undefined) delete process.env.JUMPA_MAX_PARTICIPANTS;
+  else process.env.JUMPA_MAX_PARTICIPANTS = previousLimit;
 }
 const mutable = limitsFor("FREE", "GURU"); mutable.maxParticipants = 999;
 check("Tidak memutasi kebijakan bersama", limitsFor("FREE", "GURU").maxParticipants === 30);
@@ -57,5 +70,5 @@ check("JSON rusak → default", parseMediaPrefs("{oops").camera === DEFAULT_MEDI
 
 
 const home = readFileSync("components/jumpa/JumpaHome.tsx", "utf8");
-check("Satu alur rapat, tanpa paket/webinar", home.includes("Gabung ruang") && home.includes("Mulai ruang baru") && !home.includes("Premium") && !home.includes("isWebinar"));
+check("Satu alur rapat, paket otomatis tanpa pilihan webinar", home.includes("Gabung ruang") && home.includes("Mulai ruang baru") && home.includes("packageTier") && !home.includes("isWebinar"));
 console.log(`${passed} lulus, 0 gagal`);

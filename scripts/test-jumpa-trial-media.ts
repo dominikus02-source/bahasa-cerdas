@@ -48,6 +48,18 @@ async function main() {
     assert.equal(grant.canPublish, true); assert.ok(grant.canPublishSources?.includes(1)); assert.ok(grant.canPublishSources?.includes(2));
     assert.equal(grant.roomAdmin, false); assert.equal(grant.roomRecord, false);
   }
+  // Every admitted participant gets device permissions, regardless of room role/type.
+  for (const kind of ["GURU", "KELAS", "MURID", "UMUM"] as const) {
+    for (const roomRole of ["HOST", "COHOST", "MEMBER"] as const) {
+      for (const effective of ["GURU", "MURID", "UMUM"] as const) {
+        const grant = buildJoinGrant("meeting", publishSourcesFor(roomRole, effective, { kind, allowMuridScreenShare: false }));
+        assert.equal(grant.canPublish, true, `${kind}/${roomRole}/${effective}`);
+        assert.ok(grant.canPublishSources?.includes(1), "Kamera tetap diizinkan");
+        assert.ok(grant.canPublishSources?.includes(2), "Mikrofon tetap diizinkan");
+        assert.equal(grant.roomAdmin, false);
+      }
+    }
+  }
   // 150 publications: only visible page is received; audio remains available.
   let changes = 0;
   const visible = new VisibleTracks(() => changes++);

@@ -149,12 +149,10 @@ export async function createRoom(user: JumpaUserLike, req: CreateRoomRequest): P
   if (req.kind === "UMUM") return createUmumRoom(user, req);
 
   const now = Date.now();
-  // Fase 3: paket dari pembuat ruang (langganan/trial BC yang sudah ada).
-  // Ruang MURID memakai tier pembuat untuk batas 8/15.
-  // Murid Premium → ruang MURID 15 orang; webinar & ruang guru tetap tierForPlan.
+  // Paket dari langganan pembuat ruang; peserta tidak perlu paket yang sama.
   const resolved = await resolveJumpaTier(user.id);
   const tier: JumpaTier = isWebinar ? resolved.tier : tierForRoomKind(resolved.plan, req.kind);
-  const caps = jumpaRoomLimits();
+  const caps = jumpaRoomLimits(tier);
 
   if (isWebinar) {
     if (tier !== "PREMIUM") {
@@ -272,16 +270,15 @@ const UMUM_CREATE_LOCK_KEY = 4_202_610_260;
 
 /**
  * Buat ruang UMUM (sudah lolos canCreateRoom → akun UMUM + flag menyala).
- * Paket selalu Gratis UMUM (umumTierDef), tanpa kelas/komunitas/jadwal/webinar.
+ * Paket Free/Premium dari pembuat; tanpa kelas/komunitas/jadwal/webinar.
  * Pagar: pakai ulang ruang aktif sendiri → 1 ruang aktif per akun → kuota
  * harian → batas global env JUMPA_UMUM_MAX_CONCURRENT_ROOMS (default 50).
  */
 async function createUmumRoom(user: JumpaUserLike, req: CreateRoomRequest): Promise<CreateRoomResult> {
   if (req.isWebinar) return { ok: false, status: 403, code: "WEBINAR_NOT_AVAILABLE", message: "Webinar belum tersedia untuk akun umum." };
-  // Kait UMUM_PREMIUM: selama JUMPA_UMUM_PREMIUM_ENABLED = false, paket UMUM
-  // selalu FREE (tidak membaca langganan → pembayaran tidak tersentuh).
-  const tier: JumpaTier = "FREE";
-  const caps = jumpaRoomLimits();
+  // Paket ditentukan dari langganan pembuat, bukan peserta.
+  const { tier } = await resolveJumpaTier(user.id);
+  const caps = jumpaRoomLimits(tier);
   const custom = cleanTitle(req.title);
   const title = (custom ?? "Ruang JUMPA").slice(0, 120);
 
@@ -294,11 +291,12 @@ async function createUmumRoom(user: JumpaUserLike, req: CreateRoomRequest): Prom
           where: { createdById: user.id, kind: "UMUM", status: { in: ["SCHEDULED", "LIVE"] } },
           orderBy: { createdAt: "desc" },
           take: 10,
-          select: { id: true, code: true, title: true, startedAt: true, createdAt: true, maxDurationMin: true },
+          select: { id: true, code: true, title: true, startedAt: true, createdAt: true, maxDurationMin: true, maxParticipants: true },
         });
         const myActive = mine.filter((r) => isUmumRoomActive(r, now));
         // Klik ganda / buka ulang: ruang aktif sendiri yang masih punya waktu.
         const reuse = myActive.find((r) => {
+          if (r.maxParticipants !== caps.maxParticipants || r.maxDurationMin !== caps.maxDurationMin) return false;
           const endsAt = roomEndsAt(r.startedAt, r.maxDurationMin);
           return !endsAt || endsAt.getTime() > now + 5 * 60_000;
         });
@@ -598,6 +596,7 @@ export interface RoomListItem {
 }
 
 export interface JumpaHomeData {
+  packageTier?: JumpaTier;
   trialLimits?: { maxParticipants: number; maxDurationMin: number };
   effective: JumpaEffectiveRole | null;
   isJunior: boolean;
@@ -707,19 +706,20 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
       trialing: t.trialing,
       roomsToday,
       roomsPerDay: null,
-      kelas: jumpaRoomLimits(),
-      guru: jumpaRoomLimits(),
+      kelas: jumpaRoomLimits(t.tier),
+      guru: jumpaRoomLimits(t.tier),
       upgradeUrl: JUMPA_UPGRADE_URL,
     };
   }
 
+  const homeTier = await resolveJumpaTier(user.id);
   let umum: JumpaHomeData["umum"] = null;
   if (effective === "UMUM") {
 
     umum = {
       roomsToday: await countRoomsOnDay(user.id, startOfJakartaDay(new Date()), ["UMUM"]),
       roomsPerDay: null,
-      ...jumpaRoomLimits(),
+      ...jumpaRoomLimits(homeTier.tier),
       maxCameraHeight: cameraCapFor("FREE", "UMUM"),
     };
   }
@@ -728,7 +728,8 @@ export async function loadJumpaHome(user: JumpaUserLike): Promise<JumpaHomeData>
   const commName = new Map(communities.map((c) => [c.community.id, c.community.name]));
 
   return {
-    trialLimits: jumpaRoomLimits(),
+    trialLimits: jumpaRoomLimits(homeTier.tier),
+    packageTier: homeTier.tier,
     effective,
     isJunior: actor.isJunior,
     rooms: rooms.map((r) => {

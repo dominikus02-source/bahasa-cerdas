@@ -126,8 +126,8 @@ check("Murid tidak masuk ruang GURU", !join({ actor: murid, room: groom, relatio
 console.log("\n6. Sumber publish & caps")
 check("Tanpa konteks (pemanggil Fase 1) publish = kamera + mikrofon saja", JSON.stringify(publishSourcesFor("MEMBER", "MURID")) === '["camera","microphone"]')
 check("Tanpa konteks, host pun tanpa screen share", !publishSourcesFor("HOST", "GURU").includes("screen_share" as never))
-check("Caps MURID 30 org / 120 mnt", JUMPA_CAPS.MURID.maxParticipants === 30 && JUMPA_CAPS.MURID.maxDurationMin === 120)
-check("Caps KELAS 30 org / 120 mnt", capsFor("KELAS").maxParticipants === 30 && capsFor("KELAS").maxDurationMin === 120)
+check("Caps MURID 30 org / 45 mnt", JUMPA_CAPS.MURID.maxParticipants === 30 && JUMPA_CAPS.MURID.maxDurationMin === 45)
+check("Caps KELAS 30 org / 45 mnt", capsFor("KELAS").maxParticipants === 30 && capsFor("KELAS").maxDurationMin === 45)
 check("isPastDuration tepat di batas = belum lewat", !isPastDuration(new Date(NOW.getTime() - 60 * 60_000), 60, NOW))
 
 console.log("\n7. Kode ruang")

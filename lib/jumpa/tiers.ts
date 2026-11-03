@@ -1,10 +1,6 @@
 import { JUMPA_TRIAL } from "./trial-policy";
-/**
- * JUMPA uji coba: satu kebijakan untuk semua akun (trial-policy.ts).
- * FREE/PREMIUM dipertahankan sebagai format metadata lama, bukan pembeda
- * kapasitas atau izin media. Ruang baru memakai batas runtime server-limits.ts.
- * Batas ruang lama tetap disimpan di DB; buat ruang baru untuk kebijakan baru.
- */
+/** Dua paket untuk semua akun. Batas operasional server dapat lebih rendah.
+ * Izin perangkat sama; batas ruang disimpan saat ruang dibuat. */
 import type { JumpaKind } from "./caps";
 
 export type JumpaTier = "FREE" | "PREMIUM";
@@ -35,15 +31,15 @@ export interface JumpaTierDef {
   };
 }
 
+export const JUMPA_FREE_LIMITS: JumpaRoomLimits = { maxParticipants: 30, maxDurationMin: 45 };
+
 export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
   FREE: {
-    label: "Gratis",
+    label: "Free",
     rooms: {
-      // 45 menit = 1 JP SMA (SMP 40, SD 35): satu jam pelajaran utuh muat.
-      // 30 orang (keputusan CEO, 18-10-2026): kelas kecil/menengah muat;
-      // rombel penuh (hingga 36 murid + guru) perlu Premium.
-      KELAS: { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin },
-      GURU: { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin },
+      // Batas Free berlaku untuk semua jenis akun.
+      KELAS: { ...JUMPA_FREE_LIMITS },
+      GURU: { ...JUMPA_FREE_LIMITS },
     },
     roomsPerDay: null,
     maxCameraHeight: 720,
@@ -53,8 +49,8 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
   PREMIUM: {
     label: "Premium",
     rooms: {
-      KELAS: { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin },
-      GURU: { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin },
+      KELAS: { maxParticipants: 150, maxDurationMin: 240 },
+      GURU: { maxParticipants: 150, maxDurationMin: 240 },
     },
     roomsPerDay: null,
     maxCameraHeight: 720,
@@ -63,17 +59,12 @@ export const JUMPA_TIERS: Record<JumpaTier, JumpaTierDef> = {
   },
 };
 
-/** Ruang belajar bareng murid: gratis 8, premium 15. */
-export const JUMPA_MURID_FREE: JumpaRoomLimits = { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin };
-export const JUMPA_MURID_PREMIUM: JumpaRoomLimits = { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin };
+/** Alias kompatibilitas untuk ruang belajar murid. */
+export const JUMPA_MURID_FREE: JumpaRoomLimits = { ...JUMPA_FREE_LIMITS };
+export const JUMPA_MURID_PREMIUM: JumpaRoomLimits = { ...JUMPA_TIERS.PREMIUM.rooms.GURU };
 export const JUMPA_MURID_MAX_CAMERA_HEIGHT: JumpaVideoCap = 720;
 
-/**
- * Paket ruang UMUM (akun umum: mahasiswa/dosen/masyarakat). Mengikuti paket
- * Gratis guru: 10 orang, 45 menit, 720p, 3 ruang/hari. Tanpa webinar.
- * UMUM_PREMIUM = kait untuk paket berbayar UMUM nanti; BELUM aktif
- * (JUMPA_UMUM_PREMIUM_ENABLED = false) sehingga semua ruang UMUM = Gratis.
- */
+/** Alias kompatibilitas untuk ruang akun umum; mengikuti dua paket yang sama. */
 export interface JumpaUmumTierDef {
   label: string;
   room: JumpaRoomLimits;
@@ -82,13 +73,13 @@ export interface JumpaUmumTierDef {
   maxScreenHeight: JumpaVideoCap;
 }
 export const JUMPA_UMUM_TIERS: Record<"UMUM_FREE" | "UMUM_PREMIUM", JumpaUmumTierDef> = {
-  UMUM_FREE: { label: "Gratis", room: { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin }, roomsPerDay: null, maxCameraHeight: 720, maxScreenHeight: 720 },
-  UMUM_PREMIUM: { label: "Premium", room: { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin }, roomsPerDay: null, maxCameraHeight: 720, maxScreenHeight: 720 },
+  UMUM_FREE: { label: "Free", room: { ...JUMPA_FREE_LIMITS }, roomsPerDay: null, maxCameraHeight: 720, maxScreenHeight: 720 },
+  UMUM_PREMIUM: { label: "Premium", room: { ...JUMPA_TIERS.PREMIUM.rooms.GURU }, roomsPerDay: null, maxCameraHeight: 720, maxScreenHeight: 720 },
 };
-/** Kait paket UMUM berbayar. Jangan nyalakan tanpa alur pembayaran UMUM. */
-export const JUMPA_UMUM_PREMIUM_ENABLED = false;
+/** Akun umum memakai entitlement langganan BC yang sudah ada. */
+export const JUMPA_UMUM_PREMIUM_ENABLED = true;
 
-/** Paket UMUM yang berlaku. Selama premium belum aktif → selalu UMUM_FREE. */
+/** Paket UMUM yang berlaku. */
 export function umumTierDef(tier: JumpaTier): JumpaUmumTierDef {
   return JUMPA_UMUM_PREMIUM_ENABLED && tier === "PREMIUM" ? JUMPA_UMUM_TIERS.UMUM_PREMIUM : JUMPA_UMUM_TIERS.UMUM_FREE;
 }
@@ -108,8 +99,8 @@ export const JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN = 5;
 
 /** Batas ruang (peserta, durasi) untuk paket & jenis ruang. */
 export function limitsFor(tier: JumpaTier, kind: JumpaKind, isWebinar = false): JumpaRoomLimits {
-  void tier; void kind; void isWebinar;
-  return { maxParticipants: JUMPA_TRIAL.maxParticipants, maxDurationMin: JUMPA_TRIAL.maxDurationMin };
+  void kind; void isWebinar;
+  return { ...JUMPA_TIERS[tier].rooms.GURU };
 }
 
 /** Tinggi kamera maksimum yang boleh dikirim di ruang ini. */
@@ -180,11 +171,11 @@ export function tierView(params: {
   /** Penonton adalah guru pembuat ruang (bukan murid, bukan tamu). */
   viewerIsGuruCreator: boolean;
 }): JumpaTierView {
-  // UMUM: belum ada paket berbayar → tidak pernah ada ajakan upgrade.
+  // Tidak menampilkan ajakan berlangganan saat rapat.
   const canUpgrade = false;
   return {
     tier: params.tier,
-    label: JUMPA_TRIAL.label,
+    label: JUMPA_TIERS[params.tier].label,
     kind: params.kind,
     maxParticipants: params.maxParticipants,
     maxDurationMin: params.maxDurationMin,

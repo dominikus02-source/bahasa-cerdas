@@ -23,7 +23,7 @@ const WORDS = [
 ]
 const RE = new RegExp(`(?<![\\p{L}-])(${WORDS.join("|")})(?![\\p{L}-])`, "iu")
 // Nama produk/merek dan istilah serapan yang diizinkan.
-const ALLOW = [/\bJUMPA\b/g, /\bBahasaCerdas\b/g, /\bPremium\b/g, /\bMGMP\b/g, /\(HD\)/g, /\bKelasKu\b/g, /\bLiveKit\b/g]
+const ALLOW = [/\bFree\b/g, /\bJUMPA\b/g, /\bBahasaCerdas\b/g, /\bPremium\b/g, /\bMGMP\b/g, /\(HD\)/g, /\bKelasKu\b/g, /\bLiveKit\b/g]
 
 function files(dir: string): string[] {
   let out: string[] = []

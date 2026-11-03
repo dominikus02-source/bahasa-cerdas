@@ -71,7 +71,7 @@ check("Status jadwal pra-mount deterministik", a.includes("Belum dimulai"))
 for (const effective of ["GURU", "MURID", "UMUM"] as const) {
   data.effective = effective;
   const html = renderAt(T0);
-  check(`${effective}: satu alur Mulai/Gabung`, html.includes("Mulai ruang baru") && html.includes("Gabung ruang") && !html.includes("Premium"));
+  check(`${effective}: satu alur Mulai/Gabung`, html.includes("Mulai ruang baru") && html.includes("Gabung ruang") && !html.includes("Webinar"));
 }
 data.effective = "GURU";
 data.isJunior = true;
