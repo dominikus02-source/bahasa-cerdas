@@ -19,7 +19,6 @@ import { buatPdfNaskah } from "../lib/aku-sastrawan/ekspor/pdf";
 import { buatDocxNaskah } from "../lib/aku-sastrawan/ekspor/docx";
 import { petaKosong, tulisSinopsis } from "../lib/aku-sastrawan/peta-cerita";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const pdfParse = require("pdf-parse/lib/pdf-parse.js") as (b: Buffer) => Promise<{ text: string; numpages: number }>;
 
 let passed = 0;
