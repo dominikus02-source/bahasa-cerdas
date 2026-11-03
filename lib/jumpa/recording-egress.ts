@@ -1,6 +1,7 @@
 /** Server-only adapter. Tidak diekspos sebagai endpoint sampai autentikasi, audit,
  * webhook finalisasi dan download privat selesai diuji. */
 import "server-only";
+import { randomUUID } from "node:crypto";
 import { EncodedFileOutput, EncodedFileType, S3Upload } from "@livekit/protocol";
 import { EgressClient } from "livekit-server-sdk";
 import { getLivekitServerConfig } from "./config";
@@ -29,7 +30,7 @@ export async function startPrivateRoomRecording(roomName: string, roomId: string
     endpoint: required("JUMPA_RECORDING_S3_ENDPOINT"),
     forcePathStyle: true,
   });
-  const filepath = `jumpa/${roomId}/${crypto.randomUUID()}.mp4`;
+  const filepath = `jumpa/${roomId}/${randomUUID()}.mp4`;
   const output = new EncodedFileOutput({ fileType: EncodedFileType.MP4, filepath, output: { case: "s3", value: s3 } });
   return egressClient().startRoomCompositeEgress(roomName, output, { layout: "grid" });
 }
