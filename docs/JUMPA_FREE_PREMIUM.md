@@ -9,7 +9,7 @@ Keputusan implementasi 3 November 2026. Menggantikan kebijakan kapasitas sama pa
 | Kamera dan mikrofon | Kendali peserta | Kendali peserta |
 | Berbagi layar pada rapat baru | Tersedia | Tersedia |
 | Kualitas kamera maksimum | 720p | 720p |
-| Rekaman | Belum tersedia | Belum tersedia |
+| Rekaman | Tidak tersedia | Khusus Premium, menunggu implementasi dan validasi Egress |
 
 Paket ditentukan otomatis dari langganan BC pembuat ruang (termasuk langganan Premium murid/umum dan uji coba yang masih aktif). Peserta Free dapat bergabung ke ruang Premium. Tidak ada pilihan paket di formulir mulai, paket peserta tidak mencabut izin perangkat. Aturan akses kelas privat, Junior, kunci ruang dan keluarkan peserta tetap berlaku. Tidak ada perubahan harga, pembayaran, atau skema database.
 
