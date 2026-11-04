@@ -142,10 +142,13 @@ class E2E(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(calls[0],2)
     async def test_cleanup_on_midstage_error(self):
         r=self.runner()
-        async def fail(*a,**k):raise RuntimeError("injected telemetry fault")
-        r.metrics.sample=fail # returns coroutine; unexpected, see explicit injected health below
-        r.health=lambda:False
+        calls=[0]
+        def health():
+            calls[0]+=1
+            return calls[0]<3 # fail after room is already created
+        r.health=health
         with self.assertRaises(RuntimeError):await r.one_scenario(20,"passive")
+        self.assertEqual(calls[0],3)
         self.assertEqual(self.server.rooms,{})
     def test_allowlist_production_rejected(self):
         resolve=lambda *a,**k:[(socket.AF_INET,socket.SOCK_STREAM,6,"",("1.1.1.1",443))]
