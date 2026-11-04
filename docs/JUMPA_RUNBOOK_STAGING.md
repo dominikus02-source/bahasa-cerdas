@@ -4,7 +4,7 @@
 
 ## 0. Topologi wajib
 - **SFU host:** VM staging dedicated 8 vCPU/16 GiB/60 GB SSD/1 Gbps guaranteed sebagai baseline pengadaan, disk/Redis/LiveKit/API key/turn/DNS/TLS sepenuhnya berbeda dari produksi; bukan sizing 150 yang terbukti.
-- **Generator host:** Linux/PC terpisah yang mampu melakukan 150 koneksi RTC, jangan berbagi CPU/NIC dengan SFU. Python 3.11+ dengan paket `livekit`, `livekit-api`, dan `psutil` untuk staging probe. Catat versi dependency dan checksum.
+- **Generator host:** Linux/PC terpisah yang mampu melakukan 150 koneksi RTC, jangan berbagi CPU/NIC dengan SFU. Python 3.11+; pasang dependensi dalam venv QA terisolasi: `python -m pip install -r ops/vps/jumpa_capacity/requirements-staging.txt` (LiveKit RTC 1.2.0, API 1.2.2, psutil). Catat versi dependency dan checksum.
 - **Metrics agent:** hanya di host SFU staging, akses melalui TLS reverse proxy khusus staging menuju agent loopback `127.0.0.1:9817/metrics`. Lindungi dengan firewall IP allowlist generator+ bearer panjang acak; jangan expose endpoint publik tanpa auth.
 - Konfigurasi SFU cgroup v2: direktori `STAGING_SFU_CGROUP` yang memiliki `memory.current`, `memory.max` finite, `memory.events`, serta `qa_crashes.counter` yang diperbarui oleh watchdog container/restart eksternal. Tanpa penghitung crash **jangan mulai**. NIC harus benar-benar interface SFU dan `STAGING_NIC_LINK_MBPS` merupakan kapasitas link terjamin, bukan speed klaim VPS.
 - Port terpisah: TLS/WSS 443/TCP ke 7880 internal, fallback ICE 7881/TCP, 7882/UDP mux atau range 50000–60000/UDP, TURN 3478/UDP/5349/TCP bila dipakai. Jangan ubah firewall produksi.
@@ -19,9 +19,11 @@ export LIVEKIT_API_SECRET='<secret staging; jangan commit>'
 export PRODUCTION_HEALTH_URL='https://www.bahasacerdas.com/api/health'
 export PRODUCTION_HEALTH_HOSTS='www.bahasacerdas.com'
 export STAGING_METRICS_URL='https://metrics-qa.example.net/metrics'
+export STAGING_METRICS_ALLOWED_HOSTS='metrics-qa.example.net'
 export STAGING_METRICS_BEARER='<random >=32 chars>'
 export STAGING_NIC='ens5'
 export STAGING_NIC_LINK_MBPS='1000'
+export QA_TOKEN_TTL_SECONDS='300' # maksimum 1800, refresh token saat reconnect
 ```
 Contoh hostname `example.net` **placeholder**; ganti dengan hostname staging terisolasi yang disetujui. IP produksi denylist harus lengkap dan diverifikasi admin. Secret jangan diketik ke argumen CLI, commit, screenshot, atau log.
 
