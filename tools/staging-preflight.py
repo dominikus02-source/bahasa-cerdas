@@ -166,7 +166,7 @@ if task_root.exists():
             build_progress = {}
             for log in [task / "build-1.log", task / "build-2.log"]:
                 if log.is_file():
-                    safe_lines = [line for line in log.read_text().splitlines() if re.match(r"^#\\d+ (?:\\[.*\\] RUN|CACHED$|DONE [0-9.]+s$|ERROR:)", line)]
+                    safe_lines = [line for line in log.read_text().splitlines() if line.startswith("#") and any(term in line for term in [" CACHED", " DONE ", "] RUN ", " ERROR:"])]
                     build_progress[log.name] = safe_lines[-5:]
             if log_file.is_file():
                 for line in log_file.read_text().splitlines():
