@@ -35,7 +35,7 @@ class LiveKitParticipant:
         self.room.on("track_subscribed", self._on_subscribed)
         self.room.on("reconnecting", lambda: self._connection_events.append("reconnecting"))
         self.room.on("reconnected", lambda: self._connection_events.append("reconnected"))
-        token = issue_token(self.key, self.secret, self.room_name, self.identity, ttl_seconds=300)
+        token = issue_token(self.key, self.secret, self.room_name, self.identity, ttl_seconds=300, can_publish=self.role!="passive")
         start = time.monotonic()
         await self.room.connect(self.url, token)
         self.join_latency_s = time.monotonic() - start
