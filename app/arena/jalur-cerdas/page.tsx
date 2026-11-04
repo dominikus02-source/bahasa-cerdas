@@ -119,11 +119,11 @@ export default async function JalurCerdasPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-100/50">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-100/80">
                     Perjalananmu
                   </p>
                   <p className="mt-1 text-lg font-extrabold">
-                    {totalDone} <span className="text-blue-100/45">/ {totalUnits}</span>
+                    {totalDone} <span className="text-blue-100/75">/ {totalUnits}</span>
                   </p>
                   <p className="text-xs text-blue-100/60">unit selesai</p>
                 </div>
@@ -180,7 +180,7 @@ export default async function JalurCerdasPage() {
               Dari dasar sampai mahir
             </h2>
           </div>
-          <span className="text-xs font-bold text-slate-400">
+          <span className="text-xs font-bold text-slate-500">
             {totalDone}/{totalUnits} selesai
           </span>
         </div>

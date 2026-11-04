@@ -755,7 +755,7 @@ export default function RegisterPage() {
                         <span className="w-full border-t border-slate-200 dark:border-slate-700" />
                       </div>
                       <div className="relative flex justify-center text-xs">
-                        <span className="bg-white px-3 text-slate-400 dark:bg-slate-900 dark:text-slate-500">atau</span>
+                        <span className="bg-white px-3 text-slate-500 dark:bg-slate-900 dark:text-slate-400">atau</span>
                       </div>
                     </div>
 

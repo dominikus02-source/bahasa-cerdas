@@ -58,7 +58,7 @@ export default function UnduhPage() {
             Unduh untuk Android
           </a>
 
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-slate-400">
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-slate-500">
             <span>Versi {VERSI}</span>
             <span aria-hidden>•</span>
             <span>{UKURAN}</span>

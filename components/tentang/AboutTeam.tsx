@@ -72,7 +72,7 @@ export default function AboutTeam() {
               <h3 className="text-lg font-bold text-zinc-900">{f.name}</h3>
               <p className="text-sm font-semibold text-primary mb-3">{f.role}</p>
               <p className="text-sm text-zinc-500 leading-relaxed mb-4">{f.desc}</p>
-              <span className="inline-block text-[11px] font-semibold text-zinc-500 bg-zinc-100 px-3 py-1 rounded-full">
+              <span className="inline-block text-[11px] font-semibold text-zinc-600 bg-zinc-100 px-3 py-1 rounded-full">
                 {f.tag}
               </span>
             </div>
@@ -103,7 +103,7 @@ export default function AboutTeam() {
               </div>
             ))}
           </div>
-          <div className="flex items-center justify-center gap-2 mt-8 text-xs text-zinc-400">
+          <div className="flex items-center justify-center gap-2 mt-8 text-xs text-zinc-600">
             <GraduationCap size={14} aria-hidden="true" />
             <span>Dunia akademik</span>
             <Landmark size={14} aria-hidden="true" />

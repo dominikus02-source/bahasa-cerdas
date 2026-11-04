@@ -143,7 +143,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
           <h1 className="font-game-display text-[30px] font-extrabold leading-none text-slate-900 dark:text-white">
             GIM
           </h1>
-          <p className="text-[13px] font-medium text-slate-500 dark:text-[#7C7A9E] mt-1">
+          <p className="text-[13px] font-medium text-slate-500 dark:text-bc-text-2 mt-1">
             Mainkan. Belajar. Naik Level.
           </p>
         </div>
@@ -221,7 +221,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
       {/* ── LANJUTKAN PERMAINAN ── */}
       {recentGames.length > 0 && (
         <section className="mt-7" aria-label="Lanjutkan permainan">
-          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-[#7C7A9E] mb-3">
+          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-bc-text-2 mb-3">
             Lanjutkan Permainan
           </h2>
           <div className="grid gap-3 sm:grid-cols-3">
@@ -237,7 +237,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{g.title}</p>
-                  <p className="text-[11px] text-slate-500 dark:text-[#7C7A9E] mt-0.5">Terakhir dimainkan</p>
+                  <p className="text-[11px] text-slate-500 dark:text-bc-text-2 mt-0.5">Terakhir dimainkan</p>
                 </div>
                 <span className="inline-flex items-center gap-1 rounded-xl bg-violet-100 dark:bg-violet-500/20 px-3 py-2 text-xs font-extrabold text-violet-700 dark:text-violet-300 transition-all group-hover:gap-1.5">
                   Lanjutkan <ChevronRight size={13} />
@@ -251,7 +251,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
       {/* ── BARU DI ARENA ── */}
       {newGames.length > 0 && (
         <section className="mt-7" aria-label="Baru di arena">
-          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-[#7C7A9E] mb-3">
+          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-bc-text-2 mb-3">
             Baru di Arena
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -273,7 +273,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
                   </span>
                 </div>
                 <p className="mt-3 text-sm font-bold text-slate-900 dark:text-white leading-tight">{g.title}</p>
-                <p className="mt-1 text-[11px] text-slate-500 dark:text-[#7C7A9E] line-clamp-2">{g.description}</p>
+                <p className="mt-1 text-[11px] text-slate-500 dark:text-bc-text-2 line-clamp-2">{g.description}</p>
                 <p className="mt-2.5 inline-flex items-center gap-1 rounded-md bg-amber-100/80 dark:bg-amber-400/15 px-1.5 py-0.5 text-[10px] font-extrabold text-amber-700 dark:text-amber-400">
                   <Zap size={10} /> {g.xp}
                 </p>
@@ -286,7 +286,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
       {/* ── PALING SERU DIMAINKAN ── */}
       {popular.length > 0 && (
         <section className="mt-7" aria-label="Paling seru dimainkan">
-          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-[#7C7A9E] mb-3">
+          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-bc-text-2 mb-3">
             Paling Seru Dimainkan
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
@@ -305,7 +305,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[13px] font-bold text-slate-900 dark:text-white truncate">{g.title}</p>
-                  <p className="text-[10px] text-slate-500 dark:text-[#7C7A9E]">{g.xp}</p>
+                  <p className="text-[10px] text-slate-500 dark:text-bc-text-2">{g.xp}</p>
                 </div>
               </Link>
             ))}
@@ -316,10 +316,10 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
       {/* ── PILIH PERMAINAN ── */}
       <section className="mt-7" aria-label="Pilih permainan">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-[#7C7A9E]">
+          <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-bc-text-2">
             Pilih Permainan
           </h2>
-          <span className="text-[11px] font-semibold text-slate-500 dark:text-[#7C7A9E]">
+          <span className="text-[11px] font-semibold text-slate-500 dark:text-bc-text-2">
             {filtered.filter((g) => g.status === "LIVE").length} gim siap main
           </span>
         </div>
@@ -419,7 +419,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
               </span>
               <span className="min-w-0">
                 <span className="block text-sm font-bold text-slate-900 dark:text-white">{q.label}</span>
-                <span className="block text-[11px] text-slate-500 dark:text-[#7C7A9E]">{q.desc}</span>
+                <span className="block text-[11px] text-slate-500 dark:text-bc-text-2">{q.desc}</span>
               </span>
               <ChevronRight size={15} className="ml-auto shrink-0 text-slate-300 dark:text-[#56547a] transition-transform group-hover:translate-x-0.5" />
             </Link>

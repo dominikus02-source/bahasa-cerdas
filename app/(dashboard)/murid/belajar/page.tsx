@@ -244,7 +244,7 @@ export default function BelajarPage() {
                   <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} shadow-lg`}>
                     <Icon className="h-5 w-5 text-white" />
                   </div>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[8px] font-black tracking-[0.15em] text-slate-500 dark:bg-white/[0.07] dark:text-slate-300/70">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-[0.15em] text-slate-600 dark:bg-white/[0.07] dark:text-slate-300">
                     {eyebrow}
                   </span>
                 </div>

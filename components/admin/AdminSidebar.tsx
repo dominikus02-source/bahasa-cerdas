@@ -224,7 +224,7 @@ export function AdminSidebar({ user }: Props) {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm shrink-0">BC</div>
           <div className="min-w-0">
             <p className="shell-label font-bold text-slate-900 text-sm truncate dark:text-white">Panel Admin</p>
-            <p className="shell-label text-[10px] text-slate-400">Founder</p>
+            <p className="shell-label text-[11px] text-bc-text-2">Founder</p>
           </div>
         </Link>
       </div>

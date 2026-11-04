@@ -37,7 +37,7 @@
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 60 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted-foreground: 240 4% 41%;
     --accent: 60 5% 96%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 73% 41%;
@@ -1477,3 +1477,7 @@
     transition: none;
   }
 }
+
+/* P1 kontras — text-primary (merah merek 0 73% 41%) hanya ≈2:1 di latar gelap.
+   Di mode gelap teks memakai varian merah terang dari token; latar bg-primary tidak berubah. */
+.dark .text-primary { color: var(--clr-primary-text); }
