@@ -131,7 +131,7 @@ export default async function HomePage() {
 
       <PageNavbar />
 
-      <main id="main-content" className="min-h-screen">
+      <main id="main-content" className="bc-publik min-h-screen">
         {/* 1 · HERO — positioning: satu ekosistem untuk semua */}
         <HeroSection />
 

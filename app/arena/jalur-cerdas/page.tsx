@@ -180,7 +180,7 @@ export default async function JalurCerdasPage() {
               Dari dasar sampai mahir
             </h2>
           </div>
-          <span className="text-xs font-bold text-slate-500">
+          <span className="text-xs font-bold text-slate-600 dark:text-slate-400">
             {totalDone}/{totalUnits} selesai
           </span>
         </div>

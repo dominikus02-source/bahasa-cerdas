@@ -53,7 +53,7 @@ export default function ShareButton({ url, title, text, compact = false }: Share
         title="Bagikan"
         className={compact
           ? "inline-flex items-center justify-center rounded-full px-2 py-1 text-slate-400 transition-colors hover:bg-slate-50 hover:text-blue-600 dark:hover:bg-slate-800/70 dark:hover:text-blue-300"
-          : "flex items-center gap-1.5 text-sm text-slate-500 transition-colors hover:text-blue-600 dark:text-blue-400"}
+          : "flex items-center gap-1.5 text-sm text-slate-600 transition-colors hover:text-blue-700 dark:text-slate-400 dark:hover:text-blue-400"}
       >
         <Share2 size={compact ? 13 : 16} />
         {compact ? null : "Bagikan"}

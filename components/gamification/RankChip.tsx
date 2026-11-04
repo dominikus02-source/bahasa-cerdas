@@ -31,7 +31,7 @@ export function RankChip({
       title={`${meta?.material ?? meta?.label ?? rank} — ${meta?.title ?? ""}`}
     >
       <RankIcon rank={rank} size={size} />
-      <span className="text-xs font-bold" style={{ color }}>
+      <span className="text-xs font-bold" style={{ color: `color-mix(in srgb, ${color} 40%, var(--clr-text))` }}>
         {meta?.material ?? meta?.label ?? rank}
       </span>
       {showTitle && meta?.title && (

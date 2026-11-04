@@ -34,6 +34,9 @@
   --clr-violet-soft: #f5f3ff;
   --clr-info: #2563eb;
   --clr-info-soft: #eff6ff;
+  --clr-orange-strong: #c2410c; /* P2 kontras: aksen kelas oranye di latar soft ≥4.5:1 */
+  --clr-rose-strong: #be123c;   /* P2 kontras: aksen kelas mawar di latar soft ≥4.5:1 */
+  --clr-teal-strong: #0f766e;   /* P2 kontras: aksen kelas teal di latar soft ≥4.5:1 */
 
   --clr-on-brand: #ffffff;   /* teks/ikon di atas gradien merek (terang: putih) */
   --clr-focus: var(--clr-accent-strong);

@@ -23,7 +23,7 @@ export function MenuUnduh({ projectId, sebelumUnduh }: { projectId: string; sebe
   return (
     <div ref={akar} className="relative">
       <button type="button" onClick={() => setBuka((b) => !b)} aria-expanded={buka} aria-haspopup="menu" aria-label="Unduh naskah" data-testid="menu-unduh"
-        className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-3 text-sm text-muted-foreground transition hover:text-foreground">
+        className="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full px-3 text-sm text-muted-foreground transition hover:text-foreground">
         <Download size={16} /><span className="hidden sm:inline">Unduh</span><ChevronDown size={14} className="hidden sm:inline" />
       </button>
       {buka && (

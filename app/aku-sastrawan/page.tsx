@@ -28,11 +28,11 @@ export default async function AkuSastrawanPage() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="mx-auto flex w-full max-w-6xl items-center justify-between px-5 py-5 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring">
+        <Link href="/" className="flex min-h-11 items-center gap-2.5 rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-ring">
           <span className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-background"><Feather size={17} /></span>
           <span className="text-sm font-bold tracking-[0.08em]">AKU SASTRAWAN</span>
         </Link>
-        <Link href={user ? "/aku-sastrawan/studio" : masuk} className="text-sm text-muted-foreground transition hover:text-foreground">
+        <Link href={user ? "/aku-sastrawan/studio" : masuk} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-2 text-sm text-muted-foreground transition hover:text-foreground">
           {user ? "Karyamu" : "Masuk"}
         </Link>
       </header>

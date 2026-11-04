@@ -174,7 +174,7 @@ export default function MateriAjarPage() {
             aria-label="Urutkan materi"
             value={sort}
             onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
-            className="min-h-11 w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 sm:w-auto focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+            className="min-h-11 w-full px-3 py-2.5 border border-gray-200 bg-bc-surface rounded-xl text-sm text-gray-600 sm:w-auto focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
           >
             <option value="recent">Terbaru</option>
             <option value="popular">Terpopuler</option>

@@ -24,7 +24,7 @@ export default function LokerPage() {
   const filtered = data.filter((l) => !search || l.title.toLowerCase().includes(search.toLowerCase()) || l.sekolah.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+    <div className="bc-publik min-h-screen bg-gradient-to-br from-slate-50 to-white">
       <PageNavbar />
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-10">

@@ -94,7 +94,7 @@ export default function FiturUnggulanSection() {
                     <h3 className="font-semibold text-zinc-900 group-hover:text-primary transition-colors">
                       {f.title}
                     </h3>
-                    <p className="text-sm text-zinc-500 truncate">{f.desc}</p>
+                    <p className="text-sm leading-snug text-zinc-500">{f.desc}</p>
                   </div>
                   <ArrowRight size={16} className="text-zinc-300 group-hover:text-primary group-hover:translate-x-0.5 transition-all flex-shrink-0" />
                 </Link>

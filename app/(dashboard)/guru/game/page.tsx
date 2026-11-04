@@ -672,7 +672,7 @@ export default function GuruGameHubPage() {
                   <div className="mt-4 flex items-center gap-2 flex-wrap">
                     <a
                       href="#aktivitas-murid"
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold rounded-lg transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-orange-700 hover:bg-orange-800 text-white text-xs font-bold rounded-lg transition-colors"
                     >
                       <BellRing className="w-3.5 h-3.5" /> Kirim Pengingat
                     </a>
@@ -807,7 +807,7 @@ export default function GuruGameHubPage() {
               <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto dark:text-slate-400">
                 Ajak murid bergabung ke kelas lalu bermain gim bersama — aktivitas, skor, dan XP mereka akan tampil di sini.
               </p>
-              <Link href="/guru/game/lobby" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-sky-600 text-white text-sm font-medium rounded-xl hover:bg-sky-700 transition-colors">
+              <Link href="/guru/game/lobby" className="inline-flex items-center gap-1.5 mt-4 px-4 py-2 bg-sky-700 text-white text-sm font-medium rounded-xl hover:bg-sky-800 transition-colors">
                 <Play size={14} /> Buat Ruang Baru
               </Link>
             </div>

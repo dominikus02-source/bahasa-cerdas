@@ -12,9 +12,9 @@ interface RPPFormProps {
 }
 
 const KURIKULUM_OPTIONS = [
-  { value: "Kurikulum Merdeka", label: "Kurikulum Nasional (Rencana Pembelajaran)" },
-  { value: "K13", label: "Kurikulum 2013 / K13 (Rencana Pembelajaran)" },
-  { value: "Custom", label: "Custom (Rencana Pembelajaran)" },
+  { value: "Kurikulum Merdeka", label: "Kurikulum Nasional" },
+  { value: "K13", label: "Kurikulum 2013 (K13)" },
+  { value: "Custom", label: "Kustom" },
 ];
 
 const SEMESTER_OPTIONS = [

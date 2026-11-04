@@ -1481,3 +1481,81 @@
 /* P1 kontras — text-primary (merah merek 0 73% 41%) hanya ≈2:1 di latar gelap.
    Di mode gelap teks memakai varian merah terang dari token; latar bg-primary tidak berubah. */
 .dark .text-primary { color: var(--clr-primary-text); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   P2 — Mode gelap halaman publik (.bc-publik).
+   Halaman pemasaran (beranda, /fitur, /tentang, dll.) memakai kelas palet
+   mentah (bg-white, text-zinc-900, …) yang tetap terang saat html.dark,
+   sementara navbar sudah memakai token → logo "Bahasa" nyaris tak terlihat.
+   Lapisan ini HANYA aktif di .dark, dipasang pada <main> halaman publik,
+   dan memetakan palet lama ke token --clr-*. Mode terang tidak berubah.
+   ═══════════════════════════════════════════════════════════════════════════ */
+.dark .bc-publik { color: var(--clr-text); background: var(--clr-bg); }
+
+/* Permukaan */
+.dark .bc-publik .bg-white,
+.dark .bc-publik .hover\:bg-white:hover { background-color: var(--clr-surface); }
+.dark .bc-publik .bg-white\/90 { background-color: color-mix(in srgb, var(--clr-surface) 90%, transparent); }
+.dark .bc-publik .bg-white\/85 { background-color: color-mix(in srgb, var(--clr-surface) 85%, transparent); }
+.dark .bc-publik .bg-white\/80 { background-color: color-mix(in srgb, var(--clr-surface) 80%, transparent); }
+.dark .bc-publik .bg-white\/70 { background-color: color-mix(in srgb, var(--clr-surface) 70%, transparent); }
+.dark .bc-publik .bg-white\/60 { background-color: color-mix(in srgb, var(--clr-surface) 60%, transparent); }
+.dark .bc-publik .bg-white\/50 { background-color: color-mix(in srgb, var(--clr-surface) 50%, transparent); }
+.dark .bc-publik :is(.bg-zinc-50, .bg-zinc-100, .bg-gray-50, .bg-gray-100, .bg-slate-50, .bg-slate-100):not([class*="group-open:bg-"]),
+.dark .bc-publik :is(.hover\:bg-zinc-50, .hover\:bg-zinc-100, .hover\:bg-gray-50, .hover\:bg-gray-100):hover { background-color: var(--clr-surface-2); }
+.dark .bc-publik :is(.bg-zinc-50\/50, .bg-zinc-50\/60, .bg-zinc-50\/70, .bg-zinc-50\/80, .bg-gray-50\/50) { background-color: color-mix(in srgb, var(--clr-surface-2) 80%, transparent); }
+.dark .bc-publik :is(.bg-zinc-200, .bg-gray-200, .bg-slate-200) { background-color: var(--clr-border); }
+.dark .bc-publik :is(.bg-zinc-300, .bg-zinc-400, .bg-gray-300) { background-color: var(--clr-border-strong); }
+/* Tombol gelap (bg-zinc-900 text-white) dibalik agar tetap menonjol di latar gelap. */
+.dark .bc-publik :is(a, button).bg-zinc-900 { background-color: var(--clr-text); color: var(--clr-bg); }
+.dark .bc-publik :is(a, button).bg-zinc-900:hover { background-color: var(--clr-text-2); }
+/* Ikon FAQ (details) saat tertutup: abu terang → surface-2; saat terbuka tetap bg-primary. */
+.dark .bc-publik details:not([open]) .bg-zinc-100[class*="group-open:bg-"] { background-color: var(--clr-surface-2); }
+/* Tombol putih di dalam seksi gelap (bg-zinc-900/950, mis. CTA akhir) tetap terang agar menonjol. */
+.dark .bc-publik :is(.bg-zinc-900, .bg-zinc-950) :is(a, button).bg-white { background-color: var(--clr-text); color: var(--clr-bg) !important; }
+.dark .bc-publik :is(.bg-zinc-900, .bg-zinc-950) :is(a, button).bg-white:hover { background-color: var(--clr-text-2); }
+
+/* Gradien latar terang */
+.dark .bc-publik :is(.from-white, .from-zinc-50, .from-gray-50, .from-slate-50) {
+  --tw-gradient-from: var(--clr-bg) var(--tw-gradient-from-position);
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.dark .bc-publik .via-white {
+  --tw-gradient-to: transparent var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--clr-surface) var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
+.dark .bc-publik :is(.to-zinc-50, .to-zinc-100, .to-white) { --tw-gradient-to: var(--clr-surface-2) var(--tw-gradient-to-position); }
+
+/* Rona lembut */
+.dark .bc-publik :is(.bg-primary-light, .bg-red-50, .bg-rose-50) { background-color: var(--clr-danger-soft); }
+.dark .bc-publik .bg-primary-light\/30 { background-color: color-mix(in srgb, var(--clr-danger-soft) 40%, transparent); }
+.dark .bc-publik :is(.bg-emerald-50, .bg-green-50, .bg-green-50\/95) { background-color: var(--clr-success-soft); }
+.dark .bc-publik :is(.bg-amber-50, .bg-yellow-50) { background-color: var(--clr-warning-soft); }
+.dark .bc-publik :is(.bg-violet-50, .bg-violet-100, .bg-purple-50, .bg-indigo-50, .bg-indigo-100) { background-color: var(--clr-violet-soft); }
+.dark .bc-publik :is(.bg-blue-50, .bg-cyan-50, .bg-sky-50) { background-color: var(--clr-info-soft); }
+
+/* Teks */
+.dark .bc-publik :is(.text-zinc-950, .text-zinc-900, .text-zinc-800, .text-gray-900, .text-gray-800, .text-slate-900, .text-black):not([class*="bg-amber-"]):not([class*="bg-yellow-"]),
+.dark .bc-publik .hover\:text-zinc-900:hover { color: var(--clr-text); }
+.dark .bc-publik :is(.text-zinc-700, .text-zinc-600, .text-zinc-500, .text-gray-700, .text-gray-600, .text-gray-500, .text-slate-600, .text-slate-500) { color: var(--clr-text-2); }
+.dark .bc-publik :is(.text-zinc-400, .text-gray-400, .text-slate-400) { color: var(--clr-text-3); }
+.dark .bc-publik :is(.text-primary-dark, .text-red-600, .text-red-700, .text-rose-600) { color: var(--clr-primary-text); }
+.dark .bc-publik :is(.text-emerald-600, .text-emerald-700, .text-green-600, .text-green-700) { color: var(--clr-success); }
+.dark .bc-publik :is(.text-amber-600, .text-amber-700) { color: var(--clr-warning); }
+.dark .bc-publik :is(.text-violet-600, .text-violet-700, .text-purple-600, .text-indigo-600) { color: var(--clr-violet); }
+.dark .bc-publik :is(.text-blue-600, .text-blue-700, .text-cyan-600, .text-sky-600) { color: var(--clr-info); }
+.dark .bc-publik .text-gradient {
+  background-image: linear-gradient(to right, var(--clr-primary-text), color-mix(in srgb, var(--clr-primary-text) 70%, var(--clr-warning)));
+}
+
+/* Garis */
+.dark .bc-publik :is(.border-zinc-100, .border-zinc-200, .border-zinc-200\/70, .border-zinc-300, .border-gray-100, .border-gray-200, .border-slate-200) { border-color: var(--clr-border); }
+.dark .bc-publik :is(.border-green-100, .border-emerald-100, .border-violet-100, .border-amber-100, .border-amber-200\/60, .border-red-100, .border-blue-100) { border-color: var(--clr-border-strong); }
+.dark .bc-publik .border-white:not([class*="border-white/"]) { border-color: var(--clr-surface); }
+.dark .bc-publik :is(.divide-zinc-100, .divide-zinc-200) > :not([hidden]) ~ :not([hidden]) { border-color: var(--clr-border); }
+
+/* P2 — chip/tab bg-primary-light di mode gelap (marketplace, navbar publik): latar soft gelap,
+   teks text-primary sudah diremap ke --clr-primary-text. Tidak menimpa kelas dark:bg-* eksplisit. */
+.dark .bg-primary-light:not([class*="dark:bg-"]) { background-color: var(--clr-danger-soft); }
+.dark .bg-primary-light\/50:not([class*="dark:bg-"]) { background-color: color-mix(in srgb, var(--clr-danger-soft) 85%, transparent); }
