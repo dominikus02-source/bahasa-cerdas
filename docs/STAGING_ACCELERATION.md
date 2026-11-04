@@ -18,3 +18,5 @@ VPS: Node 22.23.4 tersedia melalui nvm use 22 untuk akun bcagent. Checkout alat 
 Aktivasi Docker pada layanan staging belum dilakukan: akun bcagent tidak memiliki izin socket Docker/direktori staging; SSH bcadmin dari PC ditolak publickey. Tidak ada perubahan hak akses atau restart layanan.
 
 Cache npm lokal dipisahkan berdasarkan proyek/staging/platform/arsitektur/Node 22. Cache CI memasukkan OS, arsitektur, lockfile, dan konfigurasi build. Konfigurasi cache CI ditulis dari runner step melalui RUNNER_TEMP/GITHUB_ENV. `bash tools/check-workflow.sh` memvalidasi semantik GitHub Actions, bukan hanya sintaks YAML. Docker staging wajib memakai BUILD_CACHE_SCOPE yang berbeda dari produksi dan builder staging yang sudah diverifikasi.
+
+BahasaCerdas Next 16.2.6: build Docker staging dengan `--build-arg BC_BUILD_ENV=staging --build-arg BUILD_CACHE_SCOPE=bahasacerdas-staging`. Flag filesystem cache Turbopack aktif hanya pada BC_BUILD_ENV staging/ci. Default produksi tetap nonaktif sesuai konfigurasi sebelumnya.

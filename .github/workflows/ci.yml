@@ -14,6 +14,7 @@ jobs:
     # Placeholder values — CI only type-checks/builds, it never connects to real
     # services. Production secrets live in the VPS runtime config, not in CI.
     env:
+      BC_BUILD_ENV: "ci"
       NEXT_TELEMETRY_DISABLED: "1"
       DATABASE_URL: "postgresql://user:pass@localhost:5432/db"
       DIRECT_URL: "postgresql://user:pass@localhost:5432/db"
@@ -168,7 +169,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-anon-key
           NEXT_PUBLIC_SITE_URL=https://example.com
           EOF
-          DOCKER_BUILDKIT=1 docker build --build-arg BUILD_CACHE_SCOPE=bahasacerdas-ci \
+          DOCKER_BUILDKIT=1 docker build --build-arg BC_BUILD_ENV=ci --build-arg BUILD_CACHE_SCOPE=bahasacerdas-ci \
             -f Dockerfile.web \
             --secret id=web_env,src=/tmp/bc-web-ci.env \
             -t bahasacerdas-web-ci .
@@ -217,6 +218,7 @@ jobs:
           --health-timeout 5s
           --health-retries 20
     env:
+      BC_BUILD_ENV: "ci"
       NEXT_TELEMETRY_DISABLED: "1"
       DATABASE_URL: "postgresql://smoke:smoke@localhost:5432/smoke"
       DIRECT_URL: "postgresql://smoke:smoke@localhost:5432/smoke"
