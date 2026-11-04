@@ -53,8 +53,13 @@ def config_target(target, env, resolver=None):
         or metrics_url.hostname not in set(env.get("STAGING_METRICS_ALLOWED_HOSTS","").split(","))
         or metrics_url.query or metrics_url.fragment):
         raise RuntimeError("Explicit allowlisted HTTPS staging metrics endpoint required")
-    if urlsplit(env["STAGING_METRICS_URL"]).hostname==urlsplit(env["PRODUCTION_HEALTH_URL"]).hostname:
+    if health.hostname in set(env["STAGING_ALLOWED_HOSTS"].split(",")):
+        raise RuntimeError("Production health endpoint may not be staging")
+    if metrics_url.hostname==health.hostname:
         raise RuntimeError("Staging telemetry may not point to production")
+    # Prevent a metrics hostname from resolving to a production address too.
+    metrics_origin=f"{metrics_url.scheme}://{metrics_url.netloc}"
+    validate_target(metrics_origin,env["STAGING_METRICS_ALLOWED_HOSTS"],env["PRODUCTION_IPS"],resolver)
     link=float(env["STAGING_NIC_LINK_MBPS"])
     if link<=0 or env["STAGING_NIC"]=="lo":raise RuntimeError("Dedicated staging NIC capacity missing")
     ttl=int(env.get("QA_TOKEN_TTL_SECONDS","300"))
