@@ -30,6 +30,14 @@ class LiveKitRoomAdmin:
             result=await client.room.list_participants(api.ListParticipantsRequest(room=room))
             return [p.identity for p in result.participants]
         return await self._with_client(op)
+    async def room_exists(self, room):
+        validate_qa_room(room)
+        async def op(client):
+            if self.backend is not None: return await client.room_exists(room)
+            from livekit import api
+            rooms=await client.room.list_rooms(api.ListRoomsRequest(names=[room]))
+            return any(x.name==room for x in rooms.rooms)
+        return await self._with_client(op)
     async def remove(self, room, identity):
         validate_qa_room(room)
         if not identity.startswith("qa-"):raise ValueError("Non-QA identity rejected")
@@ -60,8 +68,8 @@ class QACleanup:
                         raise RuntimeError("Non-QA participant in QA room; refuse selective cleanup")
                     await self.admin.remove(room,identity)
                 await self.admin.delete(room)
-                remaining=await self.admin.participants(room)
-                if remaining:raise RuntimeError("Room still has participants")
+                if await self.admin.room_exists(room):
+                    raise RuntimeError("QA room still exists after deletion")
                 self.owned.discard(room)
             except Exception as exc:
                 errors.append(f"{room}: {type(exc).__name__}")
@@ -76,6 +84,7 @@ if __name__=="__main__":
         async def participants(self,room):return list(self.people)
         async def remove(self,room,identity):self.people.remove(identity);self.removed.append(identity)
         async def delete(self,room):self.deleted.append(room)
+        async def room_exists(self,room):return room not in self.deleted
         async def create_room(self,room,cap):return cap
     class CleanupTests(unittest.IsolatedAsyncioTestCase):
         def make(self): 
