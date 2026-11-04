@@ -102,6 +102,8 @@ jobs:
 
       - name: Route slug guard (outage 30 Okt — slug dinamis berbeda di level sama)
         run: npm run test:route-slugs
+      - name: Origin akun (standalone 0.0.0.0 di balik proxy, tolak origin asing)
+        run: npm run test:account-origin
       - name: AKU SASTRAWAN gate (Premium tulis, baca/ekspor setelah premium berakhir)
         run: npm run test:aku-sastrawan
       - name: AKU SASTRAWAN bahasa (tidak boleh ada teks bahasa Inggris)
