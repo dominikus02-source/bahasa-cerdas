@@ -58,6 +58,10 @@ class StagingMetrics:
                 "oom":sum(r["oom"] for r in self.samples)}
 
 def _entries(stats):
+    # LiveKit Python RTC >=1.2 returns RtcStats(publisher_stats,subscriber_stats)
+    # containing proto_stats.RtcStats with a oneof named "stats".
+    if hasattr(stats,"subscriber_stats"):
+        return list(stats.subscriber_stats)
     if hasattr(stats,"stats"): return stats.stats
     if isinstance(stats,(list,tuple)): return stats
     raise ValueError("Unexpected WebRTC SDK stats format")
@@ -76,6 +80,20 @@ def client_rtc_sample(reports):
     """
     inbound=[];pairs=[]
     for stat in _entries(reports):
+        if hasattr(stat,"WhichOneof"):
+            variant=stat.WhichOneof("stats")
+            if variant=="inbound_rtp":
+                received=stat.inbound_rtp.received
+                lost=_num(received,"packets_lost")
+                received_count=_num(received,"packets_received")
+                jitter=_num(received,"jitter")
+                if lost+received_count>0:
+                    inbound.append((100*lost/(lost+received_count),jitter*1000))
+            elif variant=="candidate_pair":
+                pair=stat.candidate_pair.candidate_pair
+                if pair.nominated:
+                    pairs.append(_num(pair,"current_round_trip_time")*1000)
+            continue
         typ = stat.get("type") if isinstance(stat,dict) else getattr(stat,"type",None)
         typ=str(typ).lower().replace("_","-")
         if "inbound-rtp" in typ or "inboundrtp" in typ:
@@ -137,5 +155,14 @@ if __name__=="__main__":
         def test_client_reject_missing_reconnect(self):
             m=ClientMetrics();m.observe(RTC);m.join=[True]
             with self.assertRaises(ValueError):m.report()
+        def test_protobuf_sdk_shape(self):
+            from types import SimpleNamespace as NS
+            class Oneof:
+                def __init__(self,variant,**fields):self.variant=variant;self.__dict__.update(fields)
+                def WhichOneof(self,name):return self.variant
+            inbound=Oneof("inbound_rtp",inbound_rtp=NS(received=NS(packets_lost=1,packets_received=999,jitter=.01)))
+            candidate=Oneof("candidate_pair",candidate_pair=NS(candidate_pair=NS(nominated=True,current_round_trip_time=.08)))
+            values=client_rtc_sample(NS(subscriber_stats=[inbound,candidate]))
+            self.assertEqual(values["rtt_ms"],80)
         def test_p95(self):self.assertEqual(p95([1,2,3,4,5]),5)
     unittest.main()
