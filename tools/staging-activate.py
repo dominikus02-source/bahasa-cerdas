@@ -229,9 +229,21 @@ try:
     health(TARGET)
     public_health(DOMAIN)
     assert inspect(TARGET)["Image"] == image_ids[0]
-    auth_check = subprocess.run(["docker", "exec", "-i", TARGET, "node"],
-                                input=(repo / "tools/staging-auth-check.cjs").read_text(),
-                                capture_output=True, text=True, timeout=240)
+    cold_healthy_seconds = round(time.monotonic() - deploy_at, 3)
+    # Standalone Next images need not retain bundled SDK package directories.
+    # Use the already-cached Node-22 deps target as a disposable QA image.
+    qa_image = "bahasacerdas/staging-qa:" + sha
+    run(["docker", "buildx", "build", "--builder", BUILDER, "--load", "--target", "deps",
+         "--build-arg", "BUILD_CACHE_SCOPE=bahasacerdas-staging",
+         "-f", "Dockerfile.web", "-t", qa_image, "."],
+        cwd=repo, log=root / "qa-deps-build.log")
+    auth_check = subprocess.run([
+        "docker", "run", "--rm", "--network", NETWORK,
+        "--env-file", str(private_env),
+        "--mount", "type=bind,src=" + str(repo / "prisma") + ",dst=/app/prisma,readonly",
+        "--mount", "type=bind,src=" + str(repo / "tools/staging-auth-check.cjs") + ",dst=/app/staging-auth-check.cjs,readonly",
+        qa_image, "sh", "-c", "npx prisma generate >/dev/null && node /app/staging-auth-check.cjs"
+    ], capture_output=True, text=True, timeout=240)
     for line in auth_check.stdout.splitlines():
         try:
             record = json.loads(line)
@@ -247,7 +259,7 @@ try:
     assert final_image["Config"]["Labels"]["org.opencontainers.image.revision"] == sha
     assert {n: (inspect(n)["Id"], inspect(n)["Image"]) for n in prod_names} == prod_ids
     public_health("https://www.bahasacerdas.com")
-    summary["deployments"] = [{"run": 1, "until_healthy_seconds": round(time.monotonic() - deploy_at, 3),
+    summary["deployments"] = [{"run": 1, "until_healthy_seconds": cold_healthy_seconds,
                                 "pipeline_total_seconds": round(time.monotonic() - started, 3),
                                 "container_replaced": True}]
     # Repeat the identical build and environment. An unchanged image requires
