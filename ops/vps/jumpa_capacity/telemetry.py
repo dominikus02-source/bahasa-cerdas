@@ -61,7 +61,7 @@ def _entries(stats):
     # LiveKit Python RTC >=1.2 returns RtcStats(publisher_stats,subscriber_stats)
     # containing proto_stats.RtcStats with a oneof named "stats".
     if hasattr(stats,"subscriber_stats"):
-        return list(stats.subscriber_stats) + list(stats.publisher_stats)
+        return list(stats.subscriber_stats) + list(getattr(stats,"publisher_stats",[]))
     if hasattr(stats,"stats"): return stats.stats
     if isinstance(stats,(list,tuple)): return stats
     raise ValueError("Unexpected WebRTC SDK stats format")
