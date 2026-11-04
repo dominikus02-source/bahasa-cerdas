@@ -229,6 +229,20 @@ try:
     health(TARGET)
     public_health(DOMAIN)
     assert inspect(TARGET)["Image"] == image_ids[0]
+    auth_check = subprocess.run(["docker", "exec", "-i", TARGET, "node"],
+                                input=(repo / "tools/staging-auth-check.cjs").read_text(),
+                                capture_output=True, text=True, timeout=240)
+    for line in auth_check.stdout.splitlines():
+        try:
+            record = json.loads(line)
+            if "check" in record and isinstance(record.get("passed"), bool):
+                emit(record)
+        except ValueError:
+            pass
+    assert auth_check.returncode == 0, "Staging authenticated HTTP checks failed"
+    summary["http_auth_integration_passed"] = True
+    summary["browser_authenticated_tested"] = False
+    summary["actual_media_tested"] = False
     final_image = json.loads(run(["docker", "image", "inspect", image]))[0]
     assert final_image["Config"]["Labels"]["org.opencontainers.image.revision"] == sha
     assert {n: (inspect(n)["Id"], inspect(n)["Image"]) for n in prod_names} == prod_ids
