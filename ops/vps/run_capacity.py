@@ -21,6 +21,8 @@ if __package__ in (None,""):
 from ops.vps.jumpa_capacity.cleanup import qa_room,validate_qa_room
 from ops.vps.jumpa_capacity.target import validate_target
 from ops.vps.jumpa_capacity.ram import require_ram
+from ops.vps.jumpa_capacity.resources import ResourceGuard
+from ops.vps.jumpa_capacity.tokens import issue_token, validate_token, MAX_TTL_SECONDS
 from ops.vps.jumpa_capacity.gates import STAGES,SCENARIOS,CRITERIA,StageGate
 from ops.vps.jumpa_capacity.livekit_adapter import LiveKitParticipant,join_many
 from ops.vps.jumpa_capacity.telemetry import StagingMetrics,ClientMetrics
@@ -42,10 +44,15 @@ def config_target(target, env, resolver=None):
         if not env.get(key): raise RuntimeError("Missing required QA env: "+key)
     if not env["LIVEKIT_API_KEY"].startswith("qa_"):raise RuntimeError("QA-only API key required")
     if len(env["STAGING_METRICS_BEARER"])<32:raise RuntimeError("Invalid metrics bearer")
-    if urlsplit(env["PRODUCTION_HEALTH_URL"]).hostname not in set(env["PRODUCTION_HEALTH_HOSTS"].split(",")):
-        raise RuntimeError("Production health host not explicitly allowed")
-    if urlsplit(env["STAGING_METRICS_URL"]).scheme!="https":
-        raise RuntimeError("Staging host metrics must be TLS-protected")
+    health=urlsplit(env["PRODUCTION_HEALTH_URL"])
+    if (health.scheme!="https" or health.path!="/api/health" or health.query or health.fragment
+        or health.hostname not in set(env["PRODUCTION_HEALTH_HOSTS"].split(","))):
+        raise RuntimeError("Explicit HTTPS production /api/health required")
+    metrics_url=urlsplit(env["STAGING_METRICS_URL"])
+    if (metrics_url.scheme!="https" or metrics_url.path!="/metrics"
+        or metrics_url.hostname not in set(env.get("STAGING_METRICS_ALLOWED_HOSTS","").split(","))
+        or metrics_url.query or metrics_url.fragment):
+        raise RuntimeError("Explicit allowlisted HTTPS staging metrics endpoint required")
     if urlsplit(env["STAGING_METRICS_URL"]).hostname==urlsplit(env["PRODUCTION_HEALTH_URL"]).hostname:
         raise RuntimeError("Staging telemetry may not point to production")
     link=float(env["STAGING_NIC_LINK_MBPS"])
@@ -191,6 +198,7 @@ def main(argv=None):
         url,resolved=config_target(args.target,env)
         if args.dry_run:
             # DNS lookup only; NEVER instantiate metrics, admin, or RTC clients.
+            offline_guards(env)
             print(json.dumps({"status":"DRY_RUN_ONLY","host":resolved["host"],
                 "media_connections":0,"production_get":0,
                 "stages":STAGES,"scenarios":SCENARIOS,"criteria":CRITERIA},sort_keys=True))
