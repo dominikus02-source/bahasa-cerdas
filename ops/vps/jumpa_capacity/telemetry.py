@@ -28,6 +28,9 @@ class StagingMetrics:
         self.open_url = open_url or urllib.request.urlopen
         self.samples = []
         self.guard = ResourceGuard()
+    def reset(self):
+        self.samples.clear()
+        self.guard = ResourceGuard()
     def sample(self):
         req=urllib.request.Request(self.endpoint,headers={"Authorization":"Bearer "+self.auth,"Accept":"application/json"})
         with self.open_url(req, timeout=3) as response:
