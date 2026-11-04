@@ -16,7 +16,9 @@ class HostSampler:
             raise ValueError("Explicit staging NIC, link speed, and SFU cgroup required")
         self.psutil=psutil_module;self.nic=nic;self.link=link_mbps
         self.cgroup=pathlib.Path(cgroup)
-        self.prev=None
+        initial=self.psutil.net_io_counters(pernic=True)
+        if self.nic not in initial: raise RuntimeError("Staging NIC not found")
+        self.prev=(time.monotonic(),int(initial[self.nic].bytes_sent))
         self.psutil.cpu_percent(interval=None)
     def _cgroup_ram(self):
         used=int((self.cgroup/"memory.current").read_text().strip())
