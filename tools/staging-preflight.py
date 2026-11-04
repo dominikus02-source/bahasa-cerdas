@@ -114,12 +114,23 @@ for name in ["jumpa-web-staging", "bahasacerdas-kuis-tempur-staging-web"]:
     print(json.dumps({"web_package_container": name, "status": r.returncode}))
     if r.returncode == 0:
         print(r.stdout)
-query = "BEGIN READ ONLY; SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name; ROLLBACK;"
-r = subprocess.run(["docker", "exec", "jumpa-db-staging", "psql", "-U", "postgres", "-d", "postgres", "-Atc", query], capture_output=True, text=True, timeout=20)
-print(json.dumps({"staging_schema_container": "jumpa-db-staging", "metadata_read_status": r.returncode}))
-if r.returncode == 0:
-    tables = [line for line in r.stdout.splitlines() if line not in ["BEGIN", "ROLLBACK"]]
-    print(json.dumps({"staging_public_table_count": len(tables), "staging_public_tables": tables}))
+web = next(c for c in containers if c["Name"] == "/jumpa-web-staging")
+db = next(c for c in containers if c["Name"] == "/jumpa-db-staging")
+web_env = dict(v.split("=", 1) for v in web["Config"].get("Env", []) if "=" in v)
+db_url = urlsplit(web_env["DATABASE_URL"])
+db_names = {"jumpa-db-staging", db["Config"].get("Hostname")}
+for net in db["NetworkSettings"].get("Networks", {}).values():
+    db_names.update(net.get("Aliases") or [])
+    db_names.add(net.get("IPAddress"))
+database = db_url.path.lstrip("/")
+print(json.dumps({"web_datasource_matches_staging_db": db_url.hostname in db_names, "database_name": database}))
+if db_url.hostname in db_names and database:
+    query = "BEGIN READ ONLY; SELECT table_name FROM information_schema.tables WHERE table_schema='public' ORDER BY table_name; ROLLBACK;"
+    r = subprocess.run(["docker", "exec", "jumpa-db-staging", "psql", "-U", "postgres", "-d", database, "-Atc", query], capture_output=True, text=True, timeout=20)
+    print(json.dumps({"staging_schema_container": "jumpa-db-staging", "metadata_read_status": r.returncode}))
+    if r.returncode == 0:
+        tables = [line for line in r.stdout.splitlines() if line not in ["BEGIN", "ROLLBACK"]]
+        print(json.dumps({"staging_public_table_count": len(tables), "staging_public_tables": tables}))
 r = subprocess.run(["docker", "exec", "jumpa-ingress-staging", "caddy", "adapt", "--config", "/etc/caddy/Caddyfile", "--adapter", "caddyfile"], capture_output=True, text=True, timeout=20)
 print(json.dumps({"staging_ingress_adapt_read_status": r.returncode}))
 if r.returncode == 0:
