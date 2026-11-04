@@ -2,15 +2,19 @@
 
 FROM node:22-bookworm-slim AS deps
 ARG BUILD_CACHE_SCOPE=bahasacerdas-production
+ARG TARGETOS
+ARG TARGETARCH
 WORKDIR /app
 RUN apt-get update -y \
   && apt-get install -y --no-install-recommends ca-certificates openssl \
   && rm -rf /var/lib/apt/lists/*
 COPY package.json package-lock.json ./
-RUN --mount=type=cache,id=${BUILD_CACHE_SCOPE}-npm,target=/root/.npm/_cacache,sharing=locked npm ci --prefer-offline --no-audit --no-fund
+RUN --mount=type=cache,id=${BUILD_CACHE_SCOPE}-node22-${TARGETOS}-${TARGETARCH}-npm,target=/root/.npm/_cacache,sharing=locked npm ci --prefer-offline --no-audit --no-fund
 
 FROM node:22-bookworm-slim AS builder
 ARG BUILD_CACHE_SCOPE=bahasacerdas-production
+ARG TARGETOS
+ARG TARGETARCH
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN apt-get update -y \
@@ -24,7 +28,7 @@ RUN npx prisma generate
 # BuildKit secrets do not invalidate cache by content, so this fingerprint lets
 # deploys intentionally rebuild the Next layer when public build-time env changes.
 ARG WEB_BUILD_FINGERPRINT=manual
-RUN --mount=type=cache,id=${BUILD_CACHE_SCOPE}-webpack,target=/app/.next/cache/webpack,sharing=locked --mount=type=cache,id=${BUILD_CACHE_SCOPE}-turbopack,target=/app/.next/cache/turbopack,sharing=locked --mount=type=cache,id=${BUILD_CACHE_SCOPE}-swc,target=/app/.next/cache/swc,sharing=locked \
+RUN --mount=type=cache,id=${BUILD_CACHE_SCOPE}-node22-${TARGETOS}-${TARGETARCH}-webpack,target=/app/.next/cache/webpack,sharing=locked --mount=type=cache,id=${BUILD_CACHE_SCOPE}-node22-${TARGETOS}-${TARGETARCH}-turbopack,target=/app/.next/cache/turbopack,sharing=locked --mount=type=cache,id=${BUILD_CACHE_SCOPE}-node22-${TARGETOS}-${TARGETARCH}-swc,target=/app/.next/cache/swc,sharing=locked \
     --mount=type=secret,id=web_env,target=/app/.env.production,required=true \
   echo "web-build-fingerprint=${WEB_BUILD_FINGERPRINT}" >/tmp/web-build-fingerprint \
   && npm run build \
