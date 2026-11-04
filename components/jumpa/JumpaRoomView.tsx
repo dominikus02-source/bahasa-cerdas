@@ -601,6 +601,44 @@ function ControlBar({
   const mediaBusy = useRef(new Set<"mic" | "camera" | "screen">());
   const [menuOpen, setMenuOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const photoPending = useRef(false);
+  const capturePhoto = async () => {
+    if (photoPending.current) return;
+    photoPending.current = true;
+    setPhotoBusy(true);
+    try {
+      await new Promise<void>((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+      const stage = document.querySelector<HTMLElement>('[aria-label="Video peserta"]');
+      if (!stage || !stage.clientWidth || !stage.clientHeight) throw new Error("STAGE_UNAVAILABLE");
+      const { default: html2canvas } = await import("html2canvas");
+      const area = stage.clientWidth * stage.clientHeight;
+      const canvas = await html2canvas(stage, {
+        useCORS: true,
+        backgroundColor: "#101827",
+        logging: false,
+        scale: Math.min(2, window.devicePixelRatio || 1, Math.sqrt(8_000_000 / Math.max(1, area))),
+      });
+      const blob = await new Promise<Blob>((resolve, reject) =>
+        canvas.toBlob((file) => file ? resolve(file) : reject(new Error("CAPTURE_EMPTY")), "image/png")
+      );
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `JUMPA-foto-${new Date().toISOString().replace(/[:.]/g, "-")}.png`;
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      toast("Foto tampilan disiapkan untuk disimpan.", "ok");
+    } catch {
+      toast("Foto belum dapat disimpan. Pastikan video terlihat dan coba lagi.", "warn");
+    } finally {
+      photoPending.current = false;
+      setPhotoBusy(false);
+    }
+  };
+
   const [endAsk, setEndAsk] = useState(false);
   const [ending, setEnding] = useState(false);
   const cancelEnd = useCallback(() => setEndAsk(false), []);
@@ -769,6 +807,9 @@ function ControlBar({
             )}
             <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { setShareOpen(true); close(); }}>
               <Share2 size={20} /> Bagikan ruang
+            </button>
+            <button type="button" role="menuitem" className="jumpa-menu-item" disabled={photoBusy} onClick={() => { close(); void capturePhoto(); }}>
+              <Camera size={20} /> {photoBusy ? "Menyiapkan foto…" : "Foto tampilan"}
             </button>
             {canLock && (
               <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { void moderate(info.isLocked ? "UNLOCK" : "LOCK"); close(); }}>
