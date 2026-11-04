@@ -86,7 +86,8 @@ class CapacityRunner:
                    "environment":"dedicated-staging","results":[],"locked_criteria":CRITERIA}
     async def preflight(self):
         # One health GET read-only, no prod user traffic/media.
-        await asyncio.to_thread(self.health)
+        if await asyncio.to_thread(self.health) is not True:
+            raise RuntimeError("PRODUCTION_KILL_SWITCH: health not OK")
         # Staging host, NEVER the generator's own CPU/RAM.
         await asyncio.to_thread(self.metrics.sample)
     async def one_scenario(self,count,scenario):
@@ -117,7 +118,8 @@ class CapacityRunner:
             while self.clock()-started < STEADY_SECONDS:
                 if self.stop.is_set():raise RuntimeError("Emergency stop requested")
                 # Health failure kills before any subsequent telemetry iteration.
-                await asyncio.to_thread(self.health)
+                if await asyncio.to_thread(self.health) is not True:
+                    raise RuntimeError("PRODUCTION_KILL_SWITCH: health not OK")
                 await asyncio.to_thread(self.metrics.sample)
                 elapsed=self.clock()-started
                 if elapsed >= STEADY_SECONDS/2 and not recon_done:
