@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import pwd
+import re
 import socket
 import subprocess
 from urllib.parse import urlsplit
@@ -136,6 +137,22 @@ print(json.dumps({"staging_ingress_adapt_read_status": r.returncode}))
 if r.returncode == 0:
     routes(json.loads(r.stdout))
 
+by_name = {c["Name"].lstrip("/"): c for c in containers}
+def env_named(name):
+    return dict(v.split("=", 1) for v in by_name[name]["Config"].get("Env", []) if "=" in v)
+stage_auth_env = env_named("jumpa-auth-staging")
+prod_auth_env = env_named("supabase-auth")
+stage_web_env = env_named("jumpa-web-staging")
+prod_web_env = env_named("bahasacerdas-prod-web-1")
+def different(a, b):
+    return (a != b) if a and b else None
+print(json.dumps({"credential_separation": {
+    "auth_signing_secret_different": different(stage_auth_env.get("GOTRUE_JWT_SECRET"), prod_auth_env.get("GOTRUE_JWT_SECRET")),
+    "service_role_key_different": different(stage_auth_env.get("STAGING_SERVICE_ROLE_KEY"), prod_web_env.get("SUPABASE_SERVICE_ROLE_KEY")),
+    "anon_key_different": different(stage_auth_env.get("STAGING_ANON_KEY"), prod_web_env.get("NEXT_PUBLIC_SUPABASE_ANON_KEY")),
+    "livekit_secret_different": different(stage_web_env.get("LIVEKIT_API_SECRET"), prod_web_env.get("LIVEKIT_API_SECRET"))
+}}))
+
 task_root = Path.home() / "bc-staging-activation"
 if task_root.exists():
     for task in sorted(task_root.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True)[:5]:
@@ -146,6 +163,11 @@ if task_root.exists():
         else:
             log_file = task / "result.log"
             progress = []
+            build_progress = {}
+            for log in [task / "build-1.log", task / "build-2.log"]:
+                if log.is_file():
+                    safe_lines = [line for line in log.read_text().splitlines() if re.match(r"^#\\d+ (?:\\[.*\\] RUN|CACHED$|DONE [0-9.]+s$|ERROR:)", line)]
+                    build_progress[log.name] = safe_lines[-5:]
             if log_file.is_file():
                 for line in log_file.read_text().splitlines():
                     try:
@@ -154,7 +176,7 @@ if task_root.exists():
                             progress.append(value)
                     except ValueError:
                         pass
-            print(json.dumps({"staging_task_pending": task.name, "recent_progress": progress[-3:]}))
+            print(json.dumps({"staging_task_pending": task.name, "recent_progress": progress[-3:], "build_progress": build_progress}))
 print("Read-only preflight complete; no deploy, migration, volume or service mutation.")
 
 

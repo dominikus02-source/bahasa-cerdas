@@ -151,6 +151,13 @@ try:
     auth_url = auth["API_EXTERNAL_URL"].removesuffix("/auth/v1")
     assert auth_url == "https://auth-staging.bahasacerdas.com"
     assert auth_url != prod_env["NEXT_PUBLIC_SUPABASE_URL"]
+    prod_auth = env_of(inspect("supabase-auth"))
+    assert auth.get("GOTRUE_JWT_SECRET") and prod_auth.get("GOTRUE_JWT_SECRET")
+    assert auth["GOTRUE_JWT_SECRET"] != prod_auth["GOTRUE_JWT_SECRET"], "Auth signing secret is shared with production"
+    assert auth["STAGING_SERVICE_ROLE_KEY"] != prod_env.get("SUPABASE_SERVICE_ROLE_KEY"), "Service-role key is shared with production"
+    assert auth["STAGING_ANON_KEY"] != prod_env.get("NEXT_PUBLIC_SUPABASE_ANON_KEY"), "Anon key is shared with production"
+    assert runtime["LIVEKIT_API_SECRET"] != prod_env.get("LIVEKIT_API_SECRET"), "Media secret is shared with production"
+    summary["credential_isolation_verified"] = True
     for key, role in [("STAGING_ANON_KEY", "anon"), ("STAGING_SERVICE_ROLE_KEY", "service_role")]:
         part = auth[key].split(".")[1]
         assert json.loads(base64.urlsafe_b64decode(part + "=" * (-len(part) % 4))).get("role") == role
