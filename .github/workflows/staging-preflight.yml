@@ -1,0 +1,45 @@
+name: Staging deploy access preflight
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/staging-preflight.yml'
+      - 'tools/staging-preflight.py'
+permissions:
+  contents: read
+concurrency:
+  group: staging-access-preflight
+  cancel-in-progress: false
+jobs:
+  inspect:
+    if: >-
+      github.event.pull_request.number == 235 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'chore/staging-acceleration-20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Prepare existing deploy identity and pinned host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_SSH_KEY" || { echo "Existing VPS_SSH_KEY is unavailable to this workflow"; exit 1; }
+          umask 077
+          mkdir -p "$RUNNER_TEMP/staging-ssh"
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > "$RUNNER_TEMP/staging-ssh/key"
+          ssh-keygen -y -f "$RUNNER_TEMP/staging-ssh/key" >/dev/null
+          printf '%s\n' '103.242.10.81 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOGNGX/cxLP8+8bhMOYXJjelUeG3Y78M++3hdjWSfKsO' > "$RUNNER_TEMP/staging-ssh/known_hosts"
+      - name: Inspect deploy account and staging metadata without mutations
+        run: |
+          set -euo pipefail
+          ssh -i "$RUNNER_TEMP/staging-ssh/key" \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o UserKnownHostsFile="$RUNNER_TEMP/staging-ssh/known_hosts" \
+            -o ConnectTimeout=20 -o ServerAliveInterval=15 \
+            bcadmin@103.242.10.81 python3 - < tools/staging-preflight.py
+      - name: Remove ephemeral SSH material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/staging-ssh"
