@@ -135,6 +135,27 @@ r = subprocess.run(["docker", "exec", "jumpa-ingress-staging", "caddy", "adapt",
 print(json.dumps({"staging_ingress_adapt_read_status": r.returncode}))
 if r.returncode == 0:
     routes(json.loads(r.stdout))
+
+task_root = Path.home() / "bc-staging-activation"
+if task_root.exists():
+    for task in sorted(task_root.iterdir(), key=lambda p: p.stat().st_mtime, reverse=True)[:5]:
+        state_file = task / "status.json"
+        if state_file.is_file():
+            value = json.loads(state_file.read_text())
+            print(json.dumps({"staging_task_status": task.name, "summary": value}))
+        else:
+            log_file = task / "result.log"
+            progress = []
+            if log_file.is_file():
+                for line in log_file.read_text().splitlines():
+                    try:
+                        value = json.loads(line)
+                        if isinstance(value, dict) and any(k in value for k in ["state", "run", "check"]):
+                            progress.append(value)
+                    except ValueError:
+                        pass
+            print(json.dumps({"staging_task_pending": task.name, "recent_progress": progress[-3:]}))
 print("Read-only preflight complete; no deploy, migration, volume or service mutation.")
+
 
 

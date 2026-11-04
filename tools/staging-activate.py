@@ -29,7 +29,6 @@ root = Path.home() / "bc-staging-activation" / (sha + "-" + run_tag)
 root.mkdir(parents=True, exist_ok=True)
 status_file = root / "status.json"
 lock = open(Path.home() / ".bc-staging-activation.lock", "a")
-fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
 started = time.monotonic()
 swapped = False
 old_name = TARGET + "-rollback-" + run_tag
@@ -99,6 +98,21 @@ def build_metrics(log):
     return result
 
 try:
+    lock_started = time.monotonic()
+    emitted_wait = False
+    while True:
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            break
+        except BlockingIOError:
+            if not emitted_wait:
+                emit({"state": "waiting-for-existing-staging-task"})
+                emitted_wait = True
+            if time.monotonic() - lock_started > 1200:
+                raise RuntimeError("Another authorized staging task still owns the lock; it was not stopped")
+            time.sleep(10)
+    summary["lock_wait_seconds"] = round(time.monotonic() - lock_started, 3)
+    execution_started = time.monotonic()
     assert os.environ.get("USER", "bcadmin") == "bcadmin", "Unexpected account"
     old = inspect(TARGET)
     old_image_metadata = json.loads(run(["docker", "image", "inspect", old["Image"]]))[0]
@@ -261,6 +275,7 @@ try:
     public_health("https://www.bahasacerdas.com")
     summary["deployments"] = [{"run": 1, "until_healthy_seconds": cold_healthy_seconds,
                                 "pipeline_total_seconds": round(time.monotonic() - started, 3),
+                                "pipeline_execution_seconds": round(time.monotonic() - execution_started, 3),
                                 "container_replaced": True}]
     # Repeat the identical build and environment. An unchanged image requires
     # health verification, not another unnecessary container restart.
