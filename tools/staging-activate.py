@@ -101,7 +101,12 @@ def build_metrics(log):
 try:
     assert os.environ.get("USER", "bcadmin") == "bcadmin", "Unexpected account"
     old = inspect(TARGET)
-    assert old["Image"] == BASE_IMAGE, "Staging moved since inspected baseline; review before deploying"
+    old_image_metadata = json.loads(run(["docker", "image", "inspect", old["Image"]]))[0]
+    old_labels = old_image_metadata["Config"].get("Labels") or {}
+    previous_revision = old_labels.get("org.opencontainers.image.revision", "")
+    owned_revision = old_labels.get("com.bahasacerdas.environment") == "staging" and re.fullmatch(r"[0-9a-f]{40}", previous_revision)
+    assert old["Image"] == BASE_IMAGE or owned_revision, "Staging moved to an unrecognized image; review before deploying"
+    summary["previous_revision"] = previous_revision if owned_revision else None
     assert set(old["NetworkSettings"]["Networks"]) == {NETWORK}
     assert not old.get("Mounts"), "Unexpected app mounts; do not recreate automatically"
     assert old["HostConfig"]["PortBindings"] == {"3000/tcp": [{"HostIp": "127.0.0.1", "HostPort": "13000"}]}
@@ -144,6 +149,8 @@ try:
     run(["git", "clone", "--quiet", "--single-branch", "--branch", "chore/staging-acceleration-20261104",
          "https://github.com/dominikus02-source/bahasa-cerdas.git", str(repo)])
     assert run(["git", "rev-parse", "HEAD"], cwd=repo).strip() == sha, "PR branch moved"
+    if owned_revision:
+        run(["git", "merge-base", "--is-ancestor", previous_revision, sha], cwd=repo)
     query = "BEGIN READ ONLY; SELECT table_name FROM information_schema.tables WHERE table_schema='public'; ROLLBACK;"
     tables = set(run(["docker", "exec", "jumpa-db-staging", "psql", "-U", "postgres", "-d", "jumpa_staging", "-Atc", query]).splitlines())
     models = set(re.findall(r"^model\s+(\w+)\s*\{", (repo / "prisma/schema.prisma").read_text(), re.M))

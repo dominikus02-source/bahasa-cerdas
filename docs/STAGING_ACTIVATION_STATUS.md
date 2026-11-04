@@ -1,30 +1,27 @@
-# Staging activation follow-up — 4 November 2026
+# Staging cache activation — current verified state
 
-Status: BLOCKED before deployment. This document does not certify staging activation.
+Date: 4 November 2026. Do not infer deployment success from this source document; inspect the final CI staging_activation result and running image revision.
 
-Access rechecked via Desktop Commander: VPS 103.242.10.81 / bc-prod-01 is online as bcagent, groups bcagent/users. Docker socket is root:docker mode 0660; Docker API returns permission denied. Book Studio application directory is bcstudio-owned mode 0750. Existing staging subdirectories are inaccessible. PC DESKTOP-2NM1AUE is offline. SSH agent has no identities, and no deploy private keys were found in the authorized account's SSH directory or bounded home search. The Desktop Commander command policy rejects sudo. No permission changes were attempted.
-Host public ED25519 fingerprint read directly on the authorized VPS: SHA256:KZBAinXldycnW2tfHs19dU/tLVtwFa6IxpuJ+8vQGsQ.
+## Access and target
+Desktop Commander reaches bc-prod-01 as bcagent, without Docker or protected-directory access; PC is offline. The existing GitHub Actions VPS_SSH_KEY successfully authenticates as bcadmin with a pinned ED25519 host key. Read-only preflights passed. No new credential or broad permission was created.
 
-Review fixes:
-- npm runner now namespaces cache by project/staging/Node 22, resolves the checkout root, enforces Node 22, rejects a non-staging build environment, and labels install/build/combined durations.
-- Docker BUILD_CACHE_SCOPE defaults to bahasacerdas-production; staging MUST pass --build-arg BUILD_CACHE_SCOPE=bahasacerdas-staging to its dedicated builder. Compiler-only cache mounts exclude fetch-cache. Do not put private environment files in cache mounts.
-- CI npm/compiler cache keys explicitly include project and CI environment. Only compiler directories are persisted. These are build caches, not application response caches.
+Verified ingress: staging.bahasacerdas.com → existing shared Caddy route → jumpa-web-staging:3000 on jumpa-staging-net. The shared Caddy configuration is not changed by deployment. Auth/storage use auth-staging.bahasacerdas.com (Cloudflare origin rule port 8443) and dedicated staging containers/volumes. Media uses jumpa-livekit-staging; production media is a different container.
 
-Outstanding deployment gates:
-1. Connect Desktop Commander as an existing authorized deploy account with Docker and staging-directory access; do not grant broad access to bcagent.
-2. Read actual staging Compose project, env paths and public URLs. Prove separate DB/Auth/Redis/LiveKit/storage targets before any deployment.
-3. Record previous git SHA, immutable image IDs/tags and private configuration checksums (never print config values). Save a staging-only rollback command.
-4. Build from this PR SHA in the staging builder, without migrations or volume deletion. Capture plain BuildKit logs and install/build durations. Repeat exactly the same SHA, build args and environment, measuring total deploy separately. For fully cached RUN steps record zero execution / layer reused, not a fabricated install/build duration.
-5. Verify health, login and the main application/JUMPA or book workflow in the browser. Roll back staging on regression and verify recovery.
-6. Keep the PR Draft until CI and deployed staging both pass.
+Baseline app image: sha256:8b9e333de5483684e2857815484f420a92c1d258e2e3ee433042d21539e09ba2. Baseline image has no usable source revision metadata; do not invent one. The actual DATABASE_URL selects jumpa_staging on jumpa-db-staging, with 163 public application tables. Resource identities differ from production. WritingProject, WritingChapter and CurriculumProgress are pre-existing optional schema gaps and remain untested; this task does not migrate them. Core User/Profile/JUMPA tables are required.
 
-No new staging commit/image/configuration was installed, no rollback was needed, and no new staging timing measurements or URLs were verified during this access-blocked follow-up. Historical local timings in STAGING_ACCELERATION.md are not staging deploy benchmarks.
+## CI correction and cache implementation
+GitHub annotations on the failed run said: Unrecognized named-value: 'runner'. Located at position 1 within expression: runner.temp. This was workflow validation, before jobs; not a billing or application-code failure. CI now configures npm cache in a runner step using RUNNER_TEMP/GITHUB_ENV. Pinned/checksummed actionlint validates workflow semantics.
 
-Additional checks: Node 22 syntax checks and YAML parsing passed; an isolated npm invocation probe passed for both projects and verified project/staging cache paths from a different working directory. Probe timings are synthetic and are not build/deploy benchmarks. CI Docker builds explicitly use a CI cache scope; only npm content-addressed downloads (_cacache), excluding npm logs, are persisted.
+Node 22 is used by build and smoke jobs. Cache scopes include project, environment, OS/architecture and relevant build inputs. npm logs and Next fetch-response caches are excluded. staging:build requires BC_BUILD_ENV=staging explicitly. Next 16.2.6 defaults build filesystem caching to false, so the flag is enabled only for staging/CI. Production defaults remain unchanged.
 
-## CI diagnosis and review corrections
-The GitHub run annotation reports: Unrecognized named-value: 'runner'. Located at position 1 within expression: runner.temp. It occurs at workflow-level env (BahasaCerdas line 12; Book Studio line 10), before jobs are created. This is a workflow validation error, not evidence of quota/billing/runner exhaustion or a failing application test.
-Set npm_config_cache in a runner step via RUNNER_TEMP/GITHUB_ENV; runner is not available in workflow-level or job-level env expressions. Validate workflow expressions using pinned actionlint 1.7.12 with an official-release SHA-256 check; YAML parsing alone is insufficient. Align the BahasaCerdas smoke job with Node 22. Cache keys additionally include platform/architecture and relevant config inputs. staging:build now requires BC_BUILD_ENV=staging explicitly.
-Access recheck: VPS online as bcagent; PC offline; Docker access still denied. No staging service/image/configuration has been changed during this follow-up. The host identity and permissions match the earlier verified VPS. Deployment, rollback baseline capture, login/media/CRUD tests and staging timing measurements remain blocked until an existing deploy account is connected.
+## Guarded deployment
+The staging_activation CI job waits for build/smoke PASS and runs only for same-repository PR #235 on the requested branch. tools/staging-activate.py verifies target/image lineage, isolated DB/Auth/media identities, required tables, disk/RAM, and production baseline before building. It clones the exact PR SHA into a separate bcadmin work directory.
 
-Next 16.2.6 source confirms turbopackFileSystemCacheForBuild defaults to false. Enable it conditionally for BC_BUILD_ENV=staging or ci; the Docker builder accepts BC_BUILD_ENV and CI passes ci. Production defaults remain unchanged. Actual staging reuse must still be measured after deploy access is restored.
+Build-time input contains public client settings and fake DB URLs; private runtime credentials remain on the VPS in mode-0600 files outside the context. A dedicated, memory/CPU-limited BuildKit builder is used. No migrations, volume removal, global pruning, production restart or shared ingress changes occur.
+
+Cold/existing-cache and identical-input warm builds are timed separately. BuildKit RUN install/build times and image-build wall time are recorded. The warm pipeline verifies the unchanged healthy image without an unnecessary restart. Report that as a healthy no-op, not as a second container replacement.
+
+Before replacement, preserve the complete private container configuration on the VPS and pin the old image. Start/health-check a candidate first. Only jumpa-web-staging is replaced; retain the previous container/image for rollback. On failure after replacement, restore the original container by immutable ID and verify recovery. Private snapshots are never uploaded to CI logs/artifacts. Later revisions may replace only a staging image whose OCI revision is an ancestor on this PR branch.
+
+## Remaining acceptance
+Inspect final CI status/metrics and running OCI revision. Browser login/session/logout and teacher/student/media/reconnect/attendance checks must be performed with authorized staging accounts. Read-only homepage/login checks alone are insufficient. No physical-device media test has been certified. Keep Draft until the requested staging acceptance checks pass.
