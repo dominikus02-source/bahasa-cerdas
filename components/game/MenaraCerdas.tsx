@@ -175,27 +175,27 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
           </div>
 
           <div className="mc-screen bg-white game-env-card dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
+            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] text-zinc-900 border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>Soal dari Pelajaranmu</span>
             <h1 className="font-extrabold text-4xl mb-2">Menara <span className="dark:text-[#D4A843]">Cerdas!</span></h1>
             <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
-            <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
+            <p className="text-xs dark:text-amber-200/80 mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
 
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
-              <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+              <div className="bg-[#FF6B6B] text-zinc-900 border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
                 <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
                 <div className="font-extrabold text-lg">3 ❤️</div>
               </div>
-              <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+              <div className="bg-[#FBBF24] text-zinc-900 border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Rentetan</div>
                 <div className="font-extrabold text-lg">Bonus</div>
               </div>
-              <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+              <div className="bg-[#4ADE80] text-zinc-900 border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
                 <div className="text-[10px] font-extrabold uppercase opacity-70">Naik</div>
                 <div className="font-extrabold text-lg">+XP</div>
               </div>
             </div>
 
-            <button onClick={start} disabled={phase === "loading"} className={`${btnBase} px-8 py-3.5 bg-[#8B5CF6] dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.3)] text-lg disabled:opacity-70`}>
+            <button onClick={start} disabled={phase === "loading"} className={`${btnBase} px-8 py-3.5 bg-violet-600 dark:bg-gradient-to-r dark:from-amber-500 dark:to-amber-600 text-white dark:text-zinc-900 dark:shadow-[0_0_16px_rgba(245,197,66,0.3)] text-lg disabled:opacity-70`}>
               {phase === "loading" ? <><Loader2 className="w-5 h-5 animate-spin" /> Menyiapkan…</> : <><Play className="w-5 h-5" /> Mulai Memanjat</>}
             </button>
           </div>
@@ -219,15 +219,15 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
           <p className="text-sm dark:text-[#D4C8A0] opacity-60 mb-6">Kamu memanjat <span className="font-extrabold">{floor} lantai</span></p>
 
           <div className="grid grid-cols-3 gap-2.5 mb-5 w-full max-w-xs">
-            <div className="bg-[#8B5CF6] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+            <div className="bg-violet-600 text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
               <div className="text-[9px] font-extrabold uppercase opacity-80">Lantai</div>
               <div className="font-extrabold text-lg">{floor}</div>
             </div>
-            <div className="bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+            <div className="bg-[#FBBF24] text-zinc-900 border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
               <div className="text-[9px] font-extrabold uppercase opacity-70">Rentetan</div>
               <div className="font-extrabold text-lg">{best}🔥</div>
             </div>
-            <div className="bg-[#4ADE80] border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
+            <div className="bg-[#4ADE80] text-zinc-900 border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
               <div className="text-[9px] font-extrabold uppercase opacity-70">XP</div>
               <div className="font-extrabold text-lg">{xpResult ? `+${xpResult.xpEarned}` : "…"}</div>
             </div>
@@ -240,7 +240,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
           )}
 
           <div className="w-full max-w-xs flex flex-col gap-2.5">
-            <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
+            <button onClick={start} className={`${btnBase} w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 dark:from-amber-500 dark:to-amber-600 text-white dark:text-zinc-900 dark:shadow-[0_0_16px_rgba(245,197,66,0.25)]`}>
               <RotateCcw className="w-4 h-4" /> Main Lagi
             </button>
             <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />
@@ -273,7 +273,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#8B5CF6] text-white border-2 border-[#161B3A] dark:border-white/25">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-violet-600 text-white border-2 border-[#161B3A] dark:border-white/25" /* warna-izin: palet tetap gim Menara Cerdas (hex lama, tak ada warna baru) */>
             <Mountain className="w-4 h-4" />
             <span className="text-sm font-bold">Lt. {floor}</span>
           </div>

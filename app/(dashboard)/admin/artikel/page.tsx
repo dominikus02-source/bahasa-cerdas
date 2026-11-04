@@ -127,7 +127,7 @@ export default function AdminArtikelPage() {
             className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 focus:outline-none focus:ring-2 focus:ring-emerald-500"
           />
         </div>
-        <Button onClick={handleSearch} className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white px-5 rounded-xl font-semibold">
+        <Button onClick={handleSearch} className="h-11 bg-emerald-700 hover:bg-emerald-800 text-white px-5 rounded-xl font-semibold">
           Cari
         </Button>
       </div>

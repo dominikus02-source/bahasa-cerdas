@@ -93,7 +93,7 @@ export default function PageNavbar() {
     >
       <div className="section-container">
         <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
+          <Link href="/" className="flex min-h-11 items-center gap-2.5 group shrink-0">
             <div className="relative w-8 h-8 lg:w-9 lg:h-9">
               <Image
                 src="/brand/bc2026-icon-dark.png"
@@ -120,7 +120,7 @@ export default function PageNavbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 focus-ring ${
+                className={`relative inline-flex min-h-11 items-center px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 focus-ring ${
                   pathname === link.href || pathname.startsWith(link.href + "/")
                     ? "text-primary bg-primary-light/50"
                     : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-primary-light/50"
@@ -133,14 +133,14 @@ export default function PageNavbar() {
               <>
                 <Link
                   href="/orders"
-                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+                  className="relative ml-1 inline-flex min-h-11 min-w-11 items-center justify-center px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
                   aria-label="Pesanan Saya"
                 >
                   <Package size={20} />
                 </Link>
                 <Link
                   href="/cart"
-                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+                  className="relative ml-1 inline-flex min-h-11 min-w-11 items-center justify-center px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
                   aria-label={`Keranjang, ${cartCount} item`}
                 >
                   <ShoppingCart size={20} />

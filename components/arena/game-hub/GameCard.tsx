@@ -111,8 +111,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
       <p
         className={`mt-0.5 line-clamp-2 text-[12px] leading-snug ${
           game.status === "SOON"
-            ? "text-slate-500 dark:text-slate-500"
-            : "text-slate-500 dark:text-bc-text-2"
+            ? "text-slate-600 dark:text-slate-400"
+            : "text-slate-600 dark:text-bc-text-2"
         }`}
       >
         {game.description}
@@ -126,8 +126,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
         <span
           className={`inline-flex min-w-0 items-center gap-1 truncate text-[10px] font-semibold ${
             game.status === "SOON"
-              ? "text-slate-400 dark:text-slate-500"
-              : "text-slate-500 dark:text-bc-text-2"
+              ? "text-slate-600 dark:text-slate-400"
+              : "text-slate-600 dark:text-bc-text-2"
           }`}
         >
           <Clock size={11} className="shrink-0" />

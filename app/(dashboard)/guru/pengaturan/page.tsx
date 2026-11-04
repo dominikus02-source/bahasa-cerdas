@@ -77,7 +77,7 @@ export default function GuruPengaturanPage() {
 
   const renderRekening = () => (
     <form onSubmit={handleRekeningSave} className="space-y-6">
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 flex items-start gap-3">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 dark:text-blue-200 flex items-start gap-3">
         <Banknote className="w-5 h-5 shrink-0 mt-0.5" />
         <p>Data rekening digunakan khusus untuk pencairan royalti penjualan karya Anda. Data dienkripsi & aman.</p>
       </div>

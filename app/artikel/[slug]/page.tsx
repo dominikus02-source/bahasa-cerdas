@@ -123,7 +123,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           </div>
 
           <div className="mt-8 pt-6 border-t border-bc-line flex items-center justify-between">
-            <Link href="/artikel" className="text-sm text-red-600 dark:text-red-400 font-semibold hover:underline flex items-center gap-1">
+            <Link href="/artikel" className="text-sm text-red-700 dark:text-red-400 font-semibold hover:underline flex items-center gap-1">
               <ArrowLeft size={14} /> Artikel Lainnya
             </Link>
             <div className="flex items-center gap-4">

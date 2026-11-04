@@ -125,7 +125,7 @@ export default function NovelChaptersPage({ params }: { params: Promise<{ projec
     <main className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 bg-background/85 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-3 sm:px-6">
-          <Link href={kembali} onClick={(e) => { if (simpan.belumTersimpan) { e.preventDefault(); void amankan().then((ok) => { if (ok) window.location.href = kembali; }); } }} className="inline-flex min-h-10 items-center gap-1.5 rounded-full px-2.5 text-sm text-muted-foreground transition hover:text-foreground"><ArrowLeft size={16} /> Naskah</Link>
+          <Link href={kembali} onClick={(e) => { if (simpan.belumTersimpan) { e.preventDefault(); void amankan().then((ok) => { if (ok) window.location.href = kembali; }); } }} className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2.5 text-sm text-muted-foreground transition hover:text-foreground"><ArrowLeft size={16} /> Naskah</Link>
           <div className="flex items-center gap-1">
             <span className="mr-1 inline-flex items-center gap-1.5 text-xs text-muted-foreground" role="status" aria-live="polite">
               {!canWrite ? (<><Lock size={13} /> Mode baca</>)
@@ -135,7 +135,7 @@ export default function NovelChaptersPage({ params }: { params: Promise<{ projec
                 : (<><LoaderCircle size={13} className="animate-spin" /> Menyimpan…</>)}
             </span>
             {projectId && <MenuUnduh projectId={projectId} sebelumUnduh={() => simpan.simpanSekarang()} />}
-            {canWrite && <button onClick={() => void createChapter()} disabled={sibuk || loading} className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90 disabled:opacity-60"><Plus size={15} /> Tambah bab</button>}
+            {canWrite && <button onClick={() => void createChapter()} disabled={sibuk || loading} className="inline-flex min-h-11 items-center gap-1.5 rounded-full bg-foreground px-4 text-sm font-semibold text-background transition hover:opacity-90 disabled:opacity-60"><Plus size={15} /> Tambah bab</button>}
           </div>
         </div>
         {!canWrite && !loading && (

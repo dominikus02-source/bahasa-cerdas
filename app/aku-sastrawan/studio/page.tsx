@@ -243,8 +243,8 @@ export default function StudioMenulisPage() {
       <main className="min-h-screen bg-background text-foreground">
         {rancangan}
         <header className="mx-auto flex max-w-3xl items-center justify-between px-5 py-5 sm:px-8">
-          <Link href="/aku-sastrawan" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition hover:text-foreground"><ArrowLeft size={16} /> AKU SASTRAWAN</Link>
-          <Link href="/aku-sastrawan/kurikulum" className="text-sm text-muted-foreground transition hover:text-foreground">Kurikulum</Link>
+          <Link href="/aku-sastrawan" className="inline-flex min-h-11 items-center gap-2 rounded-full text-sm text-muted-foreground transition hover:text-foreground"><ArrowLeft size={16} /> AKU SASTRAWAN</Link>
+          <Link href="/aku-sastrawan/kurikulum" className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-2 text-sm text-muted-foreground transition hover:text-foreground">Kurikulum</Link>
         </header>
 
         <section className="mx-auto max-w-3xl px-5 pb-20 pt-10 sm:px-8 sm:pt-16">
