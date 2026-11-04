@@ -258,3 +258,58 @@ jobs:
         run: |
           shellcheck -x ops/vps/lib-prev-image.sh ops/vps/deploy-web.sh scripts/ci/test-deploy-web-prev.sh
           bash scripts/ci/test-deploy-web-prev.sh
+
+  staging_activation:
+    name: Activate isolated staging build cache
+    needs: [build, smoke]
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.number == 235 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.head.ref == 'chore/staging-acceleration-20261104'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    permissions:
+      contents: read
+    concurrency:
+      group: bahasacerdas-staging-activation
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Prepare existing deploy identity and pinned host
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_SSH_KEY"
+          umask 077
+          mkdir -p "$RUNNER_TEMP/staging-ssh"
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > "$RUNNER_TEMP/staging-ssh/key"
+          ssh-keygen -y -f "$RUNNER_TEMP/staging-ssh/key" >/dev/null
+          printf '%s\n' '103.242.10.81 ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOGNGX/cxLP8+8bhMOYXJjelUeG3Y78M++3hdjWSfKsO' > "$RUNNER_TEMP/staging-ssh/known_hosts"
+      - name: Run guarded staging deployment and same-input rebuild
+        env:
+          DEPLOY_SHA: ${{ github.event.pull_request.head.sha }}
+          RUN_TAG: ${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          SSH=(ssh -i "$RUNNER_TEMP/staging-ssh/key" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/staging-ssh/known_hosts" -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81)
+          REMOTE_DIR="/home/bcadmin/bc-staging-activation/$DEPLOY_SHA-$RUN_TAG"
+          "${SSH[@]}" "umask 077; mkdir -p '$REMOTE_DIR'; cat > '$REMOTE_DIR/activate.py'" < tools/staging-activate.py
+          "${SSH[@]}" "nohup setsid python3 '$REMOTE_DIR/activate.py' '$DEPLOY_SHA' '$RUN_TAG' > '$REMOTE_DIR/result.log' 2>&1 < /dev/null &"
+          deadline=$(( $(date +%s) + 1800 ))
+          while :; do
+            state=$("${SSH[@]}" "test ! -f '$REMOTE_DIR/status.json' || python3 -c \"import json;print(json.load(open('$REMOTE_DIR/status.json'))['state'])\"")
+            if [[ -n "$state" ]]; then
+              "${SSH[@]}" "cat '$REMOTE_DIR/status.json'"
+              [[ "$state" == passed ]]
+              exit
+            fi
+            (( $(date +%s) < deadline )) || { echo "Staging task continues on VPS; polling deadline reached"; exit 1; }
+            sleep 20
+          done
+      - name: Remove ephemeral SSH material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/staging-ssh"
