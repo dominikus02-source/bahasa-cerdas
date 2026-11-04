@@ -123,7 +123,7 @@ export default function PageNavbar() {
                 className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 focus-ring ${
                   pathname === link.href || pathname.startsWith(link.href + "/")
                     ? "text-primary bg-primary-light/50"
-                    : "text-zinc-600 hover:text-primary hover:bg-primary-light/50"
+                    : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-primary-light/50"
                 }`}
               >
                 {link.label}
@@ -188,7 +188,7 @@ export default function PageNavbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             onKeyDown={handleKeyDown}
-            className="lg:hidden relative z-50 p-2.5 rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
+            className="lg:hidden relative z-50 grid h-11 w-11 place-items-center rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}

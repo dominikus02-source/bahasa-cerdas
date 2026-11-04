@@ -725,7 +725,7 @@ export default function GuruProfilePage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Heart size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400 italic max-w-xs">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
               <button type="button" onClick={() => openSection("bio")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Tulis Sekarang</button>
             </div>
           )}
@@ -795,7 +795,7 @@ export default function GuruProfilePage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Briefcase size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400 italic max-w-xs">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
               <button type="button" onClick={() => openSection("professional")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Lengkapi Sekarang</button>
             </div>
           )}
@@ -865,7 +865,7 @@ export default function GuruProfilePage() {
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Wallet size={32} className="text-gray-300 dark:text-slate-600 mb-3" />
             <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Rekening belum disiapkan</p>
-            <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1 max-w-xs">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 italic mt-1 max-w-xs">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
             <button type="button" onClick={() => openSection("rekening")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Atur Rekening</button>
           </div>
         )}

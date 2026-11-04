@@ -220,7 +220,7 @@ export default async function HomePage() {
                       <h4 className="font-bold text-zinc-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
                         {a.title}
                       </h4>
-                      <p className="text-xs text-zinc-400 mt-3">
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-3">
                         {a.author?.fullName} &middot;{" "}
                         {new Date(a.createdAt).toLocaleDateString("id-ID", {
                           day: "numeric",

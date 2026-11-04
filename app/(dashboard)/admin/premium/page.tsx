@@ -288,7 +288,7 @@ export default function AdminPremiumReportPage() {
         <div className="flex items-center gap-1 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2">
           <Filter size={14} className="text-slate-400" />
           <select aria-label="Filter jenis pengguna" value={audience} onChange={(e) => { setAudience(e.target.value); setPage(1); }}
-            className="text-sm bg-transparent outline-none">
+            className="min-w-24 text-sm bg-transparent outline-none">
             <option value="ALL">Semua</option>
             <option value="MURID">Murid</option>
             <option value="GURU">Guru</option>

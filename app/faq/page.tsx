@@ -85,10 +85,10 @@ export default function FAQPage() {
         <PageNavbar />
         <div className="section-container py-16 lg:py-20 max-w-3xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-3xl lg:text-4xl font-bold text-zinc-900 mb-4">
+            <h1 className="text-3xl lg:text-4xl font-bold text-zinc-900 dark:text-zinc-100 mb-4">
               Pertanyaan yang Sering Diajukan
             </h1>
-            <p className="text-lg text-zinc-500">
+            <p className="text-lg text-zinc-500 dark:text-zinc-400">
               Temukan jawaban untuk pertanyaan seputar BahasaCerdas.
             </p>
           </div>

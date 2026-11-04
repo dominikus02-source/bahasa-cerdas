@@ -390,30 +390,35 @@ export default function TokoKaryaPage() {
             <Button onClick={openTambah} className="bg-gradient-to-r from-blue-700 to-blue-500">
               <Plus size={16} /> Upload Karya
             </Button>
-            <div className="flex items-center gap-2 ml-auto">
-              <span className="text-xs text-gray-400">Tipe:</span>
-              <select
-                aria-label="Filter tipe karya"
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="ALL">Semua Tipe</option>
-                {KARYA_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </select>
-              <span className="text-xs text-gray-400 ml-1">Status:</span>
-              <select
-                aria-label="Filter status karya"
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="ALL">Semua</option>
-                <option value="PUBLISHED">Terbit</option>
-                <option value="DRAFT">Draft</option>
-              </select>
+            {/* HP: dua filter berbagi lebar layar (grid 2 kolom) agar label pilihan tidak terpotong di 390. */}
+            <div className="grid w-full grid-cols-2 gap-2 sm:ml-auto sm:flex sm:w-auto sm:items-center">
+              <label className="flex min-w-0 items-center gap-2">
+                <span className="shrink-0 text-xs text-bc-text-2">Tipe:</span>
+                <select
+                  aria-label="Filter tipe karya"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-bc-line bg-bc-surface px-2 py-1.5 text-xs text-bc-text focus:outline-none focus:ring-2 focus:ring-bc-focus sm:flex-none"
+                >
+                  <option value="ALL">Semua Tipe</option>
+                  {KARYA_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex min-w-0 items-center gap-2">
+                <span className="shrink-0 text-xs text-bc-text-2">Status:</span>
+                <select
+                  aria-label="Filter status karya"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-bc-line bg-bc-surface px-2 py-1.5 text-xs text-bc-text focus:outline-none focus:ring-2 focus:ring-bc-focus sm:flex-none"
+                >
+                  <option value="ALL">Semua</option>
+                  <option value="PUBLISHED">Terbit</option>
+                  <option value="DRAFT">Draft</option>
+                </select>
+              </label>
             </div>
           </div>
 

@@ -113,7 +113,7 @@ export default function TugasPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${
-              tab === t.key ? "bg-white dark:bg-slate-800/90 text-gray-900 dark:text-slate-100 shadow-sm" : "text-gray-500"
+              tab === t.key ? "bg-white dark:bg-slate-800/90 text-gray-900 dark:text-slate-100 shadow-sm" : "text-gray-600 dark:text-slate-300"
             }`}
           >
             {t.label}

@@ -92,7 +92,7 @@ export default function KuestHarianPage() {
           <div className="h-full bg-gradient-to-r from-violet-500 to-purple-600 rounded-full transition-all" style={{ width: `${quests.length > 0 ? (completedCount / quests.length) * 100 : 0}%` }} />
         </div>
         {allCompleted && (
-          <div className="mt-3 flex items-center justify-center gap-1.5 py-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-sm font-semibold text-emerald-600 dark:text-emerald-400">
+          <div className="mt-3 flex items-center justify-center gap-1.5 py-2 bg-emerald-50 dark:bg-emerald-950/40 rounded-xl text-sm font-semibold text-emerald-700 dark:text-emerald-400">
             <IconCheck size={16} /> Semua quest selesai! Kembali besok untuk quest baru.
           </div>
         )}
@@ -115,7 +115,7 @@ export default function KuestHarianPage() {
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-gray-900 dark:text-slate-100">{QUEST_LABELS[quest.questType] || quest.questType}</h3>
-                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400">
                       <IconCoin size={14} className="text-amber-500 dark:text-amber-400" /> {quest.rewardCoins}
                     </span>
                   </div>
@@ -164,7 +164,7 @@ export default function KuestHarianPage() {
               <span className="flex items-center gap-2 text-sm text-gray-700 dark:text-slate-300">
                 <span className="text-violet-500 dark:text-violet-400">{item.icon}</span> {item.label}
               </span>
-              <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">{item.coins}</span>
+              <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-400">{item.coins}</span>
             </div>
           ))}
         </div>

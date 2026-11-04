@@ -407,7 +407,7 @@ export default function ArenaTokoKoinPage() {
                   </div>
                   <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{item.description}</p>
                   <div className="flex items-center justify-between gap-2 mt-4">
-                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400">
                       <Coins size={14} className="text-amber-500 dark:text-amber-400" /> {item.price.toLocaleString("id-ID")}
                     </span>
                     {wearable && isOwned ? (
@@ -465,12 +465,12 @@ export default function ArenaTokoKoinPage() {
           <Coins size={16} /> Cara Mendapat Koin
         </h3>
         <div className="grid grid-cols-2 gap-2 text-xs text-amber-700 dark:text-amber-400">
-          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">10</span> Menulis karya</div>
-          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">5</span> Main game solo</div>
-          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">5</span> Login harian</div>
-          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">30</span> Streak 7 hari</div>
-          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">2</span> Karya di-like</div>
-          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 flex items-center justify-center text-[10px] font-bold">1</span> Memberi komentar</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-50 flex items-center justify-center text-[10px] font-bold">10</span> Menulis karya</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-50 flex items-center justify-center text-[10px] font-bold">5</span> Main game solo</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-50 flex items-center justify-center text-[10px] font-bold">5</span> Login harian</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-50 flex items-center justify-center text-[10px] font-bold">30</span> Streak 7 hari</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-50 flex items-center justify-center text-[10px] font-bold">2</span> Karya di-like</div>
+          <div className="flex items-center gap-2"><span className="w-5 h-5 rounded-full bg-amber-200 dark:bg-amber-800 text-amber-900 dark:text-amber-50 flex items-center justify-center text-[10px] font-bold">1</span> Memberi komentar</div>
         </div>
       </div>
     </div>

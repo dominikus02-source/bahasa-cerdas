@@ -283,7 +283,7 @@ export default function TokoKoinPage() {
                   )}
 
                   <div className="flex items-center justify-between gap-2 mt-3">
-                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-600 dark:text-amber-400">
+                    <span className="flex items-center gap-1 text-sm font-semibold text-amber-700 dark:text-amber-400">
                       <IconCoin size={14} className="text-amber-500 dark:text-amber-400" /> {item.price}
                     </span>
 
@@ -317,7 +317,7 @@ export default function TokoKoinPage() {
                         {buying === item.id ? "..." : "Perpanjang"}
                       </button>
                     ) : isAutoItem(item.type) && isOwned && qty > 0 ? (
-                      <span className="px-4 py-2 rounded-xl text-sm font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 shrink-0">
+                      <span className="px-4 py-2 rounded-xl text-sm font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 shrink-0">
                         Dimiliki
                       </span>
                     ) : (

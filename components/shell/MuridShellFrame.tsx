@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { RankChip } from "@/components/gamification/RankChip";
 import type { rankFromLevel } from "@/lib/gamification/ranks";
-import AIFloatingButton from "@/components/shared/AIFloatingButton";
+import AIFloatingButton, { NaraHeaderLink } from "@/components/shared/AIFloatingButton";
 import { MuridBackBottom } from "@/components/dashboard/MuridBackBottom";
 import { BackHome } from "@/components/shared/BackHome";
 import { LogoutButton } from "@/components/dashboard/LogoutButton";
@@ -90,18 +90,19 @@ export function MuridShellFrame({
               textClassName="text-sm"
               className="hidden md:flex shadow-md"
             />
+            <NaraHeaderLink />
             <NotificationBell />
             <ThemeToggle />
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
+          <InstallBanner />
           {children}
           <MuridBackBottom />
         </main>
       </div>
 
       <MuridMobileNav />
-      <InstallBanner />
       <AIFloatingButton />
     </div>
   );

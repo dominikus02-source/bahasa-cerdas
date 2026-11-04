@@ -27,7 +27,7 @@ function Logo({ className = "" }: { className?: string }) {
   return (
     <Link
       href="/umum"
-      className={`flex min-w-0 items-center gap-2.5 rounded-bc-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bc-focus ${className}`}
+      className={`flex min-h-11 min-w-0 items-center gap-2.5 rounded-bc-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bc-focus ${className}`}
       aria-label="Beranda dasbor BahasaCerdas"
     >
       <Image

@@ -44,10 +44,11 @@ export default function LogoutButton({
       <button
         onClick={handleLogout}
         disabled={loading}
-        className="w-8 h-8 rounded-full bg-gray-100 dark:bg-slate-800/80 flex items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+        aria-label="Keluar"
+        className="grid h-11 w-11 shrink-0 place-items-center rounded-bc-sm text-bc-text-2 transition-colors hover:bg-bc-surface-2 hover:text-bc-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
         title="Keluar"
       >
-        <LogOut size={18} className="text-gray-500 dark:text-slate-400" />
+        <LogOut size={20} aria-hidden="true" />
       </button>
     )
   }
