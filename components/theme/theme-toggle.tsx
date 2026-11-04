@@ -12,7 +12,7 @@ export function ThemeToggle() {
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="Ubah tema"
       title="Tema terang/gelap"
-      className="inline-flex h-10 w-10 items-center justify-center rounded-bc-sm border border-bc-line bg-bc-surface text-bc-text-2 hover:bg-bc-surface-2 hover:text-bc-text transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
+      className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-bc-sm border border-bc-line bg-bc-surface text-bc-text-2 hover:bg-bc-surface-2 hover:text-bc-text transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
     >
       {/* Ikon dipilih lewat CSS (kelas .dark dari next-themes), bukan resolvedTheme:
           resolvedTheme belum diketahui saat SSR sehingga memicu hydration mismatch. */}
