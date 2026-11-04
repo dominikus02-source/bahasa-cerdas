@@ -19,3 +19,5 @@ Outstanding deployment gates:
 6. Keep the PR Draft until CI and deployed staging both pass.
 
 No new staging commit/image/configuration was installed, no rollback was needed, and no new staging timing measurements or URLs were verified during this access-blocked follow-up. Historical local timings in STAGING_ACCELERATION.md are not staging deploy benchmarks.
+
+Additional checks: Node 22 syntax checks and YAML parsing passed; an isolated npm invocation probe passed for both projects and verified project/staging cache paths from a different working directory. Probe timings are synthetic and are not build/deploy benchmarks. CI Docker builds explicitly use a CI cache scope; only npm content-addressed downloads (_cacache), excluding npm logs, are persisted.

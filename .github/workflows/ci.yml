@@ -35,7 +35,7 @@ jobs:
       - name: Restore CI npm downloads
         uses: actions/cache@v4
         with:
-          path: ${{ runner.temp }}/bahasacerdas-ci-npm
+          path: ${{ runner.temp }}/bahasacerdas-ci-npm/_cacache
           key: bahasacerdas-ci-${{ runner.os }}-node22-npm-${{ hashFiles('package-lock.json') }}
 
       - name: Restore Next compiler cache
@@ -165,7 +165,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-anon-key
           NEXT_PUBLIC_SITE_URL=https://example.com
           EOF
-          DOCKER_BUILDKIT=1 docker build \
+          DOCKER_BUILDKIT=1 docker build --build-arg BUILD_CACHE_SCOPE=bahasacerdas-ci \
             -f Dockerfile.web \
             --secret id=web_env,src=/tmp/bc-web-ci.env \
             -t bahasacerdas-web-ci .
