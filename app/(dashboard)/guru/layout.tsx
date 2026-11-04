@@ -165,7 +165,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
             <FounderDashboardSwitcher user={user} compact />
             <Link
               href="/guru/profile"
-              className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
+              className="group flex min-h-11 min-w-11 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
               aria-label="Buka profil guru"
             >
               <UserAvatar
