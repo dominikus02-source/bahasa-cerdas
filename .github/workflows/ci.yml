@@ -8,6 +8,9 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  npm_config_cache: ${{ runner.temp }}/bahasacerdas-ci-npm
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,15 +31,23 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: "npm"
+
+      - name: Restore CI npm downloads
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/bahasacerdas-ci-npm
+          key: bahasacerdas-ci-${{ runner.os }}-node22-npm-${{ hashFiles('package-lock.json') }}
 
       - name: Restore Next compiler cache
         uses: actions/cache@v4
         with:
-          path: .next/cache
-          key: ${{ runner.os }}-node22-next-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
+          path: |
+            .next/cache/webpack
+            .next/cache/turbopack
+            .next/cache/swc
+          key: bahasacerdas-ci-${{ runner.os }}-node22-compiler-v2-${{ hashFiles('package-lock.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-node22-next-${{ hashFiles('package-lock.json') }}-
+            bahasacerdas-ci-${{ runner.os }}-node22-compiler-v2-${{ hashFiles('package-lock.json') }}-
 
       - name: Install dependencies
         run: npm ci
@@ -215,7 +226,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-          cache: "npm"
 
       - name: Install dependencies
         run: npm ci
