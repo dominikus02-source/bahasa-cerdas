@@ -55,7 +55,6 @@ function HomeContent() {
       <JumpaBerandaCard role="MURID" show="live" />
       <StudentHomeHero />
       <JumpaBerandaCard role="MURID" show="idle" />
-      <JumpaLaunchBanner />
 
       {/* Belajar hari ini: jalur utama + tantangan di kiri, misi harian di kanan. */}
       <section aria-label="Belajar hari ini" className="grid grid-cols-1 gap-5 xl:grid-cols-2 xl:items-stretch">
@@ -73,6 +72,9 @@ function HomeContent() {
         <AIBCHomeCard />
         <MentorHomeCard />
       </section>
+
+      {/* Promo peluncuran JUMPA dipindah ke bawah tugas inti: satu sorotan utama (hero) di layar pertama. */}
+      <JumpaLaunchBanner />
 
       <AkuSastrawanHomeCard />
       <RuangBelajarSection />
