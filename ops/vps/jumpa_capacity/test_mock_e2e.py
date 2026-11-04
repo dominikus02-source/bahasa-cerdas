@@ -24,6 +24,7 @@ ENV={"STAGING_ALLOWED_HOSTS":"stage.example.org","PRODUCTION_IPS":"1.1.1.1",
      "PRODUCTION_HEALTH_URL":"https://prod.example.org/api/health",
      "PRODUCTION_HEALTH_HOSTS":"prod.example.org",
      "STAGING_METRICS_URL":"https://metrics.stage.example.org/metrics",
+     "STAGING_METRICS_ALLOWED_HOSTS":"metrics.stage.example.org",
      "STAGING_METRICS_BEARER":"x"*40,"STAGING_NIC":"ens5","STAGING_NIC_LINK_MBPS":"1000"}
 STATS=[{"type":"inbound-rtp","packets_lost":1,"packets_received":999,"jitter":0.01},
        {"type":"candidate-pair","selected":True,"current_round_trip_time":0.08}]
@@ -162,4 +163,5 @@ class E2E(unittest.IsolatedAsyncioTestCase):
             # Dry-run config validates declarations but never calls LiveKit/production HTTP.
             url,_=run_capacity.config_target("stage.example.org",ENV)
             self.assertEqual(url,"https://stage.example.org")
+            self.assertTrue(run_capacity.offline_guards(ENV))
 if __name__=="__main__": unittest.main()
