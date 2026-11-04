@@ -97,6 +97,7 @@ class CapacityRunner:
         started=None
         max_seen=0
         try:
+            if hasattr(self.metrics,"reset"): self.metrics.reset()
             await self.preflight()
             await self.admin.create_room(room,count)
             speaker_count=1 if scenario=="passive" else min(count,6)
