@@ -57,7 +57,31 @@ def config_target(target, env, resolver=None):
         raise RuntimeError("Staging telemetry may not point to production")
     link=float(env["STAGING_NIC_LINK_MBPS"])
     if link<=0 or env["STAGING_NIC"]=="lo":raise RuntimeError("Dedicated staging NIC capacity missing")
+    ttl=int(env.get("QA_TOKEN_TTL_SECONDS","300"))
+    if not 1<=ttl<=MAX_TTL_SECONDS:raise RuntimeError("QA token TTL out of range")
     return url,resolved
+
+def offline_guards(env):
+    """Validate all static guards with synthetic fixtures. Never open media/production HTTP."""
+    ttl=int(env.get("QA_TOKEN_TTL_SECONDS","300"))
+    room=qa_room(20)
+    token=issue_token(env["LIVEKIT_API_KEY"],env["LIVEKIT_API_SECRET"],room,"qa-dry-run",
+                      ttl_seconds=ttl,now=1000,can_publish=False)
+    if validate_token(token,env["LIVEKIT_API_SECRET"],room,now=1001)!="qa-dry-run":
+        raise RuntimeError("QA token validation failed")
+    require_ram(4096)
+    link=float(env["STAGING_NIC_LINK_MBPS"])
+    ResourceGuard().update(70,link*.60,link)
+    if tuple(STAGES)!=(20,50,100,150) or tuple(SCENARIOS)!=("passive","speakers"):
+        raise RuntimeError("Stage/scenario contract modified")
+    required={"steady_seconds":900,"join_success_pct":99.0,"reconnect_success_pct":99.0,
+        "packet_loss_p95_pct":1.0,"jitter_p95_ms":30.0,"rtt_p95_ms":150.0,
+        "cpu_p95_pct":70.0,"ram_peak_limit_pct":80.0,
+        "host_available_min_mib":4096.0,"tx_p95_link_pct":60.0,
+        "crashes":0,"oom":0}
+    if CRITERIA!=required:raise RuntimeError("Locked numeric thresholds modified")
+    return True
+
 def report_write(path, payload):
     path=Path(path)
     path.parent.mkdir(parents=True,exist_ok=True)
