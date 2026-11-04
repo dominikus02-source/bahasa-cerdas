@@ -418,11 +418,13 @@ export default function TeacherHomeV3({
         <DailyMissionCard status={misiStatus} />
       </div>
 
-      {/* JUMPA: banner peluncuran (bisa ditutup) + kartu tetap; tersembunyi bila flag mati */}
-      <JumpaLaunchBanner userKey={userKey} />
+      {/* JUMPA: kartu tetap (kelas berlangsung) tetap dekat atas; tersembunyi bila flag mati */}
       <JumpaBerandaCard role="GURU" />
 
       <QuickActions />
+
+      {/* Promo peluncuran JUMPA (bisa ditutup) di bawah aksi cepat: satu sorotan utama (hero) di layar pertama. */}
+      <JumpaLaunchBanner userKey={userKey} />
 
       <GuruAkuSastrawanCard />
 

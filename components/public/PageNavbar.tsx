@@ -188,7 +188,7 @@ export default function PageNavbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             onKeyDown={handleKeyDown}
-            className="lg:hidden relative z-50 p-2.5 rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
+            className="lg:hidden relative z-50 grid h-11 w-11 place-items-center rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}

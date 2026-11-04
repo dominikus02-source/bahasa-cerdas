@@ -230,7 +230,7 @@ export function NotificationBell({
           ref={triggerRef}
           type="button"
           onClick={handleOpen}
-          className="relative grid h-10 w-10 place-items-center rounded-bc-sm text-bc-text-2 transition-colors hover:bg-bc-text/5 hover:text-bc-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
+          className="relative grid h-11 w-11 place-items-center rounded-bc-sm text-bc-text-2 transition-colors hover:bg-bc-text/5 hover:text-bc-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus"
           title="Notifikasi"
           aria-label={unreadCount > 0 ? `Notifikasi, ${unreadCount} belum dibaca` : "Notifikasi"}
           aria-expanded={open}

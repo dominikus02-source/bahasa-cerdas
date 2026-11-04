@@ -5,7 +5,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
 import { GraduationCap } from "lucide-react";
-import AIFloatingButton from "@/components/shared/AIFloatingButton";
+import AIFloatingButton, { NaraHeaderLink } from "@/components/shared/AIFloatingButton";
 import { BackHome } from "@/components/shared/BackHome";
 import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
@@ -165,7 +165,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
             <FounderDashboardSwitcher user={user} compact />
             <Link
               href="/guru/profile"
-              className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
+              className="group flex min-h-11 min-w-11 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
               aria-label="Buka profil guru"
             >
               <UserAvatar
@@ -192,6 +192,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                 </span>
               </span>
             </Link>
+            <NaraHeaderLink />
             <NotificationBell allHref="/guru/notifikasi" />
             <ThemeToggle />
             <ArenaLogoutButton variant="icon" to="/login" />
