@@ -616,7 +616,7 @@ function ControlBar({
       const area = stage.clientWidth * stage.clientHeight;
       const canvas = await html2canvas(stage, {
         useCORS: true,
-        backgroundColor: "#101827",
+        backgroundColor: null,
         logging: false,
         scale: Math.min(2, window.devicePixelRatio || 1, Math.sqrt(8_000_000 / Math.max(1, area))),
       });
