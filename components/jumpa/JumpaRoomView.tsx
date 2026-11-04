@@ -25,6 +25,7 @@ import {
 import { ConnectionQuality, ConnectionState, DisconnectReason, LocalVideoTrack, RoomEvent, Track } from "livekit-client";
 import {
   AudioWaveform,
+  Camera,
   Check,
   ChevronLeft,
   ChevronRight,
