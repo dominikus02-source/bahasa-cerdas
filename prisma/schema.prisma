@@ -4577,3 +4577,18 @@ model TrialClaim {
   @@index([kind, ipPrefixHash, createdAt])
   @@index([userId])
 }
+
+
+/// Teacher-authored diagnostic feedback for a completed simulation attempt.
+model SimulationTeacherFeedback {
+  id         String   @id @default(cuid())
+  progresId  String
+  teacherId  String
+  questionId String   @default("")
+  note       String   @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([progresId, teacherId, questionId])
+  @@index([progresId])
+}

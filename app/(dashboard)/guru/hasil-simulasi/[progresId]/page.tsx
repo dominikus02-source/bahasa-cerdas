@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { db } from "@/lib/db"
 import { getTeacherStudentIds, isTeacherOrStudent } from "@/lib/teacher/students"
+import { TeacherFeedbackEditor } from "@/components/guru/simulasi/TeacherFeedbackEditor"
 import type { AttemptAnswerDetails } from "@/lib/types/snapshot"
 
 export const dynamic = "force-dynamic"
@@ -23,6 +24,11 @@ export default async function DetailHasilSimulasi({ params }: { params: Promise<
   })
   if (!result) notFound()
 
+  const feedback = await db.simulationTeacherFeedback.findMany({
+    where: { progresId, teacherId: teacher!.id },
+    select: { questionId: true, note: true },
+  })
+  const notes = new Map(feedback.map((f) => [f.questionId, f.note]))
   const details = result.answerDetails as unknown as AttemptAnswerDetails | null
   const snapshot = details?.snapshot
   const answers = new Map((details?.userAnswers || []).map((a) => [a.questionId, a]))
@@ -62,6 +68,7 @@ export default async function DetailHasilSimulasi({ params }: { params: Promise<
           ))}
         </div>
       </header>
+      <TeacherFeedbackEditor progresId={progresId} questionId="" initialNote={notes.get("") || ""} />
       {!snapshot ? (
         <section className="rounded-xl border border-amber-200 bg-amber-50 p-5 text-sm text-amber-900">
           Rincian per nomor belum tersedia untuk percobaan ini. Nilai tetap tersimpan; jawaban atau snapshot soal tidak direkonstruksi dari kunci terbaru.
@@ -83,6 +90,7 @@ export default async function DetailHasilSimulasi({ params }: { params: Promise<
                 <p>Jawaban murid: <strong>{selected || "Tidak dijawab"}</strong></p>
                 <p>Kunci jawaban: <strong>{q?.correctAnswer || "Tidak tersedia"}</strong></p>
               </div>
+              {q && <TeacherFeedbackEditor progresId={progresId} questionId={q.id} initialNote={notes.get(q.id) || ""} />}
             </article>
           ))}
           {rows.length === 0 && <p className="text-sm text-slate-600">Tidak ada rincian soal pada snapshot ini.</p>}
