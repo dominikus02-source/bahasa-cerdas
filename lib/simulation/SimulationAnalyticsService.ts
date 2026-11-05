@@ -240,6 +240,7 @@ export function aggregateSeksiStats(attempts: Array<{ sectionScores: unknown }>)
 // ────────────────────────────────────────────────────────────
 
 export interface SimRow {
+  progresId: string;
   userId: string;
   userName: string;
   groupId: string;
@@ -377,6 +378,7 @@ export async function getSimulationRekap(teacherId: string, filter: SimulationFi
     const st = resolveAttemptStatus(p, cons);
     const g = userIdToGroup.get(p.userId) || { id: "", name: "-" };
     return {
+      progresId: p.id,
       userId: p.userId,
       userName: p.user.fullName,
       groupId: g.id,
