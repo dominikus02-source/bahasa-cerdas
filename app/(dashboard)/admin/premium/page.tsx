@@ -287,21 +287,21 @@ export default function AdminPremiumReportPage() {
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2">
           <Filter size={14} className="text-slate-400" />
-          <select value={audience} onChange={(e) => { setAudience(e.target.value); setPage(1); }}
-            className="text-sm bg-transparent outline-none">
+          <select aria-label="Filter jenis pengguna" value={audience} onChange={(e) => { setAudience(e.target.value); setPage(1); }}
+            className="min-w-24 text-sm bg-transparent outline-none">
             <option value="ALL">Semua</option>
             <option value="MURID">Murid</option>
             <option value="GURU">Guru</option>
           </select>
         </div>
-        <select value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
+        <select aria-label="Filter status langganan" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
           <option value="ALL">Semua Status</option>
           <option value="ACTIVE">Aktif</option>
           <option value="EXPIRING_SOON">Segera Berakhir</option>
           <option value="EXPIRED">Kadaluarsa</option>
         </select>
-        <select value={planFilter} onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
+        <select aria-label="Filter paket" value={planFilter} onChange={(e) => { setPlanFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
           <option value="ALL">Semua Paket</option>
           <option value="MURID_PREMIUM_MONTHLY">Murid Bulanan</option>
@@ -319,7 +319,7 @@ export default function AdminPremiumReportPage() {
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-800/90 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabel langganan premium">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">

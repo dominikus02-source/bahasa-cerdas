@@ -207,7 +207,7 @@ export default function KomunitasPage() {
   return (
     <div className="p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link href="/guru/beranda" className="p-2 hover:bg-slate-100 rounded-lg">
+        <Link aria-label="Kembali ke Beranda" href="/guru/beranda" className="p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
         <div>
@@ -231,6 +231,7 @@ export default function KomunitasPage() {
           />
         </div>
         <select
+          aria-label="Filter tipe komunitas"
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
           className="h-11 px-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
@@ -432,6 +433,7 @@ export default function KomunitasPage() {
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">Tipe</label>
                   <select
+                    aria-label="Tipe komunitas"
                     value={createForm.type}
                     onChange={(e) => setCreateForm({ ...createForm, type: e.target.value })}
                     className="w-full h-11 px-4 rounded-xl border border-slate-200 focus:ring-2 focus:ring-emerald-500"

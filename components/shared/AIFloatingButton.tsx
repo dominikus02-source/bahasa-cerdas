@@ -37,7 +37,9 @@ export default function AIFloatingButton() {
   }
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 right-6 z-50 flex items-center gap-3">
+    // HP & tablet (< lg): tombol mengambang menutupi kartu konten → di sana NARA
+    // tampil sebagai ikon di header (NaraHeaderLink). Mengambang hanya di desktop.
+    <div className="fixed bottom-6 right-6 z-50 hidden items-center gap-3 lg:flex">
       {showBubble && (
         <div className="animate-fade-in pointer-events-none bg-white rounded-2xl shadow-lg border border-slate-100 px-4 py-2.5 relative dark:bg-slate-800 dark:border-slate-700">
           <p className="text-sm font-medium text-slate-700 dark:text-slate-200">Mau tanya apa?</p>
@@ -60,5 +62,25 @@ export default function AIFloatingButton() {
         />
       </Link>
     </div>
+  );
+}
+/**
+ * NARA di header untuk HP & tablet (< lg) — pengganti tombol mengambang agar
+ * tidak menutupi kartu. Target sentuh 44px; disembunyikan di workspace NARA.
+ */
+export function NaraHeaderLink() {
+  const pathname = usePathname();
+  if (pathname && AI_BC_WORKSPACE_PATHS.has(pathname)) return null;
+  return (
+    <Link
+      href="/ai-bc"
+      aria-label="Ngobrol dengan Nara"
+      title="Ngobrol dengan Nara"
+      className="grid h-11 w-11 shrink-0 place-items-center rounded-bc-sm transition-colors hover:bg-bc-surface-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-bc-focus lg:hidden"
+    >
+      <span className="block h-8 w-8 overflow-hidden rounded-full border border-bc-line bg-bc-surface">
+        <Image src={gambarKarakter("zelby", "reading")} alt="" width={32} height={32} className="h-full w-full object-cover" />
+      </span>
+    </Link>
   );
 }

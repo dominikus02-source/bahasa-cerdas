@@ -114,15 +114,15 @@ export default function MateriAjarPage() {
 
   return (
     <div>
-        <div className="mb-5 flex flex-col gap-4 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div className="mb-5 flex flex-col gap-4 sm:mb-6 lg:flex-row lg:items-center lg:justify-between">
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Presentation className="text-emerald-500" size={28} />
               Bank Rencana Pembelajaran
             </h1>
             <p className="text-gray-500 mt-1">Cari Rencana Pembelajaran sesuai tema, unduh, atau buat sendiri dengan AI</p>
           </div>
-          <div className="grid w-full gap-2 sm:flex sm:w-auto sm:items-center sm:gap-3">
+          <div className="grid w-full gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3 lg:w-auto lg:shrink-0">
             <button onClick={() => setShowUpload(true)}
               className="flex min-h-11 w-full items-center justify-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-xl text-sm font-semibold sm:w-auto hover:bg-emerald-700 transition-colors">
               <Upload size={16} /> Unggah Rencana Pembelajaran
@@ -171,6 +171,7 @@ export default function MateriAjarPage() {
           </div>
 
           <select
+            aria-label="Urutkan materi"
             value={sort}
             onChange={e => { setSort(e.target.value as "recent" | "popular"); setPage(1) }}
             className="min-h-11 w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-600 sm:w-auto focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
@@ -182,12 +183,16 @@ export default function MateriAjarPage() {
           <div className="flex w-full overflow-hidden rounded-xl border border-gray-200 sm:w-auto">
             <button
               onClick={() => setViewMode("grid")}
+              aria-label="Tampilan kisi"
+              aria-pressed={viewMode === "grid"}
               className={`min-h-11 flex-1 p-2.5 sm:flex-none ${viewMode === "grid" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <Grid3x3 size={18} />
             </button>
             <button
               onClick={() => setViewMode("list")}
+              aria-label="Tampilan daftar"
+              aria-pressed={viewMode === "list"}
               className={`min-h-11 flex-1 p-2.5 sm:flex-none ${viewMode === "list" ? "bg-emerald-50 text-emerald-600" : "text-gray-400 hover:text-gray-600"}`}
             >
               <List size={18} />

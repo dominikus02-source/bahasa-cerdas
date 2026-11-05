@@ -117,6 +117,7 @@
     "test:investor-truth-gate": "npx tsx scripts/test-investor-truth-gate.ts",
     "test:retention-semantics": "npx tsx scripts/test-retention-semantics.ts",
     "test:mrr-truth": "npx tsx scripts/test-mrr-truth.ts",
+    "test:account-origin": "npx tsx scripts/test-account-origin.ts",
     "test:password-reset": "npx tsx scripts/test-password-reset-flow.ts",
     "test:aku-sastrawan": "npx tsx scripts/test-aku-sastrawan-access.ts",
     "test:no-ai-provider": "npx tsx scripts/test-no-ai-provider-leak.ts",

@@ -369,14 +369,14 @@ export default function TokoKaryaPage() {
 
       {/* ── Tabs ───────────────────────────────────────────────────── */}
       <Tabs value={tab} onValueChange={setTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="karya">
+        <TabsList className="mb-6 grid h-auto w-full grid-cols-3 sm:inline-flex sm:h-9 sm:w-auto">
+          <TabsTrigger value="karya" className="px-2 text-xs sm:px-3 sm:text-sm">
             <Package className="h-4 w-4 mr-1.5" /> Karya Saya
           </TabsTrigger>
-          <TabsTrigger value="pendapatan">
+          <TabsTrigger value="pendapatan" className="px-2 text-xs sm:px-3 sm:text-sm">
             <DollarSign className="h-4 w-4 mr-1.5" /> Pendapatan
           </TabsTrigger>
-          <TabsTrigger value="jelajahi">
+          <TabsTrigger value="jelajahi" className="px-2 text-xs sm:px-3 sm:text-sm">
             <ExternalLink className="h-4 w-4 mr-1.5" /> Marketplace
           </TabsTrigger>
         </TabsList>
@@ -390,28 +390,35 @@ export default function TokoKaryaPage() {
             <Button onClick={openTambah} className="bg-gradient-to-r from-blue-700 to-blue-500">
               <Plus size={16} /> Upload Karya
             </Button>
-            <div className="flex items-center gap-2 ml-auto">
-              <span className="text-xs text-gray-400">Tipe:</span>
-              <select
-                value={filterType}
-                onChange={(e) => setFilterType(e.target.value)}
-                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="ALL">Semua Tipe</option>
-                {KARYA_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>{t.label}</option>
-                ))}
-              </select>
-              <span className="text-xs text-gray-400 ml-1">Status:</span>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="ALL">Semua</option>
-                <option value="PUBLISHED">Terbit</option>
-                <option value="DRAFT">Draft</option>
-              </select>
+            {/* HP: dua filter berbagi lebar layar (grid 2 kolom) agar label pilihan tidak terpotong di 390. */}
+            <div className="grid w-full grid-cols-2 gap-2 sm:ml-auto sm:flex sm:w-auto sm:items-center">
+              <label className="flex min-w-0 items-center gap-2">
+                <span className="shrink-0 text-xs text-bc-text-2">Tipe:</span>
+                <select
+                  aria-label="Filter tipe karya"
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-bc-line bg-bc-surface px-2 py-1.5 text-xs text-bc-text focus:outline-none focus:ring-2 focus:ring-bc-focus sm:flex-none"
+                >
+                  <option value="ALL">Semua Tipe</option>
+                  {KARYA_TYPES.map((t) => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex min-w-0 items-center gap-2">
+                <span className="shrink-0 text-xs text-bc-text-2">Status:</span>
+                <select
+                  aria-label="Filter status karya"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                  className="min-h-9 min-w-0 flex-1 rounded-lg border border-bc-line bg-bc-surface px-2 py-1.5 text-xs text-bc-text focus:outline-none focus:ring-2 focus:ring-bc-focus sm:flex-none"
+                >
+                  <option value="ALL">Semua</option>
+                  <option value="PUBLISHED">Terbit</option>
+                  <option value="DRAFT">Draft</option>
+                </select>
+              </label>
             </div>
           </div>
 
@@ -765,14 +772,14 @@ export default function TokoKaryaPage() {
                           <Download size={12} /> {karya._count?.purchases || karya.downloads || 0}
                         </span>
                       </div>
-                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <a href={karya.fileUrl} target="_blank" rel="noopener noreferrer" className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
+                      <div className="flex gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                        <a href={karya.fileUrl} target="_blank" rel="noopener noreferrer" aria-label={`Pratinjau ${karya.title}`} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
                           <Eye size={14} />
                         </a>
-                        <button onClick={() => openEdit(karya)} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500">
+                        <button onClick={() => openEdit(karya)} aria-label={`Ubah ${karya.title}`} className="p-1.5 rounded-lg hover:bg-blue-50 text-blue-500">
                           <Edit2 size={14} />
                         </button>
-                        <button onClick={() => handleDelete(karya.id)} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500">
+                        <button onClick={() => handleDelete(karya.id)} aria-label={`Hapus ${karya.title}`} className="p-1.5 rounded-lg hover:bg-red-50 text-red-500">
                           <Trash2 size={14} />
                         </button>
                       </div>

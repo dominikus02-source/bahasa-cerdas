@@ -33,7 +33,7 @@ export function ReviewForm({ onSubmit, loading }: ReviewFormProps) {
     <div className="space-y-4">
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1">Jenis Konten</label>
-        <select value={contentType} onChange={(e) => setContentType(e.target.value)}
+        <select aria-label="Jenis Konten" value={contentType} onChange={(e) => setContentType(e.target.value)}
           className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
           {CONTENT_TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
         </select>

@@ -91,7 +91,7 @@ export default function TugasPage() {
     <div className="arena-page px-4 py-4">
 
       <div className="flex items-center gap-3 mb-5">
-        <Link href="/arena" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
+        <Link aria-label="Kembali ke Arena" href="/arena" className="text-gray-400 hover:text-gray-700 dark:text-slate-300"><ArrowLeft className="w-5 h-5" /></Link>
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow shrink-0">
           <BookOpen className="w-5 h-5 text-white" />
         </div>
@@ -113,7 +113,7 @@ export default function TugasPage() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={`flex-1 py-2 rounded-lg text-xs font-semibold transition-all ${
-              tab === t.key ? "bg-white dark:bg-slate-800/90 text-gray-900 dark:text-slate-100 shadow-sm" : "text-gray-500"
+              tab === t.key ? "bg-white dark:bg-slate-800/90 text-gray-900 dark:text-slate-100 shadow-sm" : "text-gray-600 dark:text-slate-300"
             }`}
           >
             {t.label}

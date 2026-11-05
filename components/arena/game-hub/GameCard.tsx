@@ -50,7 +50,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
           height={1024}
           loading="lazy"
           decoding="async"
-          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          className={`h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03] ${game.status === "SOON" ? "opacity-60" : ""}`}
           onError={() => setImgBroken(true)}
         />
       ) : (
@@ -112,7 +112,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
         className={`mt-0.5 line-clamp-2 text-[12px] leading-snug ${
           game.status === "SOON"
             ? "text-slate-500 dark:text-slate-500"
-            : "text-slate-500 dark:text-[#7C7A9E]"
+            : "text-slate-500 dark:text-bc-text-2"
         }`}
       >
         {game.description}
@@ -127,7 +127,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
           className={`inline-flex min-w-0 items-center gap-1 truncate text-[10px] font-semibold ${
             game.status === "SOON"
               ? "text-slate-400 dark:text-slate-500"
-              : "text-slate-500 dark:text-[#7C7A9E]"
+              : "text-slate-500 dark:text-bc-text-2"
           }`}
         >
           <Clock size={11} className="shrink-0" />
@@ -142,7 +142,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
   if (game.status === "SOON") {
     return (
       <div
-        className="game-card-anim relative flex select-none flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-slate-100 opacity-70 dark:border-[rgba(124,58,237,0.15)] dark:bg-[#12101F]"
+        className="game-card-anim relative flex select-none flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-slate-100 dark:border-[color:var(--clr-game-line-soon)] dark:bg-[var(--clr-game-soon)]"
         style={{ transitionDelay: `${Math.min(index, 6) * 20}ms` }}
       >
         {imageArea}

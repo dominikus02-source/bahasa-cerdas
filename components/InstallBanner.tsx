@@ -40,7 +40,8 @@ export function InstallBanner() {
 
   return (
     <>
-      <div className="fixed top-0 left-0 right-0 z-50 px-4 pb-3 pt-[calc(12px+env(safe-area-inset-top,0px))] bg-bc-murid text-bc-on-brand shadow-bc-2 md:hidden" role="region" aria-label="Pasang aplikasi">
+      {/* Kartu di dalam alur halaman (bukan fixed top-0): tidak lagi menutupi header dasbor di HP. */}
+      <div className="relative mb-4 rounded-bc-card px-4 py-3 bg-bc-murid text-bc-on-brand shadow-bc-1 md:hidden" role="region" aria-label="Pasang aplikasi">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <div className="flex min-w-[200px] flex-1 items-center gap-3 pr-7">
             <Smartphone className="w-7 h-7 shrink-0 opacity-90" aria-hidden="true" />
@@ -58,7 +59,7 @@ export function InstallBanner() {
             </button>
           </div>
         </div>
-        <button type="button" aria-label="Tutup" onClick={() => { setShow(false); localStorage.setItem("install-banner-shown", "true") }} className="absolute right-1.5 top-[calc(4px+env(safe-area-inset-top,0px))] grid h-8 w-8 place-items-center rounded-full opacity-75 hover:opacity-100">
+        <button type="button" aria-label="Tutup" onClick={() => { setShow(false); localStorage.setItem("install-banner-shown", "true") }} className="absolute right-1 top-1 grid h-9 w-9 place-items-center rounded-full opacity-75 hover:opacity-100">
           <X className="w-4 h-4" aria-hidden="true" />
         </button>
       </div>

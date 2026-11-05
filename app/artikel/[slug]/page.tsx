@@ -111,7 +111,7 @@ export default async function ArtikelDetailPage({ params }: Props) {
           {artikel.tags?.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-8">
               {artikel.tags.map((t: string) => (
-                <span key={t} className="text-xs px-3 py-1 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
+                <span key={t} className="text-xs px-3 py-1 bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
               ))}
             </div>
           )}

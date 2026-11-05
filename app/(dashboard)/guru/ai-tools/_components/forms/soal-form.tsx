@@ -61,12 +61,12 @@ export function SoalForm({ onSubmit, loading }: SoalFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Mata Pelajaran</label>
-          <input type="text" value={subject} onChange={(e) => setSubject(e.target.value)}
+          <input aria-label="Mata Pelajaran" type="text" value={subject} onChange={(e) => setSubject(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Kelas</label>
-          <select value={grade} onChange={(e) => setGrade(e.target.value)}
+          <select aria-label="Kelas" value={grade} onChange={(e) => setGrade(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
             {GRADE_OPTIONS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
           </select>
@@ -75,7 +75,7 @@ export function SoalForm({ onSubmit, loading }: SoalFormProps) {
 
       <div>
         <label className="block text-xs font-medium text-gray-600 mb-1">Topik</label>
-        <input type="text" value={topic} onChange={(e) => setTopic(e.target.value)}
+        <input aria-label="Topik" type="text" value={topic} onChange={(e) => setTopic(e.target.value)}
           placeholder="Contoh: Teks Prosedur"
           className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
       </div>
@@ -83,12 +83,12 @@ export function SoalForm({ onSubmit, loading }: SoalFormProps) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Jumlah Soal</label>
-          <input type="number" min={1} max={30} value={count} onChange={(e) => setCount(Number(e.target.value))}
+          <input aria-label="Jumlah Soal" type="number" min={1} max={30} value={count} onChange={(e) => setCount(Number(e.target.value))}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none" />
         </div>
         <div>
           <label className="block text-xs font-medium text-gray-600 mb-1">Tingkat Kesulitan</label>
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}
+          <select aria-label="Tingkat Kesulitan" value={difficulty} onChange={(e) => setDifficulty(e.target.value)}
             className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-400 focus:border-emerald-400 outline-none bg-white">
             <option value="campuran">Campuran</option>
             <option value="mudah">Mudah</option>

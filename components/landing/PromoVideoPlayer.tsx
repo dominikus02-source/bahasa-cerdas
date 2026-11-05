@@ -9,7 +9,7 @@ export default function PromoVideoPlayer({ videoId }: { videoId: string | null }
   return (
     <div className="relative aspect-video rounded-2xl overflow-hidden border border-zinc-200 shadow-xl shadow-zinc-900/5 bg-zinc-100">
       {!videoId ? (
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-zinc-400">
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-zinc-600">
           <Play size={40} strokeWidth={1.5} />
           <p className="text-sm font-medium">Video pengenalan segera hadir.</p>
         </div>

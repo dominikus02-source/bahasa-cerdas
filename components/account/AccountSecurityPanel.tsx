@@ -57,6 +57,8 @@ export default function AccountSecurityPanel() {
   async function submit(action: "password" | "delete") {
     setError(""); setMessage("");
     if (action === "password" && nextPassword !== confirmPassword) { setError("Konfirmasi password tidak cocok."); return; }
+    if (mode === "password" && !password) { setError("Masukkan password saat ini terlebih dahulu."); return; }
+    if (mode === "email" && !emailReauth && !/^\d{6,10}$/.test(code)) { setError("Masukkan kode verifikasi dari email terlebih dahulu."); return; }
     setBusy(true);
     try {
       const res = await fetch(action === "password" ? "/api/user/password" : "/api/user/account", {

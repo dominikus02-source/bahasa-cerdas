@@ -146,7 +146,7 @@ export default function LeagueTabs({ weekly, daily, hallOfFame, userId, userXP, 
       {/* Rankings */}
       <div className="mt-4">
         {board.rows.length === 0 ? (
-          <div className="text-center py-8 text-gray-400 text-sm">
+          <div className="text-center py-8 text-bc-text-2 text-sm">
             {isHarian ? "Belum ada aktivitas hari ini." : "Belum ada peringkat."}
           </div>
         ) : (

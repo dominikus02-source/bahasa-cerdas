@@ -163,7 +163,7 @@ export default function ArtikelPage() {
                       <div className="p-7 flex flex-col justify-center">
                         <div className="flex flex-wrap items-center gap-2 text-xs text-bc-text-3 mb-3">
                           {a.tags?.slice(0, 2).map(t => (
-                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
+                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
                           ))}
                           <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
                           <span className="flex items-center gap-1">{a.readCount} dibaca</span>
