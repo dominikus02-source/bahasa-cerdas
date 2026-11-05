@@ -184,7 +184,7 @@ export default function AiBcChatView({ role, personaTitle, messages, streaming, 
             rows={1}
             placeholder={PLACEHOLDERS[role]}
             aria-label="Tulis pertanyaan"
-            className={`max-h-32 flex-1 resize-none rounded-2xl border-2 border-slate-200 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-all focus:ring-2 dark:border-slate-700 dark:text-slate-100 ${tone.focus}`}
+            className={`max-h-32 flex-1 resize-none rounded-2xl border-2 border-slate-200 bg-gradient-to-r from-sky-400/20 to-violet-500/20 backdrop-blur-sm dark:border-slate-700 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-all focus:ring-2 dark:border-slate-700 dark:text-slate-100 ${tone.focus}`}
           />
           <button
             type="button"
