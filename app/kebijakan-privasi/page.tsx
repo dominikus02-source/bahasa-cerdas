@@ -108,7 +108,7 @@ export default function KebijakanPrivasiPage() {
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900">11. Kontak</h2>
             <p>Untuk pertanyaan terkait privasi atau permintaan data, hubungi:</p>
-            <p><strong>Email:</strong> dominikus.02@gmail.com<br />
+            <p><strong>Email:</strong> halo@bahasacerdas.com<br />
             <strong>Pengembang:</strong> Dominikus Wahyu<br />
             <strong>Website:</strong> <a href="https://www.bahasacerdas.com" className="text-primary hover:underline">https://www.bahasacerdas.com</a></p>
           </section>
