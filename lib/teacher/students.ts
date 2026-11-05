@@ -75,7 +75,7 @@ export async function getTeacherGroups(teacherId: string, take?: number | null) 
  * analytics, dst. Murid dengan beberapa kelas dihitung sekali.
  */
 export async function getTeacherStudentIds(teacherId: string): Promise<string[]> {
-  const groups = await getTeacherGroups(teacherId);
+  const groups = await getTeacherGroups(teacherId, null);
   const ids = groups.flatMap((g) => g.members.map((m) => m.user.id));
   return [...new Set(ids)];
 }
