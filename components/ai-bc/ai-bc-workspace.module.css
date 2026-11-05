@@ -175,11 +175,11 @@
 
 /* Shared NARA visual language: translucent 20% brand gradient, legible content. */
 .naraWelcome {
-  background: radial-gradient(ellipse at 100% 0%, rgba(130, 85, 245, .08), transparent 50%),
-              radial-gradient(ellipse at 0% 100%, rgba(45, 169, 245, .08), transparent 55%);
+  background: radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--clr-violet) 8%, transparent), transparent 50%),
+              radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--clr-info) 8%, transparent), transparent 55%);
 }
 .composerField {
-  background: linear-gradient(110deg, rgba(47, 174, 244, .20), rgba(132, 70, 238, .20));
+  background: linear-gradient(110deg, color-mix(in srgb, var(--clr-info) 20%, transparent), color-mix(in srgb, var(--clr-violet) 20%, transparent));
   border-color: hsl(var(--border));
   backdrop-filter: blur(12px);
 }
