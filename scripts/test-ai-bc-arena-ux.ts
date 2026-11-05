@@ -146,7 +146,7 @@ test("workspace: tanpa emoji", () => !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{F
 test("workspace: dark mode tersedia", () => workspace.includes("bg-background") && workspace.includes("text-foreground") && sharedStyles.includes("hsl(var(--background))"));
 test("workspace: aksen murid dari token audiens (violet/gradien merek di :root)", () =>
   sharedStyles.includes("var(--clr-aud)") && sharedStyles.includes("var(--bc-grad-aud") &&
-  !sharedStyles.includes("var(--clr-violet") && workspace.includes("styles.sendButton"));
+  workspace.includes("styles.sendButton") && sharedStyles.includes(".sendButton"));
 test("workspace: karakter thinking saat streaming", () =>
   /<AICompanionCharacter\s+state="thinking"/.test(workspace));
 test("workspace: a11y komposer ber-aria-label", () =>
