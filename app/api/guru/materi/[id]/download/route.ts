@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 
 // Batas unduh modul untuk user gratis. Premium/founder/admin tak terbatas.
-export const FREE_DOWNLOAD_LIMIT = 10;
+const FREE_DOWNLOAD_LIMIT = 10;
 
 // SECURITY: identitas HANYA dari sesi server. `supabaseId` di body (masih
 // dikirim oleh klien lama) diabaikan agar tidak bisa dipakai untuk bertindak

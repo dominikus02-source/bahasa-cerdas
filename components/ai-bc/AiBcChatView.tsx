@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import type { BcClientMessage, BcRole } from "./ai-bc-types";
 import { COMPANION_BUBBLES, COMPANION_LABELS, PLACEHOLDERS } from "./ai-bc-types";
 import AICompanionCharacter, { type CompanionState } from "./AICompanionCharacter";
+import styles from "./ai-bc-workspace.module.css";
 
 interface AiBcChatViewProps {
   role: BcRole;
@@ -184,7 +185,7 @@ export default function AiBcChatView({ role, personaTitle, messages, streaming, 
             rows={1}
             placeholder={PLACEHOLDERS[role]}
             aria-label="Tulis pertanyaan"
-            className={`max-h-32 flex-1 resize-none rounded-2xl border-2 border-slate-200 bg-white dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 outline-none transition-all focus:ring-2 dark:border-slate-700 dark:text-slate-100 ${tone.focus}`}
+            className={`max-h-32 flex-1 resize-none rounded-2xl border-2 border-bc-border px-4 py-3 text-sm text-bc-text placeholder:text-bc-text-2 outline-none transition-all focus:ring-2 ${styles.composerField} ${tone.focus}`}
           />
           <button
             type="button"

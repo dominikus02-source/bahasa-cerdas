@@ -172,3 +172,17 @@
     background: none;
   }
 }
+
+/* Shared NARA visual language: translucent 20% brand gradient, legible content. */
+.naraWelcome {
+  background: radial-gradient(ellipse at 100% 0%, color-mix(in srgb, var(--clr-violet) 8%, transparent), transparent 50%),
+              radial-gradient(ellipse at 0% 100%, color-mix(in srgb, var(--clr-info) 8%, transparent), transparent 55%);
+}
+.composerField {
+  background: linear-gradient(110deg, color-mix(in srgb, var(--clr-info) 20%, transparent), color-mix(in srgb, var(--clr-violet) 20%, transparent));
+  border-color: hsl(var(--border));
+  backdrop-filter: blur(12px);
+}
+.composerField textarea {
+  background: transparent;
+}

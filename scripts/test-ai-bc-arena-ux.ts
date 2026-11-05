@@ -133,8 +133,7 @@ const promptBlock =
   workspace.match(/export const ARENA_AI_SUGGESTED_PROMPTS[\s\S]*?\];/)?.[0] ?? "";
 test("workspace: saran awal murid-only (tanpa alur kerja guru)", () =>
   !/rpp|materi ajar|kisi-kisi|buat soal/i.test(promptBlock));
-test("workspace: chips saran hanya bila hints tersedia", () =>
-  welcome.includes("contextualHints.length > 0") && welcome.includes("<details") && workspace.includes("hints={hints}"));
+test("workspace: pembuka NARA tanpa chips saran", () => !welcome.includes("contextualHints.length > 0") && !welcome.includes("<details") && !welcome.includes("suggestionLabels"));
 test("workspace: komposer memakai safe-area-bottom", () =>
   sharedStyles.includes("env(safe-area-inset-bottom") && sharedStyles.includes(".composer"));
 test("workspace: tanpa navigasi kedua (header/theme/bell/logout)", () =>
@@ -147,7 +146,7 @@ test("workspace: tanpa emoji", () => !/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{F
 test("workspace: dark mode tersedia", () => workspace.includes("bg-background") && workspace.includes("text-foreground") && sharedStyles.includes("hsl(var(--background))"));
 test("workspace: aksen murid dari token audiens (violet/gradien merek di :root)", () =>
   sharedStyles.includes("var(--clr-aud)") && sharedStyles.includes("var(--bc-grad-aud") &&
-  !sharedStyles.includes("var(--clr-violet") && workspace.includes("styles.sendButton"));
+  workspace.includes("styles.sendButton") && sharedStyles.includes(".sendButton"));
 test("workspace: karakter thinking saat streaming", () =>
   /<AICompanionCharacter\s+state="thinking"/.test(workspace));
 test("workspace: a11y komposer ber-aria-label", () =>

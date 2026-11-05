@@ -119,8 +119,8 @@ export async function POST(req: NextRequest) {
               model,
               messages: [{ role: "system", content: systemPrompt }, ...history],
               temperature: 0.6,
-              maxTokens: 1024,
-              timeoutMs: 12000,
+              maxTokens: 4096,
+              timeoutMs: 60000,
               responseFormat: "text",
             },
             (delta) => {
@@ -139,6 +139,7 @@ export async function POST(req: NextRequest) {
           // Jika Groq sudah mengirim sebagian jawaban, pertahankan teks itu di UI.
           // Jangan mengubahnya menjadi error yang membuat klien membuang seluruh draf.
           if (streamedText.trim()) {
+            controller.enqueue(encoder.encode(sse({ type: "delta", text: "\n\n_Jawaban Nara terhenti sebelum selesai. Silakan pilih Tanya ulang._" })));
             controller.enqueue(encoder.encode(sse({ type: "done", ...publicAiMeta() })));
           } else {
             controller.enqueue(encoder.encode(sse({ type: "error", message: AI_BC_ERROR })));
