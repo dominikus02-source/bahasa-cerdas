@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import RouteBreadcrumbs from "@/components/navigation/route-breadcrumbs";
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
@@ -154,7 +156,7 @@ export default async function RootLayout({
         <a href="#main-content" className="skip-link">
           Langsung ke konten utama
         </a>
-        <Providers nonce={nonce}>{children}</Providers>
+        <Providers nonce={nonce}><Suspense fallback={null}><RouteBreadcrumbs/></Suspense>{children}</Providers>
       </body>
     </html>
   );
