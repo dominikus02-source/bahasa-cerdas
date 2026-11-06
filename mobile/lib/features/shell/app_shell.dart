@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_routes.dart';
+import '../../core/constants/legal_links.dart';
 import '../webview/webview_screen.dart';
 
 class AppShell extends StatefulWidget {
@@ -26,11 +28,18 @@ class _AppShellState extends State<AppShell> {
     }
   }
 
-  void _logout() {
+  Future<void> _logout() async {
     setState(() {
       _role = null;
       _index = 1;
     });
+  }
+
+  Future<void> _openLegal(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   @override
@@ -62,6 +71,45 @@ class _AppShellState extends State<AppShell> {
               child: const Icon(Icons.logout),
             )
           : null,
+      endDrawer: Drawer(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(16),
+            children: [
+              const Text('BahasaCerdas', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 24),
+              ListTile(
+                leading: const Icon(Icons.lock_reset),
+                title: const Text('Lupa Kata Sandi'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() => _index = 1);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.privacy_tip_outlined),
+                title: const Text('Kebijakan Privasi'),
+                onTap: () => _openLegal(LegalLinks.privacy),
+              ),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: const Text('Syarat & Ketentuan'),
+                onTap: () => _openLegal(LegalLinks.terms),
+              ),
+              const Divider(),
+              if (_role != null)
+                ListTile(
+                  leading: const Icon(Icons.logout, color: Colors.red),
+                  title: const Text('Keluar', style: TextStyle(color: Colors.red)),
+                  onTap: () {
+                    Navigator.pop(context);
+                    _logout();
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
