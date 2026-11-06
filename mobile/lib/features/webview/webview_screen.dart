@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import '../../core/constants/app_constants.dart';
 
 class WebViewScreen extends StatefulWidget {
@@ -22,6 +23,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   double _progress = 0.0;
 
+  // User agent Chrome agar Google Sign-In tidak diblokir
+  static const String _userAgent =
+      'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
+
   @override
   void initState() {
     super.initState();
@@ -35,6 +40,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF4F5F7))
       ..enableZoom(false)
+      ..setUserAgent(_userAgent)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (progress) {
@@ -61,11 +67,35 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
           },
           onNavigationRequest: (request) {
+            final uri = Uri.tryParse(request.url);
+            if (uri == null) return NavigationDecision.prevent;
+
+            // Izinkan domain Google untuk OAuth
+            final host = uri.host.toLowerCase();
+            if (host.contains('google.com') ||
+                host.contains('googleapis.com') ||
+                host.contains('gstatic.com') ||
+                host.contains('bahasacerdas.com') ||
+                host.contains('accounts.google.com')) {
+              return NavigationDecision.navigate;
+            }
+
+            // Blokir skema non-http
+            if (uri.scheme != 'http' && uri.scheme != 'https') {
+              return NavigationDecision.prevent;
+            }
+
             return NavigationDecision.navigate;
           },
         ),
       )
       ..loadRequest(Uri.parse(url));
+
+    // Aktifkan third-party cookies (penting untuk Google Sign-In)
+    if (_controller.platform is AndroidWebViewController) {
+      final androidController = _controller.platform as AndroidWebViewController;
+      androidController.setMediaPlaybackRequiresUserGesture(false);
+    }
   }
 
   Future<void> _detectRole() async {
@@ -73,12 +103,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
       final result = await _controller.runJavaScriptReturningResult('''
         (function() {
           try {
-            // Cek meta tag atau localStorage
             const meta = document.querySelector('meta[name="user-role"]');
             if (meta) return meta.content;
             const stored = localStorage.getItem('userRole') || localStorage.getItem('role');
             if (stored) return stored;
-            // Cek cookie sederhana
             const cookies = document.cookie;
             const match = cookies.match(/role=([^;]+)/);
             if (match) return match[1];
