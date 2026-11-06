@@ -31,6 +31,8 @@ class MobileFeatureCatalog {
   static const byAudience = <MobileAudience, List<MobileFeature>>{
     MobileAudience.murid: [
       MobileFeature('belajar', 'Belajar', '/murid/belajar'),
+      MobileFeature('kelasku', 'Kelasku', '/murid/kelasku'),
+      MobileFeature('jalur-cerdas', 'Jalur Cerdas', '/arena/jalur-cerdas'),
       MobileFeature('arena', 'ARENA', '/arena'),
       MobileFeature('simulasi', 'Simulasi', '/murid/simulasi'),
       MobileFeature('profil', 'Profil', '/murid/profile'),
@@ -40,9 +42,14 @@ class MobileFeatureCatalog {
       MobileFeature('evaluasi', 'Evaluasi', '/guru/evaluasi-simulasi'),
       MobileFeature('alat-ajar', 'Alat Ajar', '/guru/perangkat-ajar'),
       MobileFeature('arena', 'ARENA', '/arena'),
+      MobileFeature('gim-guru', 'Gim Guru', '/guru/game'),
+      MobileFeature('alat-nara', 'Alat NARA', '/guru/ai-tools'),
+      MobileFeature('toko-karya', 'Toko Karya', '/guru/toko-karya'),
     ],
     MobileAudience.umum: [
       MobileFeature('jelajahi', 'Jelajahi', '/umum#produk'),
+      MobileFeature('jalur-cerdas', 'Jalur Cerdas', '/arena/jalur-cerdas'),
+      MobileFeature('toko-karya', 'Toko Karya', '/marketplace'),
       MobileFeature('koleksi', 'Koleksi', '/umum/koleksi'),
       MobileFeature('akun', 'Akun', '/umum/pengaturan'),
     ],
@@ -53,6 +60,12 @@ class MobileFeatureCatalog {
   static String? destination(String id, MobileAudience audience) {
     if (id == 'karya') {
       return audience == MobileAudience.murid ? '/murid/karya' : null;
+    }
+    if (id == 'gim' && audience == MobileAudience.guru) {
+      return '/guru/game';
+    }
+    if (id == 'nara' && audience == MobileAudience.guru) {
+      return '/guru/ai-bc';
     }
     if (id == 'bermain-bersama') {
       return audience == MobileAudience.guru
