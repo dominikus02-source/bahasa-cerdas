@@ -15,11 +15,12 @@ env.write_text("POSTGRES_USER=bookstudio\nPOSTGRES_DB=bookstudio_qa\nPOSTGRES_PA
 subprocess.run(["docker","network","create","--internal",network],check=True,capture_output=True)
 subprocess.run(["docker","run","-d","--name",database,"--network",network,"--env-file",str(env),"postgres:16-alpine"],check=True,capture_output=True)
 for attempt in range(40):
- if subprocess.run(["docker","exec",database,"pg_isready","-U","bookstudio","-d","bookstudio_qa"],capture_output=True).returncode==0:break
+ if subprocess.run(["docker","exec",database,"pg_isready","-h","127.0.0.1","-U","bookstudio","-d","bookstudio_qa"],capture_output=True).returncode==0:break
  time.sleep(1)
 else:raise RuntimeError("QA database readiness failed")
 schema=subprocess.check_output(["docker","exec","bc-book-studio-runtime-db-1","pg_dump","--schema-only","--no-owner","--no-privileges","-U","bookstudio","-d","bookstudio"])
-subprocess.run(["docker","exec","-i",database,"psql","-X","-v","ON_ERROR_STOP=1","-U","bookstudio","-d","bookstudio_qa"],input=schema,check=True,capture_output=True)
+result=subprocess.run(["docker","exec","-i",database,"psql","-X","-v","ON_ERROR_STOP=1","-U","bookstudio","-d","bookstudio_qa"],input=schema,capture_output=True)
+if result.returncode:raise RuntimeError("QA schema import failed: "+result.stderr.decode(errors="replace")[-2000:])
 salt=secrets.token_hex(16)
 hashed=salt+":"+hashlib.scrypt(account["password"].encode(),salt=salt.encode(),n=16384,r=8,p=1,dklen=64,maxmem=64*1024*1024).hex()
 quote=lambda value:"'"+value.replace("'","''")+"'"
