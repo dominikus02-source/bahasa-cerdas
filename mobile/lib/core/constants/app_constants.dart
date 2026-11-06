@@ -8,7 +8,10 @@ class AppConstants {
   static const String guruHome = '/guru/beranda';
   static const String adminHome = '/admin';
   static const String umumHome = '/umum';
-  static const String loginPath = '/auth/login';
+  static const String loginPath = '/login';
+  static const String registerPath = '/register';
+  static const String forgotPath = '/auth/lupa-sandi';
+  static const String logoutPath = '/auth/logout';
   static const String deniedPath = '/auth/akses-ditolak';
 
   // Role (sinkron dengan enum Role di Prisma)
