@@ -4,6 +4,7 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/navigation_policy.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/mobile_feature_catalog.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String? initialUrl;
@@ -26,6 +27,65 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isLoading = true;
   bool _hasError = false;
   double _progress = 0.0;
+  MobileAudience? _audience;
+
+  Future<void> _openFeature(MobileFeature feature) async {
+    final audience = _audience;
+    if (audience == null) return;
+    final path = MobileFeatureCatalog.destination(feature.id, audience);
+    if (path == null) return;
+    await _controller.loadRequest(Uri.parse('${AppConstants.baseUrl}$path'));
+  }
+
+  void _showFeatureHub() {
+    final audience = _audience;
+    if (audience == null) return;
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (sheetContext) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Jelajahi BahasaCerdas', style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 6),
+              const Text('Fitur utama dan pilihan sesuai peranmu.'),
+              const SizedBox(height: 14),
+              Flexible(child: ListView(
+                shrinkWrap: true,
+                children: [
+                  for (final feature in MobileFeatureCatalog.shared)
+                    ListTile(
+                      title: Text(feature.label),
+                      trailing: const Icon(Icons.chevron_right),
+                      enabled: MobileFeatureCatalog.destination(feature.id, audience) != null,
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        _openFeature(feature);
+                      },
+                    ),
+                  const Divider(),
+                  for (final feature in MobileFeatureCatalog.byAudience[audience] ?? const <MobileFeature>[])
+                    ListTile(
+                      title: Text(feature.label),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        _openFeature(feature);
+                      },
+                    ),
+                ],
+              )),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Future<void> _goBack() async {
     if (await _controller.canGoBack()) {
@@ -131,8 +191,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
       detectedRole = 'FOUNDER';
     }
 
-    if (detectedRole != null && widget.onRoleDetected != null) {
-      widget.onRoleDetected!(detectedRole);
+    if (detectedRole != null) {
+      final audience = switch (detectedRole) {
+        'MURID' => MobileAudience.murid,
+        'GURU' => MobileAudience.guru,
+        'UMUM' => MobileAudience.umum,
+        _ => null,
+      };
+      if (mounted && audience != _audience) setState(() => _audience = audience);
+      widget.onRoleDetected?.call(detectedRole);
     }
   }
 
@@ -144,6 +211,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
         if (!didPop) _goBack();
       },
       child: Scaffold(
+      floatingActionButton: _audience == null ? null : FloatingActionButton.small(
+        onPressed: _showFeatureHub,
+        tooltip: 'Jelajahi fitur',
+        child: const Icon(Icons.apps_rounded),
+      ),
       body: SafeArea(
         child: Stack(
           children: [
