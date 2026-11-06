@@ -14,6 +14,24 @@ class AppTheme {
         ),
         fontFamily: 'Inter',
         scaffoldBackgroundColor: const Color(0xFFF8F7FC),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: navy,
+            foregroundColor: Colors.white,
+            minimumSize: const Size(0, 52),
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+          ),
+        ),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: navy,
+            minimumSize: const Size(0, 52),
+            side: const BorderSide(color: Color(0xFFD8DFEC)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          ),
+        ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF16181D),
