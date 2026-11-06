@@ -41,6 +41,8 @@ const publicPaths = [
   // Parents install the APK before anyone has an account — gating this behind
   // login would put the download on the far side of the thing it unlocks.
   "/unduh",
+  // Demo Android (Appetize) — publik, tidak perlu login.
+  "/android-demo",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/opengraph-image",
 ];
 
