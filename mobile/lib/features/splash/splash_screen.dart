@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../constants/app_constants.dart';
+import '../../core/constants/app_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onFinish;
@@ -11,43 +11,79 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    Future.delayed(const Duration(milliseconds: 2000), widget.onFinish);
+    _timer = Timer(const Duration(milliseconds: 1200), widget.onFinish);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final width = MediaQuery.sizeOf(context).width;
+    final logoSize = (width * 0.27).clamp(88.0, 128.0);
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/icons/icon-512.png',
-              width: MediaQuery.of(context).size.width * 0.28,
-              height: MediaQuery.of(context).size.width * 0.28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 28),
-            Text(
-              AppConstants.appName,
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.6,
-                color: Color(0xFF16181D),
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: dark
+                ? const [Color(0xFF0F172A), Color(0xFF312E81)]
+                : const [Color(0xFFFFFFFF), Color(0xFFF3E8FF)],
+          ),
+        ),
+        child: SafeArea(
+          child: Column(
+            children: [
+              const Spacer(),
+              Semantics(
+                label: 'Logo BahasaCerdas',
+                child: Image.asset(
+                  'assets/icons/icon-512.png',
+                  width: logoSize,
+                  height: logoSize,
+                ),
               ),
-            ),
-            const SizedBox(height: 6),
-            const Text(
-              'Belajar Bahasa, Mengenal Budaya, Berpikir Cerdas',
-              style: TextStyle(color: Color(0xFF5B6270), fontSize: 13),
-            ),
-          ],
+              const SizedBox(height: 22),
+              Text(
+                AppConstants.appName,
+                style: TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.w800,
+                  color: dark ? Colors.white : const Color(0xFF1E1B4B),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'Belajar Bahasa, Mengenal Budaya, Berpikir Cerdas',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: dark ? const Color(0xFFCBD5E1) : const Color(0xFF475569),
+                  ),
+                ),
+              ),
+              const Spacer(),
+              const SizedBox(
+                width: 26,
+                height: 26,
+                child: CircularProgressIndicator(strokeWidth: 2.5),
+              ),
+              const SizedBox(height: 40),
+            ],
+          ),
         ),
       ),
     );
