@@ -16,6 +16,8 @@ class _AppShellState extends State<AppShell> {
   int _index = 0;
   String? _role;
 
+  bool get _isFounder => _role?.toUpperCase() == 'FOUNDER';
+
   List<_NavItem> get _pages {
     if (_role == null) {
       return const [
@@ -25,7 +27,19 @@ class _AppShellState extends State<AppShell> {
       ];
     }
 
-    switch (_role!.toUpperCase()) {
+    final r = _role!.toUpperCase();
+
+    // Founder: akses Guru + Admin
+    if (_isFounder) {
+      return const [
+        _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
+        _NavItem('AI Tools', Icons.auto_awesome_outlined, Icons.auto_awesome, 'guru_ai'),
+        _NavItem('Admin', Icons.admin_panel_settings_outlined, Icons.admin_panel_settings, 'founder_admin'),
+        _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
+      ];
+    }
+
+    switch (r) {
       case AppConstants.roleGuru:
         return const [
           _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
@@ -123,8 +137,19 @@ class _AppShellState extends State<AppShell> {
             ),
             const SizedBox(height: 24),
 
-            // GURU
-            if (_role == AppConstants.roleGuru) ...[
+            // FOUNDER
+            if (_isFounder) ...[
+              const Text('Founder', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.amber)),
+              ListTile(leading: const Icon(Icons.admin_panel_settings), title: const Text('Kelola Founder'), onTap: () => _openRoute('founder_admin', 2)),
+              ListTile(leading: const Icon(Icons.dashboard), title: const Text('Admin Dashboard'), onTap: () => _openRoute('founder_dashboard', 0)),
+              const Divider(),
+              const Text('Guru', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
+              ListTile(leading: const Icon(Icons.auto_awesome), title: const Text('AI Tools'), onTap: () => _openRoute('guru_ai', 1)),
+              ListTile(leading: const Icon(Icons.groups), title: const Text('Komunitas'), onTap: () => _openRoute('guru_komunitas', 0)),
+            ],
+
+            // GURU (bukan founder)
+            if (_role == AppConstants.roleGuru && !_isFounder) ...[
               const Text('AI Tools', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
               ListTile(leading: const Icon(Icons.auto_awesome), title: const Text('Semua AI Tools'), onTap: () => _openRoute('guru_ai', 1)),
               ListTile(leading: const Icon(Icons.grading), title: const Text('Grading'), onTap: () => _openRoute('guru_grading', 1)),
