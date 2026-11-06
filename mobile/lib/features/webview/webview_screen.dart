@@ -92,9 +92,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
     widget.onControllerReady?.call(_controller);
 
+    // Konfigurasi Android WebView untuk kamera & mikrofon
     if (_controller.platform is AndroidWebViewController) {
       final androidController = _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
+
+      // Izinkan akses kamera & mikrofon untuk JUMPA
+      androidController.setOnPlatformPermissionRequest((request) {
+        request.grant();
+      });
     }
   }
 
