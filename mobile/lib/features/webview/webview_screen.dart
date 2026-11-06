@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import '../../core/constants/app_constants.dart';
 
 class WebViewScreen extends StatefulWidget {
-  const WebViewScreen({super.key});
+  final String initialUrl;
+  final ValueChanged<String?>? onRoleDetected;
+  const WebViewScreen({super.key, required this.initialUrl, this.onRoleDetected});
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -59,7 +60,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
           },
         ),
       )
-      ..loadRequest(Uri.parse(AppConstants.baseUrl));
+      ..loadRequest(Uri.parse(widget.initialUrl));
   }
 
   @override
