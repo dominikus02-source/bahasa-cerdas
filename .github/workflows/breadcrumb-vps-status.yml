@@ -1,0 +1,39 @@
+name: VPS breadcrumb status
+on:
+  push:
+    branches: [ops/breadcrumb-status-20261106]
+permissions:
+  contents: read
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check authorized VPS connection and release state
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_SSH_KEY"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          printf '\n' >> ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
+          ssh-keyscan -T 10 -H 103.242.10.81 >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 python3 - <<'PY'
+          import subprocess,json,pathlib
+          result={"ssh":"connected"}
+          for name in ["bahasacerdas-prod-web-1","bc-book-studio-ui-canary-web-1"]:
+              data=json.loads(subprocess.check_output(["docker","inspect",name]))[0]
+              result[name]={"image":data["Config"]["Image"],"state":data["State"]["Status"],"health":data["State"].get("Health",{}).get("Status")}
+          for image in ["bahasacerdas/web:breadcrumbs-20261106","bc-book-studio:breadcrumbs-20261106"]:
+              proc=subprocess.run(["docker","image","inspect",image],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+              result[image]={"built":proc.returncode==0}
+          for file in ["/opt/bahasacerdas/apps/breadcrumbs-20261106/breadcrumb-build.log","/opt/bc-book-studio-runtime/releases/breadcrumbs-20261106/breadcrumb-build.log"]:
+              path=pathlib.Path(file)
+              if path.exists():
+                  text=path.read_text(errors="replace")
+                  result[file]={"exists":True,"compiled":"Compiled successfully" in text,"containsBuildError":"ERROR:" in text or "Failed to compile" in text}
+          print(json.dumps(result))
+          PY
