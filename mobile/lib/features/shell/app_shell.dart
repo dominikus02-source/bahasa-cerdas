@@ -17,6 +17,7 @@ class _AppShellState extends State<AppShell> {
   String? _role;
 
   bool get _isFounder => _role?.toUpperCase() == 'FOUNDER';
+  bool get _isAdmin => _role?.toUpperCase() == AppConstants.roleAdmin;
 
   List<_NavItem> get _pages {
     if (_role == null) {
@@ -29,7 +30,6 @@ class _AppShellState extends State<AppShell> {
 
     final r = _role!.toUpperCase();
 
-    // Founder: akses Guru + Admin
     if (_isFounder) {
       return const [
         _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
@@ -56,8 +56,9 @@ class _AppShellState extends State<AppShell> {
         ];
       case AppConstants.roleAdmin:
         return const [
-          _NavItem('Dashboard', Icons.dashboard_outlined, Icons.dashboard, AppRoutes.dashboard),
-          _NavItem('Pengguna', Icons.people_outlined, Icons.people, AppRoutes.dashboard),
+          _NavItem('Dashboard', Icons.dashboard_outlined, Icons.dashboard, 'admin_home'),
+          _NavItem('Analytics', Icons.analytics_outlined, Icons.analytics, 'admin_analytics'),
+          _NavItem('Pengguna', Icons.people_outlined, Icons.people, 'admin_users'),
           _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
         ];
       default:
@@ -141,11 +142,22 @@ class _AppShellState extends State<AppShell> {
             if (_isFounder) ...[
               const Text('Founder', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.amber)),
               ListTile(leading: const Icon(Icons.admin_panel_settings), title: const Text('Kelola Founder'), onTap: () => _openRoute('founder_admin', 2)),
-              ListTile(leading: const Icon(Icons.dashboard), title: const Text('Admin Dashboard'), onTap: () => _openRoute('founder_dashboard', 0)),
+              ListTile(leading: const Icon(Icons.dashboard), title: const Text('Admin Dashboard'), onTap: () => _openRoute('admin_home', 0)),
               const Divider(),
               const Text('Guru', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
               ListTile(leading: const Icon(Icons.auto_awesome), title: const Text('AI Tools'), onTap: () => _openRoute('guru_ai', 1)),
               ListTile(leading: const Icon(Icons.groups), title: const Text('Komunitas'), onTap: () => _openRoute('guru_komunitas', 0)),
+            ],
+
+            // ADMIN
+            if (_isAdmin) ...[
+              const Text('Admin', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.blue)),
+              ListTile(leading: const Icon(Icons.dashboard), title: const Text('Dashboard'), onTap: () => _openRoute('admin_home', 0)),
+              ListTile(leading: const Icon(Icons.analytics), title: const Text('Analytics'), onTap: () => _openRoute('admin_analytics', 1)),
+              ListTile(leading: const Icon(Icons.people), title: const Text('Pengguna'), onTap: () => _openRoute('admin_users', 2)),
+              ListTile(leading: const Icon(Icons.payments), title: const Text('Pembayaran'), onTap: () => _openRoute('admin_payments', 0)),
+              ListTile(leading: const Icon(Icons.workspace_premium), title: const Text('Premium'), onTap: () => _openRoute('admin_premium', 0)),
+              ListTile(leading: const Icon(Icons.settings), title: const Text('Pengaturan'), onTap: () => _openRoute('admin_pengaturan', 0)),
             ],
 
             // GURU (bukan founder)
