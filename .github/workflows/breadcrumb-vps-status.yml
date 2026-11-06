@@ -1,15 +1,19 @@
-name: Prepare BC Studio breadcrumb release
+name: Verify and deploy BC Studio breadcrumbs
 on:
   push:
     branches: [ops/breadcrumb-status-20261106]
 permissions:
   contents: read
 jobs:
-  status:
+  release:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Check authorized VPS connection and release state
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Prepare authorized SSH and synthetic QA credentials
         env:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
         run: |
@@ -21,42 +25,48 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keygen -y -f ~/.ssh/id_ed25519 >/dev/null
           ssh-keyscan -T 10 -H 103.242.10.81 >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 python3 - <<'PY'
-          import subprocess,json,pathlib
-          result={"ssh":"connected"}
-          for name in ["bahasacerdas-prod-web-1","bc-book-studio-ui-canary-web-1"]:
-              data=json.loads(subprocess.check_output(["docker","inspect",name]))[0]
-              result[name]={"image":data["Config"]["Image"],"state":data["State"]["Status"],"health":data["State"].get("Health",{}).get("Status")}
-          for image in ["bahasacerdas/web:breadcrumbs-20261106","bc-book-studio:breadcrumbs-20261106"]:
-              proc=subprocess.run(["docker","image","inspect",image],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-              result[image]={"built":proc.returncode==0}
-          for file in ["/opt/bahasacerdas/apps/breadcrumbs-20261106/breadcrumb-build.log","/opt/bc-book-studio-runtime/releases/breadcrumbs-20261106/breadcrumb-build.log"]:
-              path=pathlib.Path(file)
-              if path.exists():
-                  text=path.read_text(errors="replace")
-                  result[file]={"exists":True,"compiled":"Compiled successfully" in text,"containsBuildError":"ERROR:" in text or "Failed to compile" in text}
-          print(json.dumps(result))
+          echo "BREADCRUMB_QA_RUN=${GITHUB_RUN_ID}${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_ENV"
+          python3 - <<'PY'
+          import os,pathlib,secrets,json
+          path=pathlib.Path(os.environ["RUNNER_TEMP"])/"breadcrumb-fixture.json"
+          path.write_text(json.dumps({"email":"breadcrumb-image@example.test","password":secrets.token_urlsafe(32)}))
+          path.chmod(0o600)
           PY
-
-      - name: Build bounded UI release without database changes
+      - name: Install browser test tools
+        run: |
+          npm install --prefix "$RUNNER_TEMP/browser-tools" --no-audit --no-fund @playwright/test@1.64.1
+          "$RUNNER_TEMP/browser-tools/node_modules/.bin/playwright" install --with-deps chromium
+      - name: Prepare isolated image QA on VPS
         run: |
           set -euo pipefail
-          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 python3 - <<'PY'
-          import pathlib,shutil,subprocess,json
-          root=pathlib.Path("/opt/bc-book-studio-runtime/releases")
-          source=root/"breadcrumbs-20261106"
-          dest=root/"breadcrumbs-fixed-20261106"
-          assert source.is_dir()
-          if not dest.exists():
-              shutil.copytree(source,dest,ignore=shutil.ignore_patterns("node_modules",".next",".git","*.log",".env",".env.local",".env.production","test-results"))
-          for file in ["components/use-book-selection.ts","components/use-studio-navigation.ts"]:
-              path=dest/file
-              text=path.read_text()
-              path.write_text(text.replace("window.history.pushState(window.history.state,","window.history.pushState(null,"))
-          log=dest/"breadcrumb-build.log"
-          with log.open("w") as output:
-              result=subprocess.run(["docker","build","--target","runtime","-t","bc-book-studio:breadcrumbs-fixed-20261106","."],cwd=dest,stdout=output,stderr=subprocess.STDOUT)
-          print(json.dumps({"imageBuildExit":result.returncode,"source":str(dest)}))
-          if result.returncode: raise SystemExit(result.returncode)
-          print("BCSTUDIO_BREADCRUMB_IMAGE_BUILT")
+          scp -p -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes "$RUNNER_TEMP/breadcrumb-fixture.json" "bcadmin@103.242.10.81:/tmp/breadcrumb-fixture-$BREADCRUMB_QA_RUN.json"
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 "python3 - '$BREADCRUMB_QA_RUN'" < ops/vps/breadcrumb-studio-qa.py > "$RUNNER_TEMP/breadcrumb-qa-state.json"
+          APP_IP=$(python3 -c 'import json,sys,ipaddress; print(ipaddress.ip_address(json.load(open(sys.argv[1]))["address"]))' "$RUNNER_TEMP/breadcrumb-qa-state.json")
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ExitOnForwardFailure=yes -M -S "$RUNNER_TEMP/breadcrumb-tunnel" -f -N -L "127.0.0.1:33492:$APP_IP:3000" bcadmin@103.242.10.81
+      - name: Verify real image login CRUD breadcrumbs refresh history and logout
+        run: node ops/vps/breadcrumb-studio-browser.cjs
+      - name: Deploy only the verified BC Studio web image
+        run: |
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 "python3 - '$BREADCRUMB_QA_RUN'" < ops/vps/breadcrumb-studio-deploy.py
+      - name: Check public breadcrumb pages
+        run: node ops/vps/breadcrumb-public-smoke.cjs
+      - name: Remove only temporary QA resources
+        if: always()
+        run: |
+          ssh -S "$RUNNER_TEMP/breadcrumb-tunnel" -O exit bcadmin@103.242.10.81 2>/dev/null || true
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 bcadmin@103.242.10.81 "python3 - '$BREADCRUMB_QA_RUN'" <<'PY'
+          import pathlib,json,subprocess,sys
+          run=sys.argv[1];assert run.isdigit()
+          root=pathlib.Path("/opt/bc-book-studio-runtime/releases/breadcrumbs-fixed-20261106")
+          file=root/("qa-"+run+".json")
+          if file.exists():
+              data=json.loads(file.read_text())
+              for key in ["app","database"]:
+                  assert data[key].startswith("bcstudio-breadcrumb-")
+                  subprocess.run(["docker","rm","-vf",data[key]],capture_output=True)
+              assert data["network"].startswith("bcstudio-breadcrumb-qa-")
+              subprocess.run(["docker","network","rm",data["network"]],capture_output=True)
+          (root/("qa-"+run+".env")).unlink(missing_ok=True)
+          pathlib.Path("/tmp/breadcrumb-fixture-"+run+".json").unlink(missing_ok=True)
+          print("QA_RESOURCES_REMOVED")
           PY
