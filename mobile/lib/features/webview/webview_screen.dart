@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../core/constants/navigation_policy.dart';
 import '../../core/constants/app_constants.dart';
 
 class WebViewScreen extends StatefulWidget {
@@ -40,7 +42,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   void _setupWebView() {
-    final url = widget.initialUrl ?? AppConstants.baseUrl;
+    final candidate = widget.initialUrl ?? AppConstants.baseUrl;
+    final url = NavigationPolicy.isTrustedWebUrl(candidate)
+        ? candidate : AppConstants.baseUrl;
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -76,20 +80,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
             final uri = Uri.tryParse(request.url);
             if (uri == null) return NavigationDecision.prevent;
 
-            final host = uri.host.toLowerCase();
-            if (uri.scheme == 'https' &&
-                (_isDomain(host, 'google.com') ||
-                 _isDomain(host, 'googleapis.com') ||
-                 _isDomain(host, 'gstatic.com') ||
-                 _isDomain(host, 'bahasacerdas.com'))) {
+            if (NavigationPolicy.isTrustedWebUrl(request.url)) {
               return NavigationDecision.navigate;
             }
-
-            if (uri.scheme != 'http' && uri.scheme != 'https') {
-              return NavigationDecision.prevent;
+            // Never load third-party pages in the authenticated WebView.
+            // OAuth must eventually use a verified native callback flow.
+            if (uri.scheme == 'https' && uri.userInfo.isEmpty) {
+              launchUrl(uri, mode: LaunchMode.externalApplication);
             }
-
-            return NavigationDecision.navigate;
+            return NavigationDecision.prevent;
           },
         ),
       )
