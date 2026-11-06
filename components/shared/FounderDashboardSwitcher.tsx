@@ -20,11 +20,11 @@ export function FounderDashboardSwitcher({
   ];
 
   return (
-    <details className={compact ? "relative z-[100]" : "relative z-[100] mb-4"} data-founder-dashboard-switcher>
-      <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-bold text-violet-900 shadow-sm transition hover:bg-violet-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:border-violet-800 dark:bg-violet-950/60 dark:text-violet-100 dark:hover:bg-violet-900/60">
-        <ShieldCheck size={16} aria-hidden="true" />
-        <span>Pindah Dasbor Founder</span>
-        <ChevronDown size={14} aria-hidden="true" />
+    <details className={compact ? "relative z-[100] shrink-0" : "relative z-[100] mb-4"} data-founder-dashboard-switcher>
+      <summary aria-label="Pindah dasbor founder" title="Pindah dasbor founder" className="inline-flex min-h-11 min-w-11 cursor-pointer list-none items-center justify-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-2.5 py-2 text-xs font-bold text-violet-900 shadow-sm transition hover:bg-violet-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 sm:px-3 dark:border-violet-800 dark:bg-violet-950/60 dark:text-violet-100 dark:hover:bg-violet-900/60">
+        <ShieldCheck size={18} className="shrink-0" aria-hidden="true" />
+        <span className="hidden whitespace-nowrap sm:inline">Pindah Dasbor Founder</span>
+        <ChevronDown size={14} className="hidden shrink-0 sm:block" aria-hidden="true" />
       </summary>
       <nav aria-label="Pilihan dasbor founder" className="absolute right-0 top-full z-[110] mt-2 max-h-[min(70vh,22rem)] min-w-52 overflow-y-auto overscroll-contain rounded-xl border border-bc-line bg-bc-surface p-1.5 shadow-xl">
         {links.map(({ href, label, Icon }) => (
