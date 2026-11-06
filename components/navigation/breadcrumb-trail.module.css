@@ -1,0 +1,10 @@
+.trail{color:inherit;font-size:13px;line-height:1.6;margin:8px 0 16px;max-width:100%;min-width:0}
+.trail ol{list-style:none;display:flex;align-items:center;flex-wrap:wrap;gap:2px 6px;margin:0;padding:0}
+.trail li{display:flex;align-items:center;gap:6px;min-width:0;max-width:100%}
+.trail a,.trail span{overflow-wrap:anywhere;min-width:0}
+.trail a{display:inline-flex;align-items:center;min-height:36px;padding:2px;color:inherit;text-decoration:underline;text-underline-offset:3px}
+.trail a:focus-visible{outline:2px solid currentColor;outline-offset:2px;border-radius:4px}
+.trail span[aria-current=page]{font-weight:600}
+.separator{flex-shrink:0}
+.host{width:100%;min-width:0;grid-column:1 / -1;flex:0 0 auto}
+.fallback:empty{display:none}
