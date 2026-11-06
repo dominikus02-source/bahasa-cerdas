@@ -9,8 +9,12 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String logout = '/logout';
 
+  // Guru paths (match website)
   static const String guruBeranda = '/guru/beranda';
   static const String guruAiTools = '/guru/ai-tools';
+  static const String guruAiGrading = '/guru/ai-tools/grading';
+  static const String guruAiEyd = '/guru/ai-tools/eyd';
+  static const String guruAiText = '/guru/ai-tools/text-analysis';
   static const String guruKomunitas = '/guru/komunitas';
   static const String guruBerlangganan = '/guru/berlangganan';
 
@@ -30,8 +34,16 @@ class AppRoutes {
         return _dashboardForRole(role);
       case 'guru_ai':
         return '${AppConstants.baseUrl}$guruAiTools';
+      case 'guru_grading':
+        return '${AppConstants.baseUrl}$guruAiGrading';
+      case 'guru_eyd':
+        return '${AppConstants.baseUrl}$guruAiEyd';
+      case 'guru_text':
+        return '${AppConstants.baseUrl}$guruAiText';
       case 'guru_komunitas':
         return '${AppConstants.baseUrl}$guruKomunitas';
+      case 'guru_berlangganan':
+        return '${AppConstants.baseUrl}$guruBerlangganan';
       default:
         return AppConstants.baseUrl;
     }
