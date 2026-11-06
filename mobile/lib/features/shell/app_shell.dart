@@ -15,6 +15,7 @@ class AppShell extends StatefulWidget {
 class _AppShellState extends State<AppShell> {
   int _index = 0;
   String? _role;
+  String? _selectedRoute;
 
   bool get _isFounder => _role?.toUpperCase() == 'FOUNDER';
   bool get _isAdmin => _role?.toUpperCase() == AppConstants.roleAdmin;
@@ -82,6 +83,7 @@ class _AppShellState extends State<AppShell> {
       setState(() {
         _role = role;
         _index = 0;
+        _selectedRoute = null;
       });
     }
   }
@@ -89,7 +91,8 @@ class _AppShellState extends State<AppShell> {
   Future<void> _logout() async {
     setState(() {
       _role = null;
-      _index = 1;
+      _index = 0;
+      _selectedRoute = AppRoutes.logout;
     });
   }
 
@@ -102,7 +105,10 @@ class _AppShellState extends State<AppShell> {
 
   void _openRoute(String routeKey, int tabIndex) {
     Navigator.pop(context);
-    setState(() => _index = tabIndex);
+    setState(() {
+      _index = tabIndex.clamp(0, _pages.length - 1);
+      _selectedRoute = routeKey;
+    });
   }
 
   @override
@@ -111,7 +117,7 @@ class _AppShellState extends State<AppShell> {
     if (_index >= pages.length) _index = 0;
 
     final current = pages[_index];
-    final url = AppRoutes.webPathForRoute(current.route, role: _role);
+    final url = AppRoutes.webPathForRoute(_selectedRoute ?? current.route, role: _role);
 
     return Scaffold(
       body: WebViewScreen(
@@ -121,7 +127,10 @@ class _AppShellState extends State<AppShell> {
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
+        onDestinationSelected: (i) => setState(() {
+          _index = i;
+          _selectedRoute = null;
+        }),
         destinations: pages
             .map((p) => NavigationDestination(
                   icon: Icon(p.icon),
