@@ -11,3 +11,16 @@ mobile/ios/Pods/
 mobile/ios/.symlinks/
 mobile/ios/Flutter/Flutter.framework
 mobile/ios/Flutter/Flutter.podspec
+
+# Flutter generated files (paths relative to mobile/)
+.dart_tool/
+.flutter-plugins-dependencies
+.metadata
+.idea/
+*.iml
+/build/
+/android/.gradle/
+/android/.kotlin/
+/android/local.properties
+/android/app/google-services.json
+/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java

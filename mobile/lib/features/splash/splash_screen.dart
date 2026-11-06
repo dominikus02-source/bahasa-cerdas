@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../constants/app_constants.dart';
+import '../../core/constants/app_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onFinish;
@@ -33,9 +33,9 @@ class _SplashScreenState extends State<SplashScreen> {
               fit: BoxFit.contain,
             ),
             const SizedBox(height: 28),
-            Text(
+            const Text(
               AppConstants.appName,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w800,
                 letterSpacing: -0.6,
