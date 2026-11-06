@@ -25,6 +25,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   double _progress = 0.0;
 
+  Future<void> _goBack() async {
+    if (await _controller.canGoBack()) {
+      await _controller.goBack();
+    } else if (mounted && Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -131,7 +139,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _goBack();
+      },
+      child: Scaffold(
       body: SafeArea(
         child: Stack(
           children: [
@@ -157,6 +170,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               ),
           ],
         ),
+      ),
       ),
     );
   }
