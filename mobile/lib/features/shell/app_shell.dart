@@ -20,13 +20,30 @@ class _AppShellState extends State<AppShell> {
     _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
   ];
 
+  void _onRoleDetected(String? role) {
+    if (role != null && role != _role) {
+      setState(() => _role = role);
+    }
+  }
+
+  void _logout() {
+    setState(() {
+      _role = null;
+      _index = 1;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final current = _pages[_index];
     final url = AppRoutes.webPathForRoute(current.route, role: _role);
 
     return Scaffold(
-      body: WebViewScreen(initialUrl: url, key: ValueKey(url)),
+      body: WebViewScreen(
+        initialUrl: url,
+        key: ValueKey(url),
+        onRoleDetected: _onRoleDetected,
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() => _index = i),
@@ -38,6 +55,13 @@ class _AppShellState extends State<AppShell> {
                 ))
             .toList(),
       ),
+      floatingActionButton: _role != null
+          ? FloatingActionButton.small(
+              onPressed: _logout,
+              tooltip: 'Keluar',
+              child: const Icon(Icons.logout),
+            )
+          : null,
     );
   }
 }
