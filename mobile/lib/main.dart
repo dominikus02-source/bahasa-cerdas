@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'app.dart';
 
 // Background message handler (wajib di top-level)
@@ -33,8 +32,8 @@ Future<void> main() async {
   // FCM background
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Minta izin kamera & mikrofon (untuk JUMPA)
-  await _requestPermissions();
+  // Request device permissions only when a feature needs them.
+  // Startup must not interrupt the splash and sign-in experience.
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -44,11 +43,3 @@ Future<void> main() async {
   runApp(const BahasaCerdasApp());
 }
 
-Future<void> _requestPermissions() async {
-  await [
-    Permission.camera,
-    Permission.microphone,
-    Permission.notification,
-    Permission.storage,
-  ].request();
-}
