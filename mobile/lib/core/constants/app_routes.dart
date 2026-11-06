@@ -51,11 +51,11 @@ class AppRoutes {
       case login:
         return '${AppConstants.baseUrl}${AppConstants.loginPath}';
       case signup:
-        return '${AppConstants.baseUrl}/auth/register';
+        return '${AppConstants.baseUrl}${AppConstants.registerPath}';
       case forgot:
-        return '${AppConstants.baseUrl}/auth/lupa-sandi';
+        return '${AppConstants.baseUrl}${AppConstants.forgotPath}';
       case logout:
-        return '${AppConstants.baseUrl}/auth/logout';
+        return '${AppConstants.baseUrl}${AppConstants.logoutPath}';
       case dashboard:
         return _dashboardForRole(role);
 
