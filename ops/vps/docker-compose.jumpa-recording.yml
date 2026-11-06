@@ -1,0 +1,45 @@
+# Apply after prepare-jumpa-recording.py and media/browser acceptance.
+# Merge with docker-compose.yml; never start against a room currently in use.
+services:
+  web:
+    environment:
+      JUMPA_RECORDING_ENABLED: ${JUMPA_RECORDING_ENABLED:-0}
+      JUMPA_MAX_PARTICIPANTS: ${JUMPA_MAX_PARTICIPANTS:-30}
+    volumes:
+      - "${BC_DATA_DIR:-/opt/bahasacerdas/data}/jumpa-recordings:/recordings:ro"
+  livekit:
+    cpus: 4
+    mem_limit: 3g
+    volumes:
+      - "${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/livekit-recording.yaml:/etc/livekit.yaml:ro"
+    networks: [edge, jumpa_recording]
+    depends_on: [jumpa-recording-redis]
+  jumpa-recording-redis:
+    image: redis:7.4-alpine
+    profiles: [jumpa]
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 256m
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["jumpa_recording_redis:/data"]
+    networks: [jumpa_recording]
+  jumpa-egress:
+    image: ${JUMPA_EGRESS_IMAGE:-livekit/egress:v1.15.0}
+    profiles: [jumpa]
+    restart: unless-stopped
+    cpus: 4
+    mem_limit: 4g
+    shm_size: 1g
+    stop_grace_period: 120s
+    environment:
+      EGRESS_CONFIG_FILE: /etc/egress.yaml
+    volumes:
+      - "${BC_CONFIG_DIR:-/opt/bahasacerdas/config}/egress.yaml:/etc/egress.yaml:ro"
+      - "${BC_DATA_DIR:-/opt/bahasacerdas/data}/jumpa-recordings:/recordings"
+    networks: [edge, jumpa_recording]
+    depends_on: [livekit, jumpa-recording-redis]
+networks:
+  jumpa_recording:
+    internal: true
+volumes:
+  jumpa_recording_redis:

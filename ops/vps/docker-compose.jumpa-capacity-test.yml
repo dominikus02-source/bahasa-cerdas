@@ -1,0 +1,42 @@
+# Isolated real-media test stack. Never reuses production DB/Auth/Redis/keys.
+services:
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 256m
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes: ["redis_data:/data"]
+    networks: [media]
+  livekit:
+    image: livekit/livekit-server:v1.13.10
+    restart: unless-stopped
+    cpus: 4
+    mem_limit: 3g
+    command: ["--config", "/etc/livekit.yaml"]
+    volumes: ["./livekit.yaml:/etc/livekit.yaml:ro"]
+    ports:
+      - "127.0.0.1:7890:7890"
+      - "7891:7891/tcp"
+      - "7892:7892/udp"
+    networks: [media]
+    depends_on: [redis]
+  egress:
+    image: ${JUMPA_EGRESS_IMAGE:?Set a tested Egress image tag or digest}
+    restart: unless-stopped
+    cpus: 4
+    mem_limit: 4g
+    shm_size: 1g
+    stop_grace_period: 120s
+    environment:
+      EGRESS_CONFIG_FILE: /etc/egress.yaml
+    volumes:
+      - "./egress.yaml:/etc/egress.yaml:ro"
+      - "./recordings:/recordings"
+    networks: [media]
+    depends_on: [redis, livekit]
+networks:
+  media:
+    driver: bridge
+volumes:
+  redis_data:

@@ -71,6 +71,7 @@ import { JumpaRoomProvider, useJumpa, type EndedReason, type JumpaRoomInfo, type
 import { ChatPanel, InvitePanel, PanelFrame, PeoplePanel, ReportPanel, type PanelName } from "./RoomPanels";
 import SettingsPanel from "./SettingsPanel";
 import ConfirmDialog from "./ConfirmDialog";
+import RecordingControl from "./RecordingControl";
 import ShareSheet, { type ShareTarget } from "./ShareSheet";
 import { CountdownChip, TierBadge, TimeLimitWatcher } from "./TierUi";
 
@@ -722,6 +723,7 @@ function ControlBar({
 
   return (
     <div className="jumpa-dock-wrap">
+      <RecordingControl />
       {shareOpen && <ShareSheet target={shareTargetOf(info, self)} onClose={() => setShareOpen(false)} />}
       {endAsk && (
         <ConfirmDialog
