@@ -1,5 +1,5 @@
 const {chromium}=require(process.env.RUNNER_TEMP+"/browser-tools/node_modules/@playwright/test");
-(async()=>{const browser=await chromium.launch({headless:true});try{
+(async()=>{const browser=await chromium.launch({channel:"chrome",headless:true});try{
  for(const [app,origin,paths] of [["studio","https://bcbookstudio.bahasacerdas.com",["/login","/activate"]],["main","https://www.bahasacerdas.com",["/tentang","/faq"]]]){
   const page=await browser.newPage();
   for(const path of paths){

@@ -27,6 +27,11 @@ sql='INSERT INTO "StudioUser" (id,email,name,role,"passwordHash",active,"created
 subprocess.run(["docker","exec","-i",database,"psql","-X","-v","ON_ERROR_STOP=1","-U","bookstudio","-d","bookstudio_qa"],input=sql.encode(),check=True,capture_output=True)
 env.write_text("DATABASE_URL=postgresql://bookstudio:"+urllib.parse.quote(password,safe="")+"@"+database+":5432/bookstudio_qa?schema=public\n")
 subprocess.run(["docker","run","-d","--name",app,"--network",network,"--env-file",str(env),"--security-opt","no-new-privileges:true",image],check=True,capture_output=True)
+for attempt in range(30):
+ probe=subprocess.run(["docker","exec",app,"node","-e",'fetch("http://127.0.0.1:3000/api/health").then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))'],capture_output=True)
+ if probe.returncode==0:break
+ time.sleep(1)
+else:raise RuntimeError("QA application readiness failed")
 data=json.loads(subprocess.check_output(["docker","inspect",app]))[0]
 state["address"]=data["NetworkSettings"]["Networks"][network]["IPAddress"]
 statefile.write_text(json.dumps(state))

@@ -7,7 +7,7 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -35,7 +35,28 @@ jobs:
       - name: Install browser test tools
         run: |
           npm install --prefix "$RUNNER_TEMP/browser-tools" --no-audit --no-fund @playwright/test@1.64.1
-          "$RUNNER_TEMP/browser-tools/node_modules/.bin/playwright" install --with-deps chromium
+          command -v google-chrome >/dev/null
+      - uses: docker/setup-buildx-action@v3
+      - name: Fetch bounded source without runtime secrets
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/bookstudio-source"
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 "tar --exclude='node_modules' --exclude='.next' --exclude='.git' --exclude='.env*' --exclude='*.log' --exclude='qa-*' -czf - -C /opt/bc-book-studio-runtime/releases/breadcrumbs-fixed-20261106 ." | tar -xzf - -C "$RUNNER_TEMP/bookstudio-source"
+      - name: Build UI image outside production VPS
+        uses: docker/build-push-action@v6
+        with:
+          context: ${{ runner.temp }}/bookstudio-source
+          target: runtime
+          load: true
+          tags: bc-book-studio:breadcrumbs-fixed-20261106
+          build-args: REVISION=breadcrumb-patch-90e92c8
+          cache-from: type=gha,scope=bookstudio-breadcrumb-runtime
+          cache-to: type=gha,mode=min,scope=bookstudio-breadcrumb-runtime
+      - name: Load image with a free-space guard
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 bcadmin@103.242.10.81 "python3 -c 'import shutil; assert shutil.disk_usage(\"/opt\").free >= 2*1024**3, \"Insufficient image loading space\"'"
+          docker save bc-book-studio:breadcrumbs-fixed-20261106 | gzip -1 | ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 'gunzip | docker load'
       - name: Prepare isolated image QA on VPS
         run: |
           set -euo pipefail

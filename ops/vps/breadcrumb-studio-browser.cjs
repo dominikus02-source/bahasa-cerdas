@@ -1,6 +1,6 @@
 const {chromium,expect}=require(process.env.RUNNER_TEMP+"/browser-tools/node_modules/@playwright/test");
 const fs=require("node:fs");
-(async()=>{const fixture=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/breadcrumb-fixture.json","utf8"));const browser=await chromium.launch({headless:true});try{
+(async()=>{const fixture=JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP+"/breadcrumb-fixture.json","utf8"));const browser=await chromium.launch({channel:"chrome",headless:true});try{
  const page=await browser.newPage();const origin="http://127.0.0.1:33492";
  await page.goto(origin+"/login");await page.getByLabel("Alamat email").fill(fixture.email);await page.getByLabel("Kata sandi",{exact:true}).fill(fixture.password);await page.getByRole("button",{name:"Masuk ke Studio"}).click();await page.waitForURL("**/studio");
  const menu=page.getByRole("navigation",{name:"Menu studio"}),trail=page.getByRole("navigation",{name:"Jejak navigasi"});
