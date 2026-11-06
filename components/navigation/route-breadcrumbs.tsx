@@ -11,6 +11,8 @@ export default function RouteBreadcrumbs(){
  const [host,setHost]=useState<HTMLElement|null>(null);
  const [heading,setHeading]=useState("");
  useEffect(()=>{
+  // The landing page has its own fixed navbar and does not need a breadcrumb.
+  if(pathname==="/"){setHost(null);return;}
   const container=document.createElement("div");
   container.className=styles.host;container.dataset.breadcrumbHost="true";
   let frame=0;
@@ -36,5 +38,5 @@ export default function RouteBreadcrumbs(){
   return()=>{observer.disconnect();cancelAnimationFrame(frame);container.remove();};
  },[pathname]);
  const items=pageBreadcrumbs(pathname,heading);
- return <><div ref={fallback} className={styles.fallback}/>{host&&createPortal(<BreadcrumbTrail items={items}/>,host)}</>;
+ return <><div ref={fallback} className={styles.fallback}/>{pathname!=="/"&&host&&createPortal(<BreadcrumbTrail items={items}/>,host)}</>;
 }
