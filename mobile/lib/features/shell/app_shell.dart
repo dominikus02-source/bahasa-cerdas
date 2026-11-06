@@ -36,8 +36,9 @@ class _AppShellState extends State<AppShell> {
       case AppConstants.roleMurid:
         return const [
           _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
-          _NavItem('Materi', Icons.menu_book_outlined, Icons.menu_book, AppRoutes.dashboard),
-          _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
+          _NavItem('Belajar', Icons.menu_book_outlined, Icons.menu_book, 'murid_belajar'),
+          _NavItem('Kelas', Icons.groups_outlined, Icons.groups, 'murid_kelasku'),
+          _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, 'murid_profile'),
         ];
       case AppConstants.roleAdmin:
         return const [
@@ -76,10 +77,9 @@ class _AppShellState extends State<AppShell> {
     }
   }
 
-  void _openGuruRoute(String routeKey, int tabIndex) {
+  void _openRoute(String routeKey, int tabIndex) {
     Navigator.pop(context);
     setState(() => _index = tabIndex);
-    // Force rebuild with new route
   }
 
   @override
@@ -122,68 +122,43 @@ class _AppShellState extends State<AppShell> {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 24),
+
+            // GURU
             if (_role == AppConstants.roleGuru) ...[
               const Text('AI Tools', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
-              ListTile(
-                leading: const Icon(Icons.auto_awesome),
-                title: const Text('Semua AI Tools'),
-                onTap: () => _openGuruRoute('guru_ai', 1),
-              ),
-              ListTile(
-                leading: const Icon(Icons.grading),
-                title: const Text('Grading'),
-                onTap: () => _openGuruRoute('guru_grading', 1),
-              ),
-              ListTile(
-                leading: const Icon(Icons.spellcheck),
-                title: const Text('EYD'),
-                onTap: () => _openGuruRoute('guru_eyd', 1),
-              ),
-              ListTile(
-                leading: const Icon(Icons.text_fields),
-                title: const Text('Text Analysis'),
-                onTap: () => _openGuruRoute('guru_text', 1),
-              ),
+              ListTile(leading: const Icon(Icons.auto_awesome), title: const Text('Semua AI Tools'), onTap: () => _openRoute('guru_ai', 1)),
+              ListTile(leading: const Icon(Icons.grading), title: const Text('Grading'), onTap: () => _openRoute('guru_grading', 1)),
+              ListTile(leading: const Icon(Icons.spellcheck), title: const Text('EYD'), onTap: () => _openRoute('guru_eyd', 1)),
+              ListTile(leading: const Icon(Icons.text_fields), title: const Text('Text Analysis'), onTap: () => _openRoute('guru_text', 1)),
               const Divider(),
-              ListTile(
-                leading: const Icon(Icons.groups),
-                title: const Text('Komunitas'),
-                onTap: () => _openGuruRoute('guru_komunitas', 2),
-              ),
-              ListTile(
-                leading: const Icon(Icons.workspace_premium),
-                title: const Text('Berlangganan'),
-                onTap: () => _openGuruRoute('guru_berlangganan', 0),
-              ),
+              ListTile(leading: const Icon(Icons.groups), title: const Text('Komunitas'), onTap: () => _openRoute('guru_komunitas', 2)),
+              ListTile(leading: const Icon(Icons.workspace_premium), title: const Text('Berlangganan'), onTap: () => _openRoute('guru_berlangganan', 0)),
             ],
+
+            // MURID
+            if (_role == AppConstants.roleMurid) ...[
+              const Text('Belajar', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
+              ListTile(leading: const Icon(Icons.menu_book), title: const Text('Belajar'), onTap: () => _openRoute('murid_belajar', 1)),
+              ListTile(leading: const Icon(Icons.groups), title: const Text('Kelasku'), onTap: () => _openRoute('murid_kelasku', 2)),
+              ListTile(leading: const Icon(Icons.trending_up), title: const Text('Progresku'), onTap: () => _openRoute('murid_progres', 0)),
+              ListTile(leading: const Icon(Icons.edit), title: const Text('Karya'), onTap: () => _openRoute('murid_karya', 0)),
+              ListTile(leading: const Icon(Icons.sports_esports), title: const Text('Game'), onTap: () => _openRoute('murid_game', 0)),
+              ListTile(leading: const Icon(Icons.today), title: const Text('Kuest Harian'), onTap: () => _openRoute('murid_kuest', 0)),
+              const Divider(),
+              ListTile(leading: const Icon(Icons.workspace_premium), title: const Text('Premium'), onTap: () => _openRoute('murid_premium', 0)),
+              ListTile(leading: const Icon(Icons.person), title: const Text('Profil'), onTap: () => _openRoute('murid_profile', 3)),
+            ],
+
             const Divider(),
-            ListTile(
-              leading: const Icon(Icons.lock_reset),
-              title: const Text('Lupa Kata Sandi'),
-              onTap: () {
-                Navigator.pop(context);
-                setState(() => _index = 1);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.privacy_tip_outlined),
-              title: const Text('Kebijakan Privasi'),
-              onTap: () => _openLegal(LegalLinks.privacy),
-            ),
-            ListTile(
-              leading: const Icon(Icons.description_outlined),
-              title: const Text('Syarat & Ketentuan'),
-              onTap: () => _openLegal(LegalLinks.terms),
-            ),
+            ListTile(leading: const Icon(Icons.lock_reset), title: const Text('Lupa Kata Sandi'), onTap: () { Navigator.pop(context); setState(() => _index = 1); }),
+            ListTile(leading: const Icon(Icons.privacy_tip_outlined), title: const Text('Kebijakan Privasi'), onTap: () => _openLegal(LegalLinks.privacy)),
+            ListTile(leading: const Icon(Icons.description_outlined), title: const Text('Syarat & Ketentuan'), onTap: () => _openLegal(LegalLinks.terms)),
             const Divider(),
             if (_role != null)
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.red),
                 title: const Text('Keluar', style: TextStyle(color: Colors.red)),
-                onTap: () {
-                  Navigator.pop(context);
-                  _logout();
-                },
+                onTap: () { Navigator.pop(context); _logout(); },
               ),
           ],
         ),
