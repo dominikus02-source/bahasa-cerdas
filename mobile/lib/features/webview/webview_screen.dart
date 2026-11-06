@@ -102,7 +102,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _detectRoleFromUrl(String url) {
     final uri = Uri.tryParse(url);
     if (uri == null || uri.scheme != 'https' ||
-        !_isDomain(uri.host.toLowerCase(), 'bahasacerdas.com')) return;
+        !_isDomain(uri.host.toLowerCase(), 'bahasacerdas.com')) {
+      return;
+    }
 
     final path = uri.path.toLowerCase();
     String? detectedRole;
