@@ -166,7 +166,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -191,7 +191,7 @@ export default function LoginPage() {
 
 <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
-        <div className="order-2 lg:order-1">
+        <div className="order-2 hidden lg:order-1 lg:block">
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
@@ -231,6 +231,12 @@ export default function LoginPage() {
         <div className="order-1 lg:order-2">
           <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
             <div className="mb-6 text-center">
+              <div className="mb-5 flex flex-col items-center gap-2 lg:hidden">
+                <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} priority className="h-16 w-16 object-contain dark:hidden" />
+                <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} priority className="hidden h-16 w-16 object-contain dark:block" />
+                <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BahasaCerdas</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">{BRAND_TAGLINE}</span>
+              </div>
               <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Selamat datang kembali!</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                 Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda.
@@ -248,7 +254,7 @@ export default function LoginPage() {
             <button
               onClick={handleGoogleLogin}
               disabled={googleLoading}
-              className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800"
+              className="flex w-full items-center justify-center gap-3 min-h-12 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-slate-300 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800"
             >
               {googleLoading ? (
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-slate-300 border-t-slate-600" />
@@ -338,7 +344,7 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
+                    className="absolute right-1 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-lg text-slate-400 transition-colors hover:text-slate-600 dark:hover:text-slate-300"
                     aria-label={showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                   >
                     {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
@@ -383,7 +389,7 @@ export default function LoginPage() {
           </div>
 
           {/* Mobile: value cards compact (desktop tampil di kiri) */}
-          <div className="mt-5 grid gap-2 lg:hidden">
+          <div className="mt-5 hidden gap-2 lg:hidden">
             {valueCards.map((v) => (
               <div key={v.title} className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-900/50">
                 <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${v.tint}`}>
