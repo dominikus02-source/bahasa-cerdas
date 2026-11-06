@@ -245,7 +245,7 @@ class _AppShellState extends State<AppShell> {
             ],
 
             const Divider(),
-            ListTile(leading: const Icon(Icons.lock_reset), title: const Text('Lupa Kata Sandi'), onTap: () { Navigator.pop(context); setState(() => _index = 1); }),
+            ListTile(leading: const Icon(Icons.lock_reset), title: const Text('Lupa Kata Sandi'), onTap: () => _openRoute(AppRoutes.forgot, 0)),
             ListTile(leading: const Icon(Icons.privacy_tip_outlined), title: const Text('Kebijakan Privasi'), onTap: () => _openLegal(LegalLinks.privacy)),
             ListTile(leading: const Icon(Icons.description_outlined), title: const Text('Syarat & Ketentuan'), onTap: () => _openLegal(LegalLinks.terms)),
             ListTile(leading: const Icon(Icons.delete_forever_outlined), title: const Text('Hapus Akun'), onTap: () => _openLegal(LegalLinks.deleteAccount)),
