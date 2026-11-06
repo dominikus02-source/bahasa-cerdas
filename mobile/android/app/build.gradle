@@ -2,7 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
-    id "com.google.gms.google-services"
+    // id "com.google.gms.google-services"  // uncomment after adding android/app/google-services.json
 }
 
 def localProperties = new Properties()
@@ -61,7 +61,8 @@ flutter {
 }
 
 dependencies {
-    implementation platform('com.google.firebase:firebase-bom:33.7.0')
-    implementation 'com.google.firebase:firebase-messaging'
-    implementation 'com.google.firebase:firebase-crashlytics'
+    // Firebase dependencies — enable after google-services.json is present
+    // implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    // implementation 'com.google.firebase:firebase-messaging'
+    // implementation 'com.google.firebase:firebase-crashlytics'
 }
