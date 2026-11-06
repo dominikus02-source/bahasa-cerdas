@@ -41,11 +41,18 @@ class AppShell extends StatelessWidget {
                       Expanded(child: Text('BahasaCerdas',
                         style: theme.textTheme.titleLarge?.copyWith(
                           fontWeight: FontWeight.w800, letterSpacing: -0.7))),
-                      Tooltip(
-                        message: 'Tentang BahasaCerdas',
-                        child: IconButton.filledTonal(
-                          onPressed: () => _open(context, ''),
-                          icon: const Icon(Icons.explore_outlined),
+                      Semantics(
+                        label: 'Masuk ke akun BahasaCerdas',
+                        button: true,
+                        child: IconButton(
+                          tooltip: 'Masuk',
+                          onPressed: () => _open(context, AppConstants.loginPath),
+                          icon: const Icon(Icons.person_outline_rounded),
+                          style: IconButton.styleFrom(
+                            minimumSize: const Size(48, 48),
+                            foregroundColor: theme.colorScheme.primary,
+                            backgroundColor: theme.colorScheme.primaryContainer,
+                          ),
                         ),
                       ),
                     ]),
