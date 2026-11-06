@@ -1,4 +1,4 @@
-name: Read current breadcrumb release health
+name: Verify public breadcrumb release
 on:
   push:
     branches: [ops/breadcrumb-watch-20261106]
@@ -7,8 +7,13 @@ permissions:
 jobs:
   status:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install public browser checks
+        run: npm install --prefix "$RUNNER_TEMP/browser-tools" --no-audit --no-fund @playwright/test@1.64.1
       - name: Read release progress
         env:
           VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
@@ -48,3 +53,24 @@ jobs:
           output["abandonedTaskBuildPids"]=old
           print(json.dumps(output))
           PY
+      - name: Verify rendered public breadcrumbs
+        run: |
+          node <<'JS'
+          const {chromium}=require(process.env.RUNNER_TEMP+"/browser-tools/node_modules/@playwright/test");
+          (async()=>{const browser=await chromium.launch({channel:"chrome",headless:true});try{
+           for(const [app,origin,paths] of [["studio","https://bcbookstudio.bahasacerdas.com",["/login","/activate"]],["main","https://www.bahasacerdas.com",["/tentang","/faq"]]]){
+            const page=await browser.newPage();
+            for(const path of paths){
+             try{
+              const response=await page.goto(origin+path,{waitUntil:"domcontentloaded",timeout:30000});
+              const trail=page.getByRole("navigation",{name:"Jejak navigasi"});
+              await trail.waitFor({timeout:15000});
+              const current=await trail.locator('[aria-current="page"]').innerText();
+              console.log(JSON.stringify({app,path,http:response.status(),breadcrumb:current,verified:response.ok()&&!!current}));
+             }catch(error){console.log(JSON.stringify({app,path,verified:false,error:error.message.split("\n")[0]}));}
+            }
+            await page.close();
+           }
+          }finally{await browser.close();}})().catch(error=>{console.error(error.message);process.exitCode=1;});
+          
+          JS
