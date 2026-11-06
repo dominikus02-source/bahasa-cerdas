@@ -33,6 +33,8 @@ class MobileFeatureCatalog {
       MobileFeature('belajar', 'Belajar', '/murid/belajar'),
       MobileFeature('kelasku', 'Kelasku', '/murid/kelasku'),
       MobileFeature('jalur-cerdas', 'Jalur Cerdas', '/arena/jalur-cerdas'),
+      MobileFeature('nara-mentor', 'NARA Mentor', '/murid/mentor',
+          note: 'Premium; entitlement checked by server'),
       MobileFeature('arena', 'ARENA', '/arena'),
       MobileFeature('simulasi', 'Simulasi', '/murid/simulasi'),
       MobileFeature('profil', 'Profil', '/murid/profile'),
