@@ -42,3 +42,14 @@ Lihat `SIGNING.md` dan `RELEASE_CHECKLIST.md` (sudah di main).
 - Semua checklist Play Store (Data Safety, Privacy Policy, Delete Account) siap.
 
 Tidak ada secret yang di-commit pada pemeriksaan ini.
+
+
+## Audit lanjutan 7 November 2026 — signing, perangkat, dan integrasi
+
+- **Sertifikat release AAB lama — HOLD untuk upload pertama:** hasil `keytool -printcert -jarfile` menunjukkan karakter literal backspace `\\b` pada field CN/OU/O/ST. Walaupun signature AAB/APK berhasil diverifikasi, gunakan kandidat keystore dengan DN bersih **sebelum** pendaftaran pertama di Play Console. Jangan mengganti keystore yang sudah didaftarkan tanpa prosedur resmi.
+- **Kandidat keystore pengganti:** skrip lokal interaktif `C:\keys\create-clean-bahasacerdas-keystore.ps1` sudah disiapkan dan jendela PowerShell sudah diminta untuk dibuka. Output kandidat `C:\keys\bahasacerdas-release-clean.jks`. Password dimasukkan langsung oleh pengelola dan tidak masuk Git. **Pada pemeriksaan terakhir kandidat belum tersedia**, sehingga APK/AAB saat ini masih memakai keystore lama. Jangan mengganti `key.properties` sampai kandidat dibuat dan diverifikasi.
+- **Testing perangkat nyata — HOLD:** `adb devices -l` hanya menampilkan header, tanpa serial perangkat. Sambungkan ponsel Android melalui USB, aktifkan Developer Options / USB debugging, terima RSA debugging prompt, lalu ulangi `adb devices -l`. Pasang APK release hanya setelah signing final.
+- **Checklist uji nyata:** login/logout dan semua RBAC; WebView HTTPS domain `*.bahasacerdas.com`, blokir URL tidak tepercaya; halaman utama serta Jumpa kamera/mikrofon dengan consent; pilih/upload file dan download; izin notifikasi Android 13+; kirim pesan FCM dari Firebase Console pada perangkat uji; verifikasi laporan Crashlytics secara terkendali pada build nonpublik; rotasi layar dan background/foreground; navigasi kembali tidak otomatis logout.
+- **Integrasi branch — REVIEW, belum rebase:** `origin/main` SHA `a3e731f7`, branch base PR `origin/feat/mobile-flutter-shell-20261106` SHA `71505853`, branch PR SHA `204302e8`. Dibanding `main`, branch PR memiliki 43 commit unik dan `main` 13 commit unik. Versi Android Gradle berbeda (Groovy di main, Kotlin DSL di feature). Jangan rebase/force-push PR secara membabi buta; gunakan branch integrasi terpisah, review migrasi Gradle, kemudian lint/test/build sebelum mengubah target PR.
+- **Workaround Kotlin di PC saja:** `mobile/android/gradle.properties` memiliki perubahan lokal `kotlin.incremental=false` untuk mengatasi error cache cross-drive. Belum dipush agar konfigurasi CI tim tidak berubah tanpa review.
+- **Kebijakan tetap:** `key.properties`, `*.jks`, `*.keystore`, `google-services.json`, AAB, APK, dan password hanya lokal. Tidak merge ke main, tidak deploy produksi, tidak publish Play Store.
