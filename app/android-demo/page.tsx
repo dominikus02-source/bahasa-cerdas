@@ -8,7 +8,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const buildId = process.env.NEXT_PUBLIC_APPETIZE_BUILD_ID?.trim() || "";
+// Public Appetize share ID; deployment may override without changing code.
+const buildId = process.env.NEXT_PUBLIC_APPETIZE_BUILD_ID?.trim() || "b_rxiep5jywb6uxs42kicibwhpp4";
 const isValidBuildId = /^[a-zA-Z0-9_-]{6,128}$/.test(buildId);
 
 export default function AndroidDemoPage() {
