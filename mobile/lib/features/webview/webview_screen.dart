@@ -94,10 +94,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _showFeatureHub() {
     final audience = _audience;
     if (audience == null) return;
+    // Do not advertise dead-end buttons in the native feature launcher.
+    // Keep access decisions on the server; this only hides unavailable links.
     final features = <MobileFeature>[
       ...MobileFeatureCatalog.shared,
       ...?MobileFeatureCatalog.byAudience[audience],
-    ];
+    ].where((feature) =>
+        MobileFeatureCatalog.destination(feature.id, audience) != null).toList();
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
