@@ -18,7 +18,7 @@ class AppRoutes {
   static const String guruKomunitas = '/guru/komunitas';
   static const String guruBerlangganan = '/guru/berlangganan';
 
-  // Murid (match website)
+  // Murid
   static const String muridBeranda = '/murid/beranda';
   static const String muridBelajar = '/murid/belajar';
   static const String muridKelasku = '/murid/kelasku';
@@ -28,6 +28,10 @@ class AppRoutes {
   static const String muridKuest = '/murid/kuest-harian';
   static const String muridPremium = '/murid/premium';
   static const String muridProfile = '/murid/profile';
+
+  // Founder / Admin
+  static const String adminFounder = '/admin/founder';
+  static const String adminHome = '/admin';
 
   static String webPathForRoute(String route, {String? role}) {
     switch (route) {
@@ -76,19 +80,26 @@ class AppRoutes {
       case 'murid_profile':
         return '${AppConstants.baseUrl}$muridProfile';
 
+      // Founder
+      case 'founder_admin':
+        return '${AppConstants.baseUrl}$adminFounder';
+      case 'founder_dashboard':
+        return '${AppConstants.baseUrl}$adminHome';
+
       default:
         return AppConstants.baseUrl;
     }
   }
 
   static String _dashboardForRole(String? role) {
-    switch (role?.toUpperCase()) {
+    final r = role?.toUpperCase() ?? '';
+    // Founder selalu ke Guru dashboard (sesuai backend)
+    if (r == 'FOUNDER' || r == 'GURU') return '${AppConstants.baseUrl}$guruBeranda';
+    switch (r) {
       case AppConstants.roleMurid:
         return '${AppConstants.baseUrl}$muridBeranda';
-      case AppConstants.roleGuru:
-        return '${AppConstants.baseUrl}$guruBeranda';
       case AppConstants.roleAdmin:
-        return '${AppConstants.baseUrl}${AppConstants.adminHome}';
+        return '${AppConstants.baseUrl}$adminHome';
       case AppConstants.roleUmum:
         return '${AppConstants.baseUrl}${AppConstants.umumHome}';
       default:
