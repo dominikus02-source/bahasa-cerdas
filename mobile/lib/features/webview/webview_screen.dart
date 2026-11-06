@@ -6,11 +6,13 @@ import '../../core/constants/app_constants.dart';
 class WebViewScreen extends StatefulWidget {
   final String? initialUrl;
   final void Function(String? role)? onRoleDetected;
+  final void Function(WebViewController controller)? onControllerReady;
 
   const WebViewScreen({
     super.key,
     this.initialUrl,
     this.onRoleDetected,
+    this.onControllerReady,
   });
 
   @override
@@ -56,7 +58,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onPageFinished: (url) async {
             if (mounted) setState(() => _isLoading = false);
             _detectRoleFromUrl(url);
-            await _detectRoleFromJs();
           },
           onWebResourceError: (error) {
             if (error.isForMainFrame == true && mounted) {
@@ -89,6 +90,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
       )
       ..loadRequest(Uri.parse(url));
 
+    widget.onControllerReady?.call(_controller);
+
     if (_controller.platform is AndroidWebViewController) {
       final androidController = _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
@@ -113,43 +116,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
       detectedRole = 'UMUM';
     }
 
-    // Cek founder dari URL atau path khusus
     if (path.contains('/founder') || path.contains('founder')) {
       detectedRole = 'FOUNDER';
     }
 
     if (detectedRole != null && widget.onRoleDetected != null) {
       widget.onRoleDetected!(detectedRole);
-    }
-  }
-
-  Future<void> _detectRoleFromJs() async {
-    try {
-      final result = await _controller.runJavaScriptReturningResult('''
-        (function() {
-          try {
-            // Cek dropdown atau elemen yang menunjukkan role
-            const roleText = document.body.innerText;
-            if (roleText.includes('Founder')) return 'FOUNDER';
-            if (roleText.includes('Admin')) return 'ADMIN';
-            if (roleText.includes('Guru')) return 'GURU';
-            if (roleText.includes('Murid')) return 'MURID';
-            
-            const meta = document.querySelector('meta[name="user-role"]');
-            if (meta) return meta.content;
-            const stored = localStorage.getItem('userRole') || localStorage.getItem('role');
-            if (stored) return stored;
-            return '';
-          } catch(e) { return ''; }
-        })()
-      ''');
-
-      final role = result.toString().replaceAll('"', '').trim().toUpperCase();
-      if (role.isNotEmpty && role != 'NULL' && widget.onRoleDetected != null) {
-        widget.onRoleDetected!(role);
-      }
-    } catch (_) {
-      // Abaikan
     }
   }
 
