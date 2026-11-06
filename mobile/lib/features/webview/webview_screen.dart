@@ -3,7 +3,14 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/constants/app_constants.dart';
 
 class WebViewScreen extends StatefulWidget {
-  const WebViewScreen({super.key});
+  final String? initialUrl;
+  final void Function(String? role)? onRoleDetected;
+
+  const WebViewScreen({
+    super.key,
+    this.initialUrl,
+    this.onRoleDetected,
+  });
 
   @override
   State<WebViewScreen> createState() => _WebViewScreenState();
@@ -22,6 +29,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   void _setupWebView() {
+    final url = widget.initialUrl ?? AppConstants.baseUrl;
+
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF4F5F7))
@@ -39,8 +48,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
               });
             }
           },
-          onPageFinished: (_) {
+          onPageFinished: (_) async {
             if (mounted) setState(() => _isLoading = false);
+            await _detectRole();
           },
           onWebResourceError: (error) {
             if (error.isForMainFrame == true && mounted) {
@@ -51,15 +61,39 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
           },
           onNavigationRequest: (request) {
-            final uri = Uri.tryParse(request.url);
-            if (uri != null && uri.host.contains('bahasacerdas.com')) {
-              return NavigationDecision.navigate;
-            }
             return NavigationDecision.navigate;
           },
         ),
       )
-      ..loadRequest(Uri.parse(AppConstants.baseUrl));
+      ..loadRequest(Uri.parse(url));
+  }
+
+  Future<void> _detectRole() async {
+    try {
+      final result = await _controller.runJavaScriptReturningResult('''
+        (function() {
+          try {
+            // Cek meta tag atau localStorage
+            const meta = document.querySelector('meta[name="user-role"]');
+            if (meta) return meta.content;
+            const stored = localStorage.getItem('userRole') || localStorage.getItem('role');
+            if (stored) return stored;
+            // Cek cookie sederhana
+            const cookies = document.cookie;
+            const match = cookies.match(/role=([^;]+)/);
+            if (match) return match[1];
+            return '';
+          } catch(e) { return ''; }
+        })()
+      ''');
+
+      final role = result.toString().replaceAll('"', '').trim();
+      if (role.isNotEmpty && role != 'null' && widget.onRoleDetected != null) {
+        widget.onRoleDetected!(role.toUpperCase());
+      }
+    } catch (_) {
+      // Abaikan jika JS gagal
+    }
   }
 
   @override
