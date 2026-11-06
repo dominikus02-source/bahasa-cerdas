@@ -23,7 +23,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   double _progress = 0.0;
 
-  // User agent Chrome agar Google Sign-In tidak diblokir
   static const String _userAgent =
       'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
 
@@ -54,9 +53,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
               });
             }
           },
-          onPageFinished: (_) async {
+          onPageFinished: (url) async {
             if (mounted) setState(() => _isLoading = false);
-            await _detectRole();
+            _detectRoleFromUrl(url);
+            await _detectRoleFromJs();
           },
           onWebResourceError: (error) {
             if (error.isForMainFrame == true && mounted) {
@@ -70,7 +70,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
             final uri = Uri.tryParse(request.url);
             if (uri == null) return NavigationDecision.prevent;
 
-            // Izinkan domain Google untuk OAuth
             final host = uri.host.toLowerCase();
             if (host.contains('google.com') ||
                 host.contains('googleapis.com') ||
@@ -80,7 +79,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
               return NavigationDecision.navigate;
             }
 
-            // Blokir skema non-http
             if (uri.scheme != 'http' && uri.scheme != 'https') {
               return NavigationDecision.prevent;
             }
@@ -91,36 +89,67 @@ class _WebViewScreenState extends State<WebViewScreen> {
       )
       ..loadRequest(Uri.parse(url));
 
-    // Aktifkan third-party cookies (penting untuk Google Sign-In)
     if (_controller.platform is AndroidWebViewController) {
       final androidController = _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
     }
   }
 
-  Future<void> _detectRole() async {
+  /// Deteksi role dari URL path (lebih reliable setelah login)
+  void _detectRoleFromUrl(String url) {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+
+    final path = uri.path.toLowerCase();
+    String? detectedRole;
+
+    if (path.startsWith('/guru')) {
+      detectedRole = 'GURU';
+    } else if (path.startsWith('/murid')) {
+      detectedRole = 'MURID';
+    } else if (path.startsWith('/admin')) {
+      detectedRole = 'ADMIN';
+    } else if (path.startsWith('/umum')) {
+      detectedRole = 'UMUM';
+    }
+
+    // Cek founder dari URL atau path khusus
+    if (path.contains('/founder') || path.contains('founder')) {
+      detectedRole = 'FOUNDER';
+    }
+
+    if (detectedRole != null && widget.onRoleDetected != null) {
+      widget.onRoleDetected!(detectedRole);
+    }
+  }
+
+  Future<void> _detectRoleFromJs() async {
     try {
       final result = await _controller.runJavaScriptReturningResult('''
         (function() {
           try {
+            // Cek dropdown atau elemen yang menunjukkan role
+            const roleText = document.body.innerText;
+            if (roleText.includes('Founder')) return 'FOUNDER';
+            if (roleText.includes('Admin')) return 'ADMIN';
+            if (roleText.includes('Guru')) return 'GURU';
+            if (roleText.includes('Murid')) return 'MURID';
+            
             const meta = document.querySelector('meta[name="user-role"]');
             if (meta) return meta.content;
             const stored = localStorage.getItem('userRole') || localStorage.getItem('role');
             if (stored) return stored;
-            const cookies = document.cookie;
-            const match = cookies.match(/role=([^;]+)/);
-            if (match) return match[1];
             return '';
           } catch(e) { return ''; }
         })()
       ''');
 
-      final role = result.toString().replaceAll('"', '').trim();
-      if (role.isNotEmpty && role != 'null' && widget.onRoleDetected != null) {
-        widget.onRoleDetected!(role.toUpperCase());
+      final role = result.toString().replaceAll('"', '').trim().toUpperCase();
+      if (role.isNotEmpty && role != 'NULL' && widget.onRoleDetected != null) {
+        widget.onRoleDetected!(role);
       }
     } catch (_) {
-      // Abaikan jika JS gagal
+      // Abaikan
     }
   }
 
