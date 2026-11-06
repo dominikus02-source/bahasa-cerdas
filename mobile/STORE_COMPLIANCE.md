@@ -18,7 +18,7 @@
 - **Data collected**: Personal info (Name, Email), App activity, Device or other IDs
 - **Data shared**: None
 - **Security practices**: Data is encrypted in transit
-- **Data deletion**: Users can request deletion (link: https://www.bahasacerdas.com/hapus-akun)
+- **Data deletion**: Users can request deletion → **https://www.bahasacerdas.com/hapus-akun**
 - **Firebase services used**:
   - Firebase Cloud Messaging (FCM) → push notifications
   - Firebase Crashlytics → crash reporting
@@ -50,16 +50,18 @@
 ## 3. UU PDP (Indonesia) — Komdigi
 - Dasar hukum: UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi
 - Hak subjek data sudah dicakup (akses, perbaiki, hapus, tarik persetujuan)
-- Kontak privasi: privasi@bahasacerdas.com (disarankan)
+- Kontak privasi: halo@bahasacerdas.com
 - Retensi data: selama akun aktif + 30 hari setelah permintaan hapus
 
 ---
 
 ## 4. Halaman Hapus Akun
-Jika belum ada, buat halaman sederhana di website:
-- URL: `/hapus-akun`
-- Isi: form email + alasan, atau instruksi "masuk ke pengaturan akun → hapus akun"
-- Pastikan bisa diakses tanpa login (syarat Google Play)
+**Status: SUDAH DIBUAT**
+- URL: https://www.bahasacerdas.com/hapus-akun
+- Bisa diakses tanpa login
+- Menjelaskan cara hapus via aplikasi dan via email
+- Mencakup waktu pemrosesan 30 hari
+- Sesuai syarat Google Play Data Safety
 
 ---
 
