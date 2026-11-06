@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color primary = Color(0xFFB91C1C); // danger / red accent from web
-  static const Color accent = Color(0xFF059669);  // teal
+  static const Color primary = Color(0xFF7C3AED); // BC 2026 violet
+  static const Color accent = Color(0xFF0D9488); // BC teal
   static const Color violet = Color(0xFF7C3AED);
   static const Color navy = Color(0xFF0B3A75);
 
@@ -13,7 +13,7 @@ class AppTheme {
           brightness: Brightness.light,
         ),
         fontFamily: 'Inter',
-        scaffoldBackgroundColor: const Color(0xFFF4F5F7),
+        scaffoldBackgroundColor: const Color(0xFFF8F7FC),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF16181D),
@@ -29,7 +29,7 @@ class AppTheme {
           brightness: Brightness.dark,
         ),
         fontFamily: 'Inter',
-        scaffoldBackgroundColor: const Color(0xFF0F1117),
+        scaffoldBackgroundColor: const Color(0xFF0F172A),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF171A22),
           foregroundColor: Color(0xFFF1F2F6),
