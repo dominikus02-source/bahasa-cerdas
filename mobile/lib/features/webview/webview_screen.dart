@@ -37,50 +37,97 @@ class _WebViewScreenState extends State<WebViewScreen> {
     await _controller.loadRequest(Uri.parse('${AppConstants.baseUrl}$path'));
   }
 
+  IconData _featureIcon(String id) => switch (id) {
+    'jumpa' => Icons.video_call_outlined,
+    'nara' || 'nara-mentor' || 'alat-nara' => Icons.auto_awesome_outlined,
+    'karya' || 'aku-sastrawan' => Icons.edit_note_outlined,
+    'aksara' || 'belajar' => Icons.menu_book_outlined,
+    'gim' || 'gim-guru' || 'bermain-bersama' => Icons.sports_esports_outlined,
+    'kelasku' => Icons.groups_outlined,
+    'jalur-cerdas' => Icons.route_outlined,
+    'arena' => Icons.bolt_outlined,
+    'simulasi' || 'evaluasi' => Icons.fact_check_outlined,
+    _ => Icons.grid_view_rounded,
+  };
+
+  Widget _featureTile(MobileFeature feature, MobileAudience audience) {
+    final enabled = MobileFeatureCatalog.destination(feature.id, audience) != null;
+    final premium = feature.note?.toLowerCase().contains('premium') ?? false;
+    final colors = Theme.of(context).colorScheme;
+    return Material(
+      color: colors.surfaceContainerLow,
+      borderRadius: BorderRadius.circular(22),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(22),
+        onTap: enabled ? () {
+          Navigator.of(context).pop();
+          _openFeature(feature);
+        } : null,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Icon(_featureIcon(feature.id),
+                  color: enabled ? colors.primary : colors.outline, size: 27),
+              const SizedBox(height: 18),
+              Text(feature.label,
+                  maxLines: 2, overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontWeight: FontWeight.w700,
+                      color: enabled ? colors.onSurface : colors.outline)),
+              if (premium)
+                Text('PREMIUM', style: TextStyle(
+                    fontSize: 10, letterSpacing: 1,
+                    fontWeight: FontWeight.w800, color: colors.primary))
+              else if (!enabled)
+                Text('SEGERA HADIR', style: TextStyle(
+                    fontSize: 10, color: colors.outline)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   void _showFeatureHub() {
     final audience = _audience;
     if (audience == null) return;
+    final features = <MobileFeature>[
+      ...MobileFeatureCatalog.shared,
+      ...?MobileFeatureCatalog.byAudience[audience],
+    ];
     showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       builder: (sheetContext) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Jelajahi BahasaCerdas', style: Theme.of(context).textTheme.titleLarge),
-              const SizedBox(height: 6),
-              const Text('Fitur utama dan pilihan sesuai peranmu.'),
-              const SizedBox(height: 14),
-              Flexible(child: ListView(
-                shrinkWrap: true,
-                children: [
-                  for (final feature in MobileFeatureCatalog.shared)
-                    ListTile(
-                      title: Text(feature.label),
-                      trailing: const Icon(Icons.chevron_right),
-                      enabled: MobileFeatureCatalog.destination(feature.id, audience) != null,
-                      onTap: () {
-                        Navigator.pop(sheetContext);
-                        _openFeature(feature);
-                      },
+        child: FractionallySizedBox(
+          heightFactor: 0.85,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(22, 8, 22, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Ruang belajarmu',
+                    style: Theme.of(sheetContext).textTheme.headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.w800)),
+                const SizedBox(height: 6),
+                Text('Semua fitur dalam satu tempat.',
+                    style: Theme.of(sheetContext).textTheme.bodyMedium),
+                const SizedBox(height: 24),
+                Expanded(
+                  child: GridView.builder(
+                    itemCount: features.length,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, mainAxisSpacing: 12,
+                      crossAxisSpacing: 12, mainAxisExtent: 140,
                     ),
-                  const Divider(),
-                  for (final feature in MobileFeatureCatalog.byAudience[audience] ?? const <MobileFeature>[])
-                    ListTile(
-                      title: Text(feature.label),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        Navigator.pop(sheetContext);
-                        _openFeature(feature);
-                      },
-                    ),
-                ],
-              )),
-            ],
+                    itemBuilder: (_, index) => _featureTile(features[index], audience),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
