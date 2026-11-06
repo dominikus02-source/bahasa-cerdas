@@ -76,6 +76,12 @@ class _AppShellState extends State<AppShell> {
     }
   }
 
+  void _openGuruRoute(String routeKey, int tabIndex) {
+    Navigator.pop(context);
+    setState(() => _index = tabIndex);
+    // Force rebuild with new route
+  }
+
   @override
   Widget build(BuildContext context) {
     final pages = _pages;
@@ -117,23 +123,40 @@ class _AppShellState extends State<AppShell> {
             ),
             const SizedBox(height: 24),
             if (_role == AppConstants.roleGuru) ...[
+              const Text('AI Tools', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
               ListTile(
                 leading: const Icon(Icons.auto_awesome),
-                title: const Text('AI Tools'),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() => _index = 1);
-                },
+                title: const Text('Semua AI Tools'),
+                onTap: () => _openGuruRoute('guru_ai', 1),
               ),
+              ListTile(
+                leading: const Icon(Icons.grading),
+                title: const Text('Grading'),
+                onTap: () => _openGuruRoute('guru_grading', 1),
+              ),
+              ListTile(
+                leading: const Icon(Icons.spellcheck),
+                title: const Text('EYD'),
+                onTap: () => _openGuruRoute('guru_eyd', 1),
+              ),
+              ListTile(
+                leading: const Icon(Icons.text_fields),
+                title: const Text('Text Analysis'),
+                onTap: () => _openGuruRoute('guru_text', 1),
+              ),
+              const Divider(),
               ListTile(
                 leading: const Icon(Icons.groups),
                 title: const Text('Komunitas'),
-                onTap: () {
-                  Navigator.pop(context);
-                  setState(() => _index = 2);
-                },
+                onTap: () => _openGuruRoute('guru_komunitas', 2),
+              ),
+              ListTile(
+                leading: const Icon(Icons.workspace_premium),
+                title: const Text('Berlangganan'),
+                onTap: () => _openGuruRoute('guru_berlangganan', 0),
               ),
             ],
+            const Divider(),
             ListTile(
               leading: const Icon(Icons.lock_reset),
               title: const Text('Lupa Kata Sandi'),
