@@ -171,6 +171,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               setState(() {
                 _isLoading = true;
                 _hasError = false;
+                _progress = 0;
               });
             }
           },
@@ -233,8 +234,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
       setState(() => _onRoleDashboard = onDashboard);
     }
     // Do not retain a role-specific shortcut after returning to login/logout.
-    if (path == '/login' || path.startsWith('/login/') ||
-        path == '/logout' || path.startsWith('/auth/')) {
+    if (path == '/' || path == '/login' || path.startsWith('/login/') ||
+        path == '/logout' || path.startsWith('/logout/') ||
+        path.startsWith('/auth/') || path == '/register' ||
+        path.startsWith('/register/') || path == '/forgot-password') {
       if (mounted && _audience != null) setState(() => _audience = null);
       widget.onRoleDetected?.call(null);
       return;
@@ -265,6 +268,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
       };
       if (mounted && audience != _audience) setState(() => _audience = audience);
       widget.onRoleDetected?.call(detectedRole);
+    } else if (mounted && _audience != null) {
+      // Public pages must not keep role-specific native shortcuts visible.
+      setState(() => _audience = null);
+      widget.onRoleDetected?.call(null);
     }
   }
 
