@@ -28,6 +28,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   double _progress = 0.0;
   MobileAudience? _audience;
+  bool _onRoleDashboard = false;
 
   Future<void> _openFeature(MobileFeature feature) async {
     final audience = _audience;
@@ -221,6 +222,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
 
     final path = uri.path.toLowerCase();
+    // Keep the PWA's own bottom navigation and hero unobstructed on home screens.
+    final onDashboard = path == '/murid/beranda' ||
+        path == '/guru/beranda' || path == '/umum' ||
+        path == '/murid' || path == '/guru';
+    if (mounted && _onRoleDashboard != onDashboard) {
+      setState(() => _onRoleDashboard = onDashboard);
+    }
+    // Do not retain a role-specific shortcut after returning to login/logout.
+    if (path == '/login' || path.startsWith('/login/') ||
+        path == '/logout' || path.startsWith('/auth/')) {
+      if (mounted && _audience != null) setState(() => _audience = null);
+      widget.onRoleDetected?.call(null);
+      return;
+    }
     String? detectedRole;
 
     if (path.startsWith('/guru')) {
@@ -258,7 +273,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         if (!didPop) _goBack();
       },
       child: Scaffold(
-      floatingActionButton: _audience == null ? null : FloatingActionButton.small(
+      floatingActionButton: _audience == null || _onRoleDashboard ? null : FloatingActionButton.small(
         onPressed: _showFeatureHub,
         tooltip: 'Jelajahi fitur',
         child: const Icon(Icons.apps_rounded),
