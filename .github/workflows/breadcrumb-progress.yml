@@ -1,0 +1,50 @@
+name: Breadcrumb VPS progress
+on:
+  push:
+    branches: [ops/breadcrumb-watch-20261106]
+permissions:
+  contents: read
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Read release progress
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+        run: |
+          set -euo pipefail
+          test -n "$VPS_SSH_KEY"
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" | tr -d '\r' > ~/.ssh/id_ed25519
+          printf '\n' >> ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -T 10 -H 103.242.10.81 >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 python3 - <<'PY'
+          import pathlib,subprocess,shutil,json,re
+          output={"diskFreeGiB":round(shutil.disk_usage("/opt").free/2**30,2)}
+          memory=pathlib.Path("/proc/meminfo").read_text()
+          output["availableMemoryMiB"]=round(int(re.search(r"MemAvailable:\s+(\d+)",memory)[1])/1024)
+          for name in ["bahasacerdas-prod-web-1","bc-book-studio-ui-canary-web-1"]:
+              d=json.loads(subprocess.check_output(["docker","inspect",name]))[0]
+              output[name]={"image":d["Config"]["Image"],"health":d["State"].get("Health",{}).get("Status")}
+          for image in ["bahasacerdas/web:breadcrumbs-20261106","bc-book-studio:breadcrumbs-fixed-20261106"]:
+              output[image]=subprocess.run(["docker","image","inspect",image],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0
+          files=["/tmp/bc-deploy-gh-42178733884-1.log","/opt/bahasacerdas/apps/breadcrumbs-20261106/breadcrumb-build.log","/opt/bc-book-studio-runtime/releases/breadcrumbs-fixed-20261106/breadcrumb-build.log"]
+          for filename in files:
+              p=pathlib.Path(filename)
+              if p.exists():
+                  lines=p.read_text(errors="replace").splitlines()
+                  stages=[line[:220] for line in lines if re.match(r"^#\d+ (?:\[|DONE|CACHED|exporting|extracting|transferring)",line)]
+                  output[filename]={"lastStages":stages[-4:],"hasBuildError":any("ERROR:" in line or "Failed to compile" in line for line in lines)}
+          old=[]
+          for p in pathlib.Path("/proc").iterdir():
+              if not p.name.isdigit():continue
+              try:
+                  args=(p/"cmdline").read_bytes().split(b"\0")
+                  if args and args[0].endswith(b"docker") and b"build" in args and b"bahasacerdas/web:breadcrumbs-20261106" in args:
+                      old.append(int(p.name))
+              except (OSError,PermissionError):pass
+          output["abandonedTaskBuildPids"]=old
+          print(json.dumps(output))
+          PY
