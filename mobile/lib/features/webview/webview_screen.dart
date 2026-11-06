@@ -25,9 +25,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   double _progress = 0.0;
 
-  static const String _userAgent =
-      'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36';
-
   @override
   void initState() {
     super.initState();
@@ -41,7 +38,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF4F5F7))
       ..enableZoom(false)
-      ..setUserAgent(_userAgent)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (progress) {
@@ -73,11 +69,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
             if (uri == null) return NavigationDecision.prevent;
 
             final host = uri.host.toLowerCase();
-            if (host.contains('google.com') ||
-                host.contains('googleapis.com') ||
-                host.contains('gstatic.com') ||
-                host.contains('bahasacerdas.com') ||
-                host.contains('accounts.google.com')) {
+            if (uri.scheme == 'https' &&
+                (_isDomain(host, 'google.com') ||
+                 _isDomain(host, 'googleapis.com') ||
+                 _isDomain(host, 'gstatic.com') ||
+                 _isDomain(host, 'bahasacerdas.com'))) {
               return NavigationDecision.navigate;
             }
 
@@ -99,10 +95,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
   }
 
-  /// Deteksi role dari URL path (lebih reliable setelah login)
+  static bool _isDomain(String host, String domain) =>
+      host == domain || host.endsWith('.$domain');
+
+  /// The server still enforces RBAC; the path only selects navigation chrome.
   void _detectRoleFromUrl(String url) {
     final uri = Uri.tryParse(url);
-    if (uri == null) return;
+    if (uri == null || uri.scheme != 'https' ||
+        !_isDomain(uri.host.toLowerCase(), 'bahasacerdas.com')) return;
 
     final path = uri.path.toLowerCase();
     String? detectedRole;
@@ -142,7 +142,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                 child: LinearProgressIndicator(
                   value: _progress > 0 ? _progress : null,
                   backgroundColor: Colors.transparent,
-                  color: const Color(0xFFB91C1C),
+                  color: const Color(0xFF7C3AED),
                   minHeight: 3,
                 ),
               ),
