@@ -1,4 +1,4 @@
-name: VPS breadcrumb status
+name: Prepare BC Studio breadcrumb release
 on:
   push:
     branches: [ops/breadcrumb-status-20261106]
@@ -7,7 +7,7 @@ permissions:
 jobs:
   status:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 20
     steps:
       - name: Check authorized VPS connection and release state
         env:
@@ -36,4 +36,27 @@ jobs:
                   text=path.read_text(errors="replace")
                   result[file]={"exists":True,"compiled":"Compiled successfully" in text,"containsBuildError":"ERROR:" in text or "Failed to compile" in text}
           print(json.dumps(result))
+          PY
+
+      - name: Build bounded UI release without database changes
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/id_ed25519 -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20 -o ServerAliveInterval=15 bcadmin@103.242.10.81 python3 - <<'PY'
+          import pathlib,shutil,subprocess,json
+          root=pathlib.Path("/opt/bc-book-studio-runtime/releases")
+          source=root/"breadcrumbs-20261106"
+          dest=root/"breadcrumbs-fixed-20261106"
+          assert source.is_dir()
+          if not dest.exists():
+              shutil.copytree(source,dest,ignore=shutil.ignore_patterns("node_modules",".next",".git","*.log",".env",".env.local",".env.production","test-results"))
+          for file in ["components/use-book-selection.ts","components/use-studio-navigation.ts"]:
+              path=dest/file
+              text=path.read_text()
+              path.write_text(text.replace("window.history.pushState(window.history.state,","window.history.pushState(null,"))
+          log=dest/"breadcrumb-build.log"
+          with log.open("w") as output:
+              result=subprocess.run(["docker","build","--target","runtime","-t","bc-book-studio:breadcrumbs-fixed-20261106","."],cwd=dest,stdout=output,stderr=subprocess.STDOUT)
+          print(json.dumps({"imageBuildExit":result.returncode,"source":str(dest)}))
+          if result.returncode: raise SystemExit(result.returncode)
+          print("BCSTUDIO_BREADCRUMB_IMAGE_BUILT")
           PY
