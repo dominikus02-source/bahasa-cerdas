@@ -1,6 +1,5 @@
 import '../constants/app_constants.dart';
 
-/// Route & path mapping sesuai RBAC website
 class AppRoutes {
   static const String splash = '/';
   static const String landing = '/landing';
@@ -9,6 +8,11 @@ class AppRoutes {
   static const String forgot = '/forgot';
   static const String dashboard = '/dashboard';
   static const String logout = '/logout';
+
+  static const String guruBeranda = '/guru/beranda';
+  static const String guruAiTools = '/guru/ai-tools';
+  static const String guruKomunitas = '/guru/komunitas';
+  static const String guruBerlangganan = '/guru/berlangganan';
 
   static String webPathForRoute(String route, {String? role}) {
     switch (route) {
@@ -24,6 +28,10 @@ class AppRoutes {
         return '${AppConstants.baseUrl}/auth/logout';
       case dashboard:
         return _dashboardForRole(role);
+      case 'guru_ai':
+        return '${AppConstants.baseUrl}$guruAiTools';
+      case 'guru_komunitas':
+        return '${AppConstants.baseUrl}$guruKomunitas';
       default:
         return AppConstants.baseUrl;
     }
@@ -34,7 +42,7 @@ class AppRoutes {
       case AppConstants.roleMurid:
         return '${AppConstants.baseUrl}${AppConstants.muridHome}';
       case AppConstants.roleGuru:
-        return '${AppConstants.baseUrl}${AppConstants.guruHome}';
+        return '${AppConstants.baseUrl}$guruBeranda';
       case AppConstants.roleAdmin:
         return '${AppConstants.baseUrl}${AppConstants.adminHome}';
       case AppConstants.roleUmum:
