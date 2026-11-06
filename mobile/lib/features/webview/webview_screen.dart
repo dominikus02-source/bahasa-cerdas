@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../../core/constants/navigation_policy.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/mobile_feature_catalog.dart';
@@ -211,6 +212,19 @@ class _WebViewScreenState extends State<WebViewScreen> {
     if (_controller.platform is AndroidWebViewController) {
       final androidController = _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
+      androidController.setOnPlatformPermissionRequest((request) async {
+        // WebRTC requests are user-initiated and must pass Android OS consent.
+        // Do not grant WebView media access just because the manifest declares it.
+        final statuses = await <Permission>[
+          Permission.camera,
+          Permission.microphone,
+        ].request();
+        if (statuses.values.every((status) => status.isGranted)) {
+          await request.grant();
+        } else {
+          await request.deny();
+        }
+      });
     }
   }
 
