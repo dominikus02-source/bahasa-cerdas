@@ -53,3 +53,14 @@ Tidak ada secret yang di-commit pada pemeriksaan ini.
 - **Integrasi branch — REVIEW, belum rebase:** `origin/main` SHA `a3e731f7`, branch base PR `origin/feat/mobile-flutter-shell-20261106` SHA `71505853`, branch PR SHA `204302e8`. Dibanding `main`, branch PR memiliki 43 commit unik dan `main` 13 commit unik. Versi Android Gradle berbeda (Groovy di main, Kotlin DSL di feature). Jangan rebase/force-push PR secara membabi buta; gunakan branch integrasi terpisah, review migrasi Gradle, kemudian lint/test/build sebelum mengubah target PR.
 - **Workaround Kotlin di PC saja:** `mobile/android/gradle.properties` memiliki perubahan lokal `kotlin.incremental=false` untuk mengatasi error cache cross-drive. Belum dipush agar konfigurasi CI tim tidak berubah tanpa review.
 - **Kebijakan tetap:** `key.properties`, `*.jks`, `*.keystore`, `google-services.json`, AAB, APK, dan password hanya lokal. Tidak merge ke main, tidak deploy produksi, tidak publish Play Store.
+
+
+## FINAL Signing Bersih — hasil lokal 7 November 2026 (menggantikan audit DN sebelumnya)
+
+- **Keystore baru valid (PASS):** kandidat `C:\keys\bahasacerdas-release-clean.jks` telah dibuat dan diverifikasi menggunakan password yang dimasukkan langsung di PC. `key.properties` lokal sudah mengarah ke kandidat bersih. Keystore lama tetap disimpan dan **tidak boleh digunakan** untuk rilis pertama.
+- **DN sertifikat baru (PASS):** `CN=Bahasa Cerdas, OU=IT, O=Bahasa Cerdas, L=Tangerang Selatan, ST=Banten, C=ID` (tanpa karakter backspace). Owner dan Issuer cocok.
+- **Fingerprint SHA-256 sertifikat baru (PUBLIK):** `1AA9F86EB9B284C625ABC48D3293E28C02AC471172BF8CA2D87D7C5036B4C263`; fingerprint AAB dan APK **identik**.
+- **AAB release terbaru PASS:** `mobile/build/app/outputs/bundle/release/app-release.aab` ukuran tepat **42,608,969 byte**, SHA-256 artefak `8A9C4ED6EFEB4DED2CB416A91E10A6515F34D8C449D2AEDE8EF30BB228B7C1C4`.
+- **APK release terbaru PASS:** `mobile/build/app/outputs/flutter-apk/app-release.apk` ukuran tepat **47,556,414 byte**, SHA-256 artefak `640707C4EF98ECCC3AA18077C0798328AB00E3FAB8F13F7570A2A95106B9B779`; verifikasi Android APK Signature Scheme v2 PASS.
+- **Jangan unggah file dari build lama:** AAB/APK sebelumnya memakai fingerprint sertifikat `CE5CA2...` yang DN-nya salah. Keystore final yang akan dipakai untuk rilis pertama adalah **clean** dengan fingerprint `1AA9F86...`. Catat dan backup keystore/password ini dengan aman; jangan dipush ke GitHub.
+- **Masih HOLD publikasi:** perangkat ADB belum terdeteksi sehingga E2E nyata belum dilakukan; integrasi ke `main` belum di-review/merge; akun Play Console dan pemeriksaan Data Safety/Privacy Policy/Delete Account masih perlu dituntaskan. AAB/APK saat ini siap untuk verifikasi internal, **belum** untuk publikasi publik.
