@@ -9,7 +9,7 @@ class AppRoutes {
   static const String dashboard = '/dashboard';
   static const String logout = '/logout';
 
-  // Guru paths (match website)
+  // Guru
   static const String guruBeranda = '/guru/beranda';
   static const String guruAiTools = '/guru/ai-tools';
   static const String guruAiGrading = '/guru/ai-tools/grading';
@@ -17,6 +17,17 @@ class AppRoutes {
   static const String guruAiText = '/guru/ai-tools/text-analysis';
   static const String guruKomunitas = '/guru/komunitas';
   static const String guruBerlangganan = '/guru/berlangganan';
+
+  // Murid (match website)
+  static const String muridBeranda = '/murid/beranda';
+  static const String muridBelajar = '/murid/belajar';
+  static const String muridKelasku = '/murid/kelasku';
+  static const String muridProgres = '/murid/progresku';
+  static const String muridKarya = '/murid/karya';
+  static const String muridGame = '/murid/game';
+  static const String muridKuest = '/murid/kuest-harian';
+  static const String muridPremium = '/murid/premium';
+  static const String muridProfile = '/murid/profile';
 
   static String webPathForRoute(String route, {String? role}) {
     switch (route) {
@@ -32,6 +43,8 @@ class AppRoutes {
         return '${AppConstants.baseUrl}/auth/logout';
       case dashboard:
         return _dashboardForRole(role);
+
+      // Guru
       case 'guru_ai':
         return '${AppConstants.baseUrl}$guruAiTools';
       case 'guru_grading':
@@ -44,6 +57,25 @@ class AppRoutes {
         return '${AppConstants.baseUrl}$guruKomunitas';
       case 'guru_berlangganan':
         return '${AppConstants.baseUrl}$guruBerlangganan';
+
+      // Murid
+      case 'murid_belajar':
+        return '${AppConstants.baseUrl}$muridBelajar';
+      case 'murid_kelasku':
+        return '${AppConstants.baseUrl}$muridKelasku';
+      case 'murid_progres':
+        return '${AppConstants.baseUrl}$muridProgres';
+      case 'murid_karya':
+        return '${AppConstants.baseUrl}$muridKarya';
+      case 'murid_game':
+        return '${AppConstants.baseUrl}$muridGame';
+      case 'murid_kuest':
+        return '${AppConstants.baseUrl}$muridKuest';
+      case 'murid_premium':
+        return '${AppConstants.baseUrl}$muridPremium';
+      case 'murid_profile':
+        return '${AppConstants.baseUrl}$muridProfile';
+
       default:
         return AppConstants.baseUrl;
     }
@@ -52,7 +84,7 @@ class AppRoutes {
   static String _dashboardForRole(String? role) {
     switch (role?.toUpperCase()) {
       case AppConstants.roleMurid:
-        return '${AppConstants.baseUrl}${AppConstants.muridHome}';
+        return '${AppConstants.baseUrl}$muridBeranda';
       case AppConstants.roleGuru:
         return '${AppConstants.baseUrl}$guruBeranda';
       case AppConstants.roleAdmin:
