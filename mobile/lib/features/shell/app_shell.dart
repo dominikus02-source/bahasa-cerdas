@@ -18,6 +18,7 @@ class _AppShellState extends State<AppShell> {
 
   bool get _isFounder => _role?.toUpperCase() == 'FOUNDER';
   bool get _isAdmin => _role?.toUpperCase() == AppConstants.roleAdmin;
+  bool get _isUmum => _role?.toUpperCase() == AppConstants.roleUmum;
 
   List<_NavItem> get _pages {
     if (_role == null) {
@@ -59,6 +60,13 @@ class _AppShellState extends State<AppShell> {
           _NavItem('Dashboard', Icons.dashboard_outlined, Icons.dashboard, 'admin_home'),
           _NavItem('Analytics', Icons.analytics_outlined, Icons.analytics, 'admin_analytics'),
           _NavItem('Pengguna', Icons.people_outlined, Icons.people, 'admin_users'),
+          _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
+        ];
+      case AppConstants.roleUmum:
+        return const [
+          _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
+          _NavItem('Arena', Icons.sports_esports_outlined, Icons.sports_esports, 'umum_arena'),
+          _NavItem('Jalur', Icons.route_outlined, Icons.route, 'umum_jalur'),
           _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
         ];
       default:
@@ -184,6 +192,14 @@ class _AppShellState extends State<AppShell> {
               const Divider(),
               ListTile(leading: const Icon(Icons.workspace_premium), title: const Text('Premium'), onTap: () => _openRoute('murid_premium', 0)),
               ListTile(leading: const Icon(Icons.person), title: const Text('Profil'), onTap: () => _openRoute('murid_profile', 3)),
+            ],
+
+            // UMUM
+            if (_isUmum) ...[
+              const Text('Umum', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.green)),
+              ListTile(leading: const Icon(Icons.sports_esports), title: const Text('Arena'), onTap: () => _openRoute('umum_arena', 1)),
+              ListTile(leading: const Icon(Icons.route), title: const Text('Jalur Cerdas'), onTap: () => _openRoute('umum_jalur', 2)),
+              ListTile(leading: const Icon(Icons.meeting_room), title: const Text('Jumpa'), onTap: () => _openRoute('umum_jumpa', 0)),
             ],
 
             const Divider(),
