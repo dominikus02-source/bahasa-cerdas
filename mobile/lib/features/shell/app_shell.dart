@@ -26,16 +26,17 @@ class _AppShellState extends State<AppShell> {
     }
 
     switch (_role!.toUpperCase()) {
+      case AppConstants.roleGuru:
+        return const [
+          _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
+          _NavItem('AI Tools', Icons.auto_awesome_outlined, Icons.auto_awesome, 'guru_ai'),
+          _NavItem('Komunitas', Icons.groups_outlined, Icons.groups, 'guru_komunitas'),
+          _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
+        ];
       case AppConstants.roleMurid:
         return const [
           _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
           _NavItem('Materi', Icons.menu_book_outlined, Icons.menu_book, AppRoutes.dashboard),
-          _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
-        ];
-      case AppConstants.roleGuru:
-        return const [
-          _NavItem('Beranda', Icons.home_outlined, Icons.home, AppRoutes.dashboard),
-          _NavItem('Kelas', Icons.groups_outlined, Icons.groups, AppRoutes.dashboard),
           _NavItem('Akun', Icons.account_circle_outlined, Icons.account_circle, AppRoutes.dashboard),
         ];
       case AppConstants.roleAdmin:
@@ -115,6 +116,24 @@ class _AppShellState extends State<AppShell> {
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 24),
+            if (_role == AppConstants.roleGuru) ...[
+              ListTile(
+                leading: const Icon(Icons.auto_awesome),
+                title: const Text('AI Tools'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() => _index = 1);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.groups),
+                title: const Text('Komunitas'),
+                onTap: () {
+                  Navigator.pop(context);
+                  setState(() => _index = 2);
+                },
+              ),
+            ],
             ListTile(
               leading: const Icon(Icons.lock_reset),
               title: const Text('Lupa Kata Sandi'),
