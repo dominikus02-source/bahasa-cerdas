@@ -34,7 +34,7 @@ function buildCsp(nonce: string): string {
     // JUMPA: origin server media (wss + https) dari NEXT_PUBLIC_LIVEKIT_WS_URL,
     // default wss://jumpa.bahasacerdas.com — lib/jumpa/config.ts.
     "connect-src": ["'self'", ...livekitCspOrigins(), "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
-    "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com"],
+    "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com", "https://appetize.io"],
     "worker-src": ["'self'", "blob:"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
