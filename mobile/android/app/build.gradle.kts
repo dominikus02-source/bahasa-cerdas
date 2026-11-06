@@ -53,14 +53,20 @@ android {
     buildTypes {
         release {
             // Never ship a release artifact signed with the debug key.
-            if (!releaseKeyFile.exists()) {
-                throw GradleException("Release signing not configured: android/key.properties is required")
+            if (releaseKeyFile.exists()) {
+                signingConfig = signingConfigs.getByName("release")
             }
-            signingConfig = signingConfigs.getByName("release")
         }
     }
 }
 
 flutter {
     source = "../.."
+}
+
+// Fail release builds without a real keystore, without blocking debug builds.
+gradle.taskGraph.whenReady {
+    if (allTasks.any { it.name.contains("Release", ignoreCase = true) } && !releaseKeyFile.exists()) {
+        throw GradleException("Release signing not configured: android/key.properties is required")
+    }
 }
