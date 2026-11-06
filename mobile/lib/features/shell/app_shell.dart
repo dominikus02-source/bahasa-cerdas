@@ -144,14 +144,7 @@ class _AppShellState extends State<AppShell> {
     final url = AppRoutes.webPathForRoute(_selectedRoute ?? current.route, role: _role);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BahasaCerdas', style: TextStyle(fontWeight: FontWeight.w700)),
-        actions: [Builder(builder: (context) => IconButton(
-          tooltip: 'Buka semua menu',
-          icon: const Icon(Icons.menu_rounded),
-          onPressed: () => Scaffold.of(context).openEndDrawer(),
-        ))],
-      ),
+      // AppBar Flutter dihapus agar tidak double hamburger dengan header web
       body: WebViewScreen(
         initialUrl: url,
         key: ValueKey('${url}_$_role'),
@@ -159,6 +152,11 @@ class _AppShellState extends State<AppShell> {
         onControllerReady: (controller) => _webController = controller,
       ),
       bottomNavigationBar: NavigationBar(
+        height: 72,
+        elevation: 8,
+        shadowColor: Colors.black26,
+        indicatorColor: const Color(0xFFB91C1C).withOpacity(0.12),
+        labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         selectedIndex: _index,
         onDestinationSelected: (i) => setState(() {
           _index = i;
@@ -166,16 +164,19 @@ class _AppShellState extends State<AppShell> {
         }),
         destinations: pages
             .map((p) => NavigationDestination(
-                  icon: Icon(p.icon),
-                  selectedIcon: Icon(p.selectedIcon),
+                  icon: Icon(p.icon, color: Colors.grey.shade600),
+                  selectedIcon: Icon(p.selectedIcon, color: const Color(0xFFB91C1C)),
                   label: p.label,
                 ))
             .toList(),
       ),
-      endDrawer: _buildDrawer(),
+      // endDrawer tetap ada di kode tapi tidak ditampilkan tombolnya
+      // (bisa diaktifkan lagi nanti jika diperlukan)
+      // endDrawer: _buildDrawer(),
     );
   }
 
+  // _buildDrawer tetap disimpan untuk referensi / aktivasi ulang nanti
   Widget _buildDrawer() {
     return Drawer(
       child: SafeArea(
