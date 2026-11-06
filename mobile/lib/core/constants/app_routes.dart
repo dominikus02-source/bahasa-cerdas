@@ -38,6 +38,12 @@ class AppRoutes {
   static const String adminPremium = '/admin/premium';
   static const String adminPengaturan = '/admin/pengaturan';
 
+  // Umum (sesuai roles.ts)
+  static const String umumHome = '/umum';
+  static const String umumArena = '/arena/game';
+  static const String umumJalurCerdas = '/arena/jalur-cerdas';
+  static const String umumJumpa = '/jumpa';
+
   static String webPathForRoute(String route, {String? role}) {
     switch (route) {
       case landing:
@@ -101,6 +107,14 @@ class AppRoutes {
       case 'admin_pengaturan':
         return '${AppConstants.baseUrl}$adminPengaturan';
 
+      // Umum
+      case 'umum_arena':
+        return '${AppConstants.baseUrl}$umumArena';
+      case 'umum_jalur':
+        return '${AppConstants.baseUrl}$umumJalurCerdas';
+      case 'umum_jumpa':
+        return '${AppConstants.baseUrl}$umumJumpa';
+
       default:
         return AppConstants.baseUrl;
     }
@@ -115,7 +129,7 @@ class AppRoutes {
       case AppConstants.roleAdmin:
         return '${AppConstants.baseUrl}$adminHome';
       case AppConstants.roleUmum:
-        return '${AppConstants.baseUrl}${AppConstants.umumHome}';
+        return '${AppConstants.baseUrl}$umumHome';
       default:
         return '${AppConstants.baseUrl}${AppConstants.loginPath}';
     }
