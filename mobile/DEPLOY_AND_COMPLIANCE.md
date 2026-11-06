@@ -1,99 +1,138 @@
-# BahasaCerdas — Deploy & Compliance Guide
+# BahasaCerdas — Panduan Deploy & Compliance (Lengkap)
 
-## 1. Langkah Deploy Website (halaman /hapus-akun)
-
-### Jika menggunakan Vercel (rekomendasi):
-```bash
-# Di PC, dari folder root repo
-cd F:\bahasa-cerdas
-git pull
-# Push sudah dilakukan, Vercel biasanya auto-deploy dari main
-# Atau manual:
-npx vercel --prod
-```
-
-### Cek hasil:
-- Buka: https://www.bahasacerdas.com/hapus-akun
-- Pastikan halaman tampil tanpa login
-
-### Jika pakai server sendiri:
-```bash
-git pull
-npm install
-npm run build
-npm start
-```
+**Terakhir diperbarui:** 6 November 2026
 
 ---
 
-## 2. Google Play Data Safety — Penjelasan Lengkap
+## 1. Langkah Deploy Website (Detail)
 
-### Apa yang harus diisi di Play Console
+### A. Deploy via Vercel (Rekomendasi)
 
-| Pertanyaan | Jawaban |
-|------------|---------|
-| Does your app collect or share any of the required user data types? | **Yes** |
-| Is all of the user data collected by your app encrypted in transit? | **Yes** |
-| Do you provide a way for users to request that their data is deleted? | **Yes** |
-| Data deletion URL | `https://www.bahasacerdas.com/hapus-akun` |
+1. Pastikan kode terbaru sudah di GitHub (`main`)
+2. Di PC, buka terminal:
+   ```bash
+   cd F:\bahasa-cerdas
+   git pull
+   ```
+3. Jika belum login Vercel:
+   ```bash
+   npx vercel login
+   ```
+4. Deploy ke production:
+   ```bash
+   npx vercel --prod
+   ```
+5. Tunggu proses build selesai (biasanya 1–3 menit)
+6. Buka URL production dan cek:
+   - https://www.bahasacerdas.com/hapus-akun
+   - https://www.bahasacerdas.com/kebijakan-privasi
 
-### Data yang dikumpulkan (centang yang sesuai)
+### B. Deploy Manual (Server Sendiri)
+
+1. SSH ke server
+2. Masuk ke folder project:
+   ```bash
+   cd /path/to/bahasa-cerdas
+   git pull
+   ```
+3. Install dependency:
+   ```bash
+   npm install
+   ```
+4. Build:
+   ```bash
+   npm run build
+   ```
+5. Restart server:
+   ```bash
+   pm2 restart bahasa-cerdas
+   # atau
+   npm start
+   ```
+
+### C. Verifikasi Setelah Deploy
+- [ ] Halaman `/hapus-akun` bisa diakses tanpa login
+- [ ] Halaman `/kebijakan-privasi` tampil dengan benar
+- [ ] Tidak ada error 404 atau 500
+
+---
+
+## 2. Google Play Data Safety — Penjelasan Detail
+
+### Apa itu Data Safety?
+Form wajib di Google Play Console yang menjelaskan data apa yang dikumpulkan aplikasi, untuk apa, dan apakah dibagikan.
+
+### Langkah Mengisi di Play Console
+1. Buka Google Play Console
+2. Pilih aplikasi BahasaCerdas
+3. Menu kiri → **Policy** → **App content**
+4. Klik **Data safety**
+5. Isi sesuai tabel di bawah
+
+### Tabel Jawaban yang Harus Diisi
+
+| Pertanyaan | Jawaban | Keterangan |
+|------------|--------|----------|
+| Does your app collect or share any of the required user data types? | **Yes** | Ada data yang dikumpulkan |
+| Is all of the user data collected by your app encrypted in transit? | **Yes** | Menggunakan HTTPS |
+| Do you provide a way for users to request that their data is deleted? | **Yes** | Ada halaman hapus akun |
+| Data deletion URL | `https://www.bahasacerdas.com/hapus-akun` | Wajib diisi |
+
+### Jenis Data yang Dicentang
 
 **Personal info**
-- Name → Collected, Not shared, Required
-- Email address → Collected, Not shared, Required
+- Name → Collected, Not shared, Required for app functionality
+- Email address → Collected, Not shared, Required for app functionality
 
 **App activity**
-- App interactions → Collected, Not shared
+- App interactions → Collected, Not shared, Analytics
 
 **Device or other IDs**
 - Device or other IDs → Collected, Not shared (FCM token)
 
 **Diagnostics**
-- Crash logs → Collected, Not shared (Crashlytics)
+- Crash logs → Collected, Not shared (Firebase Crashlytics)
 
-### Firebase yang harus disebutkan
-- **Firebase Cloud Messaging (FCM)** → untuk push notification
-- **Firebase Crashlytics** → untuk laporan crash
+### Firebase yang Harus Disebutkan
+- **Firebase Cloud Messaging (FCM)**: untuk mengirim notifikasi push
+- **Firebase Crashlytics**: untuk mengumpulkan laporan crash
 
 ### Privacy Policy URL
 `https://www.bahasacerdas.com/kebijakan-privasi`
 
 ---
 
-## 3. Kebijakan Privasi — Cakupan Android + Web
+## 3. FAQ
 
-Halaman sudah ada di: https://www.bahasacerdas.com/kebijakan-privasi
+**Q: Apakah halaman /hapus-akun wajib?**  
+A: Ya. Google Play mewajibkan URL penghapusan data yang bisa diakses tanpa login.
 
-**Yang sudah dicakup:**
-- Data akun (nama, email, Google Sign-In)
-- Data sekolah
-- Analytics & crash logs
-- Tidak menjual data
-- Hak pengguna (akses, perbaiki, hapus)
-- Penghapusan dalam 30 hari
-- Usia 13+
+**Q: Apakah harus menyebutkan Firebase?**  
+A: Ya. FCM dan Crashlytics harus dideklarasikan di Data Safety form.
 
-**Yang relevan untuk Android:**
-- FCM token (notifikasi)
-- Crashlytics (diagnostik)
-- Data perangkat
+**Q: Berapa lama data dihapus setelah permintaan?**  
+A: Maksimal 30 hari, sesuai yang tertulis di kebijakan privasi.
 
-**Yang relevan untuk Web:**
-- Cookie & session
-- Google Sign-In
-- Data penggunaan halaman
+**Q: Apakah data dijual?**  
+A: Tidak. Kebijakan privasi menyatakan data tidak dijual.
+
+**Q: Bagaimana dengan pengguna di bawah 13 tahun?**  
+A: Aplikasi ditujukan untuk usia 13+ atau dengan izin orang tua.
+
+**Q: Apakah perlu Privacy Nutrition Label untuk App Store?**  
+A: Ya, jika ingin rilis di iOS. Isi sesuai data yang dikumpulkan (Name, Email, Usage, Crash).
 
 ---
 
-## 4. Checklist Sebelum Submit
+## 4. Checklist Sebelum Submit ke Google Play
 
 - [ ] Halaman `/hapus-akun` sudah live
-- [ ] Privacy Policy URL bisa diakses
-- [ ] Data Safety form diisi sesuai tabel di atas
-- [ ] APK/AAB di-upload
-- [ ] Screenshots & deskripsi siap
+- [ ] Halaman `/kebijakan-privasi` sudah live
+- [ ] Data Safety form sudah diisi
+- [ ] Privacy Policy URL sudah dimasukkan
+- [ ] APK/AAB sudah di-upload
+- [ ] Screenshots dan deskripsi sudah siap
 
 ---
 
-**Terakhir diperbarui:** 6 November 2026
+**Dokumen ini dibuat untuk membantu proses rilis BahasaCerdas ke Google Play dan App Store.**
