@@ -1,0 +1,43 @@
+name: bahasa_cerdas
+description: BahasaCerdas - Ekosistem Belajar Bahasa Indonesia
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  webview_flutter: ^4.8.0
+  webview_flutter_android: ^3.16.0
+  webview_flutter_wkwebview: ^3.13.0
+  connectivity_plus: ^6.0.5
+  flutter_native_splash: ^2.4.1
+  flutter_launcher_icons: ^0.13.1
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/icons/
+    - assets/images/
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/icons/icon-512.png"
+  adaptive_icon_background: "#7C3AED"
+  adaptive_icon_foreground: "assets/icons/icon-512.png"
+  min_sdk_android: 21
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/icons/icon-512.png
+  android: true
+  ios: true
