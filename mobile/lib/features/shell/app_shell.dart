@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '../../core/constants/app_routes.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/legal_links.dart';
@@ -16,6 +17,7 @@ class _AppShellState extends State<AppShell> {
   int _index = 0;
   String? _role;
   String? _selectedRoute;
+  WebViewController? _webController;
 
   bool get _isFounder => _role?.toUpperCase() == 'FOUNDER';
   bool get _isAdmin => _role?.toUpperCase() == AppConstants.roleAdmin;
@@ -89,11 +91,33 @@ class _AppShellState extends State<AppShell> {
   }
 
   Future<void> _logout() async {
-    setState(() {
-      _role = null;
-      _index = 0;
-      _selectedRoute = AppRoutes.logout;
-    });
+    final controller = _webController;
+    if (controller == null) return;
+    try {
+      final response = await controller.runJavaScriptReturningResult("""
+        (async function() {
+          const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            credentials: 'include'
+          });
+          return response.ok ? 'OK' : 'FAILED';
+        })()
+      """);
+      if (!response.toString().contains('OK')) {
+        throw StateError('Logout endpoint rejected the request');
+      }
+      if (!mounted) return;
+      setState(() {
+        _role = null;
+        _index = 0;
+        _selectedRoute = AppRoutes.login;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Gagal keluar. Periksa koneksi dan coba lagi.')),
+      );
+    }
   }
 
   Future<void> _openLegal(String url) async {
@@ -120,10 +144,19 @@ class _AppShellState extends State<AppShell> {
     final url = AppRoutes.webPathForRoute(_selectedRoute ?? current.route, role: _role);
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('BahasaCerdas', style: TextStyle(fontWeight: FontWeight.w700)),
+        actions: [Builder(builder: (context) => IconButton(
+          tooltip: 'Buka semua menu',
+          icon: const Icon(Icons.menu_rounded),
+          onPressed: () => Scaffold.of(context).openEndDrawer(),
+        ))],
+      ),
       body: WebViewScreen(
         initialUrl: url,
         key: ValueKey('${url}_$_role'),
         onRoleDetected: _onRoleDetected,
+        onControllerReady: (controller) => _webController = controller,
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _index,
