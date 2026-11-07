@@ -47,16 +47,25 @@ class _WebViewScreenState extends State<WebViewScreen> {
         NavigationPolicy.isTrustedWebUrl(url) &&
         segments.length == 2 &&
         segments.first == 'jumpa' &&
-        !{'jadwal', 'riwayat', 'pantau'}.contains(segments.last);
+        RegExp(r'^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$').hasMatch(segments.last) &&
+        !{
+          'jadwal',
+          'riwayat',
+          'pantau',
+          'buat',
+          'baru',
+          'rekaman',
+          'pengaturan'
+        }.contains(segments.last.toLowerCase());
     if (_jumpaActive == active) return;
     _jumpaActive = active;
     try {
-      await _jumpaChannel.invokeMethod<void>('setJumpaActive', {'active': active});
+      await _jumpaChannel
+          .invokeMethod<void>('setJumpaActive', {'active': active});
     } on MissingPluginException {
       // Supported on Android only.
     }
   }
-
 
   // Orientation is opt-in per game, never forced by a broad route prefix.
   // Supported game URLs can request ?orientation=landscape. All other
@@ -69,8 +78,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
         path.startsWith('/guru/game/') ||
         path.startsWith('/murid/game/') ||
         path.startsWith('/murid/gim/');
-    final wantsLandscape = isPlayableGame &&
-        uri.queryParameters['orientation'] == 'landscape';
+    final wantsLandscape =
+        isPlayableGame && uri.queryParameters['orientation'] == 'landscape';
     if (wantsLandscape == _gameLandscape) return;
     _gameLandscape = wantsLandscape;
     await SystemChrome.setPreferredOrientations(wantsLandscape
@@ -81,12 +90,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void dispose() {
     _connectivitySub?.cancel();
-    _jumpaChannel.invokeMethod<void>('setJumpaActive', {'active': false})
-        .catchError((Object _) {});
+    _jumpaChannel.invokeMethod<void>(
+        'setJumpaActive', {'active': false}).catchError((Object _) {});
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
-
 
   @override
   void initState() {
@@ -97,7 +105,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   Future<void> _listenConnectivity() async {
     final result = await Connectivity().checkConnectivity();
-    if (mounted) setState(() => _isOffline = result.contains(ConnectivityResult.none));
+    if (mounted) {
+      setState(() => _isOffline = result.contains(ConnectivityResult.none));
+    }
     _connectivitySub = Connectivity().onConnectivityChanged.listen((results) {
       if (!mounted) return;
       final offline = results.contains(ConnectivityResult.none);
@@ -119,17 +129,20 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   IconData _featureIcon(String id) => switch (id) {
-    'jumpa' => Icons.video_call_rounded,
-    'nara' || 'nara-mentor' || 'alat-nara' => Icons.auto_awesome_rounded,
-    'karya' || 'aku-sastrawan' => Icons.edit_note_rounded,
-    'aksara' || 'belajar' => Icons.menu_book_rounded,
-    'gim' || 'gim-guru' || 'bermain-bersama' => Icons.sports_esports_rounded,
-    'kelasku' => Icons.groups_rounded,
-    'jalur-cerdas' => Icons.route_rounded,
-    'arena' => Icons.bolt_rounded,
-    'simulasi' || 'evaluasi' => Icons.fact_check_rounded,
-    _ => Icons.grid_view_rounded,
-  };
+        'jumpa' => Icons.video_call_rounded,
+        'nara' || 'nara-mentor' || 'alat-nara' => Icons.auto_awesome_rounded,
+        'karya' || 'aku-sastrawan' => Icons.edit_note_rounded,
+        'aksara' || 'belajar' => Icons.menu_book_rounded,
+        'gim' ||
+        'gim-guru' ||
+        'bermain-bersama' =>
+          Icons.sports_esports_rounded,
+        'kelasku' => Icons.groups_rounded,
+        'jalur-cerdas' => Icons.route_rounded,
+        'arena' => Icons.bolt_rounded,
+        'simulasi' || 'evaluasi' => Icons.fact_check_rounded,
+        _ => Icons.grid_view_rounded,
+      };
 
   Widget _featureTile(MobileFeature feature, MobileAudience audience) {
     final path = MobileFeatureCatalog.destination(feature.id, audience);
@@ -169,18 +182,27 @@ class _WebViewScreenState extends State<WebViewScreen> {
                     color: colors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Icon(_featureIcon(feature.id), color: colors.primary, size: 24),
+                  child: Icon(_featureIcon(feature.id),
+                      color: colors.primary, size: 24),
                 ),
                 const SizedBox(height: 16),
                 Text(feature.label,
-                    maxLines: 2, overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: colors.onSurface, height: 1.2)),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 15,
+                        color: colors.onSurface,
+                        height: 1.2)),
                 if (premium)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
-                    child: Text('PREMIUM', style: TextStyle(
-                        fontSize: 10, letterSpacing: 0.8,
-                        fontWeight: FontWeight.w800, color: colors.primary)),
+                    child: Text('PREMIUM',
+                        style: TextStyle(
+                            fontSize: 10,
+                            letterSpacing: 0.8,
+                            fontWeight: FontWeight.w800,
+                            color: colors.primary)),
                   ),
               ],
             ),
@@ -196,8 +218,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
     final features = <MobileFeature>[
       ...MobileFeatureCatalog.shared,
       ...?MobileFeatureCatalog.byAudience[audience],
-    ].where((feature) =>
-        MobileFeatureCatalog.destination(feature.id, audience) != null).toList();
+    ]
+        .where((feature) =>
+            MobileFeatureCatalog.destination(feature.id, audience) != null)
+        .toList();
 
     showModalBottomSheet<void>(
       context: context,
@@ -213,23 +237,33 @@ class _WebViewScreenState extends State<WebViewScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('Ruang belajarmu',
-                    style: Theme.of(sheetContext).textTheme.headlineSmall
-                        ?.copyWith(fontWeight: FontWeight.w800, letterSpacing: -0.5)),
+                    style: Theme.of(sheetContext)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(
+                            fontWeight: FontWeight.w800, letterSpacing: -0.5)),
                 const SizedBox(height: 4),
                 Text('Semua fitur dalam satu tempat.',
-                    style: Theme.of(sheetContext).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(sheetContext).colorScheme.onSurfaceVariant)),
+                    style: Theme.of(sheetContext)
+                        .textTheme
+                        .bodyMedium
+                        ?.copyWith(
+                            color: Theme.of(sheetContext)
+                                .colorScheme
+                                .onSurfaceVariant)),
                 const SizedBox(height: 20),
                 Expanded(
                   child: GridView.builder(
                     itemCount: features.length,
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
                       mainAxisExtent: 148,
                     ),
-                    itemBuilder: (_, index) => _featureTile(features[index], audience),
+                    itemBuilder: (_, index) =>
+                        _featureTile(features[index], audience),
                   ),
                 ),
               ],
@@ -266,7 +300,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _setupWebView() {
     final candidate = widget.initialUrl ?? AppConstants.baseUrl;
     final url = NavigationPolicy.isTrustedWebUrl(candidate)
-        ? candidate : AppConstants.baseUrl;
+        ? candidate
+        : AppConstants.baseUrl;
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
@@ -277,7 +312,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onProgress: (progress) {
             if (mounted) setState(() => _progress = progress / 100);
           },
-          onPageStarted: (_) {
+          onPageStarted: (url) {
+            // Disable PiP immediately when leaving a room; do not wait for load.
+            _updateJumpaMode(url);
             if (mounted) {
               setState(() {
                 _isLoading = true;
@@ -305,6 +342,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             if (uri == null) return NavigationDecision.prevent;
 
             if (NavigationPolicy.isTrustedWebUrl(request.url)) {
+              _updateJumpaMode(request.url);
               return NavigationDecision.navigate;
             }
             if (uri.scheme == 'mailto' || uri.scheme == 'tel') {
@@ -323,7 +361,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
     widget.onControllerReady?.call(_controller);
 
     if (_controller.platform is AndroidWebViewController) {
-      final androidController = _controller.platform as AndroidWebViewController;
+      final androidController =
+          _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
       androidController.setOnPlatformPermissionRequest((request) async {
         final statuses = await <Permission>[
@@ -344,22 +383,30 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   void _detectRoleFromUrl(String url) {
     final uri = Uri.tryParse(url);
-    if (uri == null || uri.scheme != 'https' ||
+    if (uri == null ||
+        uri.scheme != 'https' ||
         !_isDomain(uri.host.toLowerCase(), 'bahasacerdas.com')) {
       return;
     }
 
     final path = uri.path.toLowerCase();
     final onDashboard = path == '/murid/beranda' ||
-        path == '/guru/beranda' || path == '/umum' ||
-        path == '/murid' || path == '/guru';
+        path == '/guru/beranda' ||
+        path == '/umum' ||
+        path == '/murid' ||
+        path == '/guru';
     if (mounted && _onRoleDashboard != onDashboard) {
       setState(() => _onRoleDashboard = onDashboard);
     }
-    if (path == '/' || path == '/login' || path.startsWith('/login/') ||
-        path == '/logout' || path.startsWith('/logout/') ||
-        path.startsWith('/auth/') || path == '/register' ||
-        path.startsWith('/register/') || path == '/forgot-password') {
+    if (path == '/' ||
+        path == '/login' ||
+        path.startsWith('/login/') ||
+        path == '/logout' ||
+        path.startsWith('/logout/') ||
+        path.startsWith('/auth/') ||
+        path == '/register' ||
+        path.startsWith('/register/') ||
+        path == '/forgot-password') {
       if (mounted && _audience != null) setState(() => _audience = null);
       widget.onRoleDetected?.call(null);
       return;
@@ -387,14 +434,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
         'UMUM' => MobileAudience.umum,
         _ => null,
       };
-      if (mounted && audience != _audience) setState(() => _audience = audience);
+      if (mounted && audience != _audience) {
+        setState(() => _audience = audience);
+      }
       widget.onRoleDetected?.call(detectedRole);
     } else if (mounted && _audience != null) {
       setState(() => _audience = null);
       widget.onRoleDetected?.call(null);
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -429,7 +477,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
         body: SafeArea(
           child: Stack(
             children: [
-              if (!_hasError && !_isOffline) WebViewWidget(controller: _controller),
+              if (!_hasError && !_isOffline)
+                WebViewWidget(controller: _controller),
               if (_isLoading && !_hasError && !_isOffline)
                 Positioned(
                   top: 0,
@@ -491,13 +540,17 @@ class _OfflineView extends StatelessWidget {
               const SizedBox(height: 24),
               Text(
                 isOffline ? 'Tidak ada koneksi' : 'Tidak dapat terhubung',
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: -0.4),
+                style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: -0.4),
               ),
               const SizedBox(height: 10),
               const Text(
                 'Periksa koneksi internet Anda.\nSemua data dan progress tetap aman di server.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Color(0xFF64748B), height: 1.45, fontSize: 15),
+                style: TextStyle(
+                    color: Color(0xFF64748B), height: 1.45, fontSize: 15),
               ),
               const SizedBox(height: 32),
               FilledButton.icon(

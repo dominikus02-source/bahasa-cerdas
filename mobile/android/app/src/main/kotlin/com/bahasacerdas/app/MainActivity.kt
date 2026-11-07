@@ -18,6 +18,14 @@ class MainActivity : FlutterActivity() {
                 when (call.method) {
                     "setJumpaActive" -> {
                         jumpaActive = call.argument<Boolean>("active") == true
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                            setPictureInPictureParams(
+                                PictureInPictureParams.Builder()
+                                    .setAspectRatio(Rational(16, 9))
+                                    .setAutoEnterEnabled(jumpaActive)
+                                    .build()
+                            )
+                        }
                         result.success(null)
                     }
                     else -> result.notImplemented()
