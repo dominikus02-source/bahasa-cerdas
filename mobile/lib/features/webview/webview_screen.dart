@@ -36,6 +36,23 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _isOffline = false;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
   bool _gameLandscape = false;
+  static const _jumpaChannel = MethodChannel('com.bahasacerdas.app/jumpa');
+  bool _jumpaActive = false;
+
+  Future<void> _updateJumpaMode(String url) async {
+    final uri = Uri.tryParse(url);
+    final active = uri != null &&
+        NavigationPolicy.isTrustedWebUrl(url) &&
+        (uri.path == '/jumpa' || uri.path.startsWith('/jumpa/'));
+    if (_jumpaActive == active) return;
+    _jumpaActive = active;
+    try {
+      await _jumpaChannel.invokeMethod<void>('setJumpaActive', {'active': active});
+    } on MissingPluginException {
+      // Supported on Android only.
+    }
+  }
+
 
   // Orientation is opt-in per game, never forced by a broad route prefix.
   // Supported game URLs can request ?orientation=landscape. All other
@@ -60,6 +77,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void dispose() {
     _connectivitySub?.cancel();
+    _jumpaChannel.invokeMethod<void>('setJumpaActive', {'active': false})
+        .catchError((Object _) {});
     SystemChrome.setPreferredOrientations(DeviceOrientation.values);
     super.dispose();
   }
@@ -267,6 +286,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
             if (mounted) setState(() => _isLoading = false);
             _detectRoleFromUrl(url);
             await _updateOrientation(url);
+            await _updateJumpaMode(url);
           },
           onWebResourceError: (error) {
             if (error.isForMainFrame == true && mounted) {
