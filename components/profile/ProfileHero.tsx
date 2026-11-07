@@ -446,7 +446,7 @@ export default function ProfileHero({
 
           {!isOwn && (
             <a
-              href="#karya"
+              href="/murid/karya"
               className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all ${t(
                 "bg-slate-900/10 border border-slate-900/15 hover:bg-slate-900/15",
                 "bg-white/10 border border-white/15 hover:bg-white/15"
