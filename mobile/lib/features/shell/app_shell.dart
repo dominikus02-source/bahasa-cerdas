@@ -80,42 +80,51 @@ class _AppShellState extends State<AppShell> {
     }
   }
 
+  /// Accepts null to clear role (logout or public page).
   void _onRoleDetected(String? role) {
-    if (role != null && role != _role) {
-      setState(() {
-        _role = role;
-        _index = 0;
-        _selectedRoute = null;
-      });
-    }
+    if (role == _role) return;
+    if (!mounted) return;
+    setState(() {
+      _role = role;
+      _index = 0;
+      _selectedRoute = role == null ? AppRoutes.login : null;
+    });
   }
 
   Future<void> _logout() async {
     final controller = _webController;
-    if (controller == null) return;
-    try {
-      final response = await controller.runJavaScriptReturningResult("""
-        (async function() {
-          const response = await fetch('/api/auth/logout', {
-            method: 'POST',
-            credentials: 'include'
-          });
-          return response.ok ? 'OK' : 'FAILED';
-        })()
-      """);
-      if (!response.toString().contains('OK')) {
-        throw StateError('Logout endpoint rejected the request');
-      }
-      if (!mounted) return;
+
+    // Reset shell state immediately so bottom nav and drawer leave GURU/ADMIN.
+    if (mounted) {
       setState(() {
         _role = null;
         _index = 0;
         _selectedRoute = AppRoutes.login;
       });
+    }
+
+    if (controller == null) return;
+
+    try {
+      // Fire-and-forget server signout. Do NOT use runJavaScriptReturningResult
+      // with a Promise — WebView returns the Promise object, not the resolved value.
+      await controller.runJavaScript('''
+        try {
+          fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+            .catch(function() {});
+        } catch (e) {}
+      ''');
+
+      await controller.clearCache();
+      await controller.clearLocalStorage();
+
+      // Force navigate to login so any residual session cookie is not used.
+      final loginUrl = AppRoutes.webPathForRoute(AppRoutes.login);
+      await controller.loadRequest(Uri.parse(loginUrl));
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Gagal keluar. Periksa koneksi dan coba lagi.')),
+        const SnackBar(content: Text('Sesi lokal dihapus. Jika masih masuk, tutup aplikasi.')),
       );
     }
   }
@@ -188,7 +197,6 @@ class _AppShellState extends State<AppShell> {
             ),
             const SizedBox(height: 24),
 
-            // FOUNDER
             if (_isFounder) ...[
               const Text('Founder', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.amber)),
               ListTile(leading: const Icon(Icons.admin_panel_settings), title: const Text('Kelola Founder'), onTap: () => _openRoute('founder_admin', 2)),
@@ -199,7 +207,6 @@ class _AppShellState extends State<AppShell> {
               ListTile(leading: const Icon(Icons.groups), title: const Text('Komunitas'), onTap: () => _openRoute('guru_komunitas', 0)),
             ],
 
-            // ADMIN
             if (_isAdmin) ...[
               const Text('Admin', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.blue)),
               ListTile(leading: const Icon(Icons.dashboard), title: const Text('Dashboard'), onTap: () => _openRoute('admin_home', 0)),
@@ -210,7 +217,6 @@ class _AppShellState extends State<AppShell> {
               ListTile(leading: const Icon(Icons.settings), title: const Text('Pengaturan'), onTap: () => _openRoute('admin_pengaturan', 0)),
             ],
 
-            // GURU (bukan founder)
             if (_role == AppConstants.roleGuru && !_isFounder) ...[
               const Text('AI Tools', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
               ListTile(leading: const Icon(Icons.auto_awesome), title: const Text('Semua AI Tools'), onTap: () => _openRoute('guru_ai', 1)),
@@ -222,7 +228,6 @@ class _AppShellState extends State<AppShell> {
               ListTile(leading: const Icon(Icons.workspace_premium), title: const Text('Berlangganan'), onTap: () => _openRoute('guru_berlangganan', 0)),
             ],
 
-            // MURID
             if (_role == AppConstants.roleMurid) ...[
               const Text('Belajar', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.grey)),
               ListTile(leading: const Icon(Icons.menu_book), title: const Text('Belajar'), onTap: () => _openRoute('murid_belajar', 1)),
@@ -236,7 +241,6 @@ class _AppShellState extends State<AppShell> {
               ListTile(leading: const Icon(Icons.person), title: const Text('Profil'), onTap: () => _openRoute('murid_profile', 3)),
             ],
 
-            // UMUM
             if (_isUmum) ...[
               const Text('Umum', style: TextStyle(fontWeight: FontWeight.w700, color: Colors.green)),
               ListTile(leading: const Icon(Icons.sports_esports), title: const Text('Arena'), onTap: () => _openRoute('umum_arena', 1)),

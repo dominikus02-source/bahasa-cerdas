@@ -1,0 +1,13 @@
+/.gradle
+/captures/
+/local.properties
+GeneratedPluginRegistrant.java
+.cxx/
+
+# Never commit keystore or signing config
+key.properties
+**/*.keystore
+**/*.jks
+
+# Firebase config stays local
+google-services.json

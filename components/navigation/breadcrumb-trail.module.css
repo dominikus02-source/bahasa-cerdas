@@ -11,13 +11,13 @@
   min-width:0;
   grid-column:1 / -1;
   flex:0 0 auto;
-  /* Clear fixed navbar (h-16 / h-20) so breadcrumb sits properly below header */
-  padding-top:72px;
+  /* Reduced from 72px — fixed navbar clearance without large empty gap */
+  padding-top:16px;
   padding-left:16px;
   padding-right:16px;
   padding-bottom:8px;
 }
 @media (min-width: 1024px){
-  .host{padding-top:88px;padding-left:24px;padding-right:24px;}
+  .host{padding-top:24px;padding-left:24px;padding-right:24px;}
 }
 .fallback:empty{display:none}
