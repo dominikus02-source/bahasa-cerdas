@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import QRCode from "qrcode";
 
 const ZapIcon = () => <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z" strokeLinecap="round" strokeLinejoin="round"/></svg>;
@@ -19,6 +20,9 @@ const GAME_MODES = [
 ];
 
 export default function GuruGameLobbyPage() {
+  const router = useRouter();
+  const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState("");
   const [roomCode, setRoomCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [selectedMode, setSelectedMode] = useState("KUIS_BATTLE");
@@ -146,13 +150,17 @@ export default function GuruGameLobbyPage() {
             <input
               type="text"
               placeholder="Masukkan kode ruangan"
+              value={joinCode}
+              onChange={(event) => { setJoinCode(event.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "")); setJoinError(""); }}
+              aria-label="Kode ruangan gim"
               className="flex-1 h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               maxLength={6}
             />
-            <button className="px-6 h-12 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+            <button type="button" onClick={() => { const code = joinCode.trim(); if (!/^[A-Z0-9]{6}$/.test(code)) { setJoinError("Masukkan kode ruangan 6 karakter."); return; } router.push(`/game/${encodeURIComponent(code)}`); }} className="px-6 h-12 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
               Gabung
             </button>
           </div>
+          {joinError && <p role="alert" className="mt-2 text-sm text-red-600">{joinError}</p>}
         </div>
 
         <div className="mt-6 bg-white rounded-2xl border border-gray-100 p-6">
