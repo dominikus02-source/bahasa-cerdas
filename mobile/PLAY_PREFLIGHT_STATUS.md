@@ -100,3 +100,10 @@ Android 14 device `SM-A236E` connected through authorized USB ADB; tested Androi
 **PASS (user-confirmed):** Android system Back successfully returned from JUMPA to the previous page without logging the user out. This was manually confirmed on Samsung SM-A236E with Android 14; no UI automation assertion was made.
 
 **ADB observation:** device remained connected with status `device`; the `com.bahasacerdas.app` process remained active; no application fatal exception was found in the inspected crash buffer. **Still HOLD for Play release:** upload/download, file picker, logout/session integrity, cross-role testing, multi-party media, network recovery, and remaining Play Console policy gates. No credentials, signing secrets, or binary artifacts are included in this report.
+
+
+## Samsung A23 — File transfer manual check (7 November 2026)
+
+**User-reported PASS:** User indicated the just-requested file upload/download check works on their Samsung Galaxy A23. The specific feature menu, uploaded file type, download destination, and downloaded file integrity have **not** been independently verified by ADB or an automated test. Treat this as manual functional confirmation, not a validated file-integrity E2E test.
+
+**ADB observation:** Android device remained authorized (`device`), BahasaCerdas process was running (PID `30896`), and the checked Android crash buffer had no matching app fatal crash. Further release gates remain: other RBAC roles, logout and login persistence, two-party JUMPA media, notification delivery, network recovery, Play policy and deployment approval. No personal file contents or secret material were accessed or committed.
