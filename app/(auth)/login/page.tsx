@@ -198,7 +198,7 @@ export default function LoginPage() {
       <BatikAccent />
 
             {/* Tautan kembali hanya di web umum; tautan keluar scope membuka browser eksternal di APK. */}
-      {!isArenaEntry && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+      {!isArenaEntry && !isMobileApp && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
         <Link
           href="/"
           className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
@@ -214,7 +214,7 @@ export default function LoginPage() {
 
 <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
-        <div className="order-2 lg:order-1">
+        <div className={`order-2 lg:order-1 ${isMobileApp ? "!hidden" : ""}`}>
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
