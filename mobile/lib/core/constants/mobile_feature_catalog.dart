@@ -36,7 +36,7 @@ class MobileFeatureCatalog {
       MobileFeature('nara-mentor', 'NARA Mentor', '/murid/mentor',
           note: 'Premium; entitlement checked by server'),
       MobileFeature('arena', 'ARENA', '/arena'),
-      MobileFeature('simulasi', 'Simulasi', '/murid/simulasi'),
+      MobileFeature('simulasi', 'Simulasi', '/arena/simulasi'),
       MobileFeature('profil', 'Profil', '/murid/profile'),
     ],
     MobileAudience.guru: [
