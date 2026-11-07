@@ -35,6 +35,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _hasError = false;
   double _progress = 0.0;
   MobileAudience? _audience;
+  // Keep the authenticated role while a teacher previews student pages.
+  MobileAudience? _signedInAudience;
   bool _onRoleDashboard = false;
   bool _isOffline = false;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
@@ -242,6 +244,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
     );
   }
 
+  // Kept for the dedicated feature launcher; no duplicate native AppBar.
+  // ignore: unused_element
   void _showFeatureHub() {
     final audience = _audience;
     if (audience == null) return;
@@ -314,16 +318,42 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   Future<void> _goHome() async {
-    final audience = _audience;
-    String path = AppConstants.baseUrl;
+    final audience = _signedInAudience ?? _audience;
+    String path = '${AppConstants.baseUrl}${AppConstants.loginPath}?bc_app=1';
     if (audience == MobileAudience.murid) {
+      path = AppConstants.baseUrl;
+
       path += AppConstants.muridHome;
     } else if (audience == MobileAudience.guru) {
-      path += AppConstants.guruHome;
+      path = '${AppConstants.baseUrl}${AppConstants.guruHome}';
     } else if (audience == MobileAudience.umum) {
-      path += AppConstants.umumHome;
+      path = '${AppConstants.baseUrl}${AppConstants.umumHome}';
     }
     await _controller.loadRequest(Uri.parse(path));
+  }
+
+  Future<void> _applyMobileStyle(String url) async {
+    if (!mounted || !NavigationPolicy.isTrustedWebUrl(url)) return;
+    await _controller.runJavaScript(MobilePremiumStyle.javascript);
+    // Student dashboard is a preview for teachers: preserve a direct way back
+    // even while the website release with its own return button is pending.
+    if (_signedInAudience == MobileAudience.guru &&
+        Uri.tryParse(url)?.path.startsWith('/murid') == true) {
+      await _controller.runJavaScript(r"""
+(() => {
+  if (document.querySelector('a[aria-label="Kembali ke dasbor guru"],#bc-app-back-to-guru')) return;
+  const main = document.querySelector('main');
+  if (!main) return;
+  const link = document.createElement('a');
+  link.id = 'bc-app-back-to-guru';
+  link.href = '/guru/beranda';
+  link.textContent = '← Kembali ke Dasbor Guru';
+  link.setAttribute('aria-label', 'Kembali ke dasbor guru');
+  link.style.cssText = 'display:inline-flex;min-height:44px;align-items:center;padding:10px 14px;margin:0 0 12px;border-radius:12px;background:#e7f4ff;color:#083d86;font-weight:700;text-decoration:none';
+  main.insertBefore(link, main.firstChild);
+})();
+""");
+    }
   }
 
   Future<void> _goBack() async {
@@ -346,6 +376,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF8F7FC))
       ..enableZoom(false)
+      ..addJavaScriptChannel(
+        'BahasaCerdasNavigation',
+        onMessageReceived: (message) {
+          if (message.message == 'features') _showFeatureHub();
+          if (message.message == 'home') unawaited(_goHome());
+        },
+      )
       ..addJavaScriptChannel(
         'BahasaCerdasPip',
         onMessageReceived: (message) async {
@@ -384,9 +421,19 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onUrlChange: (change) {
             final url = change.url;
             if (url == null) return;
+            if (Uri.tryParse(url)?.path == '/' &&
+                NavigationPolicy.isTrustedWebUrl(url)) {
+              unawaited(_goHome());
+              return;
+            }
             _detectRoleFromUrl(url);
             unawaited(_updateJumpaMode(url));
             unawaited(_updateOrientation(url));
+            // A Next.js route change can replace the DOM without page load.
+            unawaited(Future<void>.delayed(const Duration(milliseconds: 160),
+                () async {
+              if (mounted) await _applyMobileStyle(url);
+            }));
           },
           onProgress: (progress) {
             if (mounted) setState(() => _progress = progress / 100);
@@ -403,11 +450,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
           },
           onPageFinished: (url) async {
+            _detectRoleFromUrl(url);
             if (NavigationPolicy.isTrustedWebUrl(url)) {
-              await _controller.runJavaScript(MobilePremiumStyle.javascript);
+              await _applyMobileStyle(url);
             }
             if (mounted) setState(() => _isLoading = false);
-            _detectRoleFromUrl(url);
             await _updateOrientation(url);
             await _updateJumpaMode(url);
           },
@@ -424,7 +471,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
             if (uri == null) return NavigationDecision.prevent;
 
             if (NavigationPolicy.isTrustedWebUrl(request.url)) {
-              _updateJumpaMode(request.url);
+              // The Android app must never open the long public web landing.
+              // Return to a role dashboard, or the official compact login.
+              if (uri.path == '/' && uri.host.endsWith('bahasacerdas.com')) {
+                unawaited(_goHome());
+                return NavigationDecision.prevent;
+              }
+              unawaited(_updateJumpaMode(request.url));
               return NavigationDecision.navigate;
             }
             if (uri.scheme == 'mailto' || uri.scheme == 'tel') {
@@ -489,7 +542,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
         path == '/register' ||
         path.startsWith('/register/') ||
         path == '/forgot-password') {
-      if (mounted && _audience != null) setState(() => _audience = null);
+      if (mounted && (_audience != null || _signedInAudience != null)) {
+        setState(() {
+          _audience = null;
+          _signedInAudience = null;
+        });
+      }
       widget.onRoleDetected?.call(null);
       return;
     }
@@ -516,8 +574,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
         'UMUM' => MobileAudience.umum,
         _ => null,
       };
-      if (mounted && audience != _audience) {
-        setState(() => _audience = audience);
+      if (mounted &&
+          (audience != _audience ||
+              (_signedInAudience == null && audience != null))) {
+        setState(() {
+          _audience = audience;
+          _signedInAudience ??= audience;
+        });
       }
       widget.onRoleDetected?.call(detectedRole);
     } else if (mounted && _audience != null) {
@@ -534,31 +597,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
         if (!didPop) _goBack();
       },
       child: Scaffold(
-        appBar: (_audience != null &&
-                !_onRoleDashboard &&
-                !_jumpaActive &&
-                !_isInPip)
-            ? AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back_rounded),
-                  tooltip: 'Kembali',
-                  onPressed: _goBack,
-                ),
-                title: const Text('BahasaCerdas'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.home_rounded),
-                    tooltip: 'Beranda',
-                    onPressed: _goHome,
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.apps_rounded),
-                    tooltip: 'Fitur',
-                    onPressed: _showFeatureHub,
-                  ),
-                ],
-              )
-            : null,
+        // The web dashboard already provides its own header and back controls.
+        // A second native AppBar causes the doubled toolbar seen on Android.
+        appBar: null,
         body: SafeArea(
           child: Stack(
             children: [
