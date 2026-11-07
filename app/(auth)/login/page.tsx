@@ -55,8 +55,11 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [next, setNext] = useState("");
   // Tautan undangan (mis. JUMPA) tetap dibawa saat pengguna baru memilih daftar.
-  const registerWithNext =
+  const registerWithNextBase =
     !isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref;
+  const registerWithNext = isMobileApp
+    ? `${registerWithNextBase}${registerWithNextBase.includes("?") ? "&" : "?"}bc_app=1`
+    : registerWithNextBase;
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   useEffect(() => {
@@ -136,12 +139,15 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
+      const baseUrl = isMobileApp
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com");
       const supabase = createClient();
       const authNext = next || (isArenaEntry ? "/arena" : "");
-      const redirectTo = authNext
-        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(authNext)}`
-        : `${baseUrl}/api/auth/callback`;
+      const callbackUrl = new URL("/api/auth/callback", baseUrl);
+      if (authNext && isSafeNext(authNext)) callbackUrl.searchParams.set("next", authNext);
+      if (isMobileApp) callbackUrl.searchParams.set("bc_app", "1");
+      const redirectTo = callbackUrl.toString();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo },
@@ -170,7 +176,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className={`relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b] ${isMobileApp ? "flex items-center justify-center !bg-white !py-4 dark:!bg-slate-950" : ""}`}>
+    <div className={`relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b] ${isMobileApp ? "flex min-h-[100dvh] items-center justify-center !overflow-x-hidden !bg-white !px-4 !py-2 dark:!bg-slate-950" : ""}`}>
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -233,9 +239,9 @@ export default function LoginPage() {
 
         {/* ── LOGIN CARD ── */}
         <div className="order-1 lg:order-2">
-          <div className={`mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8 ${isMobileApp ? "!border-0 !bg-transparent !shadow-none !px-1" : ""}`}>
-            <div className="mb-6 text-center">
-              <div className="mb-5 flex flex-col items-center gap-2 lg:hidden">
+          <div className={`mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8 ${isMobileApp ? "!border-0 !bg-transparent !shadow-none !px-1 !py-2" : ""}`}>
+            <div className={isMobileApp ? "mb-3 text-center" : "mb-6 text-center"}>
+              <div className={isMobileApp ? "mb-2 flex flex-col items-center gap-1 lg:hidden" : "mb-5 flex flex-col items-center gap-2 lg:hidden"}>
                 <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} priority className="h-16 w-16 object-contain dark:hidden" />
                 <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} priority className="hidden h-16 w-16 object-contain dark:block" />
                 <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BahasaCerdas</span>
@@ -273,7 +279,7 @@ export default function LoginPage() {
               {googleLoading ? "Memproses..." : "Masuk dengan Google"}
             </button>
 
-            <div className="relative my-5">
+            <div className={isMobileApp ? "relative my-3" : "relative my-5"}>
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
@@ -282,7 +288,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className={isMobileApp ? "space-y-2.5" : "space-y-4"}>
               <div>
                 <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
                   Email atau Username
@@ -382,7 +388,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800">
+            <div className={isMobileApp ? "mt-3 border-t border-slate-100 pt-3 text-center dark:border-slate-800" : "mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800"}>
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Belum punya akun?{" "}
                 <Link href={registerWithNext} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">
