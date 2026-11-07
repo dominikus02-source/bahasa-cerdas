@@ -1,5 +1,4 @@
-import {Suspense} from "react";
-import RouteBreadcrumbs from "@/components/navigation/route-breadcrumbs";
+﻿import {Suspense} from "react";
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
@@ -7,8 +6,8 @@ import { Providers } from "./providers";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
-const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI Rencana Pembelajaran generator, bank soal interaktif, kuis battle, simulasi UKBI/TKA, toko karya, dan marketplace bahan ajar — all-in-one!";
-const OG_TITLE = `${SITE_NAME} — Platform Edukasi Bahasa Indonesia #BahasaCerdas`;
+const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI Rencana Pembelajaran generator, bank soal interaktif, kuis battle, simulasi UKBI/TKA, toko karya, dan marketplace bahan ajar â€” all-in-one!";
+const OG_TITLE = `${SITE_NAME} â€” Platform Edukasi Bahasa Indonesia #BahasaCerdas`;
 const OG_DESC = "Belajar Bahasa Indonesia makin seru! AI bikin Rencana Pembelajaran, bank soal, kuis game, UKBI, komunitas MGMP, dan toko karya guru. Cobain gratis sekarang!";
 
 export const viewport: Viewport = {
@@ -24,7 +23,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Platform edukasi Bahasa Indonesia`,
+    default: `${SITE_NAME} â€” Platform edukasi Bahasa Indonesia`,
     template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESC,
@@ -44,7 +43,7 @@ export const metadata: Metadata = {
     description: OG_DESC,
     url: SITE_URL,
     countryName: "Indonesia",
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "BahasaCerdas — Platform Edukasi Bahasa Indonesia" }],
+    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: "BahasaCerdas â€” Platform Edukasi Bahasa Indonesia" }],
   },
   twitter: {
     card: "summary_large_image",
@@ -117,7 +116,7 @@ export default async function RootLayout({
   // CSP nonce (set by middleware) so our inline JSON-LD passes the strict policy.
   const nonce = (await headers()).get("x-nonce") ?? undefined;
   // Defensif: placeholder lokal (mis. `[SENSITIVE]`) tidak boleh sampai ke
-  // `new URL()` — cukup lewati dns-prefetch/preconnect saja.
+  // `new URL()` â€” cukup lewati dns-prefetch/preconnect saja.
   let supabaseHost: string | null = null;
   try {
     supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -152,12 +151,13 @@ export default async function RootLayout({
         />
       </head>
       <body className="font-sans">
-        {/* Skip to content link — WCAG 2.4.1 Bypass Blocks */}
+        {/* Skip to content link â€” WCAG 2.4.1 Bypass Blocks */}
         <a href="#main-content" className="skip-link">
           Langsung ke konten utama
         </a>
-        <Providers nonce={nonce}><Suspense fallback={null}><RouteBreadcrumbs/></Suspense>{children}</Providers>
+        <Providers nonce={nonce}>{children}</Providers>
       </body>
     </html>
   );
 }
+

@@ -327,7 +327,7 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
       {drawer && (
         <div className="fixed inset-0 z-50 md:hidden">
           <button type="button" aria-label="Tutup menu guru" className="absolute inset-0 bg-black/45" onClick={() => setDrawer(false)} />
-          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-white shadow-2xl dark:bg-slate-900">
+          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[min(78vw,300px)] max-w-[calc(100vw-48px)] flex-col bg-white shadow-2xl dark:bg-slate-900">
             <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
               <div>
                 <p className="font-bold text-white text-sm">Menu Guru</p>

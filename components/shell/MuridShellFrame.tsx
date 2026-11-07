@@ -10,7 +10,6 @@ import { NotificationBell } from "@/components/dashboard/NotificationBell";
 import { ShellSidebarToggle } from "@/components/dashboard/ShellSidebarToggle";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import MuridMobileNav from "@/components/dashboard/MuridMobileNav";
-import { InstallBanner } from "@/components/InstallBanner";
 import { IconTarget } from "@/lib/icons";
 import UserAvatar from "@/components/arena/UserAvatar";
 import { ShellNavList } from "@/components/shell/ShellNavList";
@@ -96,7 +95,6 @@ export function MuridShellFrame({
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
-          <InstallBanner />
           {children}
           <MuridBackBottom />
         </main>

@@ -376,8 +376,8 @@ export default function GuruGameHubPage() {
 
       <div className="mx-auto max-w-6xl px-0 py-4 sm:px-4 sm:py-6">
         {/* ── QUICK ACTION ──────────────────────────────────── */}
-        <div className="-mx-1 mb-6 flex gap-3 overflow-x-auto px-1 pb-2 overscroll-x-contain snap-x snap-mandatory md:mx-0 md:mb-8 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
-          <Link href={lastGame.href} className="group flex min-w-[82%] snap-start flex-col rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg sm:min-w-[48%] md:min-w-0 dark:border-slate-800 dark:bg-slate-900">
+        <div className="-mx-1 mb-6 flex gap-3 overflow-x-auto touch-pan-x px-1 pb-2 overscroll-x-contain snap-x snap-proximity md:mx-0 md:mb-8 md:grid md:grid-cols-3 md:overflow-visible md:px-0 md:pb-0">
+          <Link href={lastGame.href} className="group flex w-[82%] shrink-0 snap-start flex-col rounded-xl border border-slate-100 bg-white p-3.5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-lg sm:w-[48%] md:w-auto md:shrink dark:border-slate-800 dark:bg-slate-900">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 flex items-center justify-center shrink-0"><Play className="w-4 h-4 text-white" /></div>
               <div className="min-w-0">
@@ -396,7 +396,7 @@ export default function GuruGameHubPage() {
           {/* Tantangan / Misi */}
           <a
             href="#misi-hari-ini"
-            className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col dark:bg-slate-900 dark:border-slate-800"
+            className="group w-[82%] shrink-0 snap-start bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col sm:w-[48%] md:w-auto md:shrink dark:bg-slate-900 dark:border-slate-800"
           >
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-600 flex items-center justify-center shrink-0"><Flame className="w-4 h-4 text-white" /></div>
@@ -412,7 +412,7 @@ export default function GuruGameHubPage() {
           </a>
 
           {/* Lencana Saya */}
-          <Link href="/guru/game/achievement" className="group bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col dark:bg-slate-900 dark:border-slate-800">
+          <Link href="/guru/game/achievement" className="group w-[82%] shrink-0 snap-start bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all flex flex-col sm:w-[48%] md:w-auto md:shrink dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-2">
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-400 to-purple-600 flex items-center justify-center shrink-0"><Medal className="w-4 h-4 text-white" /></div>
               <div>
