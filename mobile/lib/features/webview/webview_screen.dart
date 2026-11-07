@@ -264,7 +264,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         child: FractionallySizedBox(
           heightFactor: 0.88,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -283,19 +283,28 @@ class _WebViewScreenState extends State<WebViewScreen> {
                             color: Theme.of(sheetContext)
                                 .colorScheme
                                 .onSurfaceVariant)),
-                const SizedBox(height: 20),
+                const SizedBox(height: 12),
                 Expanded(
-                  child: GridView.builder(
-                    itemCount: features.length,
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 12,
-                      crossAxisSpacing: 12,
-                      mainAxisExtent: 148,
-                    ),
-                    itemBuilder: (_, index) =>
-                        _featureTile(features[index], audience),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final columns = constraints.maxWidth >= 650
+                          ? 4
+                          : constraints.maxWidth >= 430
+                              ? 3
+                              : 2;
+                      return GridView.builder(
+                        itemCount: features.length,
+                        padding: const EdgeInsets.only(bottom: 12),
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: columns,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          mainAxisExtent: 150,
+                        ),
+                        itemBuilder: (_, index) =>
+                            _featureTile(features[index], audience),
+                      );
+                    },
                   ),
                 ),
               ],
@@ -556,44 +565,48 @@ class _OfflineView extends StatelessWidget {
       color: Theme.of(context).scaffoldBackgroundColor,
       child: Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 36),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
-                  shape: BoxShape.circle,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isOffline
+                        ? Icons.wifi_off_rounded
+                        : Icons.cloud_off_rounded,
+                    size: 48,
+                    color: const Color(0xFF7C3AED),
+                  ),
                 ),
-                child: Icon(
-                  isOffline ? Icons.wifi_off_rounded : Icons.cloud_off_rounded,
-                  size: 48,
-                  color: const Color(0xFF7C3AED),
+                const SizedBox(height: 24),
+                Text(
+                  isOffline ? 'Tidak ada koneksi' : 'Tidak dapat terhubung',
+                  style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.4),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                isOffline ? 'Tidak ada koneksi' : 'Tidak dapat terhubung',
-                style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: -0.4),
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'Periksa koneksi internet Anda.\nSemua data dan progress tetap aman di server.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    color: Color(0xFF64748B), height: 1.45, fontSize: 15),
-              ),
-              const SizedBox(height: 32),
-              FilledButton.icon(
-                onPressed: onRetry,
-                icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Coba Lagi'),
-              ),
-            ],
+                const SizedBox(height: 10),
+                const Text(
+                  'Periksa koneksi internet Anda.\nSemua data dan progress tetap aman di server.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      color: Color(0xFF64748B), height: 1.45, fontSize: 15),
+                ),
+                const SizedBox(height: 32),
+                FilledButton.icon(
+                  onPressed: onRetry,
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Coba Lagi'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
