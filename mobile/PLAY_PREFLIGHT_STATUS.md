@@ -86,3 +86,10 @@ Android 14 device `SM-A236E` connected through authorized USB ADB; tested Androi
 **ADB observations after user ended session:** `adb get-state` returned `device`; `pidof com.bahasacerdas.app` returned PID `30896` (app stays alive); `cmd appops get com.bahasacerdas.app CAMERA RECORD_AUDIO` reported `CAMERA: allow` with completed session duration (~10 seconds), rather than actively running; no `AndroidRuntime/FATAL EXCEPTION` match in checked crash buffer.
 
 **Remaining HOLD:** actual two-participant audio/video reception, switching networks and rejoin, logout and session persistence, navigation/back button, file picker/upload/download, role access separation, notifications/FCM, Play policy and release signoff. This test is **GO for continued device QA, HOLD for merge and Play publication**. No secret, keystore, user credentials or binary artifacts are recorded or committed.
+
+
+## Samsung A23 — JUMPA rejoin after ending session (7 November 2026)
+
+**User-reported PASS:** User confirmed that they could join JUMPA again after previously ending a meeting on the Android 14 Samsung SM-A236E. This confirms manual single-device rejoin/re-entry, not yet a validated multi-participant reconnection, connectivity-loss recovery, or complete session-state test.
+
+**ADB confirmation:** Device remained `device`; `com.bahasacerdas.app` process still running (PID `30896`); queried Android crash buffer contained no matching `FATAL EXCEPTION` from the app. **Release remains HOLD** for outstanding E2E (two participants, Android Back, upload/download, logout/session persistence, network recovery, Play policy). No credentials or secret data were collected.
