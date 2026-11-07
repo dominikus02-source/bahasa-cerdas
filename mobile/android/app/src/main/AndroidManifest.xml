@@ -30,8 +30,15 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Do not claim all web routes until Digital Asset Links and
-                 native OAuth return are fully verified for this package. -->
+            <!-- Dedicated Android callback, NOT a general web URL interception.
+                 Authorization code is validated with WebView's PKCE verifier. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="bahasacerdas" android:host="oauth" android:path="/callback" />
+            </intent-filter>
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
         </activity>
         <meta-data android:name="flutterEmbedding" android:value="2" />
     </application>

@@ -42,6 +42,11 @@ class MobilePremiumStyle {
       button:not([role="switch"]):not([role="checkbox"]):not(.h-6):not(.h-7),
       a[role="button"] { min-height: 42px; }
     }
+    html.bc-android-pip .jumpa-header,
+    html.bc-android-pip .jumpa-dock-wrap,
+    html.bc-android-pip .jumpa-strip,
+    html.bc-android-pip .jumpa-status { display: none !important; }
+    html.bc-android-pip .jumpa-tile[data-screen="true"] video { object-fit: contain; }
     @media (prefers-reduced-motion: reduce) {
       button, a[role="button"], input[type="submit"] { transition: none !important; }
     }

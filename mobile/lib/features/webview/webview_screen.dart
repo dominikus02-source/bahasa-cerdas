@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../core/constants/navigation_policy.dart';
+import '../../core/constants/jumpa_room_route.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/mobile_premium_style.dart';
 import '../../core/constants/mobile_oauth_callback.dart';
@@ -41,25 +42,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
   static const _jumpaChannel = MethodChannel('com.bahasacerdas.app/jumpa');
   static const _authChannel = MethodChannel('com.bahasacerdas.app/auth');
   bool _jumpaActive = false;
+  bool _isInPip = false;
 
   Future<void> _updateJumpaMode(String url) async {
-    final uri = Uri.tryParse(url);
-    final segments = uri?.pathSegments ?? const <String>[];
-    // Only meeting-room routes qualify, not scheduling, history or landing.
-    final active = uri != null &&
-        NavigationPolicy.isTrustedWebUrl(url) &&
-        segments.length == 2 &&
-        segments.first == 'jumpa' &&
-        RegExp(r'^[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*$').hasMatch(segments.last) &&
-        !{
-          'jadwal',
-          'riwayat',
-          'pantau',
-          'buat',
-          'baru',
-          'rekaman',
-          'pengaturan'
-        }.contains(segments.last.toLowerCase());
+    final active = JumpaRoomRoute.isRoomUrl(url);
     if (_jumpaActive == active) return;
     _jumpaActive = active;
     try {
@@ -93,6 +79,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void dispose() {
     _authChannel.setMethodCallHandler(null);
+    _jumpaChannel.setMethodCallHandler(null);
     _connectivitySub?.cancel();
     _jumpaChannel.invokeMethod<void>(
         'setJumpaActive', {'active': false}).catchError((Object _) {});
@@ -104,6 +91,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void initState() {
     super.initState();
     _setupWebView();
+    _jumpaChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onPipChanged' && call.arguments is bool) {
+        _isInPip = call.arguments as bool;
+        if (mounted) setState(() {});
+        if (_jumpaActive) {
+          await _controller.runJavaScript(
+            "document.documentElement.classList.toggle('bc-android-pip', $_isInPip);",
+          );
+        }
+      }
+    });
     _authChannel.setMethodCallHandler((call) async {
       if (call.method == 'onAuthCallback' && call.arguments is String) {
         await _receiveAuthCallback(call.arguments as String);
@@ -348,6 +346,36 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF8F7FC))
       ..enableZoom(false)
+      ..addJavaScriptChannel(
+        'BahasaCerdasPip',
+        onMessageReceived: (message) async {
+          if (message.message != 'enter' || !_jumpaActive) return;
+          try {
+            await _jumpaChannel.invokeMethod<bool>('enterPictureInPicture');
+          } on MissingPluginException {
+            // Only Android exposes the native PiP action.
+          }
+        },
+      )
+      ..addJavaScriptChannel(
+        'BahasaCerdasMobile',
+        onMessageReceived: (message) async {
+          final url = Uri.tryParse(message.message);
+          if (url == null ||
+              url.scheme != 'https' ||
+              url.userInfo.isNotEmpty ||
+              url.hasPort ||
+              url.hasFragment ||
+              url.path != '/auth/v1/authorize' ||
+              url.queryParameters['provider'] != 'google' ||
+              !(url.host.endsWith('.supabase.co') ||
+                  url.host == 'bahasacerdas.com' ||
+                  url.host.endsWith('.bahasacerdas.com'))) {
+            return;
+          }
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (progress) {
@@ -496,7 +524,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
         if (!didPop) _goBack();
       },
       child: Scaffold(
-        appBar: (_audience != null && !_onRoleDashboard)
+        appBar: (_audience != null &&
+                !_onRoleDashboard &&
+                !_jumpaActive &&
+                !_isInPip)
             ? AppBar(
                 leading: IconButton(
                   icon: const Icon(Icons.arrow_back_rounded),
