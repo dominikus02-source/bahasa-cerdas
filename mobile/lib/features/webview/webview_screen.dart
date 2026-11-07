@@ -111,7 +111,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   margin: const EdgeInsets.only(top: 6),
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: colors.primary.withOpacity(0.12),
+                    color: colors.primary.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text('PREMIUM', style: TextStyle(
@@ -384,7 +384,7 @@ class _OfflineView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF7C3AED).withOpacity(0.08),
+                  color: const Color(0xFF7C3AED).withValues(alpha: 0.08),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
