@@ -9,6 +9,7 @@ class MobilePremiumStyle {
   const style = document.createElement('style');
   style.id = id;
   style.textContent = `
+    [role="region"][aria-label="Pasang aplikasi"],
     [data-breadcrumb-host="true"],
     nav[aria-label="Breadcrumb"],
     nav[aria-label="Breadcrumbs"],
