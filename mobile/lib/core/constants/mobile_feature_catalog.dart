@@ -31,7 +31,7 @@ class MobileFeatureCatalog {
   static const byAudience = <MobileAudience, List<MobileFeature>>{
     MobileAudience.murid: [
       MobileFeature('belajar', 'Belajar', '/murid/belajar'),
-      MobileFeature('kelasku', 'Kelasku', '/murid/kelasku'),
+      MobileFeature('kelasku', 'Kelasku', '/murid/gabung-kelas'),
       MobileFeature('jalur-cerdas', 'Jalur Cerdas', '/arena/jalur-cerdas'),
       MobileFeature('nara-mentor', 'NARA Mentor', '/murid/mentor',
           note: 'Premium; entitlement checked by server'),
