@@ -29,6 +29,10 @@ export default function LoginPage() {
   // hanya memberi konteks navigasi agar aplikasi Android tetap di dalam scope.
   const pathname = usePathname() ?? "/login";
   const isArenaEntry = pathname === "/arena/login";
+  const [isMobileApp, setIsMobileApp] = useState(false);
+  useEffect(() => {
+    setIsMobileApp(new URLSearchParams(window.location.search).get("bc_app") === "1");
+  }, []);
   const [guideOpen, setGuideOpen] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
   const registerHref = isArenaEntry ? "/arena/register" : "/register";
@@ -166,7 +170,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+    <div className={`relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b] ${isMobileApp ? "flex items-center justify-center !bg-white !py-4 dark:!bg-slate-950" : ""}`}>
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -175,7 +179,7 @@ export default function LoginPage() {
       <BatikAccent />
 
             {/* Tautan kembali hanya di web umum; tautan keluar scope membuka browser eksternal di APK. */}
-      {!isArenaEntry && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+      {!isArenaEntry && !isMobileApp && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
         <Link
           href="/"
           className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
@@ -191,7 +195,7 @@ export default function LoginPage() {
 
 <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
-        <div className="order-2 hidden lg:order-1 lg:block">
+        <div className={`order-2 hidden lg:order-1 ${isMobileApp ? "!hidden" : "lg:block"}`}>
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
@@ -229,7 +233,7 @@ export default function LoginPage() {
 
         {/* ── LOGIN CARD ── */}
         <div className="order-1 lg:order-2">
-          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
+          <div className={`mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8 ${isMobileApp ? "!border-0 !bg-transparent !shadow-none !px-1" : ""}`}>
             <div className="mb-6 text-center">
               <div className="mb-5 flex flex-col items-center gap-2 lg:hidden">
                 <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} priority className="h-16 w-16 object-contain dark:hidden" />
@@ -237,9 +241,9 @@ export default function LoginPage() {
                 <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BahasaCerdas</span>
                 <span className="text-xs text-slate-500 dark:text-slate-400">{BRAND_TAGLINE}</span>
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Selamat datang kembali!</h2>
+              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{isMobileApp ? "Masuk ke BahasaCerdas" : "Selamat datang kembali!"}</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
-                Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda.
+                {isMobileApp ? "Belajar, mengajar, dan berkarya dalam satu aplikasi." : "Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda."}
               </p>
             </div>
 
@@ -365,7 +369,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || cooldownSeconds > 0}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
+                className={`flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-base font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700 ${isMobileApp ? "!from-blue-500 !to-blue-700 !shadow-blue-600/20" : ""}`}
               >
                 {loading ? (
                   <div className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
