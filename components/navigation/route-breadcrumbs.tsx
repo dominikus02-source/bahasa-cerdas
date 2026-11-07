@@ -5,7 +5,7 @@ import {usePathname} from "next/navigation";
 import BreadcrumbTrail from "./breadcrumb-trail";
 import {pageBreadcrumbs} from "../../lib/navigation/breadcrumbs";
 import styles from "./breadcrumb-trail.module.css";
-const hiddenOnPublicRoutes = (pathname: string) => pathname === "/" || /^\/(login|register|forgot-password|reset-password|verify-email|activate|auth|onboarding|confirm|pilih-peran)(\/|$)/.test(pathname);
+const hiddenOnPublicRoutes = (pathname: string) => pathname === "/" || /^\/(login|register|forgot-password|reset-password|verify-email|activate|auth|onboarding|confirm|pilih-peran|tentang|marketplace|faq)(\/|$)/.test(pathname);
 export default function RouteBreadcrumbs(){
  const pathname=usePathname()||"/";
  const fallback=useRef<HTMLDivElement>(null);
