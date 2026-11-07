@@ -41,6 +41,9 @@ const publicPaths = [
   // Parents install the APK before anyone has an account — gating this behind
   // login would put the download on the far side of the thing it unlocks.
   "/unduh",
+  // Google Play: account deletion information must be publicly reachable.
+  // Actual deletion action still requires authenticated verification.
+  "/hapus-akun",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/opengraph-image",
 ];
 
