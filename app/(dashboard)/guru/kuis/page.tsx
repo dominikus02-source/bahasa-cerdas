@@ -192,15 +192,11 @@ export default function GuruKuisPage() {
                       <Eye className="w-4 h-4" />
                     </button>
                   )}
-                  <Link href={`/guru/kuis/${quiz.id}/edit`}>
-                    <button className="p-2 hover:bg-slate-100 rounded-lg text-slate-500" title="Ubah">
+                  <Link href={`/guru/kuis/${quiz.id}/edit`} className="p-2 hover:bg-slate-100 rounded-lg text-slate-500" title="Ubah" aria-label="Ubah kuis">
                       <Edit3 className="w-4 h-4" />
-                    </button>
                   </Link>
-                  <Link href={`/guru/kuis/${quiz.id}/results`}>
-                    <button className="p-2 hover:bg-blue-50 rounded-lg text-blue-600" title="Hasil">
+                  <Link href={`/guru/kuis/${quiz.id}/results`} className="p-2 hover:bg-blue-50 rounded-lg text-blue-600" title="Hasil" aria-label="Lihat hasil kuis">
                       <BarChart3 className="w-4 h-4" />
-                    </button>
                   </Link>
                   <div className="relative">
                     <button
