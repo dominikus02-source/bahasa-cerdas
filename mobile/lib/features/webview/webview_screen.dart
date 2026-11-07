@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import '../../core/constants/app_constants.dart';
+import 'android_breadcrumb_policy.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String? initialUrl;
@@ -49,7 +50,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
             if (mounted) setState(() => _progress = progress / 100);
           },
           onPageStarted: (url) {
-            developer.log('pageStarted path=${Uri.tryParse(url)?.path ?? "?"}', name: 'bc.webview');
+            developer.log(
+              'pageStarted path=${Uri.tryParse(url)?.path ?? "?"}',
+              name: 'bc.webview',
+            );
             if (mounted) {
               setState(() {
                 _isLoading = true;
@@ -58,9 +62,21 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
           },
           onPageFinished: (url) async {
-            developer.log('pageFinished path=${Uri.tryParse(url)?.path ?? "?"}', name: 'bc.webview');
+            developer.log(
+              'pageFinished path=${Uri.tryParse(url)?.path ?? "?"}',
+              name: 'bc.webview',
+            );
             if (mounted) setState(() => _isLoading = false);
             _detectRoleFromUrl(url);
+            if (AndroidBreadcrumbPolicy.appliesTo(url)) {
+              try {
+                await _controller.runJavaScript(
+                  AndroidBreadcrumbPolicy.suppressionScript,
+                );
+              } catch (_) {
+                // Navigation can replace the page before injection finishes.
+              }
+            }
           },
           onWebResourceError: (error) {
             final rawUrl = error.url;
@@ -104,7 +120,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
     widget.onControllerReady?.call(_controller);
 
     if (_controller.platform is AndroidWebViewController) {
-      final androidController = _controller.platform as AndroidWebViewController;
+      final androidController =
+          _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
       androidController.setOnPlatformPermissionRequest((request) {
         request.grant();
@@ -128,7 +145,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
       '/verify-email',
       '/reset-password',
     };
-    if (path == '/' || publicAuthPaths.contains(path) || path.startsWith('/login')) {
+    if (path == '/' ||
+        publicAuthPaths.contains(path) ||
+        path.startsWith('/login')) {
       widget.onRoleDetected?.call(null);
       return;
     }
