@@ -1481,3 +1481,11 @@
 /* P1 kontras — text-primary (merah merek 0 73% 41%) hanya ≈2:1 di latar gelap.
    Di mode gelap teks memakai varian merah terang dari token; latar bg-primary tidak berubah. */
 .dark .text-primary { color: var(--clr-primary-text); }
+
+/* Guru dashboard: compact sidebar without affecting other roles. */
+@media (min-width: 768px) {
+  .bc-guru-shell .shell-aside { width: 14rem; }
+  .bc-guru-shell .shell-main { margin-left: 14rem; }
+  [data-shell-collapsed="1"] .bc-guru-shell .shell-aside { width: 4rem; }
+  [data-shell-collapsed="1"] .bc-guru-shell .shell-main { margin-left: 4rem; }
+}
