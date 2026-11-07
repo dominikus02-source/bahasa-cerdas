@@ -75,3 +75,14 @@ Previous local run (SHA 0dd436f8):
 - **Still HOLD:** Two-party audio/video exchange, mic mute/unmute, camera toggle, rejoin/network recovery, background/foreground, Android Back navigation, upload/download, sign-out, additional RBAC users, Play release approval.
 
 **Release recommendation: GO for continued physical E2E; HOLD for production merge and Google Play release.** No personal data, password, keystore, APK/AAB, `key.properties`, or `google-services.json` is recorded in Git.
+
+
+## Samsung A23 — JUMPA media controls and end-session smoke test (7 November 2026)
+
+Android 14 device `SM-A236E` connected through authorized USB ADB; tested Android application source remains `855d43dcaff7181728043106c788bb9202985cab`.
+
+**User-reported PASS:** mute/unmute microphone, turn off/on camera, and end JUMPA session. Previous user-reported PASS: app login, camera, microphone. These are manual single-device confirmation, not automated multi-participant acceptance tests.
+
+**ADB observations after user ended session:** `adb get-state` returned `device`; `pidof com.bahasacerdas.app` returned PID `30896` (app stays alive); `cmd appops get com.bahasacerdas.app CAMERA RECORD_AUDIO` reported `CAMERA: allow` with completed session duration (~10 seconds), rather than actively running; no `AndroidRuntime/FATAL EXCEPTION` match in checked crash buffer.
+
+**Remaining HOLD:** actual two-participant audio/video reception, switching networks and rejoin, logout and session persistence, navigation/back button, file picker/upload/download, role access separation, notifications/FCM, Play policy and release signoff. This test is **GO for continued device QA, HOLD for merge and Play publication**. No secret, keystore, user credentials or binary artifacts are recorded or committed.
