@@ -4,7 +4,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/constants/legal_links.dart';
 import '../webview/webview_screen.dart';
 
-/// A single-screen native welcome; authenticated pages retain the PWA UI.
+/// Native welcome screen. Only clear, working actions.
 class AppShell extends StatelessWidget {
   const AppShell({super.key});
 
@@ -29,71 +29,67 @@ class AppShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final dark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 460),
+            constraints: const BoxConstraints(maxWidth: 420),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-              child: SingleChildScrollView(
-                child: Column(
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 32),
+              child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/icons/icon-512.png',
-                          width: 38, height: 38),
+                      Image.asset('assets/icons/icon-512.png', width: 36, height: 36),
                       const SizedBox(width: 10),
-                      Text('BahasaCerdas',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.6)),
+                      Text(
+                        'BahasaCerdas',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ],
                   ),
-                  const SizedBox(height: 36),
+                  const Spacer(),
                   Container(
-                    width: 112,
-                    height: 112,
+                    width: 100,
+                    height: 100,
                     decoration: BoxDecoration(
                       color: scheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(32),
+                      borderRadius: BorderRadius.circular(28),
                     ),
                     alignment: Alignment.center,
-                    child: Icon(Icons.auto_stories_rounded,
-                        size: 54, color: scheme.primary),
+                    child: Icon(Icons.auto_stories_rounded, size: 48, color: scheme.primary),
                   ),
-                  const SizedBox(height: 34),
+                  const SizedBox(height: 28),
                   Text(
                     'Belajar lebih mudah.\nBerkembang lebih jauh.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          height: 1.2,
-                          letterSpacing: -0.8,
-                        ),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      height: 1.2,
+                      letterSpacing: -0.6,
+                    ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
                   Text(
                     'Satu ruang belajar untuk murid, guru, dan siapa saja yang ingin terus bertumbuh.',
                     textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          height: 1.55,
-                          color: dark ? scheme.onSurfaceVariant : const Color(0xFF64748B),
-                        ),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      height: 1.5,
+                      color: dark ? scheme.onSurfaceVariant : const Color(0xFF64748B),
+                    ),
                   ),
-                  const SizedBox(height: 36),
+                  const Spacer(),
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: FilledButton(
                       onPressed: () => _openUrl(context, AppConstants.loginPath),
-                      style: FilledButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18)),
-                      ),
-                      child: const Text('Masuk sekarang',
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                      child: const Text('Masuk', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -102,40 +98,26 @@ class AppShell extends StatelessWidget {
                     height: 52,
                     child: OutlinedButton(
                       onPressed: () => _openUrl(context, AppConstants.registerPath),
-                      style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18)),
-                      ),
-                      child: const Text('Daftar gratis',
-                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                      child: const Text('Daftar', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 16,
+                  const SizedBox(height: 24),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
                         onPressed: () => _openExternal(LegalLinks.privacy),
                         child: const Text('Privasi'),
                       ),
+                      Text('·', style: TextStyle(color: scheme.onSurfaceVariant)),
                       TextButton(
                         onPressed: () => _openExternal(LegalLinks.terms),
                         child: const Text('Syarat'),
                       ),
-                      TextButton(
-                        onPressed: () => _openExternal(LegalLinks.contact),
-                        child: const Text('Kontak'),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text('Aman • Nyaman • Terhubung',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: scheme.onSurfaceVariant)),
-                  const SizedBox(height: 6),
                 ],
-                ),
               ),
             ),
           ),
