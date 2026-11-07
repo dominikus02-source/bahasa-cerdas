@@ -52,7 +52,7 @@ export default function UiGallery() {
             <Button variant="primary" size="md">Sedang</Button>
             <Button variant="primary" size="lg">Besar</Button>
             <Button variant="secondary" size="icon" aria-label="Cari"><Search size={18} aria-hidden="true" /></Button>
-            <a href="#" className={buttonClass({ variant: "ghost", size: "sm" })}>Tautan</a>
+            <span className={buttonClass({ variant: "ghost", size: "sm" })}>Contoh tautan</span>
           </div>
           <div className="mt-3"><Button variant="primary" size="lg" block>Simpan perubahan</Button></div>
         </Card>
