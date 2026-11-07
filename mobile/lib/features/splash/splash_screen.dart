@@ -10,7 +10,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   Timer? _timer;
   late AnimationController _controller;
   late Animation<double> _fade;
@@ -19,9 +20,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 900));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 900));
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _scale = Tween<double>(begin: 0.92, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _scale = Tween<double>(begin: 0.92, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
     _timer = Timer(const Duration(milliseconds: 2000), widget.onFinish);
   }
@@ -47,8 +50,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: dark
-                ? const [Color(0xFF0F172A), Color(0xFF1E1B4B)]
-                : const [Color(0xFFFFFFFF), Color(0xFFF3E8FF)],
+                ? const [Color(0xFF053D9C), Color(0xFF0078D9)]
+                : const [Color(0xFFFFFFFF), Color(0xFFE7F4FF)],
           ),
         ),
         child: SafeArea(
@@ -67,7 +70,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       borderRadius: BorderRadius.circular(36),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
+                          color:
+                              const Color(0xFF0875E1).withValues(alpha: 0.12),
                           blurRadius: 40,
                           offset: const Offset(0, 12),
                         ),
@@ -87,19 +91,21 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                       fontSize: 32,
                       fontWeight: FontWeight.w800,
                       letterSpacing: -0.8,
-                      color: dark ? Colors.white : const Color(0xFF1E1B4B),
+                      color: dark ? Colors.white : const Color(0xFF083D86),
                     ),
                   ),
                   const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 36),
                     child: Text(
-                      'Belajar Bahasa, Mengenal Budaya, Berpikir Cerdas',
+                      'Ekosistem pembelajaran Bahasa Indonesia',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14,
                         height: 1.45,
-                        color: dark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+                        color: dark
+                            ? const Color(0xFFCBD5E1)
+                            : const Color(0xFF64748B),
                       ),
                     ),
                   ),
@@ -107,7 +113,8 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                   const SizedBox(
                     width: 28,
                     height: 28,
-                    child: CircularProgressIndicator(strokeWidth: 2.5, color: Color(0xFF7C3AED)),
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2.5, color: Color(0xFF7C3AED)),
                   ),
                   const SizedBox(height: 48),
                 ],
