@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'features/splash/splash_screen.dart';
-import 'features/shell/app_shell.dart';
+import 'features/webview/webview_screen.dart';
+import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 
 class BahasaCerdasApp extends StatefulWidget {
@@ -23,7 +24,7 @@ class _BahasaCerdasAppState extends State<BahasaCerdasApp> {
       themeMode: ThemeMode.system,
       home: _showSplash
           ? SplashScreen(onFinish: () => setState(() => _showSplash = false))
-          : const AppShell(),
+          : const WebViewScreen(initialUrl: '${AppConstants.baseUrl}${AppConstants.loginPath}'),
     );
   }
 }
