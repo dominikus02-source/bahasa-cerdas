@@ -10,7 +10,8 @@ class AppConstants {
   static const String umumHome = '/umum';
   static const String loginPath = '/login';
   static const String registerPath = '/register';
-  static const String forgotPath = '/auth/lupa-sandi';
+  // /auth/lupa-sandi returns 404; real page is /reset-password
+  static const String forgotPath = '/reset-password';
   static const String logoutPath = '/auth/logout';
   static const String deniedPath = '/auth/akses-ditolak';
 
