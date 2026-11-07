@@ -35,7 +35,9 @@ class MainActivity : FlutterActivity() {
 
     override fun onUserLeaveHint() {
         super.onUserLeaveHint()
-        if (jumpaActive && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && !isInPictureInPictureMode) {
+        // Android 12+ handles auto-enter via setAutoEnterEnabled; do not
+        // invoke enterPictureInPictureMode a second time.
+        if (jumpaActive && Build.VERSION.SDK_INT in Build.VERSION_CODES.O until Build.VERSION_CODES.S && !isInPictureInPictureMode) {
             val params = PictureInPictureParams.Builder()
                 .setAspectRatio(Rational(16, 9))
                 .build()
