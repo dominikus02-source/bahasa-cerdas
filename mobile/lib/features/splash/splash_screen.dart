@@ -63,11 +63,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     width: logoSize + 32,
                     height: logoSize + 32,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(dark ? 0.08 : 0.9),
+                      color: Colors.white.withValues(alpha: dark ? 0.08 : 0.9),
                       borderRadius: BorderRadius.circular(36),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF7C3AED).withOpacity(0.12),
+                          color: const Color(0xFF7C3AED).withValues(alpha: 0.12),
                           blurRadius: 40,
                           offset: const Offset(0, 12),
                         ),
