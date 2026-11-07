@@ -37,7 +37,8 @@ class AppShell extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 440),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
-              child: Column(
+              child: ListView(
+                shrinkWrap: true,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -53,7 +54,7 @@ class AppShell extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const Spacer(flex: 1),
+                  const SizedBox(height: 24),
 
                   Container(
                     width: double.infinity,
@@ -111,14 +112,14 @@ class AppShell extends StatelessWidget {
                     ),
                   ),
 
-                  const Spacer(flex: 2),
+                  const SizedBox(height: 24),
 
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: FilledButton(
                       onPressed: () => _openUrl(context, AppConstants.loginPath),
-                      child: const Text('Masuk', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                      child: const Text('Masuk sekarang', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                     ),
                   ),
                   const SizedBox(height: 12),
