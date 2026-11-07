@@ -24,7 +24,7 @@ class _BahasaCerdasAppState extends State<BahasaCerdasApp> {
       themeMode: ThemeMode.system,
       home: _showSplash
           ? SplashScreen(onFinish: () => setState(() => _showSplash = false))
-          : const WebViewScreen(initialUrl: '${AppConstants.baseUrl}${AppConstants.loginPath}'),
+          : const WebViewScreen(initialUrl: '${AppConstants.baseUrl}${AppConstants.loginPath}?bc_app=1'),
     );
   }
 }
