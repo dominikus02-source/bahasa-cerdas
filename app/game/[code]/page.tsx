@@ -13,12 +13,13 @@ export default function GamePage() {
   const [code, setCode] = useState<string | null>(null);
 
   useEffect(() => {
-    const roomCode = searchParams.get('code');
+    const routeCode = params.code;
+    const roomCode = searchParams.get('code') ?? (typeof routeCode === 'string' ? routeCode : null);
     const from = searchParams.get('from');
     if (roomCode) {
       setCode(roomCode);
     }
-  }, [searchParams]);
+  }, [params.code, searchParams]);
 
   const handleStart = () => {
     setPhase('countdown');
