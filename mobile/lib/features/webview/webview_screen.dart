@@ -378,6 +378,16 @@ class _WebViewScreenState extends State<WebViewScreen> {
       )
       ..setNavigationDelegate(
         NavigationDelegate(
+          // Next.js uses pushState/replaceState for client-side navigation.
+          // onPageFinished alone can leave PiP enabled or disabled on the
+          // wrong route, because SPA navigation does not reload the WebView.
+          onUrlChange: (change) {
+            final url = change.url;
+            if (url == null) return;
+            _detectRoleFromUrl(url);
+            unawaited(_updateJumpaMode(url));
+            unawaited(_updateOrientation(url));
+          },
           onProgress: (progress) {
             if (mounted) setState(() => _progress = progress / 100);
           },
