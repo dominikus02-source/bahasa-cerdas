@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static const Color primary = Color(0xFF7C3AED);
   static const Color accent = Color(0xFF0D9488);
-  static const Color softViolet = Color(0xFFF3E8FF);
   static const Color navy = Color(0xFF1E1B4B);
 
   static ThemeData get light => ThemeData(
@@ -27,7 +26,7 @@ class AppTheme {
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 56),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
             textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16, letterSpacing: -0.2),
           ),
         ),
@@ -36,7 +35,7 @@ class AppTheme {
             foregroundColor: navy,
             minimumSize: const Size(double.infinity, 52),
             side: const BorderSide(color: Color(0xFFE2E8F0), width: 1.2),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
             textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
           ),
         ),
@@ -78,7 +77,7 @@ class AppTheme {
             backgroundColor: primary,
             foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 56),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
           ),
         ),
         appBarTheme: const AppBarTheme(
