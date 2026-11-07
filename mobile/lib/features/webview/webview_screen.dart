@@ -63,8 +63,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
             _detectRoleFromUrl(url);
           },
           onWebResourceError: (error) {
+            final rawUrl = error.url;
+            final path = (rawUrl != null && rawUrl.isNotEmpty)
+                ? (Uri.tryParse(rawUrl)?.path ?? '?')
+                : '?';
             developer.log(
-              'resourceError code=${error.errorCode} path=${Uri.tryParse(error.url)?.path ?? "?"}',
+              'resourceError code=${error.errorCode} path=$path',
               name: 'bc.webview',
             );
             if (error.isForMainFrame == true && mounted) {
