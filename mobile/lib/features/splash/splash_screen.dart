@@ -23,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
     _scale = Tween<double>(begin: 0.92, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
-    _timer = Timer(const Duration(milliseconds: 1400), widget.onFinish);
+    _timer = Timer(const Duration(milliseconds: 2000), widget.onFinish);
   }
 
   @override
