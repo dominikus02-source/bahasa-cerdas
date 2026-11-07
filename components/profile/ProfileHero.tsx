@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 
 import {
   Flame, Sparkles, Settings, Heart, UserPlus, UserCheck, PenLine, Files,
@@ -445,7 +446,7 @@ export default function ProfileHero({
           )}
 
           {!isOwn && (
-            <a
+            <Link
               href="/murid/karya"
               className={`inline-flex h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition-all ${t(
                 "bg-slate-900/10 border border-slate-900/15 hover:bg-slate-900/15",
@@ -453,7 +454,7 @@ export default function ProfileHero({
               )}`}
             >
               <PenLine size={16} /> Karya
-            </a>
+            </Link>
           )}
         </div>
 
