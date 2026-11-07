@@ -1591,5 +1591,5 @@ html:not(.dark) .jumpa-scope {
   .jumpa-dock .jumpa-leave-text { display: none; }
   .jumpa-sharing-stage { gap: 0; }
   .jumpa-sharing-stage > .jumpa-strip { display: none; }
-  .jumpa-sharing-stage [data-screen-sharing="true"] video { object-fit: contain; }
+  .jumpa-sharing-stage [data-screen="true"] video { object-fit: contain; }
 }
