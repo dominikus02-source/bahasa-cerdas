@@ -8,6 +8,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../core/constants/navigation_policy.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/mobile_premium_style.dart';
+import '../../core/constants/mobile_oauth_callback.dart';
 import '../../core/constants/mobile_feature_catalog.dart';
 
 class WebViewScreen extends StatefulWidget {
@@ -37,6 +39,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
   bool _gameLandscape = false;
   static const _jumpaChannel = MethodChannel('com.bahasacerdas.app/jumpa');
+  static const _authChannel = MethodChannel('com.bahasacerdas.app/auth');
   bool _jumpaActive = false;
 
   Future<void> _updateJumpaMode(String url) async {
@@ -89,6 +92,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   void dispose() {
+    _authChannel.setMethodCallHandler(null);
     _connectivitySub?.cancel();
     _jumpaChannel.invokeMethod<void>(
         'setJumpaActive', {'active': false}).catchError((Object _) {});
@@ -100,7 +104,35 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void initState() {
     super.initState();
     _setupWebView();
+    _authChannel.setMethodCallHandler((call) async {
+      if (call.method == 'onAuthCallback' && call.arguments is String) {
+        await _receiveAuthCallback(call.arguments as String);
+        // Clear the pending Activity intent after delivering to WebView.
+        try {
+          await _authChannel.invokeMethod<String>('getInitialAuthCallback');
+        } on MissingPluginException {
+          // Non-Android platforms do not provide an OAuth bridge.
+        }
+      }
+    });
+    unawaited(_checkPendingAuth());
     _listenConnectivity();
+  }
+
+  Future<void> _checkPendingAuth() async {
+    try {
+      final url =
+          await _authChannel.invokeMethod<String>('getInitialAuthCallback');
+      if (url != null) await _receiveAuthCallback(url);
+    } on MissingPluginException {
+      // Only Android has the native OAuth channel.
+    }
+  }
+
+  Future<void> _receiveAuthCallback(String raw) async {
+    final url = MobileOAuthCallback.toWebUrl(raw);
+    if (!mounted || url == null) return;
+    await _controller.loadRequest(Uri.parse(url));
   }
 
   Future<void> _listenConnectivity() async {
@@ -324,6 +356,9 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
           },
           onPageFinished: (url) async {
+            if (NavigationPolicy.isTrustedWebUrl(url)) {
+              await _controller.runJavaScript(MobilePremiumStyle.javascript);
+            }
             if (mounted) setState(() => _isLoading = false);
             _detectRoleFromUrl(url);
             await _updateOrientation(url);
