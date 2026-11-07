@@ -167,7 +167,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
                   {tugasBelum > 0 && latihanBelum > 0 && " · "}
                   {latihanBelum > 0 && <span><strong>{latihanBelum}</strong> latihan belum selesai</span>}
                 </p>
-                <Link href="#mulai" className="bc-btn-primary mt-3 w-full text-sm">Mulai <span aria-hidden>→</span></Link>
+                <Link href="#aktivitas-kelas" className="bc-btn-primary mt-3 w-full text-sm">Mulai <span aria-hidden>→</span></Link>
               </div>
             )}
 
@@ -200,7 +200,7 @@ export default function MuridKelaskuDetailPage({ params }: { params: Promise<{ i
                 </p>
               </div>
             ) : (
-              stream.map((item) => <StreamItem key={item.key} item={item} />)
+              <div id="aktivitas-kelas" className="scroll-mt-24 space-y-3">{stream.map((item) => <StreamItem key={item.key} item={item} />)}</div>
             )}
           </div>
         )}
