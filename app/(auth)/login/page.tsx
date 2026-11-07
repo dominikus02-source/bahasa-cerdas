@@ -1,5 +1,7 @@
 "use client";
 
+import "./mobile-login.css";
+
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -189,7 +191,8 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className={`relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b] ${isMobileApp ? "flex min-h-[100dvh] items-center justify-center !overflow-x-hidden !overflow-y-auto !bg-white !px-4 !py-2 dark:!bg-slate-950" : ""}`}>
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+      <span className="hidden" data-bc-mobile-login={isMobileApp ? "true" : undefined} aria-hidden="true" />
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -252,15 +255,15 @@ export default function LoginPage() {
 
         {/* ── LOGIN CARD ── */}
         <div className="order-1 lg:order-2">
-          <div className={`mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8 ${isMobileApp ? "!border-0 !bg-transparent !shadow-none !px-1 !py-2" : ""}`}>
+          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
             <div className={isMobileApp ? "mb-3 text-center" : "mb-6 text-center"}>
               <div className={isMobileApp ? "mb-2 flex flex-col items-center gap-1 lg:hidden" : "mb-5 flex flex-col items-center gap-2 lg:hidden"}>
                 <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} priority className="h-16 w-16 object-contain dark:hidden" />
                 <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} priority className="hidden h-16 w-16 object-contain dark:block" />
                 <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BahasaCerdas</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">{isMobileApp ? "Ekosistem pembelajaran Bahasa Indonesia" : BRAND_TAGLINE}</span>
+                <span className="text-xs">{isMobileApp ? "Ekosistem pembelajaran Bahasa Indonesia" : BRAND_TAGLINE}</span>
               </div>
-              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{isMobileApp ? "Masuk ke BahasaCerdas" : "Selamat datang kembali!"}</h2>
+              <h2 className="text-2xl font-extrabold">{isMobileApp ? "Masuk ke BahasaCerdas" : "Selamat datang kembali!"}</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                 Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda.
               </p>
@@ -401,7 +404,7 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className={isMobileApp ? "mt-3 border-t border-slate-100 pt-3 text-center dark:border-slate-800" : "mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800"}>
+            <div className="mt-6 border-t border-slate-100 pt-5 text-center dark:border-slate-800">
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Belum punya akun?{" "}
                 <Link href={registerWithNext} className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400">

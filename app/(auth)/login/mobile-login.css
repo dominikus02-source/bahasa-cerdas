@@ -1,0 +1,28 @@
+/* Applies only to Android WebView login, without changing the website. */
+body:has([data-bc-mobile-login="true"]) > div { min-height:100%; }
+body:has([data-bc-mobile-login="true"]) .bc-mobile-login-target { display:none; }
+body:has([data-bc-mobile-login="true"]) div:has(> [data-bc-mobile-login="true"]) {
+  min-height:100dvh!important; display:flex!important; flex-direction:column;
+  justify-content:center; padding:8px 16px!important;
+  background:var(--clr-bg)!important; overflow-x:hidden;
+}
+body:has([data-bc-mobile-login="true"]) div:has(> [data-bc-mobile-login="true"]) > .relative.mx-auto.grid {
+  display:block!important; max-width:430px!important; margin:0 auto;
+  width:100%!important;
+}
+body:has([data-bc-mobile-login="true"]) div:has(> [data-bc-mobile-login="true"]) > .relative.mx-auto.grid > .order-2 {
+  display:none!important;
+}
+body:has([data-bc-mobile-login="true"]) .order-1 > .mx-auto.max-w-md {
+  padding:8px!important; border:0!important; background:transparent!important;
+  box-shadow:none!important;
+}
+body:has([data-bc-mobile-login="true"]) .order-1 h2 { font-size:20px;line-height:1.2; }
+body:has([data-bc-mobile-login="true"]) .order-1 input { min-height:42px;padding-block:8px; }
+body:has([data-bc-mobile-login="true"]) .order-1 .border-t { margin-top:12px!important;padding-top:12px!important; }
+body:has([data-bc-mobile-login="true"]) .order-1 form { row-gap:8px; }
+body:has([data-bc-mobile-login="true"]) .order-1 .text-xs { color:var(--clr-text-2); }
+body:has([data-bc-mobile-login="true"]) .order-1 h2 { color:var(--clr-text); }
+@media (max-height:700px) {
+  body:has([data-bc-mobile-login="true"]) div:has(> [data-bc-mobile-login="true"]) { justify-content:flex-start; }
+}
