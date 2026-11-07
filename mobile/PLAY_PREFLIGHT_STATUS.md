@@ -59,3 +59,19 @@ Previous local run (SHA 0dd436f8):
 - Kegagalan `deleted Android v1 embedding` dan AAPT resources missing dari pemeriksaan SHA sebelumnya **sudah teratasi**.
 
 **Masih HOLD untuk merge/rilis:** `adb devices -l` tidak mendeteksi ponsel fisik; E2E login/RBAC/WebView/FCM/Crashlytics/upload/download belum dijalankan. Dua workflow GitHub CI untuk SHA 855d43dc, run `42320925296` dan `42320920561`, masih **in_progress** ketika diperiksa — belum boleh dianggap PASS. Verifikasi kebijakan/route publik dan Play Console tetap diperlukan. PR #246 **tidak di-merge**, PR #245 **tidak di-force-push**. Keystore, password, `key.properties`, `google-services.json`, APK, dan AAB tidak pernah di-commit. Backup keystore bersih wajib disimpan aman.
+
+
+## Samsung Galaxy A23 physical smoke test — 7 November 2026
+
+**Build under test:** application source SHA `855d43dcaff7181728043106c788bb9202985cab` (documentation commit `631c9ec8`). Samsung `SM-A236E`, Android 14, API 34, USB ADB authorized. AAB and APK signed with the clean Bahasa Cerdas certificate.
+
+- **ADB:** `adb devices -l` listed `RRCW506HJJY device` — PASS.
+- **APK release install:** `adb install -r .../app-release.apk` returned `Success`, exit code 0, preserving existing app data — PASS.
+- **Launch:** `adb shell monkey -p com.bahasacerdas.app -c android.intent.category.LAUNCHER 1` returned exit code 0, and `com.bahasacerdas.app/.MainActivity` was top resumed, process remained alive — PASS.
+- **Login:** User directly confirmed successful login on the phone — **PASS, user-reported**, not automated identity/RBAC verification.
+- **JUMPA camera:** User directly confirmed camera functions — **PASS, user-reported**. Android `cmd appops get com.bahasacerdas.app CAMERA RECORD_AUDIO` independently showed `CAMERA: allow` and a recent running camera session.
+- **JUMPA microphone:** User directly confirmed microphone functions — **PASS, user-reported**. Package permission was granted previously; this log query did not independently establish live audio transmission.
+- **Crash:** No matching app-related fatal crash in queried Android crash buffer; not a full E2E stability guarantee.
+- **Still HOLD:** Two-party audio/video exchange, mic mute/unmute, camera toggle, rejoin/network recovery, background/foreground, Android Back navigation, upload/download, sign-out, additional RBAC users, Play release approval.
+
+**Release recommendation: GO for continued physical E2E; HOLD for production merge and Google Play release.** No personal data, password, keystore, APK/AAB, `key.properties`, or `google-services.json` is recorded in Git.
