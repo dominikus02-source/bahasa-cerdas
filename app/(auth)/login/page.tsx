@@ -31,7 +31,10 @@ export default function LoginPage() {
   const isArenaEntry = pathname === "/arena/login";
   const [isMobileApp, setIsMobileApp] = useState(false);
   useEffect(() => {
-    setIsMobileApp(new URLSearchParams(window.location.search).get("bc_app") === "1");
+    setIsMobileApp(
+      new URLSearchParams(window.location.search).get("bc_app") === "1" ||
+      "BahasaCerdasMobile" in window
+    );
   }, []);
   const [guideOpen, setGuideOpen] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
@@ -148,11 +151,21 @@ export default function LoginPage() {
       if (authNext && isSafeNext(authNext)) callbackUrl.searchParams.set("next", authNext);
       if (isMobileApp) callbackUrl.searchParams.set("bc_app", "1");
       const redirectTo = callbackUrl.toString();
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: { redirectTo, skipBrowserRedirect: isMobileApp },
       });
-      if (error) setError(error.message);
+      if (error) {
+        setError(error.message);
+      } else if (isMobileApp && data.url) {
+        // The WebView owns the PKCE verifier cookie. Open Google's OAuth
+        // challenge in the SYSTEM browser, never inside an embedded WebView.
+        const bridge = (window as Window & {
+          BahasaCerdasMobile?: { postMessage: (url: string) => void };
+        }).BahasaCerdasMobile;
+        if (bridge) bridge.postMessage(data.url);
+        else window.location.assign(data.url);
+      }
     } catch {
       setError("Gagal login dengan Google");
     }
@@ -176,7 +189,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className={`relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b] ${isMobileApp ? "flex min-h-[100dvh] items-center justify-center !overflow-x-hidden !bg-white !px-4 !py-2 dark:!bg-slate-950" : ""}`}>
+    <div className={`relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))] sm:py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b] ${isMobileApp ? "flex min-h-[100dvh] items-center justify-center !overflow-x-hidden !overflow-y-auto !bg-white !px-4 !py-2 dark:!bg-slate-950" : ""}`}>
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -245,7 +258,7 @@ export default function LoginPage() {
                 <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} priority className="h-16 w-16 object-contain dark:hidden" />
                 <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} priority className="hidden h-16 w-16 object-contain dark:block" />
                 <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BahasaCerdas</span>
-                <span className="text-xs text-slate-500 dark:text-slate-400">{BRAND_TAGLINE}</span>
+                <span className="text-xs text-slate-500 dark:text-slate-400">{isMobileApp ? "Ekosistem pembelajaran Bahasa Indonesia" : BRAND_TAGLINE}</span>
               </div>
               <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">{isMobileApp ? "Masuk ke BahasaCerdas" : "Selamat datang kembali!"}</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
