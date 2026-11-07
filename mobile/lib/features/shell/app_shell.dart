@@ -12,7 +12,8 @@ class AppShell extends StatelessWidget {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => WebViewScreen(
-          initialUrl: '${AppConstants.baseUrl}$path',
+          initialUrl:
+              '${AppConstants.baseUrl}$path${path.contains('?') ? '&' : '?'}bc_app=1',
         ),
       ),
     );
@@ -43,19 +44,20 @@ class AppShell extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset('assets/icons/icon-512.png', width: 32, height: 32),
+                      Image.asset('assets/icons/icon-512.png',
+                          width: 32, height: 32),
                       const SizedBox(width: 10),
                       Text(
                         'BahasaCerdas',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: -0.4,
-                        ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: -0.4,
+                                ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 24),
-
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.fromLTRB(28, 36, 28, 32),
@@ -70,7 +72,8 @@ class AppShell extends StatelessWidget {
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF7C3AED).withValues(alpha: dark ? 0.15 : 0.08),
+                          color: const Color(0xFF7C3AED)
+                              .withValues(alpha: dark ? 0.15 : 0.08),
                           blurRadius: 40,
                           offset: const Offset(0, 16),
                         ),
@@ -86,40 +89,50 @@ class AppShell extends StatelessWidget {
                             borderRadius: BorderRadius.circular(22),
                           ),
                           alignment: Alignment.center,
-                          child: Icon(Icons.auto_stories_rounded, size: 36, color: scheme.primary),
+                          child: Icon(Icons.auto_stories_rounded,
+                              size: 36, color: scheme.primary),
                         ),
                         const SizedBox(height: 24),
                         Text(
                           'Bahasa Indonesia,\ndengan cara yang baru.',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            height: 1.15,
-                            letterSpacing: -0.7,
-                            color: dark ? Colors.white : const Color(0xFF1E1B4B),
-                          ),
+                          style: Theme.of(context)
+                              .textTheme
+                              .headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w800,
+                                height: 1.15,
+                                letterSpacing: -0.7,
+                                color: dark
+                                    ? Colors.white
+                                    : const Color(0xFF1E1B4B),
+                              ),
                         ),
                         const SizedBox(height: 12),
                         Text(
                           'Belajar, berlatih, bermain, dan berkarya — dalam satu ruang yang tenang.',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            height: 1.5,
-                            color: dark ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
-                          ),
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    height: 1.5,
+                                    color: dark
+                                        ? const Color(0xFFCBD5E1)
+                                        : const Color(0xFF64748B),
+                                  ),
                         ),
                       ],
                     ),
                   ),
-
                   const SizedBox(height: 24),
-
                   SizedBox(
                     width: double.infinity,
                     height: 56,
                     child: FilledButton(
-                      onPressed: () => _openUrl(context, AppConstants.loginPath),
-                      child: const Text('Masuk sekarang', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                      onPressed: () =>
+                          _openUrl(context, AppConstants.loginPath),
+                      child: const Text('Masuk sekarang',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w700)),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -127,25 +140,31 @@ class AppShell extends StatelessWidget {
                     width: double.infinity,
                     height: 52,
                     child: OutlinedButton(
-                      onPressed: () => _openUrl(context, AppConstants.registerPath),
-                      child: const Text('Daftar gratis', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                      onPressed: () =>
+                          _openUrl(context, AppConstants.registerPath),
+                      child: const Text('Daftar gratis',
+                          style: TextStyle(
+                              fontSize: 15, fontWeight: FontWeight.w600)),
                     ),
                   ),
-
                   const SizedBox(height: 28),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       TextButton(
                         onPressed: () => _openExternal(LegalLinks.privacy),
-                        style: TextButton.styleFrom(minimumSize: const Size(0, 36)),
+                        style: TextButton.styleFrom(
+                            minimumSize: const Size(0, 36)),
                         child: const Text('Privasi'),
                       ),
-                      Text('·', style: TextStyle(color: scheme.onSurfaceVariant.withValues(alpha: 0.6))),
+                      Text('·',
+                          style: TextStyle(
+                              color: scheme.onSurfaceVariant
+                                  .withValues(alpha: 0.6))),
                       TextButton(
                         onPressed: () => _openExternal(LegalLinks.terms),
-                        style: TextButton.styleFrom(minimumSize: const Size(0, 36)),
+                        style: TextButton.styleFrom(
+                            minimumSize: const Size(0, 36)),
                         child: const Text('Syarat'),
                       ),
                     ],
