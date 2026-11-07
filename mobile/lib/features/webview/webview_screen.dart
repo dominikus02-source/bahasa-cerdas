@@ -92,26 +92,39 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
     widget.onControllerReady?.call(_controller);
 
-    // Konfigurasi Android WebView untuk kamera & mikrofon
     if (_controller.platform is AndroidWebViewController) {
       final androidController = _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
-
-      // Izinkan akses kamera & mikrofon untuk JUMPA
       androidController.setOnPlatformPermissionRequest((request) {
         request.grant();
       });
     }
   }
 
-  /// Deteksi role dari URL path (lebih reliable setelah login)
+  /// Deteksi role dari URL. Pathname is a hint only — public auth pages clear role.
   void _detectRoleFromUrl(String url) {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
 
     final path = uri.path.toLowerCase();
-    String? detectedRole;
 
+    // Public / unauthenticated pages must clear any previous role.
+    const publicAuthPaths = {
+      '/login',
+      '/arena/login',
+      '/register',
+      '/signup',
+      '/auth/callback',
+      '/onboarding',
+      '/verify-email',
+      '/reset-password',
+    };
+    if (path == '/' || publicAuthPaths.contains(path) || path.startsWith('/login')) {
+      widget.onRoleDetected?.call(null);
+      return;
+    }
+
+    String? detectedRole;
     if (path.startsWith('/guru')) {
       detectedRole = 'GURU';
     } else if (path.startsWith('/murid')) {
@@ -121,13 +134,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
     } else if (path.startsWith('/umum')) {
       detectedRole = 'UMUM';
     }
-
-    if (path.contains('/founder') || path.contains('founder')) {
+    if (path.contains('/founder')) {
       detectedRole = 'FOUNDER';
     }
 
-    if (detectedRole != null && widget.onRoleDetected != null) {
-      widget.onRoleDetected!(detectedRole);
+    if (detectedRole != null) {
+      widget.onRoleDetected?.call(detectedRole);
     }
   }
 
