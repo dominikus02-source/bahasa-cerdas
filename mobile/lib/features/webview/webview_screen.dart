@@ -35,6 +35,35 @@ class _WebViewScreenState extends State<WebViewScreen> {
   bool _onRoleDashboard = false;
   bool _isOffline = false;
   StreamSubscription<List<ConnectivityResult>>? _connectivitySub;
+  bool _gameLandscape = false;
+
+  // Orientation is opt-in per game, never forced by a broad route prefix.
+  // Supported game URLs can request ?orientation=landscape. All other
+  // screens (including JUMPA) follow the device orientation.
+  Future<void> _updateOrientation(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null || !NavigationPolicy.isTrustedWebUrl(url)) return;
+    final path = uri.path.toLowerCase();
+    final isPlayableGame = path.startsWith('/arena/game/') ||
+        path.startsWith('/guru/game/') ||
+        path.startsWith('/murid/game/') ||
+        path.startsWith('/murid/gim/');
+    final wantsLandscape = isPlayableGame &&
+        uri.queryParameters['orientation'] == 'landscape';
+    if (wantsLandscape == _gameLandscape) return;
+    _gameLandscape = wantsLandscape;
+    await SystemChrome.setPreferredOrientations(wantsLandscape
+        ? [DeviceOrientation.landscapeLeft, DeviceOrientation.landscapeRight]
+        : DeviceOrientation.values);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySub?.cancel();
+    SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+    super.dispose();
+  }
+
 
   @override
   void initState() {
@@ -237,6 +266,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onPageFinished: (url) async {
             if (mounted) setState(() => _isLoading = false);
             _detectRoleFromUrl(url);
+            await _updateOrientation(url);
           },
           onWebResourceError: (error) {
             if (error.isForMainFrame == true && mounted) {
@@ -341,11 +371,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
   }
 
-  @override
-  void dispose() {
-    _connectivitySub?.cancel();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {

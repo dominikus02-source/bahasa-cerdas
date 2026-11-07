@@ -38,10 +38,8 @@ Future<void> main() async {
   // Request device permissions only when a feature needs them.
   // Startup must not interrupt the splash and sign-in experience.
 
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Follow device rotation by default; individual games may opt into landscape.
+  await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
 
   runApp(const BahasaCerdasApp());
 }
