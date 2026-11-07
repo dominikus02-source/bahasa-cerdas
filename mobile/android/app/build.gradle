@@ -3,6 +3,7 @@ plugins {
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
     id "com.google.gms.google-services"
+    id "com.google.firebase.crashlytics"
 }
 
 def localProperties = new Properties()
@@ -21,6 +22,12 @@ if (flutterVersionCode == null) {
 def flutterVersionName = localProperties.getProperty('flutter.versionName')
 if (flutterVersionName == null) {
     flutterVersionName = '1.0'
+}
+
+def releaseKeyProperties = new Properties()
+def releaseKeyFile = rootProject.file("key.properties")
+if (releaseKeyFile.exists()) {
+    releaseKeyFile.withInputStream { releaseKeyProperties.load(it) }
 }
 
 android {
@@ -49,9 +56,23 @@ android {
         versionName flutterVersionName
     }
 
+    signingConfigs {
+        if (releaseKeyFile.exists()) {
+            release {
+                keyAlias releaseKeyProperties.getProperty("keyAlias")
+                keyPassword releaseKeyProperties.getProperty("keyPassword")
+                storeFile file(releaseKeyProperties.getProperty("storeFile"))
+                storePassword releaseKeyProperties.getProperty("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            signingConfig signingConfigs.debug
+            // Never ship a release artifact signed with the debug key.
+            if (releaseKeyFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
@@ -64,4 +85,11 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:33.7.0')
     implementation 'com.google.firebase:firebase-messaging'
     implementation 'com.google.firebase:firebase-crashlytics'
+}
+
+// Fail release builds without a real keystore, without blocking debug builds.
+gradle.taskGraph.whenReady {
+    if (tasks.any { it.name.toLowerCase().contains("release") } && !releaseKeyFile.exists()) {
+        throw new GradleException("Release signing not configured: android/key.properties is required")
+    }
 }
