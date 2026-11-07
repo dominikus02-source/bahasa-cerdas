@@ -16,7 +16,7 @@ class AppTheme {
         ),
         fontFamily: 'Inter',
         scaffoldBackgroundColor: const Color(0xFFF8F7FC),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           color: Colors.white,
@@ -68,7 +68,7 @@ class AppTheme {
         ),
         fontFamily: 'Inter',
         scaffoldBackgroundColor: const Color(0xFF0F172A),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           color: const Color(0xFF1E293B),
