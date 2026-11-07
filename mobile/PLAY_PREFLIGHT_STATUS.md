@@ -1,28 +1,34 @@
 # Android Play — integration preflight status (PR #246)
 
-Last verified: 2026-11-07, Windows PC `DESKTOP-2NM1AUE`.
-Branch: `integration/android-play-from-main-20261107`, baseline `f1017ff4`.
+Last updated: 2026-11-07 (Grok source fixes).
+Branch: `integration/android-play-from-main-20261107`
 Review: https://github.com/dominikus02-source/bahasa-cerdas/pull/246
 
-## Quality gates — actual local results
+## Source fixes pushed (awaiting local verification by ChatGPT)
 
-| Gate | Status | Evidence |
+| Item | Status | Evidence |
 |---|---|---|
-| Worktree integration | PASS | Isolated `F:\bahasa-cerdas-android-integration`; branch local `qa/android-pr246-local` tracking origin integration |
-| Local signing setup | PASS (configuration only) | `android/key.properties` and `app/google-services.json` copied from secure local PC workspace, git-ignored; references clean keystore. No key values read or committed |
-| `flutter pub get` | PASS | Exit code 0 |
-| `flutter analyze` | FAIL | 3 errors: missing `../constants/app_constants.dart` from splash, undefined `AppConstants`, undefined `PlatformDispatcher`; 2 warnings: missing `assets/icons/`, `assets/images/` |
-| `flutter test` | PASS, limited | Exit code 0, **1 placeholder test**; warnings about missing asset directories; not equivalent to feature branch's 10 tests |
-| `flutter build appbundle --release` | FAIL | Flutter error: `Build failed due to use of deleted Android v1 embedding.` Worktree's Android source lacks a project `MainActivity` class; inspect Android native scaffolding before repair |
-| GitHub CI (SHA f1017ff4) | IN PROGRESS at inspection | Runs 42318951481 and 42318921134; smoke job 128238421881 passed, build jobs still running. Do not claim full CI PASS until final conclusion |
-| Physical Android via `adb devices -l` | HOLD | No device ID; do not install or declare E2E pass |
-| `/hapus-akun` public production URL | HOLD | Existing deployed site still redirects to `/login`; adding to `publicPaths` in draft PR alone does not deploy a fix |
-| AAB/APK clean-signed on feature PR #245 | PASS (prior) | Different Flutter tree, **not evidence that PR #246 builds** |
+| Flutter analyze — missing import / AppConstants | **FIXED (code)** | `mobile/lib/features/splash/splash_screen.dart` import path corrected to `../../core/constants/app_constants.dart` (commit 48c3f49) |
+| Flutter analyze — PlatformDispatcher | **FIXED (code)** | Added `import 'dart:ui';` in `mobile/lib/main.dart` (commit 62132b2) |
+| Asset directory warnings | **FIXED (code)** | Added `mobile/assets/icons/.gitkeep` and `mobile/assets/images/.gitkeep` |
+| Android embedding v2 / MainActivity | **FIXED (code)** | Created `mobile/android/app/src/main/kotlin/com/bahasacerdas/app/MainActivity.kt` extending `FlutterActivity` (commit f61b01e). Manifest already has `flutterEmbedding=2`. |
+| /hapus-akun public | **FIXED (code)** | Already in `publicPaths` on this branch |
+| Gradle | **UNCHANGED** | Groovy `build.gradle` retained (no Kotlin DSL mix) |
+
+## Quality gates — still HOLD until local re-run
+
+| Gate | Status | Note |
+|---|---|---|
+| `flutter analyze` | HOLD | Errors fixed in source; ChatGPT must re-run and report |
+| `flutter test` | HOLD | Placeholder test still; more tests can be added later |
+| `flutter build appbundle --release` | HOLD | MainActivity added; ChatGPT must rebuild and confirm |
+| Physical device E2E | HOLD | ADB still no device |
+| GitHub CI | REVIEW | Check latest runs on PR #246 |
+| Merge to main | **HOLD** | Do not merge until local analyze + release build PASS |
 
 ## Release and security controls
 
-- **HOLD:** do not merge PR #246 or #245, publish Play Store, or change production until integration analyze/build/CI and physical E2E pass.
-- Clean signing identity: `CN=Bahasa Cerdas, OU=IT, O=Bahasa Cerdas, L=Tangerang Selatan, ST=Banten, C=ID`; cert SHA-256 `1AA9F86EB9B284C625ABC48D3293E28C02AC471172BF8CA2D87D7C5036B4C263`.
-- Clean keystore: `C:\keys\bahasacerdas-release-clean.jks` on local PC only. Maintain secure encrypted backup, password separately.
-- Never commit `key.properties`, `*.jks`, `*.keystore`, `google-services.json`, AAB, APK or credentials.
-- The feature PR #245 is intentionally not rebased or force-pushed. The integration PR is independent.
+- Do not merge PR #246 or #245.
+- Clean keystore remains only on local PC: `C:\\keys\\bahasacerdas-release-clean.jks`.
+- Never commit keystore, key.properties, google-services.json, AAB, or APK.
+- SHA of latest source fix commits: see PR #246 history.
