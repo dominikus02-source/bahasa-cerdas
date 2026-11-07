@@ -41,9 +41,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   Future<void> _updateJumpaMode(String url) async {
     final uri = Uri.tryParse(url);
+    final segments = uri?.pathSegments ?? const <String>[];
+    // Only meeting-room routes qualify, not scheduling, history or landing.
     final active = uri != null &&
         NavigationPolicy.isTrustedWebUrl(url) &&
-        (uri.path == '/jumpa' || uri.path.startsWith('/jumpa/'));
+        segments.length == 2 &&
+        segments.first == 'jumpa' &&
+        !{'jadwal', 'riwayat', 'pantau'}.contains(segments.last);
     if (_jumpaActive == active) return;
     _jumpaActive = active;
     try {
