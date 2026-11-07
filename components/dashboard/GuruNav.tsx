@@ -178,12 +178,18 @@ function NavLinks({
   group,
   pathname,
   onNavigate,
+  compact = false,
 }: {
   group: NavGroup;
   pathname: string;
   onNavigate?: () => void;
+  compact?: boolean;
 }) {
-  const [open, setOpen] = useState(true);
+  // The mobile drawer starts folded. Expand only the active section so
+  // navigation does not occupy the entire height of a small phone.
+  const [open, setOpen] = useState(() =>
+    !compact || Boolean(group.links?.some((link) => isActive(pathname, link.href, link.activeOn)))
+  );
 
   // Grup destination tunggal → link langsung, tanpa accordion.
   if (group.href) {
@@ -252,15 +258,17 @@ function NavLinks({
 export function GuruNavList({
   isFounder,
   onNavigate,
+  compact = false,
 }: {
   isFounder: boolean;
   onNavigate?: () => void;
+  compact?: boolean;
 }) {
   const pathname = usePathname();
   return (
-    <nav className="py-4 px-3 flex-1 overflow-y-auto">
+    <nav className={`${compact ? "py-2 px-2" : "py-4 px-3"} flex-1 overflow-y-auto`}>
       {GURU_NAV.filter((g) => !g.founderOnly || isFounder).map((group) => (
-        <NavLinks key={group.id} group={group} pathname={pathname} onNavigate={onNavigate} />
+        <NavLinks key={group.id} group={group} pathname={pathname} onNavigate={onNavigate} compact={compact} />
       ))}
     </nav>
   );
@@ -327,8 +335,8 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
       {drawer && (
         <div className="fixed inset-0 z-50 md:hidden">
           <button type="button" aria-label="Tutup menu guru" className="absolute inset-0 bg-black/45" onClick={() => setDrawer(false)} />
-          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-white shadow-2xl dark:bg-slate-900">
-            <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
+          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[min(72vw,268px)] max-w-[calc(100vw-56px)] flex-col bg-white shadow-2xl dark:bg-slate-900">
+            <div className="p-3 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
               <div>
                 <p className="font-bold text-white text-sm">Menu Guru</p>
                 <p className="text-[10px] text-blue-100">BahasaCerdas</p>
@@ -342,7 +350,7 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
               </button>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
-              <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
+              <GuruNavList isFounder={isFounder} compact onNavigate={() => setDrawer(false)} />
               <RoleSections role={role} isFounder={isFounder} />
             </div>
             <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 flex items-center justify-between gap-2">
@@ -350,7 +358,7 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
                 href="/guru/beranda"
                 className="text-[10px] text-gray-400 font-medium"
               >
-                Guru Navigation V2
+                BahasaCerdas
               </Link>
               <Link
                 href="/guru/ai-tools"

@@ -1572,3 +1572,24 @@ html:not(.dark) .jumpa-scope {
   border-color: var(--clr-border);
   box-shadow: var(--bc-shadow-3);
 }
+
+/* Mobile landscape: prioritize the active screen share. Preserve all room
+   controls (including leave) while making them compact and reachable. */
+@media (orientation: landscape) and (max-height: 600px) and (pointer: coarse) {
+  .jumpa-header { padding: 3px max(10px, env(safe-area-inset-right)) 3px max(10px, env(safe-area-inset-left)); gap: 6px; margin-bottom: 0; }
+  .jumpa-header .jumpa-mark { width: 28px; height: 28px; border-radius: 9px; font-size: 14px; }
+  .jumpa-header h1 { font-size: 12px; }
+  .jumpa-header .jumpa-brand-by, .jumpa-header .jumpa-tier { display: none; }
+  .jumpa-header .jumpa-head-btn { min-height: 32px; min-width: 32px; }
+  .jumpa-dock-wrap { padding: 3px max(8px, env(safe-area-inset-right)) max(3px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)); }
+  .jumpa-dock { width: max-content; max-width: 100%; padding: 4px 8px; gap: 6px; align-items: center; border-radius: 18px; }
+  .jumpa-dock-group { display: contents; }
+  .jumpa-dock-sep, .jumpa-dock .jumpa-ctl-label { display: none; }
+  .jumpa-dock .jumpa-ctl { flex: 0 0 auto; width: auto; max-width: none; }
+  .jumpa-dock .jumpa-key { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; }
+  .jumpa-dock .jumpa-key[data-variant="leave"] { min-width: 46px; }
+  .jumpa-dock .jumpa-leave-text { display: none; }
+  .jumpa-sharing-stage { gap: 0; }
+  .jumpa-sharing-stage > .jumpa-strip { display: none; }
+  .jumpa-sharing-stage [data-screen="true"] video { object-fit: contain; }
+}

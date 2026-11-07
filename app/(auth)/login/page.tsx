@@ -1,5 +1,7 @@
 "use client";
 
+import "./mobile-login.css";
+
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -29,6 +31,13 @@ export default function LoginPage() {
   // hanya memberi konteks navigasi agar aplikasi Android tetap di dalam scope.
   const pathname = usePathname() ?? "/login";
   const isArenaEntry = pathname === "/arena/login";
+  const [isMobileApp, setIsMobileApp] = useState(false);
+  useEffect(() => {
+    setIsMobileApp(
+      new URLSearchParams(window.location.search).get("bc_app") === "1" ||
+      "BahasaCerdasMobile" in window
+    );
+  }, []);
   const [guideOpen, setGuideOpen] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
   const registerHref = isArenaEntry ? "/arena/register" : "/register";
@@ -51,8 +60,11 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [next, setNext] = useState("");
   // Tautan undangan (mis. JUMPA) tetap dibawa saat pengguna baru memilih daftar.
-  const registerWithNext =
+  const registerWithNextBase =
     !isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref;
+  const registerWithNext = isMobileApp
+    ? `${registerWithNextBase}${registerWithNextBase.includes("?") ? "&" : "?"}bc_app=1`
+    : registerWithNextBase;
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   useEffect(() => {
@@ -132,17 +144,30 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
+      const baseUrl = isMobileApp
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com");
       const supabase = createClient();
       const authNext = next || (isArenaEntry ? "/arena" : "");
-      const redirectTo = authNext
-        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(authNext)}`
-        : `${baseUrl}/api/auth/callback`;
-      const { error } = await supabase.auth.signInWithOAuth({
+      const callbackUrl = new URL("/api/auth/callback", baseUrl);
+      if (authNext && isSafeNext(authNext)) callbackUrl.searchParams.set("next", authNext);
+      if (isMobileApp) callbackUrl.searchParams.set("bc_app", "1");
+      const redirectTo = callbackUrl.toString();
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: { redirectTo, skipBrowserRedirect: isMobileApp },
       });
-      if (error) setError(error.message);
+      if (error) {
+        setError(error.message);
+      } else if (isMobileApp && data.url) {
+        // The WebView owns the PKCE verifier cookie. Open Google's OAuth
+        // challenge in the SYSTEM browser, never inside an embedded WebView.
+        const bridge = (window as Window & {
+          BahasaCerdasMobile?: { postMessage: (url: string) => void };
+        }).BahasaCerdasMobile;
+        if (bridge) bridge.postMessage(data.url);
+        else window.location.assign(data.url);
+      }
     } catch {
       setError("Gagal login dengan Google");
     }
@@ -166,7 +191,8 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
+      <span className="hidden" data-bc-mobile-login={isMobileApp ? "true" : undefined} aria-hidden="true" />
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -175,7 +201,7 @@ export default function LoginPage() {
       <BatikAccent />
 
             {/* Tautan kembali hanya di web umum; tautan keluar scope membuka browser eksternal di APK. */}
-      {!isArenaEntry && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+      {!isArenaEntry && !isMobileApp && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
         <Link
           href="/"
           className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
@@ -191,7 +217,7 @@ export default function LoginPage() {
 
 <div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
-        <div className="order-2 lg:order-1">
+        <div className={`order-2 lg:order-1 ${isMobileApp ? "!hidden" : ""}`}>
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
@@ -230,8 +256,14 @@ export default function LoginPage() {
         {/* ── LOGIN CARD ── */}
         <div className="order-1 lg:order-2">
           <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
-            <div className="mb-6 text-center">
-              <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Selamat datang kembali!</h2>
+            <div className={isMobileApp ? "mb-3 text-center" : "mb-6 text-center"}>
+              <div className={isMobileApp ? "mb-2 flex flex-col items-center gap-1 lg:hidden" : "mb-5 flex flex-col items-center gap-2 lg:hidden"}>
+                <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} priority className="h-16 w-16 object-contain dark:hidden" />
+                <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} priority className="hidden h-16 w-16 object-contain dark:block" />
+                <span className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">BahasaCerdas</span>
+                <span className="text-xs">{isMobileApp ? "Ekosistem pembelajaran Bahasa Indonesia" : BRAND_TAGLINE}</span>
+              </div>
+              <h2 className="text-2xl font-extrabold">{isMobileApp ? "Masuk ke BahasaCerdas" : "Selamat datang kembali!"}</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                 Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda.
               </p>
@@ -263,7 +295,7 @@ export default function LoginPage() {
               {googleLoading ? "Memproses..." : "Masuk dengan Google"}
             </button>
 
-            <div className="relative my-5">
+            <div className={isMobileApp ? "relative my-3" : "relative my-5"}>
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t border-slate-200 dark:border-slate-700" />
               </div>
@@ -272,7 +304,7 @@ export default function LoginPage() {
               </div>
             </div>
 
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleLogin} className={isMobileApp ? "space-y-2.5" : "space-y-4"}>
               <div>
                 <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-slate-700 dark:text-slate-200">
                   Email atau Username

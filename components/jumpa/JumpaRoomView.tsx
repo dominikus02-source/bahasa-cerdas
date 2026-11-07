@@ -43,6 +43,7 @@ import {
   MonitorUp,
   MoreHorizontal,
   PartyPopper,
+  PictureInPicture2,
   PhoneOff,
   Presentation,
   Settings2,
@@ -511,7 +512,7 @@ const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeop
   }
   if (screen) {
     return (
-      <div className="flex h-full min-w-0 flex-col gap-2">
+      <div className="jumpa-sharing-stage flex h-full min-w-0 flex-col gap-2" data-screen-sharing="true">
         <div key={`screen-${screen.participant.identity}`} className="jumpa-in-fade min-h-0 min-w-0 flex-1">
           <ParticipantTile trackRef={screen} screen />
         </div>
@@ -600,6 +601,8 @@ function ControlBar({
   const [busy, setBusy] = useState<ReadonlySet<"mic" | "camera" | "screen">>(new Set());
   const mediaBusy = useRef(new Set<"mic" | "camera" | "screen">());
   const [menuOpen, setMenuOpen] = useState(false);
+  const [canNativePip, setCanNativePip] = useState(false);
+  useEffect(() => setCanNativePip("BahasaCerdasPip" in window), []);
   const [shareOpen, setShareOpen] = useState(false);
   const [endAsk, setEndAsk] = useState(false);
   const [ending, setEnding] = useState(false);
@@ -747,6 +750,15 @@ function ControlBar({
               ))}
             </div>
             <div className="my-1 h-px bg-[var(--jp-line)]" />
+            {canNativePip && (
+              <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => {
+                (window as Window & { BahasaCerdasPip?: { postMessage: (value: string) => void } })
+                  .BahasaCerdasPip?.postMessage("enter");
+                close();
+              }}>
+                <PictureInPicture2 size={20} /> Mini player (PiP)
+              </button>
+            )}
             {!wide && (
               <button type="button" role="menuitem" className="jumpa-menu-item" onClick={() => { openPanel("settings"); close(); }}>
                 <Settings2 size={20} /> Pengaturan
