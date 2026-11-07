@@ -1,3 +1,4 @@
+import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -47,7 +48,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onProgress: (progress) {
             if (mounted) setState(() => _progress = progress / 100);
           },
-          onPageStarted: (_) {
+          onPageStarted: (url) {
+            developer.log('pageStarted path=${Uri.tryParse(url)?.path ?? "?"}', name: 'bc.webview');
             if (mounted) {
               setState(() {
                 _isLoading = true;
@@ -56,10 +58,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
             }
           },
           onPageFinished: (url) async {
+            developer.log('pageFinished path=${Uri.tryParse(url)?.path ?? "?"}', name: 'bc.webview');
             if (mounted) setState(() => _isLoading = false);
             _detectRoleFromUrl(url);
           },
           onWebResourceError: (error) {
+            developer.log(
+              'resourceError code=${error.errorCode} path=${Uri.tryParse(error.url)?.path ?? "?"}',
+              name: 'bc.webview',
+            );
             if (error.isForMainFrame == true && mounted) {
               setState(() {
                 _hasError = true;
@@ -101,14 +108,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
   }
 
-  /// Deteksi role dari URL. Pathname is a hint only — public auth pages clear role.
   void _detectRoleFromUrl(String url) {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
 
     final path = uri.path.toLowerCase();
 
-    // Public / unauthenticated pages must clear any previous role.
     const publicAuthPaths = {
       '/login',
       '/arena/login',
