@@ -185,9 +185,13 @@ class _WebViewScreenState extends State<WebViewScreen> {
   Future<void> _goHome() async {
     final audience = _audience;
     String path = AppConstants.baseUrl;
-    if (audience == MobileAudience.murid) path += AppConstants.muridHome;
-    else if (audience == MobileAudience.guru) path += AppConstants.guruHome;
-    else if (audience == MobileAudience.umum) path += AppConstants.umumHome;
+    if (audience == MobileAudience.murid) {
+      path += AppConstants.muridHome;
+    } else if (audience == MobileAudience.guru) {
+      path += AppConstants.guruHome;
+    } else if (audience == MobileAudience.umum) {
+      path += AppConstants.umumHome;
+    }
     await _controller.loadRequest(Uri.parse(path));
   }
 
