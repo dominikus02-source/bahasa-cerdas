@@ -17,6 +17,7 @@ body:has([data-bc-mobile-login="true"]) .order-1 > .mx-auto.max-w-md {
   padding:8px!important; border:0!important; background:transparent!important;
   box-shadow:none!important;
 }
+body:has([data-bc-mobile-login="true"]) .order-1 > .mt-5.grid.gap-2 { display:none!important; }
 body:has([data-bc-mobile-login="true"]) .order-1 h2 { font-size:20px;line-height:1.2; }
 body:has([data-bc-mobile-login="true"]) .order-1 input { min-height:42px;padding-block:8px; }
 body:has([data-bc-mobile-login="true"]) .order-1 .border-t { margin-top:12px!important;padding-top:12px!important; }
