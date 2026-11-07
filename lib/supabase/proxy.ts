@@ -43,6 +43,8 @@ const publicPaths = [
   "/unduh",
   // Demo Android (Appetize) — publik, tidak perlu login.
   "/android-demo",
+  // Google Play: account deletion information must be publicly reachable.
+  "/hapus-akun",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/opengraph-image",
 ];
 
