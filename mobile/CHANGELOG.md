@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.0.1] - 2026-11-07
+### Fixed
+- Corrected Kotlin package directory for MainActivity (`com.bahasacerdas.app`)
+- Added deep link intent-filters for bahasacerdas.com domains in AndroidManifest
+- Improved native welcome screen with Register button and legal links
+
+### Added
+- Better Play Store readiness notes
+
 ## [1.0.0] - 2026-11-06
 ### Added
 - Flutter WebView shell untuk BahasaCerdas
