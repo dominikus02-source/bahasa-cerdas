@@ -19,7 +19,7 @@ export function EmptyStates({ hasStudents }: { hasStudents: boolean }) {
       </p>
       <div className="mt-4 flex flex-wrap justify-center gap-2">
         <Link
-          href="#transparansi"
+          href="/guru/komisi/program"
           className="rounded-lg border border-input px-4 py-2 text-sm font-medium hover:bg-muted"
         >
           Pelajari cara kerjanya
