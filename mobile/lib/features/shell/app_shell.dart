@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/legal_links.dart';
 import '../webview/webview_screen.dart';
 
 /// A single-screen native welcome; authenticated pages retain the PWA UI.
 class AppShell extends StatelessWidget {
   const AppShell({super.key});
 
-  void _openLogin(BuildContext context) {
+  void _openUrl(BuildContext context, String path) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => const WebViewScreen(
-          initialUrl: '${AppConstants.baseUrl}${AppConstants.loginPath}',
+        builder: (_) => WebViewScreen(
+          initialUrl: '${AppConstants.baseUrl}$path',
         ),
       ),
     );
+  }
+
+  Future<void> _openExternal(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
   }
 
   @override
@@ -77,7 +86,7 @@ class AppShell extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: FilledButton(
-                      onPressed: () => _openLogin(context),
+                      onPressed: () => _openUrl(context, AppConstants.loginPath),
                       style: FilledButton.styleFrom(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(18)),
@@ -86,11 +95,44 @@ class AppShell extends StatelessWidget {
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: OutlinedButton(
+                      onPressed: () => _openUrl(context, AppConstants.registerPath),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18)),
+                      ),
+                      child: const Text('Daftar gratis',
+                          style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 16,
+                    children: [
+                      TextButton(
+                        onPressed: () => _openExternal(LegalLinks.privacy),
+                        child: const Text('Privasi'),
+                      ),
+                      TextButton(
+                        onPressed: () => _openExternal(LegalLinks.terms),
+                        child: const Text('Syarat'),
+                      ),
+                      TextButton(
+                        onPressed: () => _openExternal(LegalLinks.contact),
+                        child: const Text('Kontak'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
                   Text('Aman • Nyaman • Terhubung',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: scheme.onSurfaceVariant)),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 6),
                 ],
               ),
             ),

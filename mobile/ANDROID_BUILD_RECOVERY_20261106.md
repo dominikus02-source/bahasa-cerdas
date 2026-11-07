@@ -24,3 +24,10 @@
 
 ## Current blocker
 Attempted Flutter scaffold generation through the remote command interface, but execution was blocked by safety controls. No Android scaffold was generated or APK produced in this step.
+
+## Update 2026-11-07 (audit & fixes)
+- Package path for MainActivity corrected to match `com.bahasacerdas.app`.
+- Deep link intent-filters added to AndroidManifest (autoVerify for bahasacerdas.com).
+- Native welcome screen enhanced with Daftar button + Privasi/Syarat/Kontak links.
+- Remaining blockers for full APK: install Flutter SDK + Android SDK, place google-services.json, generate launcher icons & splash, run `flutter build apk --release` with proper keystore.
+- Recommended next: `cd mobile && flutter pub get && flutter analyze && flutter test && flutter build apk --debug` then smoke-test login + JUMPA camera/mic.
