@@ -81,20 +81,22 @@ class _AppShellState extends State<AppShell> {
   }
 
   /// Accepts null to clear role (logout or public page).
+  /// Does not wipe an active drawer selection when the same role is re-detected.
   void _onRoleDetected(String? role) {
     if (role == _role) return;
     if (!mounted) return;
     setState(() {
       _role = role;
-      _index = 0;
-      _selectedRoute = role == null ? AppRoutes.login : null;
+      if (role == null) {
+        _index = 0;
+        _selectedRoute = AppRoutes.login;
+      }
     });
   }
 
   Future<void> _logout() async {
     final controller = _webController;
 
-    // Reset shell state immediately so bottom nav and drawer leave GURU/ADMIN.
     if (mounted) {
       setState(() {
         _role = null;
@@ -106,8 +108,6 @@ class _AppShellState extends State<AppShell> {
     if (controller == null) return;
 
     try {
-      // Fire-and-forget server signout. Do NOT use runJavaScriptReturningResult
-      // with a Promise — WebView returns the Promise object, not the resolved value.
       await controller.runJavaScript('''
         try {
           fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
@@ -118,7 +118,6 @@ class _AppShellState extends State<AppShell> {
       await controller.clearCache();
       await controller.clearLocalStorage();
 
-      // Force navigate to login so any residual session cookie is not used.
       final loginUrl = AppRoutes.webPathForRoute(AppRoutes.login);
       await controller.loadRequest(Uri.parse(loginUrl));
     } catch (_) {
@@ -136,12 +135,37 @@ class _AppShellState extends State<AppShell> {
     }
   }
 
+  /// Close drawer safely, then navigate. Never rely on Navigator.pop throwing.
   void _openRoute(String routeKey, int tabIndex) {
-    Navigator.pop(context);
+    final scaffold = Scaffold.maybeOf(context);
+    if (scaffold?.isEndDrawerOpen == true) {
+      scaffold!.closeEndDrawer();
+    }
+
     setState(() {
       _index = tabIndex.clamp(0, _pages.length - 1);
       _selectedRoute = routeKey;
     });
+
+    // Force WebView to load even if ValueKey does not rebuild.
+    final url = AppRoutes.webPathForRoute(routeKey, role: _role);
+    final controller = _webController;
+    if (controller != null) {
+      controller.loadRequest(Uri.parse(url));
+    }
+  }
+
+  void _openForgotPassword() {
+    final scaffold = Scaffold.maybeOf(context);
+    if (scaffold?.isEndDrawerOpen == true) {
+      scaffold!.closeEndDrawer();
+    }
+    setState(() {
+      _selectedRoute = AppRoutes.forgot;
+      _index = 0;
+    });
+    final url = AppRoutes.webPathForRoute(AppRoutes.forgot);
+    _webController?.loadRequest(Uri.parse(url));
   }
 
   @override
@@ -249,7 +273,7 @@ class _AppShellState extends State<AppShell> {
             ],
 
             const Divider(),
-            ListTile(leading: const Icon(Icons.lock_reset), title: const Text('Lupa Kata Sandi'), onTap: () { Navigator.pop(context); setState(() => _index = 1); }),
+            ListTile(leading: const Icon(Icons.lock_reset), title: const Text('Lupa Kata Sandi'), onTap: _openForgotPassword),
             ListTile(leading: const Icon(Icons.privacy_tip_outlined), title: const Text('Kebijakan Privasi'), onTap: () => _openLegal(LegalLinks.privacy)),
             ListTile(leading: const Icon(Icons.description_outlined), title: const Text('Syarat & Ketentuan'), onTap: () => _openLegal(LegalLinks.terms)),
             ListTile(leading: const Icon(Icons.delete_forever_outlined), title: const Text('Hapus Akun'), onTap: () => _openLegal(LegalLinks.deleteAccount)),
@@ -258,7 +282,11 @@ class _AppShellState extends State<AppShell> {
               ListTile(
                 leading: const Icon(Icons.logout, color: Colors.red),
                 title: const Text('Keluar', style: TextStyle(color: Colors.red)),
-                onTap: () { Navigator.pop(context); _logout(); },
+                onTap: () {
+                  final scaffold = Scaffold.maybeOf(context);
+                  if (scaffold?.isEndDrawerOpen == true) scaffold!.closeEndDrawer();
+                  _logout();
+                },
               ),
           ],
         ),
