@@ -93,3 +93,10 @@ Android 14 device `SM-A236E` connected through authorized USB ADB; tested Androi
 **User-reported PASS:** User confirmed that they could join JUMPA again after previously ending a meeting on the Android 14 Samsung SM-A236E. This confirms manual single-device rejoin/re-entry, not yet a validated multi-participant reconnection, connectivity-loss recovery, or complete session-state test.
 
 **ADB confirmation:** Device remained `device`; `com.bahasacerdas.app` process still running (PID `30896`); queried Android crash buffer contained no matching `FATAL EXCEPTION` from the app. **Release remains HOLD** for outstanding E2E (two participants, Android Back, upload/download, logout/session persistence, network recovery, Play policy). No credentials or secret data were collected.
+
+
+## Samsung A23 — Android Back navigation after JUMPA (7 November 2026)
+
+**PASS (user-confirmed):** Android system Back successfully returned from JUMPA to the previous page without logging the user out. This was manually confirmed on Samsung SM-A236E with Android 14; no UI automation assertion was made.
+
+**ADB observation:** device remained connected with status `device`; the `com.bahasacerdas.app` process remained active; no application fatal exception was found in the inspected crash buffer. **Still HOLD for Play release:** upload/download, file picker, logout/session integrity, cross-role testing, multi-party media, network recovery, and remaining Play Console policy gates. No credentials, signing secrets, or binary artifacts are included in this report.
