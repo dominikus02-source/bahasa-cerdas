@@ -191,7 +191,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900">
       <span className="hidden" data-bc-mobile-login={isMobileApp ? "true" : undefined} aria-hidden="true" />
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
