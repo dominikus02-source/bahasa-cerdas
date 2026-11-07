@@ -36,7 +36,8 @@ class AppShell extends StatelessWidget {
             constraints: const BoxConstraints(maxWidth: 460),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-              child: Column(
+              child: SingleChildScrollView(
+                child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -50,7 +51,7 @@ class AppShell extends StatelessWidget {
                               letterSpacing: -0.6)),
                     ],
                   ),
-                  const Spacer(flex: 2),
+                  const SizedBox(height: 36),
                   Container(
                     width: 112,
                     height: 112,
@@ -81,7 +82,7 @@ class AppShell extends StatelessWidget {
                           color: dark ? scheme.onSurfaceVariant : const Color(0xFF64748B),
                         ),
                   ),
-                  const Spacer(flex: 3),
+                  const SizedBox(height: 36),
                   SizedBox(
                     width: double.infinity,
                     height: 56,
@@ -134,6 +135,7 @@ class AppShell extends StatelessWidget {
                           color: scheme.onSurfaceVariant)),
                   const SizedBox(height: 6),
                 ],
+                ),
               ),
             ),
           ),
