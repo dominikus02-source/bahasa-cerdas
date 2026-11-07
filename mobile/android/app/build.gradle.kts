@@ -8,6 +8,12 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
+// Apply Firebase plugins only when an Android Firebase configuration exists.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+    apply(plugin = "com.google.firebase.crashlytics")
+}
+
 val releaseKeyProperties = Properties()
 val releaseKeyFile = rootProject.file("key.properties")
 if (releaseKeyFile.exists()) {

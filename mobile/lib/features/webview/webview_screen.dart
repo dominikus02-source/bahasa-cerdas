@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -46,9 +47,14 @@ class _WebViewScreenState extends State<WebViewScreen> {
     final result = await Connectivity().checkConnectivity();
     if (mounted) setState(() => _isOffline = result.contains(ConnectivityResult.none));
     _connectivitySub = Connectivity().onConnectivityChanged.listen((results) {
-      if (mounted) {
-        setState(() => _isOffline = results.contains(ConnectivityResult.none));
-      }
+      if (!mounted) return;
+      final offline = results.contains(ConnectivityResult.none);
+      final recovered = _isOffline && !offline;
+      setState(() {
+        _isOffline = offline;
+        if (recovered) _hasError = false;
+      });
+      if (recovered) _controller.reload();
     });
   }
 
@@ -200,6 +206,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
       await _controller.goBack();
     } else if (mounted && Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
+    } else {
+      await SystemNavigator.pop();
     }
   }
 
@@ -244,6 +252,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
             if (NavigationPolicy.isTrustedWebUrl(request.url)) {
               return NavigationDecision.navigate;
+            }
+            if (uri.scheme == 'mailto' || uri.scheme == 'tel') {
+              launchUrl(uri, mode: LaunchMode.externalApplication);
+              return NavigationDecision.prevent;
             }
             if (uri.scheme == 'https' && uri.userInfo.isEmpty) {
               launchUrl(uri, mode: LaunchMode.externalApplication);
