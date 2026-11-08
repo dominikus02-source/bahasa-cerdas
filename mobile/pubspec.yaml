@@ -12,7 +12,7 @@ dependencies:
   webview_flutter: ^4.8.0
   webview_flutter_android: ^3.16.0
   webview_flutter_wkwebview: ^3.13.0
-  connectivity_plus: ^6.0.5
+  connectivity_plus: ^7.0.0
   flutter_native_splash: ^2.4.1
   flutter_launcher_icons: ^0.13.1
   url_launcher: ^6.3.0
