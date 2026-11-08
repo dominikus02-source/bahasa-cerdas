@@ -179,7 +179,6 @@ class MobilePremiumStyle {
         font-size:13px!important;padding:8px 9px!important;
       }
       #guru-mobile-menu nav .shell-accordion {margin:0 0 4px 13px!important;padding-left:6px!important;gap:0!important;}
-      #guru-mobile-menu > div:last-child {display:none!important;}
       html.bc-android-pip .jumpa-header,
       html.bc-android-pip .jumpa-dock-wrap,
       html.bc-android-pip .jumpa-strip,

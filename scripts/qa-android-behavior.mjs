@@ -83,6 +83,34 @@ for (const theme of ["light", "dark"]) {
   await ctx.close();
 }
 
+// 2b. Drawer Guru di APK lama: aturan injeksi lama `#guru-mobile-menu > div:last-child {display:none}`
+// tidak boleh menyembunyikan isi menu (regresi laporan pengguna: drawer putih kosong).
+for (const theme of ["light", "dark"]) {
+  const { ctx, page } = await open(`view=guru-founder&theme=${theme}&path=/guru/kelasku`);
+  await page.addStyleTag({ content: "#guru-mobile-menu > div:last-child {display:none!important;}" });
+  await page.locator('button[aria-controls="guru-mobile-menu"]').click();
+  const drawer = page.locator("#guru-mobile-menu");
+  await drawer.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+  const links = await drawer.locator("nav a, nav button[aria-expanded]").evaluateAll((els) => els.filter((e) => { const r = e.getBoundingClientRect(); return r.width > 0 && r.height > 0; }).length);
+  check(`drawer APK lama ${theme}: grup & tautan guru terlihat (bukan panel kosong)`, links >= 3, `terlihat=${links}`);
+  await page.screenshot({ path: `${OUT}/guru-drawer-legacy-css-${theme}.png` });
+  await ctx.close();
+}
+
+// 2c. Merek seragam di navbar atas Guru & Murid (logo + nama + tagline seperti Umum), tanpa panah kembali
+for (const [view, path, home] of [["guru-founder", "/guru/beranda", "/guru/beranda"], ["guru", "/guru/kelasku", "/guru/beranda"], ["murid-founder", "/murid/beranda", "/murid/beranda"], ["murid", "/murid/belajar", "/murid/beranda"]]) {
+  for (const theme of ["light", "dark"]) {
+    const { ctx, page } = await open(`view=${view}&theme=${theme}&path=${encodeURIComponent(path)}`);
+    const brand = page.locator('header a[aria-label="Beranda dasbor BahasaCerdas"]').first();
+    const ok = (await brand.count()) === 1 && await brand.isVisible();
+    const txt = ok ? await brand.innerText() : "";
+    check(`merek ${view} ${theme}: logo+BahasaCerdas+tagline → ${home}`, ok && txt.includes("BahasaCerdas") && txt.includes("Dunia Bahasa Indonesia") && (await brand.getAttribute("href")) === home && (await brand.locator("img").count()) >= 1, txt.replace(/\s+/g, " "));
+    check(`merek ${view} ${theme}: tanpa panah kembali di header`, (await page.locator('header a[aria-label="Kembali ke Beranda"]').count()) === 0);
+    if (theme === "light") await page.screenshot({ path: `${OUT}/brand-${view}-${theme}.png` });
+    await ctx.close();
+  }
+}
+
 // 3. Skala font 130%
 for (const view of ["guru-founder", "guru", "murid-founder", "murid", "login"]) {
   for (const w of [320, 360]) {

@@ -351,6 +351,13 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
               <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
               <RoleSections role={role} isFounder={isFounder} />
             </div>
+            {/*
+              APK Android lama menyuntik `#guru-mobile-menu > div:last-child {display:none}`
+              (dulu menyembunyikan footer dev). Footer sudah dihapus, sehingga aturan itu
+              menyembunyikan seluruh isi menu. Elemen ekor kosong ini menjaga isi menu tetap
+              terlihat di APK yang sudah terpasang sampai APK baru dipasang.
+            */}
+            <div aria-hidden="true" data-bc-legacy-drawer-tail className="hidden" />
           </div>
         </div>
       )}
