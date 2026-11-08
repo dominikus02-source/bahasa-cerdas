@@ -1,0 +1,13 @@
+const assert=require('node:assert/strict'),fs=require('node:fs');
+const layout=fs.readFileSync('app/(dashboard)/guru/layout.tsx','utf8');
+const settings=fs.readFileSync('app/(dashboard)/guru/pengaturan/page.tsx','utf8');
+const logout=fs.readFileSync('components/arena/LogoutButton.tsx','utf8');
+assert.match(layout, /hidden md:block"><ArenaLogoutButton variant="icon"/);
+assert.match(layout, /user\.isFounder \? "hidden lg:flex"/);
+assert.match(layout, /hidden lg:flex"><NaraHeaderLink/);
+assert.match(settings, /data-guru-settings-logout/);
+assert.match(settings, /ArenaLogoutButton variant="settings" to="\/login"/);
+assert.match(logout, /supabase\.auth\.signOut\(\)/);
+assert.match(logout, /variant === "settings"/);
+assert.match(logout, /Keluar dari akun/);
+console.log('PASS: Guru compact mobile header, logout in Settings, real signOut retained');

@@ -38,7 +38,10 @@ check("Arena login preserves default next=/arena", login.includes('params.get("n
 check("Arena password login preserves student-only policy", login.includes('isArenaEntry && result.user.role !== "MURID"'));
 check("web role redirects use canonical resolver", login.includes("resolvePostAuthDestinationForUser"));
 check("Arena registration stays in the Android TWA scope", login.includes('const registerHref = isArenaEntry ? "/arena/register" : "/register"'));
-check("Google OAuth uses shared API callback", login.includes("/api/auth/callback") && login.includes("encodeURIComponent(authNext)"));
+check("Google OAuth uses shared API callback", login.includes("/api/auth/callback") &&
+    (login.includes("encodeURIComponent(authNext)") ||
+      (login.includes('callbackUrl.searchParams.set("next", authNext)') &&
+        login.includes("isSafeNext(authNext)"))));
 check("PWA service worker registration is retained on Arena entry", login.includes("{isArenaEntry && <SwRegister />}"));
 check("PWA manifest still launches Arena", manifest.start_url?.startsWith("/arena") === true);
 check("Android TWA remains scoped to Arena", twa.startUrl?.startsWith("/arena") === true && twa.fullScopeUrl?.endsWith("/arena") === true);
