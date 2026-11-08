@@ -8,6 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../core/constants/navigation_policy.dart';
+import '../../core/constants/mobile_webview_permission_policy.dart';
 import '../../core/constants/jumpa_room_route.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/mobile_premium_style.dart';
@@ -511,13 +512,29 @@ class _WebViewScreenState extends State<WebViewScreen> {
           _controller.platform as AndroidWebViewController;
       androidController.setMediaPlaybackRequiresUserGesture(false);
       androidController.setOnPlatformPermissionRequest((request) async {
-        final statuses = await <Permission>[
-          Permission.camera,
-          Permission.microphone,
-        ].request();
-        if (statuses.values.every((status) => status.isGranted)) {
-          await request.grant();
-        } else {
+        // Never grant unknown resource types, and never request camera when
+        // the meeting only needs a microphone (or vice versa).
+        final required =
+            MobileWebViewPermissionPolicy.requiredPermissions(request.types);
+        if (required == null) {
+          await request.deny();
+          return;
+        }
+        // Do not approve device capture for external or spoofed pages.
+        final currentUrl = await _controller.currentUrl();
+        if (currentUrl == null ||
+            !NavigationPolicy.isTrustedWebUrl(currentUrl)) {
+          await request.deny();
+          return;
+        }
+        try {
+          final statuses = await required.request();
+          if (statuses.values.every((status) => status.isGranted)) {
+            await request.grant();
+          } else {
+            await request.deny();
+          }
+        } catch (_) {
           await request.deny();
         }
       });
