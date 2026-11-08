@@ -25,11 +25,9 @@ export interface GuruHeaderUser {
   level?: number | null;
 }
 
-const HEADER_CLASS = "shrink-0 sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-blue-100/80 bg-white/88 px-4 backdrop-blur-xl md:px-6 dark:border-blue-950/70 dark:bg-[#08182b]/92"; // warna-izin: dipindah apa adanya dari app/(dashboard)/guru/layout.tsx, bukan warna baru
-
 export function GuruHeader({ user, rank }: { user: GuruHeaderUser; rank: ReturnType<typeof rankFromLevel> }) {
   return (
-    <header className={HEADER_CLASS}>
+    <header className="shrink-0 sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-blue-100/80 bg-white/88 px-4 backdrop-blur-xl md:px-6 dark:border-blue-950/70 dark:bg-[color-mix(in_srgb,var(--bc-guru-header-night)_92%,transparent)]">
       <div className="flex min-w-0 items-center gap-2">
         <BackHome href="/guru/beranda" className="hover:text-blue-700 hover:bg-blue-50 dark:hover:text-blue-300 dark:hover:bg-blue-950/50" />
         <div className="hidden shrink-0 items-center gap-2 sm:flex">

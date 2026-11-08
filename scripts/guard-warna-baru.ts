@@ -22,7 +22,6 @@ const ALLOW: RegExp[] = [
   /^src\/game\//, /^lib\/game\//, /^lib\/gamification\//, /^lib\/arena-junior\//, /^lib\/arena\/game-registry\.ts$/, /^lib\/cosmetics\.ts$/,
   /^app\/api\//, /opengraph-image\.tsx$/, /(?:^|\/)icon\.tsx$/, /apple-icon\.tsx$/, /\.test\.tsx?$/, /\.d\.ts$/,
   /^tailwind\.config\.ts$/,
-  /^app\/qa-fixture\//, // fixture QA lokal dev-only (BC_QA_FIXTURE=1), meniru kelas layout asli
 ];
 const HEX = /(?<![&\w])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{4}|[0-9a-fA-F]{3})(?![\w-])/g;
 const FUNC = /\b(?:rgba?|hsla?)\(\s*[\d.]/g;

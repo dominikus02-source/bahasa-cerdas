@@ -50,7 +50,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       <>
         {controls}
         <ShellLayout
-          rootClassName="bc-guru-shell bg-gradient-to-br from-blue-50 via-white to-slate-50 dark:from-[#061225] dark:via-[#08182b] dark:to-[#0b1f38]"
+          rootClassName="bc-guru-shell ui-app-bg"
           header={<GuruHeader user={user} rank={rank} />}
           mainClassName="bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
           bottomNav={<GuruMobileNav role="GURU" isFounder={isFounder} />}

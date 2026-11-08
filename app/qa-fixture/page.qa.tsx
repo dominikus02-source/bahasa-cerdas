@@ -41,7 +41,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         {frames.map(([w, h]) => (
           <figure key={`${w}x${h}`} style={{ margin: 0 }}>
             <figcaption style={{ fontSize: 12 }}>{w}×{h}</figcaption>
-            <iframe title={`${view} ${w}x${h}`} src={src} width={w} height={h} style={{ border: "1px solid #999" }} />
+            <iframe title={`${view} ${w}x${h}`} src={src} width={w} height={h} style={{ border: "1px solid currentColor" }} />
           </figure>
         ))}
       </div>
