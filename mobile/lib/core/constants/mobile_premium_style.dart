@@ -128,8 +128,7 @@ class MobilePremiumStyle {
         .jumpa-dock {padding:4px 8px!important;gap:4px!important;}
         .jumpa-dock .jumpa-ctl-label,.jumpa-dock-sep {display:none!important;}
         .jumpa-dock .jumpa-key {width:40px!important;height:40px!important;min-width:40px!important;}
-        .jumpa-sharing-stage .jumpa-strip {display:none!important;}
-        .jumpa-sharing-stage [data-screen="true"] video {object-fit:contain!important;}
+        .jumpa-screen-stage [data-screen="true"] video {object-fit:contain!important;}
       }
       @media (prefers-reduced-motion:reduce) {
         button,a[role="button"] {transition:none!important;}

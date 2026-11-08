@@ -441,6 +441,7 @@
     "test:diagnostic-baseline-v2": "npx tsx scripts/test-diagnostic-baseline-v2.ts",
     "test:login-unified": "npx tsx scripts/test-unified-login-routing.ts",
     "test:mobile-oauth-handoff": "npx tsx scripts/test-mobile-oauth-handoff.ts",
+    "test:founder-role-labels": "npx tsx scripts/test-founder-role-labels.tsx",
     "test:jumpa-permissions": "npx tsx scripts/test-jumpa-permissions.ts",
     "test:jumpa-trial-media": "node --import tsx scripts/test-jumpa-trial-media.ts",
     "test:jumpa-token": "npx tsx scripts/test-jumpa-token.ts",

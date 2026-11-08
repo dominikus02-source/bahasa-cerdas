@@ -59,6 +59,9 @@ jobs:
       - name: Android Google OAuth handoff regression
         run: npm run test:mobile-oauth-handoff
 
+      - name: Founder compact role switcher labels and access
+        run: npm run test:founder-role-labels
+
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
 

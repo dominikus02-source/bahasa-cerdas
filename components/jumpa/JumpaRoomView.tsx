@@ -511,8 +511,8 @@ const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeop
   }
   if (screen) {
     return (
-      <div className="flex h-full min-w-0 flex-col gap-2">
-        <div key={`screen-${screen.participant.identity}`} className="jumpa-in-fade min-h-0 min-w-0 flex-1">
+      <div className="jumpa-screen-stage flex h-full min-w-0 flex-col gap-2" data-screen-sharing="true">
+        <div key={`screen-${screen.participant.identity}`} className="jumpa-screen-primary jumpa-in-fade min-h-0 min-w-0 flex-1">
           <ParticipantTile trackRef={screen} screen />
         </div>
         <Strip speakingKey={speakingKey} tracks={tracks} max={stripMax} onMore={onShowPeople} />
