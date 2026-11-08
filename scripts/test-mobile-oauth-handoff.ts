@@ -61,7 +61,11 @@ async function main() {
       path + ": Android handoff must precede server PKCE exchange",
     );
   }
-  console.log("PASS: Android OAuth handoff and guarded route wiring, secure headers, invalid-code rejection");
+  const middleware = readFileSync("middleware.ts", "utf8");
+  assert.match(middleware, /const androidOAuthHandoff = pathname === "\/auth\/callback"/);
+  assert.match(middleware, /pathname\.startsWith\("\/api\/"\) \|\| androidOAuthHandoff/);
+
+  console.log("PASS: Android OAuth handoff, route wiring, middleware CSP guard, secure headers, invalid-code rejection");
 }
 
 main().catch((error) => {
