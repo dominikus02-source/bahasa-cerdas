@@ -165,7 +165,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
             <FounderDashboardSwitcher user={user} compact />
             <Link
               href="/guru/profile"
-              className={`group min-h-11 min-w-11 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50 ${user.isFounder ? "hidden sm:flex" : "flex"}`}
+              className={`group min-h-11 min-w-11 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50 ${user.isFounder ? "hidden lg:flex" : "hidden sm:flex"}`}
               aria-label="Buka profil guru"
             >
               <UserAvatar
@@ -193,11 +193,11 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
               </span>
             </Link>
             {user.isFounder ? (
-              <div className="hidden sm:flex"><NaraHeaderLink /></div>
+              <div className="hidden lg:flex"><NaraHeaderLink /></div>
             ) : <NaraHeaderLink />}
             <NotificationBell allHref="/guru/notifikasi" />
             <ThemeToggle />
-            <ArenaLogoutButton variant="icon" to="/login" />
+            <div className="hidden md:block"><ArenaLogoutButton variant="icon" to="/login" /></div>
           </div>
         </header>
       }
