@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { mobileOAuthHandoff } from "@/lib/auth/mobile-oauth-handoff";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import {
@@ -35,6 +36,10 @@ export async function GET(request: Request) {
   const token_hash = requestUrl.searchParams.get("token_hash");
   const type = requestUrl.searchParams.get("type");
   const next = requestUrl.searchParams.get("next") ?? "/";
+
+  if (code && requestUrl.searchParams.get("bc_app") === "1") {
+    return mobileOAuthHandoff({ code, next, flow: "register" });
+  }
 
   const clearIntent = intentClearCookie();
   const withClearedIntent = (res: NextResponse) => {
