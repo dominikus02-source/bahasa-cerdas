@@ -70,8 +70,8 @@ function main() {
   const mobileNav = read("components/dashboard/MuridMobileNav.tsx");
   const roleSections = read("components/shell/RoleSections.tsx");
   const navCtx = read("components/shell/navigation-context.ts");
-  test("sidebar murid memakai <BackHome /> di top shell header",
-    () => muridLayout.includes("<BackHome />"));
+  test("header murid memakai merek BahasaCerdas (BrandMark → /murid/beranda), tanpa panah kembali",
+    () => muridLayout.includes('<BrandMark href="/murid/beranda"') && !muridLayout.includes("<BackHome />"));
   test("arena desktop header memakai <BackHome />",
     () => arenaLayout.includes("<BackHome />"));
   test("arena & chat berbagi SATU BackHome kanonik di header global (tanpa varian iconOnly terpisah)",

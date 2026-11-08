@@ -27,6 +27,10 @@ html.bc-android-app [data-bc-login="hero"],
 html.bc-android-app [data-bc-login="back"],
 html.bc-android-app [data-bc-login="extras"] { display: none !important; }
 html.bc-android-app [data-bc-login="brand"] { display: flex !important; }
+/* APK lama (sebelum penanda data-bc-native-styles) menyuntik merek kedua
+   #bc-android-login-brand di atas judul; merek kini dari source ([data-bc-login="brand"]),
+   jadi sisipan lama disembunyikan agar logo tidak dobel. */
+html #bc-android-login-brand { display: none !important; }
 html.bc-android-app div:has(> [data-bc-login="grid"]) {
   min-height: 100dvh;
   padding: max(10px, env(safe-area-inset-top)) 14px max(10px, env(safe-area-inset-bottom));

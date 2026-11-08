@@ -334,6 +334,41 @@
   [data-shell-collapsed="1"] .shell-accordion { display: none; }
 }
 
+/* ---- Drawer Guru mobile: maksimal 50% lebar layar (permintaan pengguna) ----
+   Selektor ID ganda + !important sengaja: harus menang atas CSS lama yang disuntik
+   APK terpasang (`#guru-mobile-menu {width:min(70vw,260px)!important}` dsb.).
+   Teks boleh membungkus; target sentuh tetap ≥44px. */
+html #guru-mobile-menu#guru-mobile-menu {
+  box-sizing: border-box;
+  width: min(50vw, 300px) !important;
+  max-width: 50vw !important;
+  min-width: 0 !important;
+}
+html #guru-mobile-menu#guru-mobile-menu nav { padding: 8px 4px !important; }
+html #guru-mobile-menu#guru-mobile-menu .shell-link {
+  min-height: 44px;
+  gap: 8px !important;
+  padding: 6px 6px !important;
+  font-size: 13px !important;
+  line-height: 1.25;
+}
+html #guru-mobile-menu#guru-mobile-menu .shell-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+html #guru-mobile-menu#guru-mobile-menu .shell-accordion {
+  margin: 0 0 4px 12px !important;
+  padding-left: 6px !important;
+}
+html #guru-mobile-menu#guru-mobile-menu .shell-accordion a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 8px !important;
+  overflow-wrap: anywhere;
+}
+
 /* ---- DARK/LIGHT 2.2 — kartu premium profil (theme-aware) ----
    Light: surface putih dengan tint violet/indigo + ring slate.
    Dark: navy gradient semula. Dipakai ProfileHero (bc-hero-card) dan
