@@ -34,7 +34,9 @@ for (const view of VIEWS) for (const theme of THEMES) for (const [w, h] of SIZES
     if (header) {
       const items = [...header.querySelectorAll("a,button,summary")].filter((el) => {
         const r = el.getBoundingClientRect(); const cs = getComputedStyle(el);
-        return r.width > 0 && r.height > 0 && cs.visibility !== "hidden";
+        // Isi <details> tertutup tidak dirender (content-visibility) — rect-nya semu; menu terbuka diuji di qa-android-behavior.
+        const closed = el.closest("details:not([open])") && el.tagName !== "SUMMARY";
+        return !closed && r.width > 0 && r.height > 0 && cs.visibility !== "hidden";
       });
       const rects = items.map((el) => ({ el, r: el.getBoundingClientRect(), label: (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 30) }));
       for (let i = 0; i < rects.length; i++) for (let j = i + 1; j < rects.length; j++) {

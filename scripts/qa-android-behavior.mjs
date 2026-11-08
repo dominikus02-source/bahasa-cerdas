@@ -26,6 +26,7 @@ async function open(query, { w = 360, h = 760 } = {}) {
 }
 const overflow = (page) => page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 const outside = (page, sel, vw) => page.evaluate(([sel, vw]) => [...document.querySelectorAll(sel)].filter((el) => {
+  if (el.closest("details:not([open])") && el.tagName !== "SUMMARY") return false; // tidak dirender saat tertutup
   const r = el.getBoundingClientRect(); return r.width > 0 && (r.right > vw + 1 || r.left < -1);
 }).map((el) => (el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 30)), [sel, vw]);
 
@@ -89,6 +90,15 @@ for (const view of ["guru-founder", "guru", "murid-founder", "murid", "login"]) 
     const ox = await overflow(page);
     const out = await outside(page, "header a, header button, header summary, nav a", w);
     check(`font 130% ${view} ${w}px: tanpa overflow & kontrol di dalam layar`, ox <= 1 && out.length === 0, `overflowX=${ox}${out.length ? " keluar=" + out.join(";") : ""}`);
+    const sw = page.locator("[data-founder-dashboard-switcher] summary").first();
+    if (await sw.count()) {
+      await sw.click();
+      await page.waitForTimeout(150);
+      const menuOut = await outside(page, "[data-founder-dashboard-switcher] nav, [data-founder-dashboard-switcher] nav a", w);
+      check(`font 130% ${view} ${w}px: menu peran Founder terbuka di dalam layar`, menuOut.length === 0, menuOut.join(";"));
+      await page.screenshot({ path: `${OUT}/font130-${view}-${w}-founder-menu.png` });
+      await sw.click();
+    }
     await page.screenshot({ path: `${OUT}/font130-${view}-${w}.png` });
     await ctx.close();
   }
