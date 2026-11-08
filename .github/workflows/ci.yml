@@ -183,6 +183,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: QA fixture is not in the production build
+        run: |
+          test ! -e .next/server/app/qa-fixture && ! grep -rqs "QA FIXTURE" .next/server/app && echo "OK: qa-fixture tidak ada di build produksi"
+
       - name: Kerahasiaan penyedia AI (bundle publik .next/static)
         run: npm run test:no-ai-provider-bundle
 
