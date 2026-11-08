@@ -27,7 +27,7 @@ html.bc-android-app [data-bc-login="hero"],
 html.bc-android-app [data-bc-login="back"],
 html.bc-android-app [data-bc-login="extras"] { display: none !important; }
 html.bc-android-app [data-bc-login="brand"] { display: flex !important; }
-html.bc-android-app [data-bc-login="root"] {
+html.bc-android-app div:has(> [data-bc-login="grid"]) {
   min-height: 100dvh;
   padding: max(10px, env(safe-area-inset-top)) 14px max(10px, env(safe-area-inset-bottom));
 }
