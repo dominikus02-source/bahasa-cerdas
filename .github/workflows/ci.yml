@@ -56,6 +56,9 @@ jobs:
       - name: Unified login routing regression
         run: npm run test:login-unified
 
+      - name: Android Google OAuth return-to-app regression
+        run: npx tsx scripts/test-mobile-oauth-handoff.ts
+
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
 
