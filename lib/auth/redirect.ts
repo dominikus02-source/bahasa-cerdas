@@ -38,6 +38,9 @@ export function isSafeNext(next: string | null | undefined): boolean {
   return (
     next.startsWith("/") &&
     !next.startsWith("//") &&
+    // Browsers normalize "\\" to "/", so "/\\evil.com" acts like "//evil.com".
+    !next.includes("\\") &&
+    !/[\u0000-\u001f\u007f]/.test(next) &&
     !next.startsWith("/login") &&
     !next.startsWith("/register")
   );

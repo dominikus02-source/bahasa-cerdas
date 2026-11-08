@@ -62,6 +62,9 @@ jobs:
       - name: Founder compact role switcher labels and access
         run: npm run test:founder-role-labels
 
+      - name: Android Google OAuth return-to-app regression (behavioural)
+        run: npx tsx scripts/test-mobile-oauth-return.ts
+
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
 
