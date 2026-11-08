@@ -29,6 +29,13 @@ export default function LoginPage() {
   // hanya memberi konteks navigasi agar aplikasi Android tetap di dalam scope.
   const pathname = usePathname() ?? "/login";
   const isArenaEntry = pathname === "/arena/login";
+  const [isMobileApp, setIsMobileApp] = useState(false);
+  useEffect(() => {
+    setIsMobileApp(
+      new URLSearchParams(window.location.search).get("bc_app") === "1" ||
+      "BahasaCerdasMobile" in window
+    );
+  }, []);
   const [guideOpen, setGuideOpen] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
   const registerHref = isArenaEntry ? "/arena/register" : "/register";
@@ -51,8 +58,11 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [next, setNext] = useState("");
   // Tautan undangan (mis. JUMPA) tetap dibawa saat pengguna baru memilih daftar.
-  const registerWithNext =
+  const registerWithNextBase =
     !isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref;
+  const registerWithNext = isMobileApp
+    ? `${registerWithNextBase}${registerWithNextBase.includes("?") ? "&" : "?"}bc_app=1`
+    : registerWithNextBase;
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   useEffect(() => {
@@ -132,17 +142,28 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
+      const baseUrl = isMobileApp
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com");
       const supabase = createClient();
       const authNext = next || (isArenaEntry ? "/arena" : "");
-      const redirectTo = authNext
-        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(authNext)}`
-        : `${baseUrl}/api/auth/callback`;
-      const { error } = await supabase.auth.signInWithOAuth({
+      const callbackUrl = new URL("/api/auth/callback", baseUrl);
+      if (authNext && isSafeNext(authNext)) callbackUrl.searchParams.set("next", authNext);
+      if (isMobileApp) callbackUrl.searchParams.set("bc_app", "1");
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: { redirectTo: callbackUrl.toString(), skipBrowserRedirect: isMobileApp },
       });
-      if (error) setError(error.message);
+      if (error) {
+        setError(error.message);
+      } else if (isMobileApp && data.url) {
+        // The PKCE verifier belongs to WebView, not the external system browser.
+        const bridge = (window as Window & {
+          BahasaCerdasMobile?: { postMessage: (url: string) => void };
+        }).BahasaCerdasMobile;
+        if (bridge) bridge.postMessage(data.url);
+        else setError("Google Login harus dibuka melalui aplikasi BahasaCerdas. Silakan buka ulang aplikasi.");
+      }
     } catch {
       setError("Gagal login dengan Google");
     }
