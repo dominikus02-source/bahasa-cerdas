@@ -55,6 +55,8 @@ import {
   VideoOff,
   WifiOff,
   X,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import { mediaErrorMessage, withDefaultDeviceFallback } from "./media-errors";
 import type { JumpaReaction } from "@/lib/jumpa/signals";
@@ -478,6 +480,8 @@ const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeop
   const speakers = useSpeakingParticipants();
   const speakingKey = speakers.map((p) => p.identity).join("|");
   const [focusId, setFocusId] = useState<string | null>(null);
+  // Fokus layar: sembunyikan strip peserta agar materi yang dibagikan terbaca maksimal.
+  const [screenFocus, setScreenFocus] = useState(false);
   const [gridRef, gridSize] = useElementSize<HTMLDivElement>();
 
   // Pembicara terakhir (selain diri sendiri) menjadi fokus layout Pembicara.
@@ -511,11 +515,21 @@ const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeop
   }
   if (screen) {
     return (
-      <div className="flex h-full min-w-0 flex-col gap-2">
-        <div key={`screen-${screen.participant.identity}`} className="jumpa-in-fade min-h-0 min-w-0 flex-1">
+      <div className="jumpa-screen-stage flex h-full min-w-0 flex-col gap-2" data-screen-sharing="true" data-screen-focus={screenFocus}>
+        <div key={`screen-${screen.participant.identity}`} className="jumpa-screen-primary jumpa-in-fade relative min-h-0 min-w-0 flex-1">
           <ParticipantTile trackRef={screen} screen />
+          <button
+            type="button"
+            className="jumpa-screen-focus-btn"
+            aria-pressed={screenFocus}
+            aria-label={screenFocus ? "Tampilkan peserta" : "Perbesar layar yang dibagikan"}
+            title={screenFocus ? "Tampilkan peserta" : "Perbesar layar"}
+            onClick={() => setScreenFocus((v) => !v)}
+          >
+            {screenFocus ? <Minimize2 size={16} aria-hidden="true" /> : <Maximize2 size={16} aria-hidden="true" />}
+          </button>
         </div>
-        <Strip speakingKey={speakingKey} tracks={tracks} max={stripMax} onMore={onShowPeople} />
+        {!screenFocus && <Strip speakingKey={speakingKey} tracks={tracks} max={stripMax} onMore={onShowPeople} />}
       </div>
     );
   }
