@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { mobileOAuthHandoff } from "@/lib/auth/mobile-oauth-handoff";
 import { createClient } from "@/lib/supabase/server";
 import {
   ROLE_INTENT_COOKIE,
@@ -19,6 +20,12 @@ export async function GET(request: Request) {
     const token_hash = requestUrl.searchParams.get("token_hash");
     const type = requestUrl.searchParams.get("type");
     const next = requestUrl.searchParams.get("next") ?? "/";
+
+    // Android system browser cannot access the PKCE verifier held by WebView.
+    // Hand the one-time code back to Android; WebView performs the exchange.
+    if (code && requestUrl.searchParams.get("bc_app") === "1") {
+      return mobileOAuthHandoff({ code, next, flow: "login" });
+    }
 
     const clearIntent = intentClearCookie();
     const clearOn = (res: NextResponse) => {
