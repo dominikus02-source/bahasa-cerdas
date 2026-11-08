@@ -22,7 +22,8 @@ class MainActivity : FlutterActivity() {
     // proof; Supabase PKCE still verifies the code against the WebView verifier.
     private fun oauthUrl(uri: Uri?): String? = uri?.takeIf {
         it.scheme == "bahasacerdas" && it.host == "oauth" && it.path == "/callback" &&
-            !it.getQueryParameter("code").isNullOrBlank()
+            (!it.getQueryParameter("code").isNullOrBlank() ||
+                it.getQueryParameter("error") == "cancelled" || it.getQueryParameter("error") == "failed")
     }?.toString()
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {

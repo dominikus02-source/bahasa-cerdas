@@ -1,6 +1,7 @@
 /* Regression: Android Google login/registration must return to the app. */
 import { readFileSync } from "node:fs";
-import { mobileOAuthHandoff } from "../lib/auth/mobile-oauth-handoff";
+import { mobileOAuthErrorHandoff, mobileOAuthHandoff } from "../lib/auth/mobile-oauth-handoff";
+import { authErrorMessage } from "../lib/auth/auth-error-message";
 let passed = 0, failed = 0;
 const check = (n: string, ok: boolean) => { ok ? passed++ : failed++; console.log(`${ok ? "PASS" : "FAIL"} ${n}`); };
 const deeplink = async (r: Response) => {
@@ -31,6 +32,19 @@ const deeplink = async (r: Response) => {
   const { html } = await deeplink(mobileOAuthHandoff({ code: 'a"<script>', next: null, flow: "login" }));
   check("code cannot break out of HTML/script", !html.includes('a"<script>'));
 
+  // Batal/gagal di Google tetap kembali ke aplikasi, dengan kode tetap.
+  for (const [err, want] of [["access_denied", "cancelled"], ["server_error", "failed"], ['"><script>', "failed"]] as const) {
+    for (const flow of ["login", "register"] as const) {
+      const r = mobileOAuthErrorHandoff({ error: err, flow });
+      const { html, url } = await deeplink(r);
+      check(`error ${err}/${flow}: kembali ke app dengan error=${want}`, r.status === 200 && url?.protocol === "bahasacerdas:" && url.searchParams.get("error") === want && url.searchParams.get("flow") === flow && !url.searchParams.has("code"));
+      check(`error ${err}/${flow}: teks penyedia tidak diteruskan`, !html.includes("<script>\"") && !html.includes('"><script>'));
+    }
+  }
+  check("pesan error: kode dikenal → Indonesia", authErrorMessage("google_cancelled") === "Masuk dengan Google dibatalkan.");
+  check("pesan error: teks bebas dari URL tidak ditampilkan", authErrorMessage("Akun Anda diblokir, hubungi wa.me/123") === "Terjadi kendala saat masuk. Silakan coba lagi.");
+  check("pesan error: 'auth' tidak tampil mentah", authErrorMessage("auth") !== "auth");
+
   const src = (p: string) => readFileSync(p, "utf8");
   const api = src("app/api/auth/callback/route.ts"), reg = src("app/auth/callback/route.ts");
   const handoffFirst = (s: string, flow: string) => {
@@ -45,6 +59,12 @@ const deeplink = async (r: Response) => {
     check(`${n} page: app mode skips WebView redirect, posts to bridge`, s.includes("skipBrowserRedirect: isMobileApp") && s.includes("bridge.postMessage(data.url)"));
   }
   const mw = src("middleware.ts");
+  for (const p of ["app/api/auth/callback/route.ts", "app/auth/callback/route.ts"]) {
+    const r = src(p);
+    check(`${p}: error tanpa kode di app → handoff error sebelum alur web`, r.indexOf("mobileOAuthErrorHandoff({") > 0 && r.indexOf("mobileOAuthErrorHandoff({") < r.indexOf("exchangeCodeForSession("));
+  }
+  check("register: spinner Google direset setelah browser dibuka", src("app/(auth)/register/page.tsx").includes("bridge.postMessage(data.url);\n          // Browser sistem"));
+  check("login & register memakai pemetaan pesan error aman", src("app/(auth)/login/page.tsx").includes("authErrorMessage(authError)") && src("app/(auth)/register/page.tsx").includes("authErrorMessage("));
   check("middleware does not override handoff CSP on /auth/callback", mw.includes('pathname === "/auth/callback"') && mw.includes("androidOAuthHandoff"));
   console.log(`RESULT ${passed} passed, ${failed} failed`);
   if (failed) process.exit(1);

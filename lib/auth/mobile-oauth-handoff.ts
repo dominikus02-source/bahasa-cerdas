@@ -25,7 +25,22 @@ export function mobileOAuthHandoff(params: {
   if (params.next && isSafeNext(params.next)) {
     callback.searchParams.set("next", params.next);
   }
-  const url = callback.toString();
+  return handoffPage(callback.toString(), "Autentikasi Google telah diproses. Buka aplikasi untuk menyelesaikan masuk secara aman.");
+}
+
+/**
+ * Google/Auth mengembalikan error (mis. pengguna membatalkan) tanpa kode.
+ * Tetap kembalikan pengguna ke aplikasi Android dengan kode error yang
+ * dinormalisasi — teks dari penyedia TIDAK pernah diteruskan.
+ */
+export function mobileOAuthErrorHandoff(params: { error: string | null; flow: "login" | "register" }): NextResponse {
+  const callback = new URL("bahasacerdas://oauth/callback");
+  callback.searchParams.set("error", params.error === "access_denied" ? "cancelled" : "failed");
+  callback.searchParams.set("flow", params.flow);
+  return handoffPage(callback.toString(), "Masuk dengan Google tidak selesai. Kembali ke aplikasi untuk mencoba lagi.");
+}
+
+function handoffPage(url: string, message: string): NextResponse {
   const escapedHref = url.replaceAll("&", "&amp;").replaceAll('"', "&quot;");
   const scriptUrl = JSON.stringify(url).replaceAll("<", "\\u003c");
   const nonce = randomBytes(16).toString("base64");
@@ -43,7 +58,7 @@ h1{font-size:24px;margin:0 0 12px}p{color:var(--clr-text-2,slategray);line-heigh
 a{display:block;padding:16px;background:var(--clr-violet,blueviolet);color:white;border-radius:14px;text-decoration:none;font-weight:700}
 </style></head><body>
 <main><h1>Kembali ke BahasaCerdas</h1>
-<p>Autentikasi Google telah diproses. Buka aplikasi untuk menyelesaikan masuk secara aman.</p>
+<p>${message}</p>
 <a href="${escapedHref}" rel="noreferrer">Buka aplikasi BahasaCerdas</a></main>
 <script nonce="${nonce}">window.location.replace(${scriptUrl});</script>
 </body></html>`;

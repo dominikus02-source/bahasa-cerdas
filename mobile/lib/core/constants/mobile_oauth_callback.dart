@@ -18,8 +18,23 @@ class MobileOAuthCallback {
         uri.hasFragment) {
       return null;
     }
-    if (uri.queryParametersAll['code']?.length != 1 ||
-        uri.queryParametersAll['flow']?.length != 1) {
+    if (uri.queryParametersAll['flow']?.length != 1) return null;
+    final flowParam = uri.queryParameters['flow'];
+    if (flowParam != 'login' && flowParam != 'register') return null;
+
+    // Login Google dibatalkan/gagal: kembali ke formulir dengan kode error
+    // tetap (tidak pernah teks bebas), tanpa kode autentikasi.
+    if (!uri.queryParameters.containsKey('code') &&
+        uri.queryParametersAll['error']?.length == 1) {
+      final error = uri.queryParameters['error'];
+      if (error != 'cancelled' && error != 'failed') return null;
+      return Uri.parse(AppConstants.baseUrl).replace(
+        path: flowParam == 'register' ? '/register' : '/login',
+        queryParameters: {'error': 'google_$error', 'bc_app': '1'},
+      ).toString();
+    }
+
+    if (uri.queryParametersAll['code']?.length != 1) {
       return null;
     }
     final code = uri.queryParameters['code'];

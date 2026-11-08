@@ -44,5 +44,24 @@ void main() {
         'https://www.bahasacerdas.com/api/auth/callback?code=abc',
       );
     });
+
+    test('cancelled/failed Google login returns to the right form, never free text', () {
+      expect(
+        MobileOAuthCallback.toWebUrl('bahasacerdas://oauth/callback?error=cancelled&flow=login'),
+        'https://www.bahasacerdas.com/login?error=google_cancelled&bc_app=1',
+      );
+      expect(
+        MobileOAuthCallback.toWebUrl('bahasacerdas://oauth/callback?error=failed&flow=register'),
+        'https://www.bahasacerdas.com/register?error=google_failed&bc_app=1',
+      );
+      for (final candidate in [
+        'bahasacerdas://oauth/callback?error=%3Cscript%3E&flow=login',
+        'bahasacerdas://oauth/callback?error=cancelled&flow=evil',
+        'bahasacerdas://oauth/callback?error=cancelled&error=failed&flow=login',
+        'bahasacerdas://oauth/callback?error=cancelled',
+      ]) {
+        expect(MobileOAuthCallback.toWebUrl(candidate), isNull, reason: candidate);
+      }
+    });
   });
 }

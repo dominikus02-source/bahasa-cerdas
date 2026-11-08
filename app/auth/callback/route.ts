@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { mobileOAuthHandoff } from "@/lib/auth/mobile-oauth-handoff";
+import { mobileOAuthErrorHandoff, mobileOAuthHandoff } from "@/lib/auth/mobile-oauth-handoff";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
 import {
@@ -39,6 +39,10 @@ export async function GET(request: Request) {
 
   if (code && requestUrl.searchParams.get("bc_app") === "1") {
     return mobileOAuthHandoff({ code, next, flow: "register" });
+  }
+  // Dibatalkan/gagal di Google: kembalikan ke aplikasi, bukan terjebak di browser.
+  if (!code && requestUrl.searchParams.get("bc_app") === "1" && requestUrl.searchParams.has("error")) {
+    return mobileOAuthErrorHandoff({ error: requestUrl.searchParams.get("error"), flow: "register" });
   }
 
   const clearIntent = intentClearCookie();

@@ -1,5 +1,6 @@
 "use client";
 
+import { authErrorMessage } from "@/lib/auth/auth-error-message";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -152,6 +153,8 @@ export default function RegisterPage() {
   useEffect(() => {
     const n = new URLSearchParams(window.location.search).get("next");
     if (n && n !== "/" && isSafeNext(n)) setNext(n);
+    const authError = authErrorMessage(new URLSearchParams(window.location.search).get("error"));
+    if (authError) setError(authError);
   }, []);
   const nextQuery = next ? `?next=${encodeURIComponent(next)}` : "";
   const backToLoginQuery = `${nextQuery}${nextQuery ? "&" : "?"}bc_app=1`;
@@ -305,8 +308,11 @@ export default function RegisterPage() {
         const bridge = (window as Window & {
           BahasaCerdasMobile?: { postMessage: (url: string) => void };
         }).BahasaCerdasMobile;
-        if (bridge) bridge.postMessage(data.url);
-        else {
+        if (bridge) {
+          bridge.postMessage(data.url);
+          // Browser sistem mengambil alih; bila ditutup tanpa selesai, tombol harus bisa dipakai lagi.
+          setGoogleLoading(false);
+        } else {
           setError("Pendaftaran Google harus dibuka melalui aplikasi BahasaCerdas.");
           setGoogleLoading(false);
         }

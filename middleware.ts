@@ -90,7 +90,7 @@ export async function middleware(request: NextRequest) {
   // override it with the global page nonce (which would block auto-return).
   const androidOAuthHandoff = pathname === "/auth/callback" &&
     request.nextUrl.searchParams.get("bc_app") === "1" &&
-    request.nextUrl.searchParams.has("code");
+    (request.nextUrl.searchParams.has("code") || request.nextUrl.searchParams.has("error"));
   if (pathname.startsWith("/api/") || androidOAuthHandoff) {
     return response;
   }

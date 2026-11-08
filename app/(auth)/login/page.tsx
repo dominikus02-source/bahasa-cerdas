@@ -1,5 +1,6 @@
 "use client";
 
+import { authErrorMessage } from "@/lib/auth/auth-error-message";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -81,7 +82,7 @@ export default function LoginPage() {
     if (params.get("reset") === "success") setRecoveryMessage("Kata sandi berhasil diubah. Silakan masuk.");
     const authError = params.get("error");
     if (authError) {
-      setError(authError);
+      setError(authErrorMessage(authError) ?? "");
       params.delete("error");
       const query = params.toString();
       window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);

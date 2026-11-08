@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { mobileOAuthHandoff } from "@/lib/auth/mobile-oauth-handoff";
+import { mobileOAuthErrorHandoff, mobileOAuthHandoff } from "@/lib/auth/mobile-oauth-handoff";
 import { createClient } from "@/lib/supabase/server";
 import {
   ROLE_INTENT_COOKIE,
@@ -25,6 +25,10 @@ export async function GET(request: Request) {
     // Hand the one-time code back to Android; WebView performs the exchange.
     if (code && requestUrl.searchParams.get("bc_app") === "1") {
       return mobileOAuthHandoff({ code, next, flow: "login" });
+    }
+    // Dibatalkan/gagal di Google: kembalikan ke aplikasi, bukan terjebak di browser.
+    if (!code && requestUrl.searchParams.get("bc_app") === "1" && requestUrl.searchParams.has("error")) {
+      return mobileOAuthErrorHandoff({ error: requestUrl.searchParams.get("error"), flow: "login" });
     }
 
     const clearIntent = intentClearCookie();
