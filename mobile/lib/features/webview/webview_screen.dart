@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,8 @@ import '../../core/constants/app_constants.dart';
 import '../../core/constants/mobile_premium_style.dart';
 import '../../core/constants/mobile_oauth_callback.dart';
 import '../../core/constants/mobile_feature_catalog.dart';
+import '../../core/screen_share/native_screen_share.dart';
+import '../../core/screen_share/screen_share_request.dart';
 
 class WebViewScreen extends StatefulWidget {
   final String? initialUrl;
@@ -47,9 +50,34 @@ class _WebViewScreenState extends State<WebViewScreen> {
   static const _authChannel = MethodChannel('com.bahasacerdas.app/auth');
   bool _jumpaActive = false;
   bool _isInPip = false;
+  late final NativeScreenShare _screenShare = NativeScreenShare(_notifyScreenShare);
+  static bool get _nativeScreenShareSupported =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.android;
+
+  /// Kirim status berbagi layar ke halaman JUMPA (nilai tetap, tanpa input halaman).
+  void _notifyScreenShare(String state, [String? reason]) {
+    if (!mounted) return;
+    final detail = jsonEncode({'state': state, if (reason != null) 'reason': reason});
+    unawaited(_controller
+        .runJavaScript(
+            "window.dispatchEvent(new CustomEvent('bc:native-screen',{detail:$detail}));")
+        .catchError((Object _) {}));
+  }
+
+  Future<void> _onScreenShareMessage(String raw) async {
+    final request = ScreenShareRequest.parse(raw, pageUrl: await _controller.currentUrl());
+    if (request == null) return; // halaman/isi tidak tepercaya → abaikan
+    if (request.isStart) {
+      await _screenShare.start(request.serverUrl!, request.token!);
+    } else {
+      await _screenShare.stop();
+    }
+  }
 
   Future<void> _updateJumpaMode(String url) async {
     final active = JumpaRoomRoute.isRoomUrl(url);
+    // Keluar dari ruang (termasuk logout/navigasi) → hentikan berbagi layar.
+    if (!active && _screenShare.isActive) unawaited(_screenShare.stop());
     if (_jumpaActive == active) return;
     _jumpaActive = active;
     try {
@@ -82,6 +110,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   void dispose() {
+    unawaited(_screenShare.stop());
     _authChannel.setMethodCallHandler(null);
     _jumpaChannel.setMethodCallHandler(null);
     _connectivitySub?.cancel();
@@ -374,7 +403,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
         ? candidate
         : AppConstants.baseUrl;
 
-    _controller = WebViewController()
+    final controller = WebViewController();
+    if (_nativeScreenShareSupported) {
+      // Kapabilitas berbagi layar native: hanya Android. APK lama/platform lain
+      // tidak punya channel ini, jadi halaman tidak menampilkan tombol mati.
+      // Dipasang sebelum loadRequest agar tersedia sejak halaman pertama.
+      unawaited(controller.addJavaScriptChannel(
+        'BahasaCerdasScreenShare',
+        onMessageReceived: (message) =>
+            unawaited(_onScreenShareMessage(message.message)),
+      ));
+    }
+    _controller = controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setBackgroundColor(const Color(0xFFF8F7FC))
       ..enableZoom(false)
