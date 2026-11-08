@@ -61,7 +61,7 @@ for (const theme of ["light", "dark"]) {
   check(`drawer ${theme}: terbuka (role=dialog, aria-modal)`, await drawer.isVisible() && (await drawer.getAttribute("aria-modal")) === "true");
   check(`drawer ${theme}: tombol Menu aria-expanded=true`, (await trigger.getAttribute("aria-expanded")) === "true");
   const box = await drawer.boundingBox();
-  check(`drawer ${theme}: lebar ≤300px dan menyisakan latar`, !!box && box.width <= 300 && box.width < 360 - 40, box ? `${Math.round(box.width)}px` : "");
+  check(`drawer ${theme}: lebar ≤50% layar (360px → ≤180px)`, !!box && box.width <= 360 / 2 + 0.5, box ? `${Math.round(box.width)}px` : "");
   const close = drawer.locator('button[aria-label="Tutup menu"]');
   const cb = await close.boundingBox();
   check(`drawer ${theme}: tombol tutup ≥44px`, !!cb && cb.width >= 44 && cb.height >= 44, cb ? `${Math.round(cb.width)}x${Math.round(cb.height)}` : "");
@@ -108,6 +108,49 @@ for (const [view, path, home] of [["guru-founder", "/guru/beranda", "/guru/beran
     check(`merek ${view} ${theme}: tanpa panah kembali di header`, (await page.locator('header a[aria-label="Kembali ke Beranda"]').count()) === 0);
     if (theme === "light") await page.screenshot({ path: `${OUT}/brand-${view}-${theme}.png` });
     await ctx.close();
+  }
+}
+
+// 2d. Drawer Guru maksimal 50% lebar layar di semua ukuran mobile, font 100/130%, terang/gelap,
+// juga dengan CSS lama APK terpasang (lebar 70vw !important). Isi tidak terpotong, target ≥44px.
+const LEGACY_DRAWER_CSS = `#guru-mobile-menu { width:min(70vw,260px)!important;max-width:calc(100vw - 48px)!important; }
+#guru-mobile-menu nav { padding:8px 6px!important; }
+#guru-mobile-menu nav a,#guru-mobile-menu nav button { font-size:13px!important;padding:8px 9px!important; }
+#guru-mobile-menu nav .shell-accordion {margin:0 0 4px 13px!important;padding-left:6px!important;gap:0!important;}
+#guru-mobile-menu > div:last-child {display:none!important;}`;
+for (const [w, h] of [[320, 720], [360, 760], [390, 844], [430, 932], [740, 360]]) {
+  for (const font of [100, 130]) {
+    for (const theme of ["light", "dark"]) {
+      for (const legacy of [false, true]) {
+        if (legacy && (theme === "dark" || font === 100)) continue;
+        const { ctx, page } = await open(`view=guru-founder&theme=${theme}&font=${font}&path=/guru/kelasku`, { w, h });
+        if (legacy) await page.addStyleTag({ content: LEGACY_DRAWER_CSS });
+        await page.locator('button[aria-controls="guru-mobile-menu"]').click();
+        const drawer = page.locator("#guru-mobile-menu");
+        await drawer.waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+        // Buka semua grup agar sub-tautan ikut diukur.
+        for (const b of await drawer.locator("nav button[aria-expanded=false]").all()) await b.click({ timeout: 1500 }).catch(() => {});
+        const m = await drawer.evaluate((d) => {
+          const r = d.getBoundingClientRect();
+          const nav = d.querySelector("nav");
+          const items = [...d.querySelectorAll("nav a, nav button")].filter((e) => e.getBoundingClientRect().height > 0);
+          const clipped = items.filter((e) => { const b = e.getBoundingClientRect(); return b.right > r.right + 0.5 || b.left < r.left - 0.5 || e.scrollWidth > e.clientWidth + 1; }).map((e) => e.textContent.trim().slice(0, 20));
+          const small = items.filter((e) => e.getBoundingClientRect().height < 43.5).map((e) => e.textContent.trim().slice(0, 20));
+          const close = d.querySelector('button[aria-label="Tutup menu"]').getBoundingClientRect();
+          const title = [...d.querySelectorAll("p")].find((p) => p.textContent.includes("Menu Guru")).getBoundingClientRect();
+          const collide = !(title.right <= close.left || title.bottom <= close.top || title.top >= close.bottom);
+          return { width: r.width, n: items.length, clipped, small, closeOk: close.width >= 44 && close.height >= 44 && close.right <= r.right + 0.5, collide, navOverflow: nav.scrollWidth - nav.clientWidth };
+        });
+        const ox = await overflow(page);
+        const tag = `drawer ${w}x${h} font${font} ${theme}${legacy ? " +CSS APK lama" : ""}`;
+        check(`${tag}: lebar ≤50% layar`, m.width <= w / 2 + 0.5, `${m.width.toFixed(1)}px dari ${w}px`);
+        check(`${tag}: ${m.n} tautan/grup tidak terpotong, tanpa overflow`, m.n >= 10 && m.clipped.length === 0 && m.navOverflow <= 1 && ox <= 1, m.clipped.join(";"));
+        check(`${tag}: semua target ≥44px`, m.small.length === 0, m.small.join(";"));
+        check(`${tag}: tombol tutup ≥44px, judul tidak bertabrakan`, m.closeOk && !m.collide);
+        if (w !== 430) await page.screenshot({ path: `${OUT}/guru-drawer-50-${w}x${h}-f${font}-${theme}${legacy ? "-legacy" : ""}.png` });
+        await ctx.close();
+      }
+    }
   }
 }
 

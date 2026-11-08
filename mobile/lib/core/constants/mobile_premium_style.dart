@@ -173,7 +173,7 @@ class MobilePremiumStyle {
       html.bc-android-login .bc-android-login-grid label { margin-bottom:3px!important; }
       html.bc-android-login .bc-android-login-grid > .order-1 > .mt-5.grid.gap-2 { display:none!important; }
       /* Compact the teacher drawer without hiding destinations. */
-      #guru-mobile-menu { width:min(70vw,260px)!important;max-width:calc(100vw - 48px)!important; }
+      #guru-mobile-menu { width:min(50vw,300px)!important;max-width:50vw!important; }
       #guru-mobile-menu nav { padding:8px 6px!important; }
       #guru-mobile-menu nav a,#guru-mobile-menu nav button {
         font-size:13px!important;padding:8px 9px!important;

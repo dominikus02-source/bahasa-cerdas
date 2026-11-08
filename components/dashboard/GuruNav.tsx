@@ -332,17 +332,17 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
       {drawer && (
         <div className="fixed inset-0 z-50 md:hidden">
           <button type="button" aria-label="Tutup menu guru" className="absolute inset-0 bg-black/45" onClick={() => setDrawer(false)} />
-          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[82%] max-w-[300px] flex-col bg-white shadow-2xl dark:bg-slate-900">
-            <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
-              <div>
-                <p className="font-bold text-white text-sm">Menu Guru</p>
-                <p className="text-[10px] text-blue-100">BahasaCerdas</p>
+          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[50vw] max-w-[min(50vw,300px)] flex-col bg-white shadow-2xl dark:bg-slate-900">
+            <div className="px-2.5 py-3 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-start justify-between gap-1.5">
+              <div className="min-w-0 pt-1">
+                <p className="font-bold text-white text-sm leading-tight [overflow-wrap:anywhere]">Menu Guru</p>
+                <p className="text-[10px] text-blue-100 [overflow-wrap:anywhere]">BahasaCerdas</p>
               </div>
               <button
                 type="button"
                 onClick={() => setDrawer(false)}
                 aria-label="Tutup menu"
-                className="w-11 h-11 rounded-lg bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
+                className="w-11 h-11 shrink-0 rounded-lg bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
               >
                 <X className="w-4 h-4" />
               </button>
