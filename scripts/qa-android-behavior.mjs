@@ -154,6 +154,39 @@ for (const [w, h] of [[320, 720], [360, 760], [390, 844], [430, 932], [740, 360]
   }
 }
 
+// 2e. Login di APK lama: skrip lama menyisipkan #bc-android-login-brand sebelum <h2>.
+// Harus tetap SATU merek terlihat (logo + BahasaCerdas), terang & gelap, 320 font 130%.
+for (const theme of ["light", "dark"]) {
+  for (const [w, font] of [[360, 100], [320, 130]]) {
+    const { ctx, page } = await open(`view=login&app=1&theme=${theme}&font=${font}`, { w });
+    await page.evaluate(() => {
+      const heading = document.querySelector("h2");
+      if (heading && !document.getElementById("bc-android-login-brand")) {
+        const brand = document.createElement("div");
+        brand.id = "bc-android-login-brand";
+        brand.innerHTML = '<img src="/brand/bc2026-icon.png" alt="Logo BahasaCerdas" width="64" height="64" /><span>BahasaCerdas</span>';
+        heading.parentElement?.insertBefore(brand, heading);
+      }
+    });
+    await page.addStyleTag({ content: "#bc-android-login-brand {display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 12px;color:#4f46e5;font-size:17px;font-weight:800;}" });
+    await page.waitForTimeout(150);
+    const r = await page.evaluate(() => {
+      const vis = (e) => { const b = e.getBoundingClientRect(); const cs = getComputedStyle(e); return b.width > 0 && b.height > 0 && cs.visibility !== "hidden"; };
+      const logos = [...document.querySelectorAll('img[src*="bc2026"], img[srcset*="bc2026"], img[src*="brand"]')].filter((i) => vis(i) && i.closest("[data-bc-login='panel'], #bc-android-login-brand, [data-bc-login='brand']"));
+      const names = [...document.querySelectorAll("span")].filter((s) => s.textContent.trim() === "BahasaCerdas" && vis(s));
+      return { logos: logos.length, names: names.length, legacy: !!document.getElementById("bc-android-login-brand") && vis(document.getElementById("bc-android-login-brand")),
+        google: !!document.querySelector("button") && [...document.querySelectorAll("button")].some((b) => /Google/.test(b.textContent) && vis(b)),
+        email: !!document.querySelector("#email") && vis(document.querySelector("#email")), password: !!document.querySelector("#password") && vis(document.querySelector("#password")) };
+    });
+    const tag = `login APK lama ${theme} ${w}px font${font}`;
+    check(`${tag}: satu logo & satu nama BahasaCerdas, sisipan lama tersembunyi`, r.logos === 1 && r.names === 1 && !r.legacy, JSON.stringify(r));
+    check(`${tag}: tombol Google, email, sandi tetap terlihat`, r.google && r.email && r.password);
+    check(`${tag}: tanpa overflow horizontal`, (await overflow(page)) <= 1);
+    await page.screenshot({ path: `${OUT}/login-legacy-brand-${theme}-${w}-f${font}.png` });
+    await ctx.close();
+  }
+}
+
 // 3. Skala font 130%
 for (const view of ["guru-founder", "guru", "murid-founder", "murid", "login"]) {
   for (const w of [320, 360]) {
