@@ -338,7 +338,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
     // Student dashboard is a preview for teachers: preserve a direct way back
     // even while the website release with its own return button is pending.
     if (_signedInAudience == MobileAudience.guru &&
-        Uri.tryParse(url)?.path.startsWith('/murid') == true) {
+        Uri.tryParse(url)?.path == '/murid/beranda') {
       await _controller.runJavaScript(r"""
 (() => {
   if (document.querySelector('a[aria-label="Kembali ke dasbor guru"],#bc-app-back-to-guru')) return;

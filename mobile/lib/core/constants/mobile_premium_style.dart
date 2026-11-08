@@ -9,7 +9,18 @@ class MobilePremiumStyle {
   html.classList.add('bc-android-app');
   const isLogin = /^\/(?:login|arena\/login)\/?$/.test(location.pathname);
   html.classList.toggle('bc-android-login', isLogin);
+  const studentHome = location.pathname === '/murid/beranda';
+  const studentArea = /^\/murid(?:\/|$)/.test(location.pathname);
+  html.classList.toggle('bc-android-student-subpage', studentArea && !studentHome);
+  if (!studentHome) document.getElementById('bc-app-back-to-guru')?.remove();
   if (isLogin) {
+    const heading = document.querySelector('h2');
+    if (heading && !document.getElementById('bc-android-login-brand')) {
+      const brand = document.createElement('div');
+      brand.id = 'bc-android-login-brand';
+      brand.innerHTML = '<img src="/brand/bc2026-icon.png" alt="Logo BahasaCerdas" width="64" height="64" /><span>BahasaCerdas</span>';
+      heading.parentElement?.insertBefore(brand, heading);
+    }
     const form = document.querySelector('form:has(#email):has(#password)');
     const card = form && form.closest('.order-1');
     const grid = card && card.parentElement;
@@ -47,6 +58,11 @@ class MobilePremiumStyle {
       html.bc-android-app a:focus-visible {
         outline:3px solid #60a5fa;outline-offset:2px;
       }
+      html.bc-android-student-subpage a[href='/guru/beranda'] {display:none!important;}
+      #bc-android-login-brand {display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 12px;color:#c4b5fd;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+      #bc-android-login-brand img {width:54px;height:54px;object-fit:contain;border-radius:14px;}
+      html.bc-android-login .bc-android-login-grid > .order-1 > div {border-radius:24px!important;background:rgba(15,23,42,.92)!important;}
+      html.bc-android-app .jumpa-home section[aria-labelledby="jumpa-rules"] {display:none!important;}
       /* Keep promotional sections hidden across React hydration/re-renders. */
       html.bc-android-login [class*="order-2"][class*="lg:order-1"],
       html.bc-android-login a[aria-label="Kembali ke Beranda"] {
