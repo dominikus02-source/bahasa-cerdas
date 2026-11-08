@@ -85,8 +85,13 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // CSP hanya untuk HTML — API JSON responses tidak perlu
-  if (pathname.startsWith("/api/")) {
+  // API responses set their own CSP when needed. The one-time Android OAuth
+  // handoff page also sets a stricter, response-specific CSP nonce. Do not
+  // override it with the global page nonce (which would block auto-return).
+  const androidOAuthHandoff = pathname === "/auth/callback" &&
+    request.nextUrl.searchParams.get("bc_app") === "1" &&
+    request.nextUrl.searchParams.has("code");
+  if (pathname.startsWith("/api/") || androidOAuthHandoff) {
     return response;
   }
 
