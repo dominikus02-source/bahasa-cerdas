@@ -7,7 +7,8 @@ import { db } from "@/lib/db";
 import { roomEndsAt } from "./caps";
 import { chatRetentionCutoff } from "./chat";
 import { attendanceOnJoin, attendanceOnLeave, sweepActionFor, webhookDedupeKey } from "./lifecycle";
-import { sendServerSignal } from "./livekit";
+import { removeLivekitParticipant, sendServerSignal } from "./livekit";
+import { isScreenIdentity, screenIdentityOrNull } from "./screen-identity";
 import { closeAttendance, endRoomForAll } from "./room-actions";
 import { JUMPA_TOPICS } from "./signals";
 
@@ -88,6 +89,11 @@ export async function handleJumpaWebhook(evt: JumpaWebhookEvent, now = new Date(
   }
 
   if (!evt.identity) return "ok";
+  // Identitas layar Android bukan kehadiran. Bila pemilik keluar/terputus,
+  // putuskan juga layarnya (pembersihan sisi server bila aplikasi mati).
+  if (isScreenIdentity(evt.identity)) return "ok";
+  const ownedScreen = evt.event !== "participant_joined" ? screenIdentityOrNull(evt.identity) : null;
+  if (ownedScreen) await removeLivekitParticipant(room.livekitRoomName, ownedScreen).catch(() => undefined);
   const p = await db.jumpaParticipant.findUnique({
     where: { roomId_userId: { roomId: room.id, userId: evt.identity } },
     select: { id: true, lastJoinedAt: true, lastLeftAt: true, totalSeconds: true, joinCount: true },

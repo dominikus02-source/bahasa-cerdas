@@ -63,6 +63,8 @@ import type { JumpaReaction } from "@/lib/jumpa/signals";
 import { JUMPA_UPGRADE_PROMPT_BEFORE_END_MIN, type JumpaTierView } from "@/lib/jumpa/tiers";
 import ParticipantTile from "./ParticipantTile";
 import { fitGrid, gridColumns, parseParticipantMeta } from "./format";
+import { useNativeScreenShare } from "./native-screen-share";
+import { isScreenIdentity, screenOwnerOf } from "@/lib/jumpa/screen-identity";
 import { detectDevice, publishPolicy, type DeviceClass } from "./media-policy";
 import { writeMediaPrefs, type JumpaMediaPrefs } from "./media-prefs";
 import { backgroundById, backgroundImageFor } from "./backgrounds";
@@ -236,7 +238,8 @@ function Toasts() {
 /** Jumlah peserta: hanya berubah saat orang masuk/keluar. */
 const COUNT_EVENTS = [RoomEvent.ParticipantConnected, RoomEvent.ParticipantDisconnected, RoomEvent.ConnectionStateChanged];
 function useParticipantCount(): number {
-  return useParticipants({ updateOnlyOn: COUNT_EVENTS }).length;
+  // Identitas layar Android bukan peserta.
+  return useParticipants({ updateOnlyOn: COUNT_EVENTS }).filter((p) => !isScreenIdentity(p.identity)).length;
 }
 
 // Status jaringan perangkat: Wi-Fi/data putus langsung terlihat, tanpa menunggu
@@ -474,9 +477,16 @@ function shareTargetOf(info: JumpaRoomInfo, self: JumpaSelf & { roomRole: "HOST"
 
 const Stage = memo(function Stage({ layout, wide, pageSize, stripMax, onShowPeople }: { layout: Layout; wide: boolean; pageSize: number; stripMax: number; onShowPeople: () => void }) {
   const allTracks = useTracks([...CAMERA_AND_SCREEN], { onlySubscribed: false });
+  const localIdentity = useLocalParticipant().localParticipant.identity;
   // Layar yang dibagikan selalu jadi fokus (paling baru), kamera di strip.
-  const screens = useMemo(() => allTracks.filter((t) => t.source === Track.Source.ScreenShare), [allTracks]);
-  const tracks = useMemo(() => allTracks.filter((t) => t.source !== Track.Source.ScreenShare), [allTracks]);
+  // Layar dari aplikasi Android datang dari identitas `screen:<pemilik>`:
+  // tampil sebagai layar, tidak pernah sebagai tile kamera. Layar milik diri
+  // sendiri tidak dirender (hindari efek cermin & unduhan sia-sia).
+  const screens = useMemo(
+    () => allTracks.filter((t) => t.source === Track.Source.ScreenShare && screenOwnerOf(t.participant.identity) !== localIdentity),
+    [allTracks, localIdentity],
+  );
+  const tracks = useMemo(() => allTracks.filter((t) => t.source !== Track.Source.ScreenShare && !isScreenIdentity(t.participant.identity)), [allTracks]);
   const speakers = useSpeakingParticipants();
   const speakingKey = speakers.map((p) => p.identity).join("|");
   const [focusId, setFocusId] = useState<string | null>(null);
@@ -638,7 +648,9 @@ function ControlBar({
   };
   const [screenSupported, setScreenSupported] = useState(false);
   useEffect(() => setScreenSupported(supportsScreenShare()), []);
-  const canScreen = screenSupported && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
+  const nativeScreen = useNativeScreenShare(info.code, toast);
+  const screenOn = nativeScreen.available ? nativeScreen.state !== "idle" : isScreenShareEnabled;
+  const canScreen = (screenSupported || nativeScreen.available) && Boolean(permissions?.canPublishSources?.some((s) => Number(s) === PROTO_SCREEN_SHARE));
   const connected = useConnectionState() === ConnectionState.Connected;
   const stageBlocked = !connected || permissions?.canPublish === false;
   // Pemandu dewasa: guru di ruang sekolah, atau akun UMUM di ruang UMUM. Guru/murid
@@ -688,6 +700,11 @@ function ControlBar({
     }
   };
   const toggleScreen = async () => {
+    if (nativeScreen.available) {
+      if (nativeScreen.state === "idle") await nativeScreen.start();
+      else nativeScreen.stop();
+      return;
+    }
     if (mediaBusy.current.has("screen")) return;
     mediaBusy.current.add("screen");
     setBusy(new Set(mediaBusy.current));
@@ -772,8 +789,8 @@ function ControlBar({
             </button>
             {canScreen && !wide && (
               <button type="button" role="menuitem" className="jumpa-menu-item" disabled={busy.has("screen")} onClick={() => { close(); void toggleScreen(); }}>
-                <MonitorUp size={20} className={isScreenShareEnabled ? "text-[var(--jp-accent)]" : undefined} />
-                {isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"}
+                <MonitorUp size={20} className={screenOn ? "text-[var(--jp-accent)]" : undefined} />
+                {screenOn ? "Hentikan berbagi layar" : "Bagikan layar"}
               </button>
             )}
             {canInvite && (
@@ -830,10 +847,10 @@ function ControlBar({
         <div className="jumpa-dock-group">
           {canScreen && wide && (
             <div className="jumpa-ctl">
-              <button type="button" className="jumpa-key" data-on={isScreenShareEnabled} aria-pressed={isScreenShareEnabled} aria-label={isScreenShareEnabled ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy.has("screen")}>
+              <button type="button" className="jumpa-key" data-on={screenOn} aria-pressed={screenOn} aria-label={screenOn ? "Hentikan berbagi layar" : "Bagikan layar"} onClick={toggleScreen} disabled={busy.has("screen")}>
                 <MonitorUp size={22} />
               </button>
-              <span className="jumpa-ctl-label">{isScreenShareEnabled ? "Berhenti" : "Layar"}</span>
+              <span className="jumpa-ctl-label">{screenOn ? "Berhenti" : "Layar"}</span>
             </div>
           )}
           <div className="jumpa-ctl">

@@ -68,6 +68,9 @@ jobs:
       - name: Founder navbar + JUMPA screen regression
         run: npx tsx scripts/test-founder-nav-jumpa-screen.ts
 
+      - name: JUMPA native screen share regression
+        run: npx tsx scripts/test-jumpa-native-screen-share.ts
+
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
 

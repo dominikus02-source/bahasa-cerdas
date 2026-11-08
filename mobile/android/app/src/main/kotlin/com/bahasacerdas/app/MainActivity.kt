@@ -16,6 +16,7 @@ class MainActivity : FlutterActivity() {
     private var jumpaChannel: MethodChannel? = null
     private val authChannelName = "com.bahasacerdas.app/auth"
     private var authChannel: MethodChannel? = null
+    private val screenChannelName = "com.bahasacerdas.app/screen"
 
     // Only accept our dedicated callback. A custom scheme is not an ownership
     // proof; Supabase PKCE still verifies the code against the WebView verifier.
@@ -54,6 +55,24 @@ class MainActivity : FlutterActivity() {
                     else -> result.notImplemented()
                 }
             }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, screenChannelName).setMethodCallHandler { call, result ->
+            when (call.method) {
+                // Dipanggil Dart hanya setelah persetujuan MediaProjection diberikan.
+                "startService" -> {
+                    try {
+                        ScreenShareService.start(this)
+                        result.success(null)
+                    } catch (e: Exception) {
+                        result.error("SCREEN_SERVICE", e.message, null)
+                    }
+                }
+                "stopService" -> {
+                    ScreenShareService.stop(this)
+                    result.success(null)
+                }
+                else -> result.notImplemented()
+            }
+        }
         authChannel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, authChannelName)
         authChannel?.setMethodCallHandler { call, result ->
             when (call.method) {
@@ -76,6 +95,12 @@ class MainActivity : FlutterActivity() {
             // If the Flutter listener isn't ready, the code stays available
             // through getInitialAuthCallback on next screen startup.
         }
+    }
+
+    override fun onDestroy() {
+        // Activity/engine berakhir → jangan biarkan service proyeksi tertinggal.
+        ScreenShareService.stop(this)
+        super.onDestroy()
     }
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
