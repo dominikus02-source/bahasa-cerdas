@@ -35,6 +35,7 @@
   "/aku-sastrawan/novel/[projectId]",
   "/aku-sastrawan/ruang-menulis",
   "/aku-sastrawan/studio",
+  "/android-demo",
   "/arena",
   "/arena/adaptive-practice/[sessionId]",
   "/arena/ai",
@@ -196,6 +197,7 @@
   "/guru/tugas-murid",
   "/guru/ukbi",
   "/guru/video-belajar",
+  "/hapus-akun",
   "/jumpa",
   "/jumpa/[code]",
   "/jumpa/jadwal",
@@ -286,5 +288,6 @@
   "/unduh",
   "/verify-email",
   "/video-belajar",
-  "/video-belajar/[id]"
+  "/video-belajar/[id]",
+  "/webapp"
 ]
