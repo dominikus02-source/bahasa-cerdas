@@ -59,9 +59,11 @@ class MobilePremiumStyle {
         outline:3px solid #60a5fa;outline-offset:2px;
       }
       html.bc-android-student-subpage a[href='/guru/beranda'] {display:none!important;}
-      #bc-android-login-brand {display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 12px;color:#c4b5fd;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+      #bc-android-login-brand {display:flex;align-items:center;justify-content:center;gap:10px;margin:0 auto 12px;color:#4f46e5;font-size:17px;font-weight:800;letter-spacing:-.3px;}
+      html.dark #bc-android-login-brand {color:#c4b5fd;}
       #bc-android-login-brand img {width:54px;height:54px;object-fit:contain;border-radius:14px;}
-      html.bc-android-login .bc-android-login-grid > .order-1 > div {border-radius:24px!important;background:rgba(15,23,42,.92)!important;}
+      html.bc-android-login .bc-android-login-grid > .order-1 > div {border-radius:24px!important;background:rgba(255,255,255,.96)!important;}
+      html.dark.bc-android-login .bc-android-login-grid > .order-1 > div {background:rgba(15,23,42,.94)!important;}
       html.bc-android-app .jumpa-home section[aria-labelledby="jumpa-rules"] {display:none!important;}
       /* Keep promotional sections hidden across React hydration/re-renders. */
       html.bc-android-login [class*="order-2"][class*="lg:order-1"],

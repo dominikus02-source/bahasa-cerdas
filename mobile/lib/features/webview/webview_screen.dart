@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
@@ -452,7 +453,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onPageFinished: (url) async {
             _detectRoleFromUrl(url);
             if (NavigationPolicy.isTrustedWebUrl(url)) {
-              await _applyMobileStyle(url);
+              try {
+                await _applyMobileStyle(url);
+                if (kDebugMode) {
+                  final state = await _controller.runJavaScriptReturningResult(
+                    "JSON.stringify({path:location.pathname,styled:document.documentElement.classList.contains('bc-android-login'),brand:!!document.getElementById('bc-android-login-brand'),style:!!document.getElementById('bc-android-premium-style-v2')})",
+                  );
+                  debugPrint('BC_WEBVIEW_QA $state');
+                }
+              } catch (error) {
+                if (kDebugMode) debugPrint('BC_WEBVIEW_STYLE_ERROR $error');
+              }
             }
             if (mounted) setState(() => _isLoading = false);
             await _updateOrientation(url);
@@ -605,16 +616,42 @@ class _WebViewScreenState extends State<WebViewScreen> {
             children: [
               if (!_hasError && !_isOffline)
                 WebViewWidget(controller: _controller),
+              // Keep unstyled website content hidden until the Android
+              // presentation patch is applied; prevents the login page
+              // briefly showing large promotional cards before hydration.
               if (_isLoading && !_hasError && !_isOffline)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: LinearProgressIndicator(
-                    value: _progress > 0 ? _progress : null,
-                    backgroundColor: Colors.transparent,
-                    color: const Color(0xFF7C3AED),
-                    minHeight: 3,
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/icons/icon-512.png',
+                            width: 64,
+                            height: 64,
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'Memuat BahasaCerdas',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          SizedBox(
+                            width: 120,
+                            child: LinearProgressIndicator(
+                              value: _progress > 0 ? _progress : null,
+                              color: const Color(0xFF7C3AED),
+                              minHeight: 3,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
               if (_hasError || _isOffline)

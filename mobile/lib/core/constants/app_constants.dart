@@ -10,7 +10,9 @@ class AppConstants {
   static const String umumHome = '/umum';
   static const String loginPath = '/login';
   static const String registerPath = '/register';
-  static const String forgotPath = '/auth/lupa-sandi';
+  // Password recovery is an action on the canonical /login page.
+  // /auth/lupa-sandi has no Next.js page and previously caused a 404.
+  static const String forgotPath = '/login';
   static const String logoutPath = '/auth/logout';
   static const String deniedPath = '/auth/akses-ditolak';
 
