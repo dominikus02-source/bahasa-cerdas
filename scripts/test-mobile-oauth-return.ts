@@ -68,6 +68,10 @@ const deeplink = async (r: Response) => {
   check("middleware does not override handoff CSP on /auth/callback", mw.includes('pathname === "/auth/callback"') && mw.includes("androidOAuthHandoff"));
   {
     const { authErrorMessage: m } = await import("../lib/auth/auth-error-message");
+    check("pesan google_incomplete/google_offline berbahasa Indonesia", /belum selesai/.test(m("google_incomplete") ?? "") && /Koneksi internet/.test(m("google_offline") ?? ""));
+    const login = src("app/(auth)/login/page.tsx");
+    check("login tidak menampilkan error.message mentah penyedia", !login.includes("setError(error.message)"));
+    check("tawaran kembali ke aplikasi hanya kode error tetap (tanpa code)", login.includes('href="bahasacerdas://oauth/callback?flow=login&error=failed"') && !/bahasacerdas:\/\/oauth\/callback\?[^"]*code=/.test(login));
     check("state OAuth kedaluwarsa → pesan Indonesia tetap", m("google_expired") === "Sesi masuk Google kedaluwarsa. Silakan coba lagi.");
     check("GoTrue bad_oauth_state di / → /login?error=google_expired (target tetap)", mw.includes('searchParams.get("error_code") === "bad_oauth_state"') && mw.includes('new URL("/login?error=google_expired", request.url)'));
   }

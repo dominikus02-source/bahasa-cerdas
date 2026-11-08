@@ -14,10 +14,11 @@ step "install"; adb install -r -g "$APK" | tee "$OUT/install.txt" | grep -q Succ
 step "launch"; adb shell monkey -p "$PKG" -c android.intent.category.LAUNCHER 1 >/dev/null 2>&1
 sleep 25; alive && echo "PASS launch: proses hidup" || { echo "FAIL launch: proses mati"; fail=1; }
 adb exec-out screencap -p > "$OUT/01-launch.png" || true
-step "deeplink batal"; adb shell am start -W -a android.intent.action.VIEW -d "'bahasacerdas://oauth/callback?error=cancelled'" "$PKG" | tee "$OUT/deeplink-cancel.txt"
+step "deeplink batal"; adb shell am start -W -a android.intent.action.VIEW -d "'bahasacerdas://oauth/callback?flow=login&error=cancelled'" "$PKG" | tee "$OUT/deeplink-cancel.txt"
 sleep 10; alive && echo "PASS deeplink batal: proses hidup" || { echo "FAIL deeplink batal"; fail=1; }
 adb exec-out screencap -p > "$OUT/02-deeplink-cancel.png" || true
-step "deeplink berbahaya"; adb shell am start -W -a android.intent.action.VIEW -d "'bahasacerdas://oauth/callback?code=x&next=https://evil.example/'" "$PKG" >/dev/null
+# Ditolak sebelum jaringan (flow tidak sah): tidak ada permintaan ke produksi.
+step "deeplink berbahaya"; adb shell am start -W -a android.intent.action.VIEW -d "'bahasacerdas://oauth/callback?flow=evil&next=//evil.example/'" "$PKG" >/dev/null
 sleep 6; alive && echo "PASS deeplink berbahaya: tidak crash" || { echo "FAIL deeplink berbahaya"; fail=1; }
 adb shell dumpsys activity activities | grep -E "mResumedActivity|topResumedActivity" | head -3 | tee "$OUT/resumed.txt"
 step "rotasi"; adb shell settings put system accelerometer_rotation 0; adb shell settings put system user_rotation 1; sleep 5

@@ -35,6 +35,8 @@ jobs:
           for i in $(seq 1 90); do curl -sf -o /dev/null --max-time 120 "http://127.0.0.1:3100/qa-fixture/frame?view=guru" && break; sleep 2; done
       - name: Rendered checks (320–768, landscape, light/dark)
         run: QA_OUT=qa-output/android-visual node scripts/qa-android-visual.mjs
+      - name: Behavioral checks (Guru return, drawer, font 130%, keyboard)
+        run: QA_OUT=qa-output/android-visual/behavior node scripts/qa-android-behavior.mjs
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -106,6 +108,9 @@ jobs:
 
       - name: JUMPA native screen share regression
         run: npx tsx scripts/test-jumpa-native-screen-share.ts
+
+      - name: Android security/RBAC sample
+        run: npx tsx scripts/test-android-security-sample.ts
 
       - name: Android WebView style gate (real Chromium)
         env:

@@ -16,6 +16,7 @@ import { levelFromXp } from "@/lib/gamification/levels";
 import { rankFromLevel } from "@/lib/gamification/ranks";
 import LoginPage from "@/app/(auth)/login/page";
 import { QaControls } from "../QaControls";
+import { QaPathname } from "../QaPathname";
 
 export const dynamic = "force-dynamic";
 
@@ -41,7 +42,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const view = q.view ?? "guru-founder";
   const theme = q.theme === "dark" ? "dark" : "light";
   const app = q.app !== "0";
-  const controls = <QaControls theme={theme} app={app} />;
+  const font = Math.min(200, Math.max(80, Number(q.font) || 100));
+  // Jalur yang disimulasikan untuk usePathname() (hanya jalur internal relatif).
+  const path = q.path && /^\/[a-z0-9\-/]*$/.test(q.path) ? q.path : null;
+  const controls = <QaControls theme={theme} app={app} font={font} />;
 
   if (view === "guru-founder" || view === "guru") {
     const isFounder = view === "guru-founder";
@@ -49,6 +53,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     return (
       <>
         {controls}
+        <QaPathname pathname={path ?? "/guru/beranda"}>
         <ShellLayout
           rootClassName="bc-guru-shell ui-app-bg"
           header={<GuruHeader user={user} rank={rank} />}
@@ -57,6 +62,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         >
           <QaContent label={isFounder ? "Founder di peran Guru" : "Guru biasa"} />
         </ShellLayout>
+        </QaPathname>
       </>
     );
   }
@@ -65,9 +71,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     return (
       <>
         {controls}
+        <QaPathname pathname={path ?? "/murid/beranda"}>
         <MuridShellFrame user={{ fullName: isFounder ? "QA Founder Palsu" : "QA Murid Palsu", avatar: null, role: isFounder ? "GURU" : "MURID", isFounder, email: isFounder ? founderEmail : "qa-murid@example.invalid" }} rank={rank}>
           <QaContent label={isFounder ? "Founder di peran Murid" : "Murid biasa"} />
         </MuridShellFrame>
+        </QaPathname>
       </>
     );
   }
@@ -75,7 +83,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     return (
       <>
         {controls}
-        <Suspense fallback={null}><LoginPage /></Suspense>
+        <QaPathname pathname="/login"><Suspense fallback={null}><LoginPage /></Suspense></QaPathname>
       </>
     );
   }

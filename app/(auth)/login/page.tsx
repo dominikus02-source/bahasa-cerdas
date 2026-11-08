@@ -38,6 +38,7 @@ export default function LoginPage() {
     );
   }, []);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [offerAppReturn, setOfferAppReturn] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
   const registerHref = isArenaEntry ? "/arena/register" : "/register";
   const [recoveryMessage, setRecoveryMessage] = useState("");
@@ -83,6 +84,10 @@ export default function LoginPage() {
     const authError = params.get("error");
     if (authError) {
       setError(authErrorMessage(authError) ?? "");
+      // State OAuth kedaluwarsa membuat GoTrue kehilangan penanda aplikasi,
+      // sehingga halaman ini terbuka di browser Android, bukan di aplikasi.
+      // Tawarkan kembali ke aplikasi dengan kode error tetap (tanpa kode OAuth).
+      setOfferAppReturn(authError === "google_expired" && !("BahasaCerdasMobile" in window) && /Android/i.test(navigator.userAgent));
       params.delete("error");
       const query = params.toString();
       window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
@@ -156,7 +161,8 @@ export default function LoginPage() {
         options: { redirectTo: callbackUrl.toString(), skipBrowserRedirect: isMobileApp },
       });
       if (error) {
-        setError(error.message);
+        // Teks mentah penyedia tidak ditampilkan (bahasa Inggris/teknis).
+        setError(authErrorMessage("google_failed") ?? "");
       } else if (isMobileApp && data.url) {
         // The PKCE verifier belongs to WebView, not the external system browser.
         const bridge = (window as Window & {
@@ -271,6 +277,12 @@ export default function LoginPage() {
                 <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
                 {error}
               </div>
+            )}
+            {offerAppReturn && (
+              <a href="bahasacerdas://oauth/callback?flow=login&error=failed" data-bc-app-return
+                className="mb-4 flex min-h-11 items-center justify-center rounded-xl border border-bc-line bg-bc-surface-2 px-4 text-sm font-bold text-bc-text">
+                Kembali ke aplikasi BahasaCerdas
+              </a>
             )}
 
             <button

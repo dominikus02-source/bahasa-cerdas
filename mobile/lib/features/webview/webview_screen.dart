@@ -13,6 +13,7 @@ import '../../core/constants/mobile_webview_permission_policy.dart';
 import '../../core/constants/jumpa_room_route.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/mobile_premium_style.dart';
+import '../../core/auth/oauth_pending_tracker.dart';
 import '../../core/constants/mobile_oauth_callback.dart';
 import '../../core/constants/mobile_feature_catalog.dart';
 import '../../core/screen_share/native_screen_share.dart';
@@ -34,7 +35,9 @@ class WebViewScreen extends StatefulWidget {
   State<WebViewScreen> createState() => _WebViewScreenState();
 }
 
-class _WebViewScreenState extends State<WebViewScreen> {
+class _WebViewScreenState extends State<WebViewScreen> with WidgetsBindingObserver {
+  final OAuthPendingTracker _oauth = OAuthPendingTracker();
+  Timer? _oauthResumeTimer;
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _hasError = false;
@@ -110,6 +113,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _oauthResumeTimer?.cancel();
     unawaited(_screenShare.stop());
     _authChannel.setMethodCallHandler(null);
     _jumpaChannel.setMethodCallHandler(null);
@@ -123,6 +128,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _setupWebView();
     _jumpaChannel.setMethodCallHandler((call) async {
       if (call.method == 'onPipChanged' && call.arguments is bool) {
@@ -160,9 +166,25 @@ class _WebViewScreenState extends State<WebViewScreen> {
     }
   }
 
+  /// Kembali dari browser login Google tanpa deep link (ditutup, state
+  /// kedaluwarsa, jaringan putus): setelah jeda singkat tampilkan formulir
+  /// semula dengan pesan tetap. Tidak pernah memutar ulang kode OAuth.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed || !_oauth.isPending) return;
+    _oauthResumeTimer?.cancel();
+    _oauthResumeTimer = Timer(OAuthPendingTracker.resumeGrace, () {
+      final action = _oauth.onResumeSettled(now: DateTime.now(), offline: _isOffline);
+      final url = _oauth.feedbackUrl(action);
+      if (url != null && mounted) unawaited(_controller.loadRequest(Uri.parse(url)));
+    });
+  }
+
   Future<void> _receiveAuthCallback(String raw) async {
     final url = MobileOAuthCallback.toWebUrl(raw);
     if (!mounted || url == null) return;
+    _oauth.complete();
+    _oauthResumeTimer?.cancel();
     await _controller.loadRequest(Uri.parse(url));
   }
 
@@ -453,6 +475,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   url.host.endsWith('.bahasacerdas.com'))) {
             return;
           }
+          _oauth.start(DateTime.now(), url);
           await launchUrl(url, mode: LaunchMode.externalApplication);
         },
       )

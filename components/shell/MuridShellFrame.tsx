@@ -79,9 +79,9 @@ export function MuridShellFrame({
       </aside>
 
       <div className="shell-main flex-1 min-w-0 md:ml-64 flex flex-col">
- <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
+ <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-3 sm:px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
           <BackHome />
-          <div className="flex min-w-0 items-center gap-1 md:gap-2">
+          <div className="flex min-w-0 items-center gap-0.5 sm:gap-1 md:gap-2">
             <FounderDashboardSwitcher user={user} compact />
             <UserAvatar
               size={36}

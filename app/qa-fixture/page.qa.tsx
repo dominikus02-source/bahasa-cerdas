@@ -2,7 +2,8 @@
  * Indeks FIXTURE QA VISUAL LOKAL (BC_QA_FIXTURE=1, dev saja). Merender
  * /qa-fixture/frame dalam iframe dengan lebar perangkat tetap.
  * Query: view=guru-founder|guru|murid|murid-founder|login, theme=light|dark,
- * app=1|0, sizes=320,360,... (opsional), landscape=1 menambah 740x360.
+ * app=1|0, sizes=320,360,... (opsional), landscape=1 menambah 740x360,
+ * font=80..200 (persen, skala font sistem), path=/murid/... (usePathname simulasi).
  */
 import { notFound } from "next/navigation";
 
@@ -20,9 +21,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
   const sizes = (q.sizes ?? "").split(",").map(Number).filter((n) => n >= 280 && n <= 1400);
   const frames: Array<[number, number]> = (sizes.length ? sizes : DEFAULT_SIZES).map((w) => [w, 720]);
   if (q.landscape === "1") frames.push([740, 360]);
-  const src = `/qa-fixture/frame?view=${view}&theme=${theme}&app=${app}`;
+  const extra = new URLSearchParams();
+  if (q.font) extra.set("font", q.font);
+  if (q.path) extra.set("path", q.path);
+  const src = `/qa-fixture/frame?view=${view}&theme=${theme}&app=${app}${extra.size ? `&${extra}` : ""}`;
   const link = (patch: Record<string, string>) => {
-    const p = new URLSearchParams({ view, theme, app, ...(q.sizes ? { sizes: q.sizes } : {}), ...(q.landscape ? { landscape: q.landscape } : {}), ...patch });
+    const p = new URLSearchParams({ view, theme, app, ...(q.sizes ? { sizes: q.sizes } : {}), ...(q.landscape ? { landscape: q.landscape } : {}), ...(q.font ? { font: q.font } : {}), ...(q.path ? { path: q.path } : {}), ...patch });
     return `/qa-fixture?${p.toString()}`;
   };
   return (
@@ -36,6 +40,10 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         <a href={link({ app: "1" })}>mode app</a><a href={link({ app: "0" })}>mode web</a>
         <span>|</span>
         <a href={link({ landscape: q.landscape === "1" ? "0" : "1" })}>landscape</a>
+        <span>|</span>
+        <a href={link({ font: "100" })}>font 100%</a><a href={link({ font: "130" })}>font 130%</a>
+        <span>|</span>
+        <a href={link({ path: "/murid/beranda" })}>/murid/beranda</a><a href={link({ path: "/murid/belajar" })}>/murid/belajar</a>
       </nav>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "flex-start" }}>
         {frames.map(([w, h]) => (
