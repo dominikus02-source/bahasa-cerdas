@@ -19,7 +19,6 @@ import { RankChip } from "@/components/gamification/RankChip"
 import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
 import { VerifiedBadge } from "@/components/arena/UserName";
 import UserAvatar from "@/components/arena/UserAvatar";
-import ArenaLogoutButton from "@/components/arena/LogoutButton";
 import { GuruNavList, GuruMobileNav } from "@/components/dashboard/GuruNav";
 import { startGuruTrialIfEligible, shouldStartGuruTrial, getTrialStatus } from "@/lib/ai-gateway/trial-service";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
@@ -165,7 +164,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
             <FounderDashboardSwitcher user={user} compact />
             <Link
               href="/guru/profile"
-              className="group flex min-h-11 min-w-11 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
+              className={`group min-h-11 min-w-11 items-center gap-2 rounded-xl px-1 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50 ${user.isFounder ? "hidden lg:flex" : "flex"}`}
               aria-label="Buka profil guru"
             >
               <UserAvatar
@@ -192,10 +191,12 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
                 </span>
               </span>
             </Link>
-            <NaraHeaderLink />
+            {user.isFounder ? (
+              <div className="hidden lg:flex"><NaraHeaderLink /></div>
+            ) : <NaraHeaderLink />}
             <NotificationBell allHref="/guru/notifikasi" />
             <ThemeToggle />
-            <ArenaLogoutButton variant="icon" to="/login" />
+            {/* Keluar dipindah ke Profil & Pengaturan agar navbar tidak overlap. */}
           </div>
         </header>
       }

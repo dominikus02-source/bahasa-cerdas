@@ -56,6 +56,9 @@ jobs:
       - name: Unified login routing regression
         run: npm run test:login-unified
 
+      - name: Founder navbar + JUMPA screen regression
+        run: npx tsx scripts/test-founder-nav-jumpa-screen.ts
+
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
 
