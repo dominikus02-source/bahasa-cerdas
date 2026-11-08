@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
+import ArenaLogoutButton from "@/components/arena/LogoutButton";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
@@ -875,6 +876,9 @@ export default function GuruProfilePage() {
       {/*  SECTION 4 — AKUN                                               */}
       {/* ═══════════════════════════════════════════════════════════════ */}
       <div className="mt-6"><AccountSecurityPanel /></div>
+      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-2 dark:border-slate-800 dark:bg-slate-900" data-guru-profile-logout>
+        <ArenaLogoutButton variant="settings" to="/login" />
+      </div>
     </div>
   );
 }

@@ -45,8 +45,8 @@ export default function LogoutButton({
         type="button"
         onClick={handleLogout}
         disabled={loading}
-        aria-label="Keluar dari akun guru"
-        className="flex min-h-11 w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-semibold text-rose-700 transition hover:bg-rose-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-rose-500 disabled:opacity-60 dark:text-rose-300 dark:hover:bg-rose-950/40"
+        data-logout-settings
+        className="flex min-h-11 w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-60 dark:text-slate-200 dark:hover:bg-blue-950/50"
       >
         <LogOut size={17} aria-hidden="true" />
         {loading ? "Keluar..." : "Keluar dari akun"}

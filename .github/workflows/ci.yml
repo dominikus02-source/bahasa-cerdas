@@ -65,6 +65,9 @@ jobs:
       - name: Android Google OAuth return-to-app regression (behavioural)
         run: npx tsx scripts/test-mobile-oauth-return.ts
 
+      - name: Founder navbar + JUMPA screen regression
+        run: npx tsx scripts/test-founder-nav-jumpa-screen.ts
+
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
 
