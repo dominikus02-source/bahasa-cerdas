@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeacherHomeShortcut } from "@/components/dashboard/TeacherHomeShortcut";
 import type { ReactNode } from "react";
 import { RankChip } from "@/components/gamification/RankChip";
 import type { rankFromLevel } from "@/lib/gamification/ranks";
@@ -97,6 +98,7 @@ export function MuridShellFrame({
         </header>
         <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
           <InstallBanner />
+          {(user.role === "GURU" || user.isFounder) && <TeacherHomeShortcut />}
           {children}
           <MuridBackBottom />
         </main>

@@ -1,10 +1,10 @@
 import 'dart:async';
+import 'dart:ui' show PlatformDispatcher;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'app.dart';
 
 // Background message handler (wajib di top-level)
@@ -16,38 +16,30 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp();
+  // Firebase is optional until Android Firebase credentials are configured.
+  // Never block the login screen if the native configuration is missing.
+  bool firebaseReady = false;
+  try {
+    await Firebase.initializeApp();
+    firebaseReady = true;
+  } catch (error) {
+    debugPrint('Firebase unavailable; push and crash reporting disabled: $error');
+  }
 
-  // Crashlytics: tangkap error Flutter
-  FlutterError.onError = (details) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(details);
-  };
+  if (firebaseReady) {
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
 
-  // Tangkap error async yang tidak tertangkap
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+  // Request device permissions only when a feature needs them.
+  // Startup must not interrupt the splash and sign-in experience.
 
-  // FCM background
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // Minta izin kamera & mikrofon (untuk JUMPA)
-  await _requestPermissions();
-
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+  // Follow device rotation by default; individual games may opt into landscape.
+  await SystemChrome.setPreferredOrientations(DeviceOrientation.values);
 
   runApp(const BahasaCerdasApp());
-}
-
-Future<void> _requestPermissions() async {
-  await [
-    Permission.camera,
-    Permission.microphone,
-    Permission.notification,
-    Permission.storage,
-  ].request();
 }

@@ -1,0 +1,50 @@
+name: Android Mobile QA
+
+on:
+  push:
+    paths:
+      - 'mobile/**'
+      - 'scripts/audit-mobile-routes.cjs'
+      - '.github/workflows/android-qa.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - 'scripts/audit-mobile-routes.cjs'
+      - '.github/workflows/android-qa.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-and-route-audit:
+    name: Flutter, route inventory, debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: stable
+          cache: true
+      - name: Resolve Flutter dependencies
+        working-directory: mobile
+        run: flutter pub get
+      - name: Static route audit (no network or user credentials)
+        run: node scripts/audit-mobile-routes.cjs
+      - name: Analyze Flutter
+        working-directory: mobile
+        run: flutter analyze
+      - name: Test Flutter
+        working-directory: mobile
+        run: flutter test
+      - name: Compile debug APK
+        working-directory: mobile
+        run: flutter build apk --debug --no-pub
