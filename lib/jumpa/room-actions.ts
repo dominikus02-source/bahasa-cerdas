@@ -11,6 +11,7 @@ import { linkInviteExpiry } from "./caps";
 import { sanitizeChatContent, toChatView, type ChatView } from "./chat";
 import { generateInviteToken, hashInviteToken } from "./code";
 import { attendanceOnLeave, isAttending } from "./lifecycle";
+import { isScreenIdentity, screenIdentityFor, screenOwnerOf } from "./screen-identity";
 import {
   deleteLivekitRoom,
   listLivekitIdentities,
@@ -161,6 +162,8 @@ export async function moderate(
       case "STOP_SCREEN": {
         const source = action === "MUTE_AUDIO" ? "microphone" : action === "MUTE_VIDEO" ? "camera" : "screen_share";
         await muteParticipantSource(lk, target!.userId, source);
+        // Layar dari aplikasi Android berjalan di identitas terpisah — putuskan juga.
+        if (source === "screen_share") await disconnectScreenIdentity(lk, screenIdentityFor(target!.userId));
         await sendServerSignal(lk, JUMPA_TOPICS.moderation, { t: "mod.muted", source }, [target!.userId]);
         break;
       }
@@ -171,6 +174,7 @@ export async function moderate(
         });
         await sendServerSignal(lk, JUMPA_TOPICS.moderation, { t: "mod.removed" }, [target!.userId]);
         await removeLivekitParticipant(lk, target!.userId);
+        await disconnectScreenIdentity(lk, screenIdentityFor(target!.userId));
         break;
       }
       case "LOCK":
@@ -200,7 +204,9 @@ export async function moderate(
         next = { ...next, allowMuridScreenShare: allow };
         // Terapkan ke murid yang sedang tersambung (izin atomik di LiveKit).
         const connected = await listLivekitIdentities(lk);
+        const muridOwners = new Set<string>();
         for (const p of connected) {
+          if (isScreenIdentity(p.identity)) continue; // izin identitas layar tidak pernah dinaikkan
           let meta: { bcRole?: string; roomRole?: JumpaRoomRole } = {};
           try {
             meta = JSON.parse(p.metadata || "{}");
@@ -210,6 +216,12 @@ export async function moderate(
           if (meta.bcRole !== "MURID") continue;
           const sources = publishSourcesFor(meta.roomRole ?? "MEMBER", "MURID", { kind: room.kind, allowMuridScreenShare: allow });
           await updateLivekitParticipant(lk, p.identity, { permission: buildParticipantPermission(sources) });
+          if (!sources.includes("screen_share")) muridOwners.add(p.identity);
+        }
+        // Izin dicabut → putuskan layar Android milik murid tersebut.
+        for (const p of connected) {
+          const owner = screenOwnerOf(p.identity);
+          if (owner && muridOwners.has(owner)) await disconnectScreenIdentity(lk, p.identity);
         }
         await sendServerSignal(lk, JUMPA_TOPICS.room, { t: "room.screen", allowMurid: allow });
         break;
@@ -574,4 +586,9 @@ export async function createInvite(
     }
   }
   return { ok: true, inviteId: invite.id, path, notified: recipients.length };
+}
+
+/** Putuskan identitas layar Android (`screen:<userId>`); tidak tersambung = sukses. */
+async function disconnectScreenIdentity(roomName: string, screenIdentity: string): Promise<void> {
+  await removeLivekitParticipant(roomName, screenIdentity);
 }

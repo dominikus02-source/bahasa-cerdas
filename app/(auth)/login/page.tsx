@@ -1,5 +1,6 @@
 "use client";
 
+import { authErrorMessage } from "@/lib/auth/auth-error-message";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
@@ -29,7 +30,15 @@ export default function LoginPage() {
   // hanya memberi konteks navigasi agar aplikasi Android tetap di dalam scope.
   const pathname = usePathname() ?? "/login";
   const isArenaEntry = pathname === "/arena/login";
+  const [isMobileApp, setIsMobileApp] = useState(false);
+  useEffect(() => {
+    setIsMobileApp(
+      new URLSearchParams(window.location.search).get("bc_app") === "1" ||
+      "BahasaCerdasMobile" in window
+    );
+  }, []);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [offerAppReturn, setOfferAppReturn] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
   const registerHref = isArenaEntry ? "/arena/register" : "/register";
   const [recoveryMessage, setRecoveryMessage] = useState("");
@@ -51,8 +60,11 @@ export default function LoginPage() {
   const [remember, setRemember] = useState(true);
   const [next, setNext] = useState("");
   // Tautan undangan (mis. JUMPA) tetap dibawa saat pengguna baru memilih daftar.
-  const registerWithNext =
+  const registerWithNextBase =
     !isArenaEntry && next !== "/" && isSafeNext(next) ? `${registerHref}?next=${encodeURIComponent(next)}` : registerHref;
+  const registerWithNext = isMobileApp
+    ? `${registerWithNextBase}${registerWithNextBase.includes("?") ? "&" : "?"}bc_app=1`
+    : registerWithNextBase;
   const [cooldownSeconds, setCooldownSeconds] = useState(0);
 
   useEffect(() => {
@@ -71,7 +83,11 @@ export default function LoginPage() {
     if (params.get("reset") === "success") setRecoveryMessage("Kata sandi berhasil diubah. Silakan masuk.");
     const authError = params.get("error");
     if (authError) {
-      setError(authError);
+      setError(authErrorMessage(authError) ?? "");
+      // State OAuth kedaluwarsa membuat GoTrue kehilangan penanda aplikasi,
+      // sehingga halaman ini terbuka di browser Android, bukan di aplikasi.
+      // Tawarkan kembali ke aplikasi dengan kode error tetap (tanpa kode OAuth).
+      setOfferAppReturn(authError === "google_expired" && !("BahasaCerdasMobile" in window) && /Android/i.test(navigator.userAgent));
       params.delete("error");
       const query = params.toString();
       window.history.replaceState({}, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
@@ -132,17 +148,29 @@ export default function LoginPage() {
     setError("");
 
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
+      const baseUrl = isMobileApp
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com");
       const supabase = createClient();
       const authNext = next || (isArenaEntry ? "/arena" : "");
-      const redirectTo = authNext
-        ? `${baseUrl}/api/auth/callback?next=${encodeURIComponent(authNext)}`
-        : `${baseUrl}/api/auth/callback`;
-      const { error } = await supabase.auth.signInWithOAuth({
+      const callbackUrl = new URL("/api/auth/callback", baseUrl);
+      if (authNext && isSafeNext(authNext)) callbackUrl.searchParams.set("next", authNext);
+      if (isMobileApp) callbackUrl.searchParams.set("bc_app", "1");
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo },
+        options: { redirectTo: callbackUrl.toString(), skipBrowserRedirect: isMobileApp },
       });
-      if (error) setError(error.message);
+      if (error) {
+        // Teks mentah penyedia tidak ditampilkan (bahasa Inggris/teknis).
+        setError(authErrorMessage("google_failed") ?? "");
+      } else if (isMobileApp && data.url) {
+        // The PKCE verifier belongs to WebView, not the external system browser.
+        const bridge = (window as Window & {
+          BahasaCerdasMobile?: { postMessage: (url: string) => void };
+        }).BahasaCerdasMobile;
+        if (bridge) bridge.postMessage(data.url);
+        else setError("Google Login harus dibuka melalui aplikasi BahasaCerdas. Silakan buka ulang aplikasi.");
+      }
     } catch {
       setError("Gagal login dengan Google");
     }
@@ -166,7 +194,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[var(--bc-login-night-via)] dark:to-[var(--bc-login-night-to)]">
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -175,7 +203,7 @@ export default function LoginPage() {
       <BatikAccent />
 
             {/* Tautan kembali hanya di web umum; tautan keluar scope membuka browser eksternal di APK. */}
-      {!isArenaEntry && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+      {!isArenaEntry && <div data-bc-login="back" className="relative mx-auto mb-6 flex w-full max-w-6xl">
         <Link
           href="/"
           className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
@@ -189,9 +217,9 @@ export default function LoginPage() {
         </Link>
       </div>}
 
-<div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+<div data-bc-login="grid" className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
-        <div className="order-2 lg:order-1">
+        <div data-bc-login="hero" className="order-2 lg:order-1">
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
@@ -228,9 +256,15 @@ export default function LoginPage() {
         </div>
 
         {/* ── LOGIN CARD ── */}
-        <div className="order-1 lg:order-2">
-          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
+        <div data-bc-login="card" className="order-1 lg:order-2">
+          <div data-bc-login="panel" className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
             <div className="mb-6 text-center">
+              {/* Merek ringkas: hanya tampil di aplikasi Android (html.bc-android-app). */}
+              <div data-bc-login="brand" className="mb-3 hidden items-center justify-center gap-2.5">
+                <Image src={BRAND_ICON_DARK} alt="" width={48} height={48} className="h-12 w-12 object-contain dark:hidden" />
+                <Image src={BRAND_ICON} alt="" width={48} height={48} className="hidden h-12 w-12 object-contain dark:inline" />
+                <span className="text-lg font-extrabold tracking-tight text-bc-violet">BahasaCerdas</span>
+              </div>
               <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Selamat datang kembali!</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                 Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda.
@@ -243,6 +277,12 @@ export default function LoginPage() {
                 <span className="h-2 w-2 shrink-0 rounded-full bg-red-500" />
                 {error}
               </div>
+            )}
+            {offerAppReturn && (
+              <a href="bahasacerdas://oauth/callback?flow=login&error=failed" data-bc-app-return
+                className="mb-4 flex min-h-11 items-center justify-center rounded-xl border border-bc-line bg-bc-surface-2 px-4 text-sm font-bold text-bc-text">
+                Kembali ke aplikasi BahasaCerdas
+              </a>
             )}
 
             <button
@@ -383,7 +423,7 @@ export default function LoginPage() {
           </div>
 
           {/* Mobile: value cards compact (desktop tampil di kiri) */}
-          <div className="mt-5 grid gap-2 lg:hidden">
+          <div data-bc-login="extras" className="mt-5 grid gap-2 lg:hidden">
             {valueCards.map((v) => (
               <div key={v.title} className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-900/50">
                 <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${v.tint}`}>

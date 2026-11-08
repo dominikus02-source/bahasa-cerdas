@@ -1,10 +1,11 @@
 "use client";
+import ArenaLogoutButton from "@/components/arena/LogoutButton";
 import { VerifiedBadge } from "@/components/arena/UserName";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2,
+  Settings, X, Camera, Save, CheckCircle2, AlertCircle, Loader2,
   Award, History, Pencil, BookOpen, ChevronRight, TrendingUp,
 } from "lucide-react";
 import "@/app/arena/player-theme.css";
@@ -324,11 +325,6 @@ export default function MuridProfilePage() {
       }
     } catch {}
     setShowNicknameHistory(true);
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
   };
 
   const handleDeleteKarya = async (id: string) => {
@@ -793,9 +789,8 @@ export default function MuridProfilePage() {
               </Button>
             </div>
             <div className="border-t border-bc-line p-5 space-y-2">
-              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-bc-danger hover:text-bc-danger dark:text-red-300 font-medium">
-                <LogOut size={16} /> Keluar
-              </button>
+              {/* Keluar netral (merah hanya untuk error), sama dengan Profil Guru. */}
+              <ArenaLogoutButton variant="settings" to="/login" />
             </div>
           </div>
         </div>

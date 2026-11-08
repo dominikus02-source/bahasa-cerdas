@@ -21,7 +21,9 @@ class AppRoutes {
   // Murid
   static const String muridBeranda = '/murid/beranda';
   static const String muridBelajar = '/murid/belajar';
-  static const String muridKelasku = '/murid/kelasku';
+  // The class list/join page is /murid/gabung-kelas; /murid/kelasku
+  // only exists with a required [id] segment for class detail.
+  static const String muridKelasku = '/murid/gabung-kelas';
   static const String muridProgres = '/murid/progresku';
   static const String muridKarya = '/murid/karya';
   static const String muridGame = '/murid/game';

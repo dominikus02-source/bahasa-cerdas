@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TeacherHomeShortcut } from "@/components/dashboard/TeacherHomeShortcut";
 import type { ReactNode } from "react";
 import { RankChip } from "@/components/gamification/RankChip";
 import type { rankFromLevel } from "@/lib/gamification/ranks";
@@ -78,9 +79,9 @@ export function MuridShellFrame({
       </aside>
 
       <div className="shell-main flex-1 min-w-0 md:ml-64 flex flex-col">
- <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
+ <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-3 sm:px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
           <BackHome />
-          <div className="flex items-center gap-1 md:gap-2">
+          <div className="flex min-w-0 items-center gap-0.5 sm:gap-1 md:gap-2">
             <FounderDashboardSwitcher user={user} compact />
             <UserAvatar
               size={36}
@@ -90,13 +91,15 @@ export function MuridShellFrame({
               textClassName="text-sm"
               className="hidden md:flex shadow-md"
             />
-            <NaraHeaderLink />
+            {/* Founder: pemilih peran memakan ruang; NARA tetap ada via tombol mengambang. */}
+            {user.isFounder ? <div className="hidden lg:flex"><NaraHeaderLink /></div> : <NaraHeaderLink />}
             <NotificationBell />
             <ThemeToggle />
           </div>
         </header>
         <main className="flex-1 p-4 md:p-8 pb-24 md:pb-8 bg-transparent">
           <InstallBanner />
+          {(user.role === "GURU" || user.isFounder) && <TeacherHomeShortcut />}
           {children}
           <MuridBackBottom />
         </main>

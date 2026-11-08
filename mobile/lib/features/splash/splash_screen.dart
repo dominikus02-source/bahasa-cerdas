@@ -1,6 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import '../constants/app_constants.dart';
+import '../../core/constants/app_constants.dart';
 
 class SplashScreen extends StatefulWidget {
   final VoidCallback onFinish;
@@ -10,44 +10,117 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  Timer? _timer;
+  late AnimationController _controller;
+  late Animation<double> _fade;
+  late Animation<double> _scale;
+
   @override
   void initState() {
     super.initState();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    Future.delayed(const Duration(milliseconds: 2000), widget.onFinish);
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 900));
+    _fade = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _scale = Tween<double>(begin: 0.92, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _controller.forward();
+    _timer = Timer(const Duration(milliseconds: 2000), widget.onFinish);
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final width = MediaQuery.sizeOf(context).width;
+    final logoSize = (width * 0.28).clamp(96.0, 132.0);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/icons/icon-512.png',
-              width: MediaQuery.of(context).size.width * 0.28,
-              height: MediaQuery.of(context).size.width * 0.28,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 28),
-            Text(
-              AppConstants.appName,
-              style: const TextStyle(
-                fontSize: 30,
-                fontWeight: FontWeight.w800,
-                letterSpacing: -0.6,
-                color: Color(0xFF16181D),
+      body: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: dark
+                ? const [Color(0xFF053D9C), Color(0xFF0078D9)]
+                : const [Color(0xFFFFFFFF), Color(0xFFE7F4FF)],
+          ),
+        ),
+        child: SafeArea(
+          child: FadeTransition(
+            opacity: _fade,
+            child: ScaleTransition(
+              scale: _scale,
+              child: Column(
+                children: [
+                  const Spacer(flex: 3),
+                  Container(
+                    width: logoSize + 32,
+                    height: logoSize + 32,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: dark ? 0.08 : 0.9),
+                      borderRadius: BorderRadius.circular(36),
+                      boxShadow: [
+                        BoxShadow(
+                          color:
+                              const Color(0xFF0875E1).withValues(alpha: 0.12),
+                          blurRadius: 40,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    alignment: Alignment.center,
+                    child: Image.asset(
+                      'assets/icons/icon-512.png',
+                      width: logoSize,
+                      height: logoSize,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    AppConstants.appName,
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -0.8,
+                      color: dark ? Colors.white : const Color(0xFF083D86),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 36),
+                    child: Text(
+                      'Ekosistem pembelajaran Bahasa Indonesia',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14,
+                        height: 1.45,
+                        color: dark
+                            ? const Color(0xFFCBD5E1)
+                            : const Color(0xFF64748B),
+                      ),
+                    ),
+                  ),
+                  const Spacer(flex: 4),
+                  const SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2.5, color: Color(0xFF7C3AED)),
+                  ),
+                  const SizedBox(height: 48),
+                ],
               ),
             ),
-            const SizedBox(height: 6),
-            const Text(
-              'Belajar Bahasa, Mengenal Budaya, Berpikir Cerdas',
-              style: TextStyle(color: Color(0xFF5B6270), fontSize: 13),
-            ),
-          ],
+          ),
         ),
       ),
     );

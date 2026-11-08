@@ -1,5 +1,6 @@
 "use client";
 
+import { authErrorMessage } from "@/lib/auth/auth-error-message";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -152,8 +153,18 @@ export default function RegisterPage() {
   useEffect(() => {
     const n = new URLSearchParams(window.location.search).get("next");
     if (n && n !== "/" && isSafeNext(n)) setNext(n);
+    const authError = authErrorMessage(new URLSearchParams(window.location.search).get("error"));
+    if (authError) setError(authError);
   }, []);
   const nextQuery = next ? `?next=${encodeURIComponent(next)}` : "";
+  const backToLoginQuery = `${nextQuery}${nextQuery ? "&" : "?"}bc_app=1`;
+  const [isMobileApp, setIsMobileApp] = useState(false);
+  useEffect(() => {
+    setIsMobileApp(
+      new URLSearchParams(window.location.search).get("bc_app") === "1" ||
+      "BahasaCerdasMobile" in window
+    );
+  }, []);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
@@ -276,15 +287,35 @@ export default function RegisterPage() {
         setGoogleLoading(false);
         return;
       }
-      const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com";
+      const baseUrl = isMobileApp
+        ? window.location.origin
+        : (process.env.NEXT_PUBLIC_SITE_URL || window.location.origin || "https://www.bahasacerdas.com");
       const supabase = createClient();
-      const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      const callbackUrl = new URL("/auth/callback", baseUrl);
+      if (next) callbackUrl.searchParams.set("next", next);
+      if (isMobileApp) callbackUrl.searchParams.set("bc_app", "1");
+      const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: `${baseUrl}/auth/callback${nextQuery}` },
+        options: {
+          redirectTo: callbackUrl.toString(),
+          skipBrowserRedirect: isMobileApp,
+        },
       });
       if (oauthError) {
         setError(oauthError.message);
         setGoogleLoading(false);
+      } else if (isMobileApp && data.url) {
+        const bridge = (window as Window & {
+          BahasaCerdasMobile?: { postMessage: (url: string) => void };
+        }).BahasaCerdasMobile;
+        if (bridge) {
+          bridge.postMessage(data.url);
+          // Browser sistem mengambil alih; bila ditutup tanpa selesai, tombol harus bisa dipakai lagi.
+          setGoogleLoading(false);
+        } else {
+          setError("Pendaftaran Google harus dibuka melalui aplikasi BahasaCerdas.");
+          setGoogleLoading(false);
+        }
       }
     } catch {
       setError("Gagal mendaftar dengan Google");
@@ -375,7 +406,7 @@ export default function RegisterPage() {
                 </p>
                 <div className="pt-4">
                   <Link
-                    href={role === "MURID" ? "/auth/arena-login" : `/login${nextQuery}`}
+                    href={role === "MURID" && !isMobileApp ? "/auth/arena-login" : `/login${isMobileApp ? backToLoginQuery : nextQuery}`}
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 px-6 font-bold text-white shadow-lg shadow-violet-600/25 transition-all hover:from-violet-700 hover:to-violet-800 dark:from-violet-500 dark:to-violet-600 dark:hover:from-violet-600 dark:hover:to-violet-700"
                   >
                     Masuk Sekarang <ArrowRight className="h-4 w-4" />
@@ -784,7 +815,7 @@ export default function RegisterPage() {
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     Sudah punya akun?{" "}
                     <Link
-                      href={`/login${nextQuery}`}
+                      href={`/login${isMobileApp ? backToLoginQuery : nextQuery}`}
                       className="font-semibold text-violet-600 hover:text-violet-700 hover:underline dark:text-violet-400"
                     >
                       Masuk

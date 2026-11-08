@@ -37,6 +37,34 @@ export function buildJoinGrant(
   };
 }
 
+/**
+ * Grant untuk identitas layar native (lib/jumpa/screen-identity.ts):
+ * hanya SCREEN_SHARE, tanpa subscribe, tanpa data, tanpa ubah metadata.
+ */
+export function buildScreenShareGrant(roomName: string): VideoGrant {
+  return {
+    roomJoin: true,
+    room: roomName,
+    canSubscribe: false,
+    canPublish: true,
+    canPublishSources: [TrackSource.SCREEN_SHARE],
+    canPublishData: false,
+    canUpdateOwnMetadata: false,
+    roomAdmin: false,
+    roomCreate: false,
+    roomRecord: false,
+    roomList: false,
+    hidden: false,
+    recorder: false,
+  };
+}
+
+export interface JumpaScreenMetadata {
+  v: 1;
+  kind: "screen";
+  owner: string;
+}
+
 export interface JumpaParticipantMetadata {
   v: 1;
   bcRole: "GURU" | "MURID" | "UMUM";
@@ -49,7 +77,7 @@ export async function mintJoinToken(params: {
   apiSecret: string;
   identity: string;
   name: string;
-  metadata: JumpaParticipantMetadata;
+  metadata: JumpaParticipantMetadata | JumpaScreenMetadata;
   grant: VideoGrant;
   ttlSec?: number;
 }): Promise<string> {

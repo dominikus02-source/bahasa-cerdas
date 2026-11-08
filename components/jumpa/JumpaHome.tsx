@@ -90,14 +90,6 @@ export default function JumpaHome({ data, displayName, dashboardHref }: { data: 
         <Link href="/jumpa/riwayat" className="ui-btn ui-btn--ghost"><History size={18} /> Riwayat</Link>
         {data.effective === "GURU" && <><Link href="/guru/kelasku" className="ui-btn ui-btn--ghost"><GraduationCap size={18} /> KelasKu</Link><Link href="/jumpa/jadwal" className="ui-btn ui-btn--ghost"><CalendarPlus size={18} /> Jadwal kelas</Link></>}
       </div>
-      <section aria-labelledby="jumpa-rules" className="border-t border-bc-line pt-4">
-        <h2 id="jumpa-rules" className="text-sm font-semibold">Saat di ruang</h2>
-        <ul className="mt-2 space-y-2 text-sm text-bc-text-2">
-          <li>Kamu mengatur kamera dan mikrofon sendiri.</li>
-          <li>Pemandu dapat membisukan, mengeluarkan peserta, atau mengunci ruang.</li>
-          <li>Rekaman belum tersedia.</li>
-        </ul>
-      </section>
     </main>
   );
 }

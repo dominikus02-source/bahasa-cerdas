@@ -9,7 +9,7 @@ export default function LogoutButton({
   variant = "link",
   to = "/arena/login",
 }: {
-  variant?: "link" | "icon" | "row";
+  variant?: "link" | "icon" | "row" | "settings";
   /** Tujuan setelah signOut — default Arena; shell Guru memakai /login. */
   to?: string;
 }) {
@@ -35,6 +35,21 @@ export default function LogoutButton({
         <span className="flex items-center gap-2 text-sm font-bold text-[var(--px-text)]">
           <LogOut size={15} className="text-rose-300" /> {loading ? "Keluar..." : "Keluar"}
         </span>
+      </button>
+    )
+  }
+
+  if (variant === "settings") {
+    return (
+      <button
+        type="button"
+        onClick={handleLogout}
+        disabled={loading}
+        data-logout-settings
+        className="flex min-h-11 w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm font-semibold text-slate-700 transition hover:bg-blue-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-60 dark:text-slate-200 dark:hover:bg-blue-950/50"
+      >
+        <LogOut size={17} aria-hidden="true" />
+        {loading ? "Keluar..." : "Keluar dari akun"}
       </button>
     )
   }

@@ -1,0 +1,92 @@
+name: Android Mobile QA
+
+on:
+  push:
+    paths:
+      - 'mobile/**'
+      - 'scripts/audit-mobile-routes.cjs'
+      - 'scripts/ci/android-emulator-smoke.sh'
+      - '.github/workflows/android-qa.yml'
+  pull_request:
+    paths:
+      - 'mobile/**'
+      - 'scripts/audit-mobile-routes.cjs'
+      - 'scripts/ci/android-emulator-smoke.sh'
+      - '.github/workflows/android-qa.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-qa-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  flutter-and-route-audit:
+    name: Flutter, route inventory, debug APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.6'
+          channel: stable
+          cache: true
+      - name: Resolve Flutter dependencies
+        working-directory: mobile
+        run: flutter pub get
+      - name: Static route audit (no network or user credentials)
+        run: node scripts/audit-mobile-routes.cjs
+      - name: Analyze Flutter
+        working-directory: mobile
+        run: flutter analyze
+      - name: Test Flutter
+        working-directory: mobile
+        run: flutter test
+      - name: Compile debug APK
+        working-directory: mobile
+        run: flutter build apk --debug --no-pub
+      - name: Upload debug APK (QA only, not release-signed)
+        uses: actions/upload-artifact@v4
+        with:
+          name: bahasacerdas-debug-apk-${{ github.sha }}
+          path: mobile/build/app/outputs/flutter-apk/app-debug.apk
+          retention-days: 14
+          if-no-files-found: error
+
+  emulator-smoke:
+    name: Emulator smoke (install, launch, deep link, crash log)
+    needs: flutter-and-route-audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: bahasacerdas-debug-apk-${{ github.sha }}
+          path: apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Run emulator smoke (API 34, x86_64)
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: OUT=emulator-smoke bash scripts/ci/android-emulator-smoke.sh apk/app-debug.apk
+      - name: Upload emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-smoke-${{ github.sha }}
+          path: emulator-smoke
+          retention-days: 14

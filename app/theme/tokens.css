@@ -12,6 +12,10 @@
 
 /* ── 1. Warna dasar (nilai identik dengan sebelumnya) ─────────────── */
 :root {
+  /* Malam shell Guru & login (nilai lama yang dulu ditulis mentah di komponen). */
+  --bc-guru-header-night: #08182b;
+  --bc-login-night-via: #0b1220;
+  --bc-login-night-to: #1e1b4b;
   --clr-bg: #f4f5f7;
   --clr-surface: #ffffff;
   --clr-surface-2: #f8f9fb;

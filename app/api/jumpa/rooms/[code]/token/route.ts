@@ -18,11 +18,12 @@ import { db } from "@/lib/db";
 import { rateLimitRoute } from "@/lib/rate-limit";
 import { INVITE_TOKEN_RE, isValidRoomCode } from "@/lib/jumpa/code";
 import { getLivekitPublicWsUrl, getLivekitServerConfig } from "@/lib/jumpa/config";
-import { countActiveOthers, ensureLivekitRoom } from "@/lib/jumpa/livekit";
+import { countActiveOthers, ensureLivekitRoom, listLivekitIdentities } from "@/lib/jumpa/livekit";
 import { publishSourcesFor } from "@/lib/jumpa/permissions";
 import { loadRoomContext, recordJoinDenied, recordJoinGranted } from "@/lib/jumpa/service";
 import { notifyRoomLive } from "@/lib/jumpa/notify-server";
-import { buildJoinGrant, mintJoinToken } from "@/lib/jumpa/token";
+import { buildJoinGrant, buildScreenShareGrant, mintJoinToken } from "@/lib/jumpa/token";
+import { SCREEN_TOKEN_TTL_SEC, screenIdentityFor } from "@/lib/jumpa/screen-identity";
 import { tierView } from "@/lib/jumpa/tiers";
 import { jumpaDisabledResponse, jumpaError, jumpaJson } from "@/lib/jumpa/http";
 
@@ -56,7 +57,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
   const { code } = await params;
   if (!isValidRoomCode(code)) return jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan.");
 
-  const body = (await request.json().catch(() => null)) as { invite?: unknown } | null;
+  const body = (await request.json().catch(() => null)) as { invite?: unknown; mode?: unknown } | null;
   const linkToken = typeof body?.invite === "string" && INVITE_TOKEN_RE.test(body.invite) ? body.invite : null;
 
   const config = getLivekitServerConfig();
@@ -64,6 +65,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
     console.error("JUMPA_LIVEKIT_NOT_CONFIGURED");
     return jumpaError(503, "MEDIA_NOT_CONFIGURED", "Server video belum dikonfigurasi.");
   }
+
+  // Berbagi layar native Android: token terpisah untuk identitas layar saja.
+  if (body?.mode === "screen") return screenShareToken(code, user, linkToken, config);
 
   try {
     const base = await db.jumpaRoom.findUnique({ where: { code }, select: { livekitRoomName: true } });
@@ -134,5 +138,59 @@ export async function POST(request: Request, { params }: { params: Promise<{ cod
       return jumpaError(503, "MEDIA_UNAVAILABLE", "Layanan video sedang bermasalah. Kapasitas ruang belum dapat dipastikan. Coba lagi sebentar.");
     }
     return jumpaError(503, "STORAGE_UNAVAILABLE", "JUMPA belum tersedia saat ini. Coba lagi sebentar.");
+  }
+}
+
+/**
+ * Token identitas layar (`screen:<userId>`) untuk aplikasi Android.
+ * Syarat: lolos keputusan join yang sama (tidak dilonggarkan), konteks ruang
+ * mengizinkan pemilik berbagi layar, pemilik SEDANG tersambung, dan kapasitas
+ * LiveKit masih cukup (identitas layar memakan satu slot). Tidak mencatat
+ * kehadiran. Grant: hanya SCREEN_SHARE, tanpa subscribe/data, TTL 60 detik.
+ */
+async function screenShareToken(
+  code: string,
+  user: NonNullable<Awaited<ReturnType<typeof getUser>>>,
+  linkToken: string | null,
+  config: NonNullable<ReturnType<typeof getLivekitServerConfig>>,
+) {
+  try {
+    const base = await db.jumpaRoom.findUnique({ where: { code }, select: { livekitRoomName: true } });
+    if (!base) return jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan.");
+    const identity = screenIdentityFor(user.id);
+    const connected = await listLivekitIdentities(base.livekitRoomName, config);
+    if (!connected.some((p) => p.identity === user.id)) {
+      return jumpaError(409, "NOT_CONNECTED", "Masuk ke ruang dulu sebelum membagikan layar.");
+    }
+    const activeOthers = connected.filter((p) => p.identity !== identity).length;
+    const ctx = await loadRoomContext(code, user, activeOthers, new Date(), linkToken);
+    if (!ctx) return jumpaError(404, "NOT_FOUND", "Ruang tidak ditemukan.");
+    if (!ctx.decision.ok) {
+      return jumpaError(DENY_STATUS[ctx.decision.code] ?? 403, ctx.decision.code, ctx.decision.message);
+    }
+    const { roomRole, effective } = ctx.decision;
+    const sources = publishSourcesFor(roomRole, effective, { kind: ctx.room.kind, allowMuridScreenShare: ctx.room.allowMuridScreenShare });
+    if (!sources.includes("screen_share")) {
+      return jumpaError(403, "SCREEN_NOT_ALLOWED", "Kamu belum diizinkan membagikan layar di ruang ini.");
+    }
+    // Identitas layar memakai slot LiveKit; jangan melewati batas ruang (termasuk untuk pemandu).
+    if (activeOthers >= ctx.room.maxParticipants) {
+      return jumpaError(409, "ROOM_FULL", "Ruang penuh, layar belum bisa dibagikan.");
+    }
+    const profile = await db.user.findUnique({ where: { id: user.id }, select: { fullName: true, nickname: true } });
+    const token = await mintJoinToken({
+      apiKey: config.apiKey,
+      apiSecret: config.apiSecret,
+      identity,
+      name: `${(profile?.nickname || profile?.fullName || "Pengguna BC").slice(0, 48)} (layar)`,
+      metadata: { v: 1, kind: "screen", owner: user.id },
+      grant: buildScreenShareGrant(ctx.room.livekitRoomName),
+      ttlSec: SCREEN_TOKEN_TTL_SEC,
+    });
+    return jumpaJson({ token, serverUrl: getLivekitPublicWsUrl(), identity, expiresInSec: SCREEN_TOKEN_TTL_SEC });
+  } catch (error) {
+    const reason = error instanceof Error ? error.message : String(error);
+    console.error("JUMPA_SCREEN_TOKEN_FAILED", { error: reason });
+    return jumpaError(503, "MEDIA_UNAVAILABLE", "Berbagi layar belum tersedia. Coba lagi sebentar.");
   }
 }
