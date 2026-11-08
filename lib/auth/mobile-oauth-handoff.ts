@@ -37,10 +37,10 @@ export function mobileOAuthHandoff(params: {
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Kembali ke BahasaCerdas</title>
 <style nonce="${nonce}">
-body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,sans-serif;background:#f8f7fc;color:#1e1b4b}
-main{width:min(92vw,400px);box-sizing:border-box;padding:32px;text-align:center;background:white;border-radius:24px;box-shadow:0 12px 35px #7c3aed16}
-h1{font-size:24px;margin:0 0 12px}p{color:#64748b;line-height:1.55;margin:0 0 24px}
-a{display:block;padding:16px;background:#7c3aed;color:white;border-radius:14px;text-decoration:none;font-weight:700}
+body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,sans-serif;background:var(--clr-bg,ghostwhite);color:var(--clr-text,midnightblue)}
+main{width:min(92vw,400px);box-sizing:border-box;padding:32px;text-align:center;background:var(--clr-surface,white);border-radius:24px;box-shadow:0 12px 35px thistle}
+h1{font-size:24px;margin:0 0 12px}p{color:var(--clr-text-2,slategray);line-height:1.55;margin:0 0 24px}
+a{display:block;padding:16px;background:var(--clr-violet,blueviolet);color:white;border-radius:14px;text-decoration:none;font-weight:700}
 </style></head><body>
 <main><h1>Kembali ke BahasaCerdas</h1>
 <p>Autentikasi Google telah diproses. Buka aplikasi untuk menyelesaikan masuk secara aman.</p>
