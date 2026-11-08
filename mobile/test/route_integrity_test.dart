@@ -27,4 +27,14 @@ void main() {
     expect(script, contains('background:rgba(255,255,255,.96)'));
     expect(script, contains('background:rgba(15,23,42,.94)'));
   });
+
+  test('Legacy WebView injection is skipped when the site ships source styles', () {
+    const script = MobilePremiumStyle.javascript;
+    final gate = script.indexOf("getAttribute('data-bc-native-styles') === '1') return;");
+    expect(gate, greaterThan(0));
+    // The gate must run before any DOM mutation (class, style, observers).
+    expect(gate, lessThan(script.indexOf("classList.add('bc-android-app')")));
+    expect(gate, lessThan(script.indexOf('MutationObserver')));
+    expect(gate, lessThan(script.indexOf('createElement')));
+  });
 }

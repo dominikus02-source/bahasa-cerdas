@@ -1,0 +1,56 @@
+/*
+ * Aplikasi Android BahasaCerdas (WebView). Semua aturan di-scope ke
+ * html.bc-android-app, yang dipasang skrip boot di app/layout.tsx HANYA bila
+ * jembatan native `BahasaCerdasMobile` ada. Peramban web biasa tidak terpengaruh.
+ * Pengganti permanen untuk injeksi CSS/DOM lama di
+ * mobile/lib/core/constants/mobile_premium_style.dart (lihat peta di
+ * docs/android-webview-style-migration.md).
+ */
+
+/* Spanduk "Pasang aplikasi" tidak relevan di dalam aplikasi. */
+html.bc-android-app [role="region"][aria-label="Pasang aplikasi"] { display: none !important; }
+
+/* Umpan balik sentuh & fokus yang konsisten. */
+html.bc-android-app button:not([role="switch"]),
+html.bc-android-app a[role="button"] {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .16s ease, box-shadow .16s ease;
+}
+html.bc-android-app button:enabled:active,
+html.bc-android-app a[role="button"]:active { transform: scale(.98); }
+html.bc-android-app button:focus-visible,
+html.bc-android-app a:focus-visible { outline: 3px solid var(--clr-focus); outline-offset: 2px; }
+
+/* Login aplikasi: satu kartu ringkas tanpa hero promosi; muat tanpa gulir. */
+html.bc-android-app [data-bc-login="hero"],
+html.bc-android-app [data-bc-login="back"],
+html.bc-android-app [data-bc-login="extras"] { display: none !important; }
+html.bc-android-app [data-bc-login="brand"] { display: flex !important; }
+html.bc-android-app [data-bc-login="root"] {
+  min-height: 100dvh;
+  padding: max(10px, env(safe-area-inset-top)) 14px max(10px, env(safe-area-inset-bottom));
+}
+html.bc-android-app [data-bc-login="grid"] { display: block; max-width: 440px; gap: 0; }
+html.bc-android-app [data-bc-login="panel"] {
+  padding: 12px 14px; border: 0; box-shadow: none; border-radius: 24px;
+}
+html.bc-android-app [data-bc-login="panel"] h2 { font-size: 20px; line-height: 1.2; }
+html.bc-android-app [data-bc-login="panel"] form > * + * { margin-top: 8px; }
+html.bc-android-app [data-bc-login="panel"] input { min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+html.bc-android-app [data-bc-login="panel"] button { min-height: 44px; }
+
+/* JUMPA: aturan ruang panjang tidak tampil di aplikasi (tetap di web). */
+html.bc-android-app .jumpa-home section[aria-labelledby="jumpa-rules"] { display: none !important; }
+
+/* JUMPA Picture-in-Picture: kelas bc-android-pip dipasang jembatan native. */
+html.bc-android-pip .jumpa-header,
+html.bc-android-pip .jumpa-dock-wrap,
+html.bc-android-pip .jumpa-strip,
+html.bc-android-pip .jumpa-status { display: none !important; }
+html.bc-android-pip .jumpa-tile[data-screen="true"] video { object-fit: contain !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  html.bc-android-app button,
+  html.bc-android-app a[role="button"] { transition: none !important; }
+}

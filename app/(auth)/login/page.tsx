@@ -188,7 +188,7 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
+    <div data-bc-login="root" className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-indigo-50/60 to-violet-50 px-4 py-8 dark:from-slate-950 dark:via-[#0b1220] dark:to-[#1e1b4b]">
       {isArenaEntry && <SwRegister />}
       {/* Dekorasi edukatif ringan — tidak mengganggu form */}
       <div aria-hidden className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-violet-200/40 blur-3xl dark:bg-violet-900/20" />
@@ -197,7 +197,7 @@ export default function LoginPage() {
       <BatikAccent />
 
             {/* Tautan kembali hanya di web umum; tautan keluar scope membuka browser eksternal di APK. */}
-      {!isArenaEntry && <div className="relative mx-auto mb-6 flex w-full max-w-6xl">
+      {!isArenaEntry && <div data-bc-login="back" className="relative mx-auto mb-6 flex w-full max-w-6xl">
         <Link
           href="/"
           className="inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white/70 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300 dark:hover:border-violet-700 dark:hover:bg-violet-500/10 dark:hover:text-violet-300"
@@ -211,9 +211,9 @@ export default function LoginPage() {
         </Link>
       </div>}
 
-<div className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+<div data-bc-login="grid" className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
-        <div className="order-2 lg:order-1">
+        <div data-bc-login="hero" className="order-2 lg:order-1">
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />
             <Image src={BRAND_ICON} alt="Logo BahasaCerdas" width={72} height={72} className="hidden h-16 w-16 object-contain dark:inline md:h-20 md:w-20" />
@@ -250,9 +250,15 @@ export default function LoginPage() {
         </div>
 
         {/* ── LOGIN CARD ── */}
-        <div className="order-1 lg:order-2">
-          <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
+        <div data-bc-login="card" className="order-1 lg:order-2">
+          <div data-bc-login="panel" className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
             <div className="mb-6 text-center">
+              {/* Merek ringkas: hanya tampil di aplikasi Android (html.bc-android-app). */}
+              <div data-bc-login="brand" className="mb-3 hidden items-center justify-center gap-2.5">
+                <Image src={BRAND_ICON_DARK} alt="" width={48} height={48} className="h-12 w-12 object-contain dark:hidden" />
+                <Image src={BRAND_ICON} alt="" width={48} height={48} className="hidden h-12 w-12 object-contain dark:inline" />
+                <span className="text-lg font-extrabold tracking-tight text-bc-violet">BahasaCerdas</span>
+              </div>
               <h2 className="text-2xl font-extrabold text-slate-900 dark:text-white">Selamat datang kembali!</h2>
               <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
                 Masuk ke BahasaCerdas untuk melanjutkan perjalanan belajar dan mengajar Anda.
@@ -405,7 +411,7 @@ export default function LoginPage() {
           </div>
 
           {/* Mobile: value cards compact (desktop tampil di kiri) */}
-          <div className="mt-5 grid gap-2 lg:hidden">
+          <div data-bc-login="extras" className="mt-5 grid gap-2 lg:hidden">
             {valueCards.map((v) => (
               <div key={v.title} className="flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 px-3 py-2.5 dark:border-slate-800 dark:bg-slate-900/50">
                 <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${v.tint}`}>

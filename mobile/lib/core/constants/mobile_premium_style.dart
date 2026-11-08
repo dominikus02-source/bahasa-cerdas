@@ -1,3 +1,6 @@
+/// TRANSISIONAL: fallback untuk situs live lama yang belum memuat
+/// app/android-app.css. Dilewati otomatis bila situs menandai
+/// data-bc-native-styles="1"; hapus setelah rilis web terverifikasi.
 /// Presentation-only improvements inside the trusted BahasaCerdas Android WebView.
 /// Never changes authentication, cookies, permission checks, or website data.
 class MobilePremiumStyle {
@@ -6,6 +9,9 @@ class MobilePremiumStyle {
   const host = location.hostname.toLowerCase();
   if (host !== 'bahasacerdas.com' && !host.endsWith('.bahasacerdas.com')) return;
   const html = document.documentElement;
+  // Situs yang sudah memuat gaya aplikasi dari source (app/android-app.css)
+  // menandai <html data-bc-native-styles="1">: jangan injeksi CSS/DOM lama.
+  if (html.getAttribute('data-bc-native-styles') === '1') return;
   html.classList.add('bc-android-app');
   const isLogin = /^\/(?:login|arena\/login)\/?$/.test(location.pathname);
   html.classList.toggle('bc-android-login', isLogin);

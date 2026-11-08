@@ -372,6 +372,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         Uri.tryParse(url)?.path == '/murid/beranda') {
       await _controller.runJavaScript(r"""
 (() => {
+  if (document.documentElement.getAttribute('data-bc-native-styles') === '1') return;
   if (document.querySelector('a[aria-label="Kembali ke dasbor guru"],#bc-app-back-to-guru')) return;
   const main = document.querySelector('main');
   if (!main) return;

@@ -11,8 +11,9 @@ check("label peran tepat GURU/UMUM/MURID/FOUNDER", JSON.stringify([...labels].so
 check("tidak ada kata 'Dasbor' pada switcher", !/Dasbor/.test(sw));
 check("menu switcher tidak melewati lebar layar 360px", sw.includes("max-w-[calc(100vw-2rem)]"));
 
-const guru = src("app/(dashboard)/guru/layout.tsx");
-const header = guru.slice(guru.indexOf("header={"), guru.indexOf("bottomNav="));
+// Header Guru dipisah ke components/shell/GuruHeader.tsx (dirender fixture QA).
+const guru = src("app/(dashboard)/guru/layout.tsx") + src("components/shell/GuruHeader.tsx");
+const header = src("components/shell/GuruHeader.tsx");
 check("navbar Guru tidak lagi memuat tombol Keluar", !/LogoutButton/.test(header));
 check("founder: profil & NARA di navbar hanya di layar lebar; akun reguler tidak berubah", header.includes('user.isFounder ? "hidden lg:flex" : "flex"') && header.includes('<div className="hidden lg:flex"><NaraHeaderLink /></div>'));
 check("Profil tetap di bottom nav mobile Guru", src("components/dashboard/GuruNav.tsx").includes('{ label: "Profil", href: "/guru/profile"'));

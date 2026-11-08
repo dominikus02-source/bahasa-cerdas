@@ -183,7 +183,11 @@ function NavLinks({
   pathname: string;
   onNavigate?: () => void;
 }) {
-  const [open, setOpen] = useState(true);
+  // Drawer seluler: grup dimulai tertutup kecuali berisi halaman aktif
+  // (pengganti skrip WebView Android yang dulu menutup grup via DOM).
+  const [open, setOpen] = useState(() =>
+    !onNavigate || (group.links?.some((l) => isActive(pathname, l.href, l.activeOn)) ?? false),
+  );
 
   // Grup destination tunggal → link langsung, tanpa accordion.
   if (group.href) {
@@ -215,6 +219,7 @@ function NavLinks({
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={group.label}
+        aria-expanded={open}
         title={group.label}
         className={`${NAV_LINK_BASE} ${NAV_LINK_INACTIVE} ${active && open ? "text-blue-700 dark:text-blue-300" : ""}`}
       >
@@ -327,7 +332,7 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
       {drawer && (
         <div className="fixed inset-0 z-50 md:hidden">
           <button type="button" aria-label="Tutup menu guru" className="absolute inset-0 bg-black/45" onClick={() => setDrawer(false)} />
-          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[88%] max-w-sm flex-col bg-white shadow-2xl dark:bg-slate-900">
+          <div id="guru-mobile-menu" role="dialog" aria-modal="true" aria-label="Menu Guru" className="absolute inset-y-0 left-0 flex w-[82%] max-w-[300px] flex-col bg-white shadow-2xl dark:bg-slate-900">
             <div className="p-5 border-b border-gray-100 dark:border-slate-800 bg-gradient-to-r from-blue-700 to-blue-600 flex items-center justify-between">
               <div>
                 <p className="font-bold text-white text-sm">Menu Guru</p>
@@ -336,7 +341,8 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
               <button
                 type="button"
                 onClick={() => setDrawer(false)}
-                className="w-8 h-8 rounded-lg bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
+                aria-label="Tutup menu"
+                className="w-11 h-11 rounded-lg bg-white/20 dark:bg-slate-900/20 flex items-center justify-center text-white"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -344,20 +350,6 @@ export function GuruMobileNav({ role, isFounder }: { role: string; isFounder: bo
             <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pb-[env(safe-area-inset-bottom)]">
               <GuruNavList isFounder={isFounder} onNavigate={() => setDrawer(false)} />
               <RoleSections role={role} isFounder={isFounder} />
-            </div>
-            <div className="p-3 border-t border-gray-100 dark:border-slate-800 bg-gray-50/50 dark:bg-slate-800/50 flex items-center justify-between gap-2">
-              <Link
-                href="/guru/beranda"
-                className="text-[10px] text-gray-400 font-medium"
-              >
-                Guru Navigation V2
-              </Link>
-              <Link
-                href="/guru/ai-tools"
-                className="text-[10px] text-blue-600 dark:text-blue-300 font-semibold"
-              >
-                Buka Alat NARA
-              </Link>
             </div>
           </div>
         </div>

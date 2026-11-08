@@ -1,6 +1,12 @@
 import type { NextConfig } from "next";
 
+// Fixture QA visual lokal (app/qa-fixture/*.qa.tsx) hanya dikenali sebagai
+// halaman bila BC_QA_FIXTURE=1 di luar produksi; build produksi mengabaikannya.
+const qaFixture = process.env.BC_QA_FIXTURE === "1" && process.env.NODE_ENV !== "production";
+
 const nextConfig: NextConfig = {
+  ...(qaFixture ? { devIndicators: false as const } : {}),
+  pageExtensions: qaFixture ? ["tsx", "ts", "jsx", "js", "qa.tsx"] : ["tsx", "ts", "jsx", "js"],
   // Production VPS containers use Next.js standalone output. Vercel ignores
   // this packaging detail, so the migration can be tested before cutover.
   output: "standalone",

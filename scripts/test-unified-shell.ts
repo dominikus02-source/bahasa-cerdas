@@ -80,7 +80,7 @@ function main() {
 
   // ── 3. GURU ──
   console.log("\n── 3. Guru memakai Unified Shell ──");
-  const guruLayout = read("app/(dashboard)/guru/layout.tsx");
+  const guruLayout = read("app/(dashboard)/guru/layout.tsx") + read("components/shell/GuruHeader.tsx");
   test("guru layout memakai ShellLayout",
     () => guruLayout.includes("ShellLayout"));
   test("guru sidebar = GuruNavList kanonik (tanpa sidebar baru)",
