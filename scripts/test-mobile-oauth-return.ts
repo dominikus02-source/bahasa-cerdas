@@ -66,6 +66,11 @@ const deeplink = async (r: Response) => {
   check("register: spinner Google direset setelah browser dibuka", src("app/(auth)/register/page.tsx").includes("bridge.postMessage(data.url);\n          // Browser sistem"));
   check("login & register memakai pemetaan pesan error aman", src("app/(auth)/login/page.tsx").includes("authErrorMessage(authError)") && src("app/(auth)/register/page.tsx").includes("authErrorMessage("));
   check("middleware does not override handoff CSP on /auth/callback", mw.includes('pathname === "/auth/callback"') && mw.includes("androidOAuthHandoff"));
+  {
+    const { authErrorMessage: m } = await import("../lib/auth/auth-error-message");
+    check("state OAuth kedaluwarsa → pesan Indonesia tetap", m("google_expired") === "Sesi masuk Google kedaluwarsa. Silakan coba lagi.");
+    check("GoTrue bad_oauth_state di / → /login?error=google_expired (target tetap)", mw.includes('searchParams.get("error_code") === "bad_oauth_state"') && mw.includes('new URL("/login?error=google_expired", request.url)'));
+  }
   console.log(`RESULT ${passed} passed, ${failed} failed`);
   if (failed) process.exit(1);
 })();

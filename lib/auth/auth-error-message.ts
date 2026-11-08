@@ -7,6 +7,7 @@ const MESSAGES: Record<string, string> = {
   auth: "Masuk dengan Google gagal atau sesinya kedaluwarsa. Silakan coba lagi.",
   google_cancelled: "Masuk dengan Google dibatalkan.",
   google_failed: "Masuk dengan Google gagal. Periksa koneksi lalu coba lagi.",
+  google_expired: "Sesi masuk Google kedaluwarsa. Silakan coba lagi.",
   exchange_failed: "Tautan sudah kedaluwarsa atau pernah dipakai. Silakan coba lagi.",
 };
 

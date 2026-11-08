@@ -35,3 +35,16 @@ export function screenOwnerOf(identity: string | null | undefined): string | nul
 export function screenIdentityOrNull(userId: string | null | undefined): string | null {
   return typeof userId === "string" && OWNER_RE.test(userId) ? `${SCREEN_IDENTITY_PREFIX}${userId}` : null;
 }
+
+/**
+ * Identitas layar yang baru tersambung harus diputus bila pemiliknya sudah
+ * tidak tersambung atau sudah dikeluarkan (token 60 dtk bisa dicetak sesaat
+ * sebelum pemilik keluar/di-kick — balapan ini ditutup oleh webhook).
+ */
+export function shouldEvictScreen(input: {
+  ownerConnected: boolean;
+  ownerRemoved: boolean;
+  ownerKnown: boolean;
+}): boolean {
+  return !input.ownerKnown || input.ownerRemoved || !input.ownerConnected;
+}

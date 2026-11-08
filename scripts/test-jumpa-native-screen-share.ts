@@ -1,7 +1,7 @@
 /* Regression: berbagi layar native Android JUMPA (identitas layar terpisah). */
 import { readFileSync } from "node:fs";
 import { buildScreenShareGrant, buildJoinGrant, mintJoinToken } from "../lib/jumpa/token";
-import { isScreenIdentity, screenIdentityFor, screenIdentityOrNull, screenOwnerOf, SCREEN_TOKEN_TTL_SEC } from "../lib/jumpa/screen-identity";
+import { isScreenIdentity, screenIdentityFor, screenIdentityOrNull, screenOwnerOf, shouldEvictScreen, SCREEN_TOKEN_TTL_SEC } from "../lib/jumpa/screen-identity";
 import { buildNativeStartMessage, NATIVE_STOP_MESSAGE, nativeScreenMessage, parseNativeScreenEvent } from "../components/jumpa/native-screen-share";
 
 let passed = 0, failed = 0;
@@ -13,6 +13,10 @@ const src = (p: string) => readFileSync(p, "utf8");
   check("identitas layar = screen:<userId>", screenIdentityFor("u_1-A") === "screen:u_1-A");
   check("pemilik dari identitas layar", screenOwnerOf("screen:u_1") === "u_1" && screenOwnerOf("u_1") === null);
   check("identitas tak sah ditolak", screenOwnerOf("screen:a:b") === null && screenIdentityOrNull("a b") === null);
+  check("layar yatim: pemilik terputus → diputus", shouldEvictScreen({ ownerKnown: true, ownerRemoved: false, ownerConnected: false }));
+  check("layar yatim: pemilik di-kick → diputus", shouldEvictScreen({ ownerKnown: true, ownerRemoved: true, ownerConnected: true }));
+  check("layar yatim: pemilik tak dikenal → diputus", shouldEvictScreen({ ownerKnown: false, ownerRemoved: false, ownerConnected: true }));
+  check("layar sah: pemilik tersambung & aktif → dipertahankan", !shouldEvictScreen({ ownerKnown: true, ownerRemoved: false, ownerConnected: true }));
   let threw = false; try { screenIdentityFor("screen:x"); } catch { threw = true; }
   check("tidak bisa membuat identitas layar bertingkat", threw);
   check("userId biasa bukan identitas layar", !isScreenIdentity("8f14e45f-ceea-467f-a0e6-1b2c3d4e5f60"));
@@ -49,7 +53,7 @@ const src = (p: string) => readFileSync(p, "utf8");
   check("REMOVE memutus identitas layar", actions.includes("await disconnectScreenIdentity(lk, screenIdentityFor(target!.userId));") && actions.includes("await removeLivekitParticipant(roomName, screenIdentity)"));
   check("DISALLOW murid memutus layar murid & tak menaikkan izin identitas layar", actions.includes("if (isScreenIdentity(p.identity)) continue;") && actions.includes("muridOwners.has(owner)"));
   const bg = src("lib/jumpa/background.ts");
-  check("webhook: identitas layar bukan kehadiran", bg.includes("if (isScreenIdentity(evt.identity)) return \"ok\";"));
+  check("webhook: identitas layar bukan kehadiran", /if \(isScreenIdentity\(evt\.identity\)\) \{[\s\S]{0,200}?return "ok";/.test(bg) && bg.includes("evictOrphanScreen(room, evt.identity)"));
   check("webhook: pemilik keluar → layar diputus", bg.includes("screenIdentityOrNull(evt.identity)") && bg.includes("removeLivekitParticipant(room.livekitRoomName, ownedScreen)"));
 
   // UI
