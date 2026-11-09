@@ -92,6 +92,9 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    /* URL/kata panjang patah di tepi baris alih-alih melebarkan halaman
+       (break-word tidak mengubah ukuran min-content tata letak flex/grid). */
+    overflow-wrap: break-word;
   }
 
   ::selection {
