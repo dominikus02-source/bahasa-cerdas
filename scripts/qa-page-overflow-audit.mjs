@@ -230,4 +230,5 @@ results.sort((a, b) => a.route.localeCompare(b.route));
 writeFileSync(`${OUT}/results.json`, JSON.stringify(results, null, 2));
 const n = (s) => results.filter((r) => r.status === s).length;
 console.log(`\n${results.length} rute: ${n("PASS")} PASS, ${n("FAIL")} FAIL, ${n("NOT_RENDERABLE")} NOT_RENDERABLE`);
-process.exit(n("FAIL") ? 1 : 0);
+// AUDIT_REQUIRE_RENDER=1 (CI): rute yang diminta wajib bisa dirender.
+process.exit(n("FAIL") || (process.env.AUDIT_REQUIRE_RENDER && n("NOT_RENDERABLE")) ? 1 : 0);
