@@ -37,6 +37,8 @@ jobs:
         run: QA_OUT=qa-output/android-visual node scripts/qa-android-visual.mjs
       - name: Behavioral checks (Guru return, drawer, font 130%, keyboard)
         run: QA_OUT=qa-output/android-visual/behavior node scripts/qa-android-behavior.mjs
+      - name: Arena shared brand header regression
+        run: QA_OUT=qa-output/android-visual/arena node scripts/qa-arena-brand.mjs
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

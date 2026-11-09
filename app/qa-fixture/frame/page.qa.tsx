@@ -7,6 +7,7 @@
  */
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { ArenaHeader } from "@/components/arena/ArenaHeader";
 import { GuruHeader } from "@/components/shell/GuruHeader";
 import { GuruMobileNav } from "@/components/dashboard/GuruNav";
 import { ShellLayout } from "@/components/shell/ShellLayout";
@@ -78,6 +79,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         </QaPathname>
       </>
     );
+  }
+  if (view === "arena") {
+    return <>{controls}<QaPathname pathname={path ?? "/arena"}><ShellLayout
+      header={<ArenaHeader fullName="QA Murid Palsu" avatar={null} homeHref="/murid/beranda" />}
+      mainClassName="p-3"><QaContent label="Arena (header asli)" /></ShellLayout></QaPathname></>;
   }
   if (view === "login") {
     return (
