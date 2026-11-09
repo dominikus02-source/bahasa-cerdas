@@ -72,7 +72,12 @@ async function measure(page, vw) {
     const root = document.querySelector("[data-qa-page]") || document.querySelector("main") || document.body;
     const header = [...document.querySelectorAll("header")].find((h) => !root.contains(h) && /(fixed|sticky)/.test(getComputedStyle(h).position) && h.getBoundingClientRect().height > 0);
     let headerOverlap = false;
-    const first = [...root.querySelectorAll("*")].find((e) => { const r = e.getBoundingClientRect(); return r.height > 0 && r.width > 0 && !hidden(e); });
+    // Elemen konten pertama (teks/kontrol), bukan dekorasi aria-hidden/absolut.
+    const first = [...root.querySelectorAll("*")].find((e) => {
+      const r = e.getBoundingClientRect(); if (!(r.height > 0 && r.width > 0) || hidden(e) || e.closest("[aria-hidden='true']")) return false;
+      const own = [...e.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) || /^(A|BUTTON|INPUT|SELECT|TEXTAREA|IMG)$/.test(e.tagName);
+      return own && getComputedStyle(e).visibility !== "hidden";
+    });
     if (header && first && scrollY === 0) {
       const fixedAnc = (e) => { for (let a = e; a && a !== root.parentElement; a = a.parentElement) if (getComputedStyle(a).position === "fixed") return true; return false; };
       if (!fixedAnc(first)) headerOverlap = first.getBoundingClientRect().top < header.getBoundingClientRect().bottom - 1;
@@ -162,7 +167,9 @@ async function auditRoute({ route, file }) {
   const attempts = [];
   // 1) URL asli (tanpa sesi)
   attempts.push({ kind: "url", url: `${BASE}${concrete}`, expect: concrete });
-  // 2) fixture (halaman klien)
+  // 2) fixture (halaman klien) / fixture khusus untuk halaman server tertentu
+  const SERVER_FIXTURES = { "/jumpa": "/qa-fixture/jumpa" };
+  if (SERVER_FIXTURES[route]) attempts.push({ kind: "fixture", url: `${BASE}${SERVER_FIXTURES[route]}?app=1`, expect: SERVER_FIXTURES[route], mode: "object" });
   if (CLIENT.has(route)) {
     const fx = route.startsWith("/arena") ? `/qa-fixture/arena?route=${encodeURIComponent(route)}&app=1` : `/qa-fixture/frame?view=page&route=${encodeURIComponent(route)}&app=1`;
     const expect = route.startsWith("/arena") ? "/qa-fixture/arena" : "/qa-fixture/frame";
