@@ -39,8 +39,8 @@ export default function AdminLokerPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Kelola Lowongan</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Posting lowongan guru Bahasa Indonesia</p>
         </div>
