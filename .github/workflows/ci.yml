@@ -41,6 +41,8 @@ jobs:
         run: QA_OUT=qa-output/android-visual/arena node scripts/qa-arena-brand.mjs
       - name: Login cold-start session resume (mock verification, real component)
         run: QA_OUT=qa-output/android-visual/login-resume node scripts/qa-login-session-resume.mjs
+      - name: Page overflow audit (Komunitas full matrix + fixed routes, legacy APK CSS)
+        run: QA_OUT=qa-output/android-visual/overflow AUDIT_ROUTES=/guru/komunitas,/guru/bank-soal-tka,/guru/bank-soal-ukbi,/guru/buat-tka,/guru/dokumen-latihan,/guru/game/lobby,/guru/kuis,/guru/olimpiade/info,/guru/tinjau-simulasi,/murid/premium node scripts/qa-page-overflow-audit.mjs
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4

@@ -148,13 +148,13 @@ export function DokumenLatihanView({
             ))}
           </div>
           <div className="flex items-center gap-1 text-xs text-gray-400"><Filter size={13} /> Kelas</div>
-          <select value={kelasFilter} onChange={(e) => setKelasFilter(e.target.value)} className="text-sm border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white">
+          <select value={kelasFilter} onChange={(e) => setKelasFilter(e.target.value)} className="max-w-full min-w-0 text-sm border border-gray-200 rounded-lg px-2.5 py-1.5 bg-white">
             <option value="">Semua Kelas</option>
             {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
           </select>
-          <div className="relative">
+          <div className="relative w-full min-w-0 sm:w-auto">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari murid / paket..." className="text-sm border border-gray-200 rounded-lg pl-8 pr-3 py-1.5 bg-white min-w-48" />
+            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Cari murid / paket..." className="text-sm border border-gray-200 rounded-lg pl-8 pr-3 py-1.5 bg-white w-full sm:w-auto sm:min-w-48" />
           </div>
           <div className="flex gap-1.5 ml-auto">
             <button onClick={() => exportDocs("csv")} className="text-xs px-3 py-1.5 rounded-lg border border-gray-200 hover:bg-gray-50 text-gray-600 font-medium">CSV</button>

@@ -103,7 +103,7 @@ export default function LombaInfoPage() {
             className="w-full h-11 pl-10 pr-4 rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {["all", "OPEN", "UPCOMING", "CLOSED"].map((f) => (
             <button
               key={f}

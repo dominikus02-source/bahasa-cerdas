@@ -46,7 +46,7 @@ export default function GuruGameLobbyPage() {
   }, [roomCode]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-emerald-50 p-4 sm:p-8">
       <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <Link href="/guru/game" className="text-emerald-600 hover:underline text-sm flex items-center gap-1 mb-4">
@@ -140,16 +140,16 @@ export default function GuruGameLobbyPage() {
           </div>
         )}
 
-        <div className="bg-white rounded-2xl border border-gray-100 p-6">
+        <div className="bg-white rounded-2xl border border-gray-100 p-4 sm:p-6">
           <h2 className="font-bold text-gray-900 mb-4">Gabung ke Ruangan</h2>
           <div className="flex gap-3">
             <input
               type="text"
               placeholder="Masukkan kode ruangan"
-              className="flex-1 h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              className="min-w-0 flex-1 h-12 px-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500"
               maxLength={6}
             />
-            <button className="px-6 h-12 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
+            <button className="shrink-0 px-5 h-12 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">
               Gabung
             </button>
           </div>

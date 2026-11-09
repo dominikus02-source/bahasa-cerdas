@@ -18,6 +18,7 @@ import { rankFromLevel } from "@/lib/gamification/ranks";
 import LoginPage from "@/app/(auth)/login/page";
 import { QaControls } from "../QaControls";
 import { QaPathname } from "../QaPathname";
+import { QaClientPage } from "../QaClientPage";
 
 export const dynamic = "force-dynamic";
 
@@ -84,6 +85,24 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
     return <>{controls}<QaPathname pathname={path ?? "/arena"}><ShellLayout
       header={<ArenaHeader fullName="QA Murid Palsu" avatar={null} homeHref="/murid/beranda" />}
       mainClassName="p-3"><QaContent label="Arena (header asli)" /></ShellLayout></QaPathname></>;
+  }
+  // Halaman klien asli dalam shell asli; API dimock oleh skrip audit (tanpa sesi).
+  if (view === "page" && path) {
+    if (path.startsWith("/guru/")) {
+      const user = { fullName: "QA Guru Palsu", avatar: null, email: "qa-guru@example.invalid", isFounder: false, isPremium: false, badgeKind: null, level: 12 };
+      return (<>{controls}<QaPathname pathname={path}><ShellLayout
+        rootClassName="bc-guru-shell ui-app-bg"
+        header={<GuruHeader user={user} rank={rank} />}
+        mainClassName="bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+        bottomNav={<GuruMobileNav role="GURU" isFounder={false} />}
+      ><QaClientPage route={path} /></ShellLayout></QaPathname></>);
+    }
+    if (path.startsWith("/murid/")) {
+      return (<>{controls}<QaPathname pathname={path}>
+        <MuridShellFrame user={{ fullName: "QA Murid Palsu", avatar: null, role: "MURID", isFounder: false, email: "qa-murid@example.invalid" }} rank={rank}>
+          <QaClientPage route={path} />
+        </MuridShellFrame></QaPathname></>);
+    }
   }
   if (view === "login") {
     return (
