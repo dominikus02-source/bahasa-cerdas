@@ -180,18 +180,18 @@ export function TinjauSimulasiView({ hub = false }: { hub?: boolean }) {
 
       {/* Filter */}
       <div className="bg-white rounded-2xl border border-slate-100 p-3 mb-4 flex flex-wrap gap-2 items-center">
-        <select value={filter.kelas} onChange={(e) => update("kelas", e.target.value)} className="text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white">
+        <select value={filter.kelas} onChange={(e) => update("kelas", e.target.value)} className="max-w-full min-w-0 text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white">
           <option value="">Semua Kelas</option>
           {groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
         </select>
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           {(["", "MENULIS", "BERBICARA"] as const).map((f) => (
             <button key={f || "ALL"} onClick={() => update("seksi", f)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filter.seksi === f ? "bg-violet-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"}`}>
               {f === "MENULIS" ? "Menulis" : f === "BERBICARA" ? "Berbicara" : "Semua"}
             </button>
           ))}
         </div>
-        <select value={filter.status} onChange={(e) => update("status", e.target.value)} className="text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white">
+        <select value={filter.status} onChange={(e) => update("status", e.target.value)} className="max-w-full min-w-0 text-sm border border-slate-200 rounded-lg px-2.5 py-1.5 bg-white">
           <option value="">Semua Status</option>
           <option value="MENUNGGU_PENILAIAN_AI">Menunggu Penilaian AI</option>
           <option value="AI_SELESAI_MENILAI">AI Selesai Menilai</option>

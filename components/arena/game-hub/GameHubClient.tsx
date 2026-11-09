@@ -170,7 +170,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
       >
         <div className="pointer-events-none absolute -right-16 -top-20 w-72 h-72 rounded-full opacity-20"
           style={{ background: "radial-gradient(circle, #ffffff, transparent 70%)" }} />
-        <div className="relative grid md:grid-cols-2 gap-4 p-6 sm:p-8 items-center">
+        <div className="relative grid grid-cols-1 md:grid-cols-2 gap-4 p-6 sm:p-8 items-center">
           <div className="min-w-0">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-400 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-amber-950 shadow-sm">
               <Sparkles size={11} /> Game Baru
@@ -224,7 +224,7 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
           <h2 className="text-[13px] font-extrabold uppercase tracking-[1.5px] text-slate-500 dark:text-bc-text-2 mb-3">
             Lanjutkan Permainan
           </h2>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {recentGames.map((g) => (
               <Link
                 key={g.id}

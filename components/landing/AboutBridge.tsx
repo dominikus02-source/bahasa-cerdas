@@ -22,7 +22,7 @@ export default function AboutBridge() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="grid lg:grid-cols-2 items-center gap-10 p-8 lg:p-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-10 p-8 lg:p-12">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
                 <HeartHandshake size={12} className="text-primary" aria-hidden="true" />

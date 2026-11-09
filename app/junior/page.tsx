@@ -312,7 +312,7 @@ export default async function ArenaJuniorPage({
       />
 
       <main className="mx-auto max-w-5xl px-4 py-6">
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="flex flex-col gap-6 lg:order-2">
             <KartuZelby pesan={pesanZelby} karakter={ringkasan.karakterBerikutnya} />
             <MisiHarian selesai={ringkasan.selesaiHariIni} target={ringkasan.targetHarian} />

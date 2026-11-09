@@ -77,11 +77,11 @@ export default function QuizResultsPage() {
 
   return (
     <div className="p-6 max-w-6xl mx-auto">
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex flex-wrap items-center gap-3 mb-6">
         <Link aria-label="Kembali" href={backHref} className="p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
-        <div className="flex-1">
+        <div className="min-w-0 flex-1 basis-40">
           <h1 className="text-2xl font-bold text-slate-900">Hasil Kuis</h1>
           <p className="text-sm text-slate-500">{quiz?.title}</p>
         </div>

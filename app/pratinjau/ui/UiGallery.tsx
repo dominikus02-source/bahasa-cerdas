@@ -59,7 +59,7 @@ export default function UiGallery() {
 
         <Card variant="surface">
           <p className="ui-eyebrow">Aksen audiens</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
             {([["murid", "Murid"], ["guru", "Guru"]] as const).map(([aud, label]) => (
               <div key={aud} data-audience={aud} className="grid min-w-0 gap-3 rounded-bc-md border border-bc-line bg-bc-surface-2 p-3">
                 <div className="flex min-w-0 items-center gap-3">
@@ -97,7 +97,7 @@ export default function UiGallery() {
           </div>
         </Card>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Card variant="surface" interactive tabIndex={0}>
             <div className="flex items-center gap-3">
               <span className="ui-icon-box" aria-hidden="true"><Users size={20} /></span>

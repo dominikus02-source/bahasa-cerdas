@@ -135,7 +135,7 @@ export default function ProgresPage() {
           Hasil tes awal menjadi titik awal. Setiap latihan berikutnya akan menambah bukti sehingga gambaran kemampuanmu makin akurat.
         </p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div className="rounded-2xl bg-white/75 p-4 dark:bg-white/[.05]">
             <BookOpen className="h-4 w-4 text-bc-violet" />
             <p className="mt-2 text-2xl font-black text-slate-950 dark:text-white">{totalAttempts}</p>
@@ -176,7 +176,7 @@ export default function ProgresPage() {
       )}
 
       {withEvidence.length > 0 ? (
-        <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        <section className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/50">
             <div className="mb-5 flex items-center gap-2">
               <BarChart3 size={18} className="text-bc-violet" />

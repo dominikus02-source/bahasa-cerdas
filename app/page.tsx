@@ -195,7 +195,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {artikel.length > 0 ? (
                 artikel.slice(0, 3).map((a: any) => (
                   <Link

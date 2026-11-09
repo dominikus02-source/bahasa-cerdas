@@ -225,7 +225,7 @@ export default async function ExecutiveDashboard() {
       {data.paymentHealth.summary.totalAffected > 0 && <PaymentHealthAlert data={data.paymentHealth} />}
 
       {/* ═══ SECTION 3: 3-Column Founder Intelligence ═══ */}
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Column A: Growth */}
         <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
           <h2 className="font-semibold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2 text-sm"><Activity size={14} className="text-violet-500" /> Growth</h2>
@@ -362,7 +362,7 @@ export default async function ExecutiveDashboard() {
         </h2>
 
         {/* Row 1: User Growth + Engagement + Monetization */}
-        <div className="grid lg:grid-cols-3 gap-5 mb-5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
           {/* User Growth */}
           <div className="space-y-3">
             <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User Growth</h3>
@@ -452,7 +452,7 @@ export default async function ExecutiveDashboard() {
         </div>
 
         {/* Row 2: Revenue Growth + Learning Activity */}
-        <div className="grid lg:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {/* Revenue Growth */}
           <div className="space-y-3">
             <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Revenue Growth</h3>

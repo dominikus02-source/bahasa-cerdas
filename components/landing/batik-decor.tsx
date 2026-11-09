@@ -19,7 +19,7 @@ const images: Record<string, string> = {
 export default function BatikDecor({ position, variant = "batik-bg", className = "" }: BatikDecorProps) {
   return (
     <div
-      className={`absolute ${positionClasses[position]} opacity-[0.03] pointer-events-none select-none bg-cover bg-center ${className}`}
+      className={`absolute max-w-full ${positionClasses[position]} opacity-[0.03] pointer-events-none select-none bg-cover bg-center ${className}`}
       style={{
         backgroundImage: images[variant],
         backgroundSize: "cover",

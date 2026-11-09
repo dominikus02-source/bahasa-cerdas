@@ -25,13 +25,13 @@ export function BottomNav() {
               key={item.href}
               href={item.href}
               prefetch={true}
-              className={`flex flex-col items-center gap-0.5 py-1 px-4 rounded-xl transition-all relative ${
+              className={`flex min-w-0 flex-1 flex-col items-center gap-0.5 py-1 px-1 rounded-xl transition-all relative ${
                 aktif ? "text-violet-600" : "text-gray-400 hover:text-gray-600"
               }`}
             >
               {aktif && <div className="absolute -top-0.5 left-1/2 -translate-x-1/2 w-6 h-1 bg-violet-600 rounded-full" />}
-              <item.icon className={`w-5 h-5 ${aktif ? "drop-shadow-sm" : ""}`} />
-              <span className={`text-[10px] ${aktif ? "font-bold" : "font-medium"}`}>{item.label}</span>
+              <item.icon className={`w-5 h-5 shrink-0 ${aktif ? "drop-shadow-sm" : ""}`} />
+              <span className={`max-w-full truncate text-[10px] ${aktif ? "font-bold" : "font-medium"}`}>{item.label}</span>
             </Link>
           )
         })}

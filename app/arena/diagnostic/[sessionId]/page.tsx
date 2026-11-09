@@ -137,7 +137,7 @@ function ResultPanel({ result, abilityProfile, fallbackReason }: { result: Diagn
             Belum cukup jawaban untuk menyusun profil. Selesaikan semua butir tes untuk mendapatkan gambaran kemampuanmu.
           </p>
         ) : (
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <p className="text-xs text-slate-500 dark:text-slate-400">Akurasi keseluruhan</p>
               <p className="mt-1 text-3xl font-bold text-slate-900 dark:text-slate-100">{Math.round((result.overallAccuracy ?? 0) * 100)}%</p>

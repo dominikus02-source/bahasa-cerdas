@@ -96,13 +96,13 @@ export default function AdminFeatureUsagePage() {
   }, [chart]);
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
+    <div className="space-y-6 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Pemakaian Fitur</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Fitur paling dipakai user setiap harinya (distinct user & jumlah aksi)</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <div className="flex bg-slate-100 dark:bg-slate-800/70 rounded-xl p-1">
             {RANGE_OPTIONS.map((r) => (
               <button
@@ -137,7 +137,7 @@ export default function AdminFeatureUsagePage() {
           )}
 
           {/* Ranking fitur */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {data.features.map((f, idx) => {
               const meta = FEATURE_META[f.key] || FEATURE_META.game;
               const Icon = meta.icon;

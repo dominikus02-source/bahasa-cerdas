@@ -311,7 +311,7 @@ export default async function UmumDashboardPage({
         </section>
 
         {/* Baris bawah: Aktivitas + Jelajahi Dunia Bahasa */}
-        <div className="grid gap-5 lg:grid-cols-[1.2fr_1fr]">
+        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[1.2fr_1fr]">
           <section
             aria-labelledby="judul-aktivitas"
             className="rounded-bc-card border border-bc-line bg-bc-surface p-5 shadow-bc-1"

@@ -239,7 +239,7 @@ export default function CommunityDetailPage({ params }: { params: Promise<{ id: 
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 py-6 grid lg:grid-cols-3 gap-6">
+      <div className="max-w-4xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           <Card className="p-4 border-0 shadow-lg rounded-2xl">
             <form onSubmit={handlePost}>

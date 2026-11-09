@@ -381,7 +381,7 @@ export default function KelasKuPage() {
               </button>
             </div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
               {filteredGroups.map((g) => (
                 <div key={g.id} className={`bc-card overflow-hidden transition-colors bc-class-tint-${stableClassTint(g.id)}`}>
                   {/* Header tinted — identitas visual kelas (deterministik) */}
@@ -697,7 +697,7 @@ export default function KelasKuPage() {
           </div>
         ) : tab === "nilai" && detail ? (
           <div className="space-y-4">
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="bc-card p-5">
                 <p className="text-xs font-semibold uppercase tracking-wide text-[var(--clr-text-3)]">Rata-rata Nilai</p>
                 <p className="text-3xl font-bold text-[var(--clr-text)] mt-1">{detail.stats?.nilaiRata ?? "—"}</p>

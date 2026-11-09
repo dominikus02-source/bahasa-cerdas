@@ -63,6 +63,8 @@ export default function GuruGameLeaderboardPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Tab periode boleh digulir di layar sempit, bukan melebarkan halaman. */}
+        <div className="max-w-full overflow-x-auto">
         <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-2xl p-1.5 mb-6 w-fit">
           {PERIOD_TABS.map((tab) => (
             <button
@@ -79,6 +81,7 @@ export default function GuruGameLeaderboardPage() {
             </button>
           ))}
         </div>
+        </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-16 text-slate-400">
@@ -88,7 +91,7 @@ export default function GuruGameLeaderboardPage() {
           <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center">
             <p className="text-red-600 font-medium">{error}</p>
           </div>
-        ) : data && data.entries.length > 0 ? (
+        ) : data?.entries && data.entries.length > 0 ? (
           <>
             {data.myRank != null && data.myRank > 20 && (
               <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center justify-between">

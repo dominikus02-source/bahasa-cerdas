@@ -846,7 +846,7 @@ export default function GuruProfilePage() {
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
               <CheckCircle2 size={13} /> Rekening penarikan aktif
             </span>
-            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
               <div className="flex items-start gap-3 py-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">Bank</span>
                 <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}</span>

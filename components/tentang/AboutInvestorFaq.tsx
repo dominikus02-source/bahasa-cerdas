@@ -15,7 +15,7 @@ export default function AboutInvestorFaq() {
             }}
             aria-hidden="true"
           />
-          <div className="relative z-10 grid lg:grid-cols-2 gap-10 items-center p-8 lg:p-14">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center p-8 lg:p-14">
             <div>
               <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 border border-white/10 mb-5">
                 <span className="text-xs font-semibold text-amber-400">Kemitraan & Investasi</span>

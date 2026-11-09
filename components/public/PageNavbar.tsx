@@ -91,10 +91,10 @@ export default function PageNavbar() {
           : "bg-transparent"
       }`}
     >
-      <div className="section-container">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2.5 group shrink-0">
-            <div className="relative w-8 h-8 lg:w-9 lg:h-9">
+      <div className="section-container min-w-0">
+        <div className="flex min-w-0 items-center justify-between gap-2 h-16 lg:h-20">
+          <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-2.5 group">
+            <div className="relative h-8 w-8 shrink-0 lg:h-9 lg:w-9">
               <Image
                 src="/brand/bc2026-icon-dark.png"
                 alt="Logo BahasaCerdas"
@@ -104,11 +104,11 @@ export default function PageNavbar() {
                 priority
               />
             </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-base lg:text-lg text-bc-text leading-tight">
+            <div className="min-w-0 flex flex-col">
+              <span className="truncate font-bold text-base lg:text-lg text-bc-text leading-tight">
                 Bahasa<span className="text-primary">Cerdas</span>
               </span>
-              <span className="text-[10px] lg:text-[11px] text-bc-text-3 font-medium leading-tight -mt-0.5 hidden sm:block">
+              <span className="truncate text-[10px] lg:text-[11px] text-bc-text-3 font-medium leading-tight -mt-0.5 hidden sm:block">
                 Ekosistem Belajar Bahasa Indonesia
               </span>
             </div>
@@ -188,7 +188,7 @@ export default function PageNavbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             onKeyDown={handleKeyDown}
-            className="lg:hidden relative z-50 grid h-11 w-11 place-items-center rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
+            className="lg:hidden relative z-50 grid h-11 w-11 shrink-0 place-items-center rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}

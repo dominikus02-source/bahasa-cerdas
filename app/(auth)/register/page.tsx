@@ -349,7 +349,7 @@ export default function RegisterPage() {
         </Link>
       </div>
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
+      <div className="relative mx-auto grid grid-cols-1 w-full max-w-6xl items-start gap-10 lg:grid-cols-2 lg:gap-14">
         <div className="order-2 lg:order-1 lg:sticky lg:top-8">
           <Link href="/" className="inline-flex items-center gap-4" aria-label="Beranda BahasaCerdas">
             <Image src={BRAND_ICON_DARK} alt="Logo BahasaCerdas" width={72} height={72} className="h-16 w-16 object-contain dark:hidden md:h-20 md:w-20" />

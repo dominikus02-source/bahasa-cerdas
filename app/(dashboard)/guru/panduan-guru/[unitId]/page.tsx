@@ -1328,7 +1328,7 @@ function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
       </div>
 
       {(guide.remedial.length > 0 || guide.enrichment.length > 0) && (
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {guide.remedial.length > 0 && (
             <div className="bg-white rounded-xl border border-slate-200 p-5">
               <h2 className="font-bold text-slate-900 mb-2 text-sm flex items-center gap-2"><Target className="w-4 h-4 text-red-500" />Remedial</h2>
@@ -1399,7 +1399,7 @@ function GuideContent({ guide }: { guide: NonNullable<Konten["guide"]> }) {
       )}
 
       {guide.reflection && (
-        <div className="grid sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-white rounded-xl border border-slate-200 p-5">
             <h2 className="font-bold text-slate-900 mb-2 text-sm flex items-center gap-2"><HelpCircle className="w-4 h-4 text-violet-500" />Refleksi Peserta Didik</h2>
             <ul className="space-y-1">

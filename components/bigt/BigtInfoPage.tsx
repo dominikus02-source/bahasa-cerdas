@@ -31,7 +31,7 @@ export function BigtInfoPage({ role }: Props) {
       {/* Perbedaan */}
       <div className="bg-card dark:bg-slate-900 rounded-2xl border border-border p-6 mb-6">
         <h2 className="font-bold text-foreground text-lg mb-4">Perbedaan BahasaCerdas dan BIGT</h2>
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="p-4 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/20">
             <h3 className="font-bold text-violet-700 dark:text-violet-400 mb-2">BahasaCerdas.com</h3>
             <ul className="text-sm text-muted-foreground space-y-1.5">
@@ -57,7 +57,7 @@ export function BigtInfoPage({ role }: Props) {
       </div>
 
       {/* Fitur BIGT */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
         {[
           { icon: <BookOpen size={24} />, title: "Layar Tes", desc: "Pengatur Waktu Akurat — waktu dan progres bagian yang terstruktur" },
           { icon: <Shield size={24} />, title: "Umpan Balik AI", desc: "Latihan menulis dan berbicara dinilai otomatis, kapan saja" },

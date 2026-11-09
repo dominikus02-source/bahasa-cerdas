@@ -536,7 +536,7 @@ export default function KuisTempurSolo({ backHref = "/arena/game/kuis-tempur" }:
           </div>
 
           <section className="overflow-hidden rounded-[34px] border border-cyan-100/15 bg-[#061325]/88 shadow-[0_34px_100px_rgba(0,0,0,.48)] backdrop-blur-xl">
-            <div className="grid min-h-[600px] lg:grid-cols-[.95fr_1.15fr]">
+            <div className="grid grid-cols-1 min-h-[600px] lg:grid-cols-[.95fr_1.15fr]">
               <div className="relative flex min-h-[560px] flex-col overflow-hidden border-b border-white/10 px-6 pb-4 pt-5 lg:border-b-0 lg:border-r lg:px-8">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_34%_40%,rgba(14,165,233,.18),transparent_30%),linear-gradient(180deg,rgba(5,35,67,.64),rgba(3,13,27,.9))]" />
                 <div className="relative z-10 max-w-xl">

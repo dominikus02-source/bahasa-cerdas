@@ -181,7 +181,7 @@ export function UserAnalytics({
 }) {
   if (loading && !data) {
     return (
-      <div className="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, index) => (
           <div
             key={index}
@@ -198,7 +198,7 @@ export function UserAnalytics({
 
   return (
     <section className="mb-6 space-y-4" aria-label="Analitik pengguna">
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           icon={UsersRound}
           label="Total pengguna"
@@ -229,7 +229,7 @@ export function UserAnalytics({
         />
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[0.8fr_0.8fr_1.4fr]">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[0.8fr_0.8fr_1.4fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800/90">
           <div>
             <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-100">

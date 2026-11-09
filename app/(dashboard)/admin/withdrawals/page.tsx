@@ -108,7 +108,7 @@ export default function AdminWithdrawalsPage() {
         <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Tinjau dan proses pencairan saldo guru</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
           <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 mb-1">
             <Clock size={16} />
