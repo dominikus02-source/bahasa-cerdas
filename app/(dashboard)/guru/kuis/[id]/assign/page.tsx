@@ -139,7 +139,7 @@ export default function AssignQuizPage({ params }: { params: Promise<{ id: strin
               <span key={a.id} className="inline-flex items-center gap-2 px-3 py-1.5 bg-white rounded-lg border border-emerald-200 text-sm">
                 <Users className="w-3.5 h-3.5 text-emerald-600" />
                 {a.group.name}
-                <span className="text-xs text-slate-400">({a._count.submissions} siswa mengerjakan)</span>
+                <span className="text-xs text-slate-400">({a._count?.submissions ?? 0} siswa mengerjakan)</span>
               </span>
             ))}
           </div>
@@ -173,7 +173,7 @@ export default function AssignQuizPage({ params }: { params: Promise<{ id: strin
                     </div>
                     <div>
                       <p className="font-medium text-slate-900">{g.name}</p>
-                      <p className="text-xs text-slate-400">Kode: {g.accessCode} · {g._count.members} anggota</p>
+                      <p className="text-xs text-slate-400">Kode: {g.accessCode} · {g._count?.members ?? 0} anggota</p>
                     </div>
                   </div>
                   {isAssigned && (

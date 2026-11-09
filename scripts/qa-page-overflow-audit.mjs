@@ -55,7 +55,8 @@ function mockApi(url, mode) {
   if (p === "/api/komunitas") return { communities: COMMUNITIES };
   if (p === "/api/user/me") return { user: QA_USER };
   if (p === "/api/user/rekening") return { bank: "", holder: "", number: "" };
-  if (p === "/api/group") return { groups: [{ id: "g1", name: "Kelas QA 9A" }] };
+  if (p === "/api/group") return { groups: [{ id: "g1", name: "Kelas QA 9A", accessCode: "QA1", grade: "IX", _count: { members: 0 } }] };
+  if (p.startsWith("/api/guru/quiz/")) return { quiz: { id: "qa-1", title: "Kuis QA", assignments: [] } };
   if (p === "/api/guru/leaderboard") return { entries: [], myRank: null, period: "week" };
   if (p === "/api/guru/hasil-karya/leaderboard") return { topCreator: null, topSchools: [], leaderboard: [], topTeachers: [] };
   if (p === "/api/guru/literasi/stats") return { total: { karya: 0, penulis: 0, likes: 0, views: 0 }, pilihanAI: [], palingPopuler: [], penulisTeraktif: [], insight: [], rekomendasi: [] };

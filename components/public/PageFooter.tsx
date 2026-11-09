@@ -65,7 +65,7 @@ export default function PageFooter() {
               Satu ekosistem untuk belajar, berlatih, bermain, berkarya, dan bertumbuh —
               menghubungkan guru, murid, dan komunitas Bahasa Indonesia.
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <a
                 href="mailto:halo@bahasacerdas.com"
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-800/80 border border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors focus-ring"
@@ -80,7 +80,7 @@ export default function PageFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className={`flex items-center justify-center w-9 h-9 rounded-xl bg-zinc-800/80 border border-zinc-700 text-zinc-300 ${hoverColor} transition-colors focus-ring`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700 text-zinc-300 ${hoverColor} transition-colors focus-ring`}
                 >
                   <Icon className="w-4 h-4" />
                 </a>
