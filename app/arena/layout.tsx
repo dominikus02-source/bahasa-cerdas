@@ -11,13 +11,10 @@ import { rankFromLevel } from "@/lib/gamification/ranks"
 import { RankChip } from "@/components/gamification/RankChip"
 import { IconTarget } from "@/lib/icons"
 import { SwRegister } from "@/components/SwRegister"
+import { ArenaHeader } from "@/components/arena/ArenaHeader"
 import { ArenaClientWrapper } from "./arena-client"
 import { BottomNav } from "./bottom-nav"
 import MuridMobileNav from "@/components/dashboard/MuridMobileNav"
-import { ArenaBackButton } from "@/components/arena/ArenaBackButton"
-import UserAvatar from "@/components/arena/UserAvatar"
-import { NotificationBell } from "@/components/dashboard/NotificationBell"
-import { ThemeToggle } from "@/components/theme/theme-toggle"
 import { ShellLayout } from "@/components/shell/ShellLayout"
 import { ShellNavList } from "@/components/shell/ShellNavList"
 import { RoleSections } from "@/components/shell/RoleSections"
@@ -37,7 +34,7 @@ import { UmumMobileNav, UmumNavList, UmumRouteGate } from "@/components/arena/Um
 // UNIFIED APP SHELL — Arena & Obrolan berbagi SATU shell global (Student
 // Shell): sidebar (brand → user → ShellNavList → role sections → footer)
 // DAN header global yang sama persis dengan halaman Student lainnya:
-// [← Beranda] ......... [Avatar] [Bell] [Theme]. Identitas produk (Arena/
+// [Logo + BahasaCerdas + tagline] ... [Avatar] [Bell] [Theme]. Identitas produk (Arena/
 // Obrolan) hidup di KONTEN halaman, bukan di header global — header tidak
 // boleh membawa navigasi produk kedua. Sidebar hanya untuk web (APK memakai
 // chrome penuh + BottomNav, konsisten dengan perilaku lama).
@@ -72,12 +69,8 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
   // lewat RoleSections di sidebar (Mode Guru / Akses Founder). Tidak ada CTA
   // "Dashboard Guru" di header global — header kanonik netral untuk semua role.
 
-  // Inside the Android APK the top bar drops its one escape hatch. "Beranda"
-  // points outside the /arena scope, so tapping it would throw the student into a
-  // browser tab — the one thing the APK exists to avoid. Logout moves to the
-  // Pemain tab (Duolingo keeps account actions in the profile too): a destructive
-  // action sitting one stray thumb away from the notification bell is a bad trade
-  // on a phone used by children.
+  // APK detection still selects sidebar / bottom navigation variants. The brand
+  // header is now shared across web and APK; native navigation accepts /murid/beranda.
   const apk = await isApk()
 
   // OBROLAN 4.0 — produk Student Shell, bukan halaman Arena. Obrolan memakai
@@ -135,29 +128,8 @@ export default async function ArenaLayout({ children }: { children: React.ReactN
       header={
         <>
           <SwRegister />
-          {/* HEADER GLOBAL KANONIK — sama persis dengan halaman Student lain
-              (/murid/*): [← Kembali] .... [Avatar] [Bell] [Theme]. ARENA 2.0:
-              tombol kiri = ArenaBackButton (router history + fallback logis per
-              route — BUKAN hardcode Beranda). TIDAK ada identitas produk
-              (Arena/Obrolan), CTA dasbor guru, search, atau logout di header —
-              navigasi tetap via sidebar global; akses guru/founder via
-              RoleSections; logout via sidebar footer dan Pemain tab. APK
-              menurunkan tombol kembali (escape hatch keluar scope). */}
- <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-bc-surface/95 border-b border-bc-line">
-            {!apk && <ArenaBackButton homeHref={umum ? UMUM_HOME : undefined} />}
-            <div className="flex items-center gap-1 md:gap-2">
-              <UserAvatar
-                size={36}
-                avatar={user.avatar}
-                initials={user.fullName?.charAt(0).toUpperCase() || "M"}
-                gradient="from-violet-500 to-purple-600"
-                textClassName="text-sm"
-                className="hidden md:flex shadow-md"
-              />
-              <NotificationBell />
-              <ThemeToggle />
-            </div>
-          </header>
+          {/* Brand + bell + theme, shared with /murid header branding. No history-back arrow. */}
+          <ArenaHeader avatar={user.avatar} fullName={user.fullName} homeHref={umum ? UMUM_HOME : "/murid/beranda"} />
         </>
       }
       mainClassName="mx-auto px-0 w-full py-0"
