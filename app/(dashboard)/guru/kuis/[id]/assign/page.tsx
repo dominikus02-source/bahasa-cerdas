@@ -214,7 +214,7 @@ export default function AssignQuizPage({ params }: { params: Promise<{ id: strin
         </div>
       </Card>
 
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Link href="/guru/kuis" className="flex-1 py-3 border-2 border-slate-200 text-slate-600 font-bold rounded-xl text-center hover:bg-slate-50">
           Batal
         </Link>
