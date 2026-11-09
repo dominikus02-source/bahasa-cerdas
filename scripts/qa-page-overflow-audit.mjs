@@ -43,10 +43,35 @@ const COMMUNITIES = [
   { id: "qa3", name: "Komunitas_Penulis_Puisi_Remaja_Nusantara_TanpaSpasi", type: "PUBLIKASI", description: null, province: null, city: null, memberCount: 7, postCount: 0, isVerified: false, creator: { id: "u2" }, avatarUrl: null },
 ];
 const MINE = COMMUNITIES.map((c, i) => ({ ...c, status: ["PENDING", "APPROVED", "REJECTED"][i], reviewNote: i === 2 ? "Nama belum sesuai pedoman. " + "Lengkapi dokumen ".repeat(6) : null, createdAt: "2026-11-01T03:00:00.000Z" }));
+const QA_USER = {
+  id: "qa-user-1", fullName: "QA Guru Palsu", nickname: "QA", email: "qa@bahasacerdas.test",
+  avatar: null, bio: "Profil QA untuk audit overflow.", school: "SMP BahasaCerdas", city: "Jakarta",
+  province: "DKI Jakarta", subject: "Bahasa Indonesia", grade: "IX", xp: 120, level: 3, streak: 2,
+  isPremium: false, isFounder: false, badgeKind: null, coins: 10, league: "bronze", totalLikes: 0, totalViews: 0,
+};
 function mockApi(url, mode) {
   const p = new URL(url).pathname;
   if (p === "/api/komunitas/mine") return { communities: MINE };
   if (p === "/api/komunitas") return { communities: COMMUNITIES };
+  if (p === "/api/user/me") return { user: QA_USER };
+  if (p === "/api/user/rekening") return { bank: "", holder: "", number: "" };
+  if (p === "/api/group") return { groups: [{ id: "g1", name: "Kelas QA 9A" }] };
+  if (p === "/api/guru/leaderboard") return { entries: [], myRank: null, period: "week" };
+  if (p === "/api/guru/hasil-karya/leaderboard") return { topCreator: null, topSchools: [], leaderboard: [], topTeachers: [] };
+  if (p === "/api/guru/literasi/stats") return { total: { karya: 0, penulis: 0, likes: 0, views: 0 }, pilihanAI: [], palingPopuler: [], penulisTeraktif: [], insight: [], rekomendasi: [] };
+  if (p === "/api/siswa/karya") return { items: [], nextCursor: null };
+  if (p.startsWith("/api/siswa/karya/")) return { karya: null, comments: [], liked: false };
+  if (p === "/api/guru/nilai-kategori") return { kategoris: [] };
+  if (p === "/api/siswa/user/karya") return { items: [], karya: [] };
+  if (p === "/api/murid/profile-meta") return { memberNumber: "QA-1", gelar: "Pemula", stats: { karyaCount: 0, totalLikes: 0, totalViews: 0, wordCount: 0, xp: 120, coins: 10 }, kebunKata: [], lencana: [], nickname: { value: "QA", updatedAt: null, daysLeftForChange: 0 } };
+  if (p.startsWith("/api/user/profile/")) return { followerCount: 0, followingCount: 0, profileLikeCount: 0, followers: [], following: [] };
+  if (p === "/api/player/profile") return { profile: null };
+  if (p === "/api/player/xp/history") return { entries: [] };
+  if (p === "/api/player/badges") return { badges: [] };
+  if (p === "/api/player/journey") return { entries: [] };
+  if (p === "/api/player/skills") return { skills: [] };
+  if (p === "/api/player/diagnostic/baseline") return null;
+  if (p === "/api/murid/nickname") return { nickname: "QA", history: [] };
   return mode === "array" ? [] : {};
 }
 

@@ -91,7 +91,7 @@ export default function GuruGameLeaderboardPage() {
           <div className="bg-red-50 border border-red-100 rounded-2xl p-6 text-center">
             <p className="text-red-600 font-medium">{error}</p>
           </div>
-        ) : data && data.entries.length > 0 ? (
+        ) : data?.entries && data.entries.length > 0 ? (
           <>
             {data.myRank != null && data.myRank > 20 && (
               <div className="mb-6 bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center justify-between">

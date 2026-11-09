@@ -191,7 +191,9 @@
 .bp-summary__row > :last-child { font-variant-numeric: tabular-nums; text-align: right; margin-left: auto; }
 .bp-summary__row--promo { color: var(--clr-accent-strong); font-weight: 700; }
 .dark .bp-summary__row--promo { color: var(--clr-accent); }
-.bp-summary__total { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; margin-top: 4px; }
+.bp-summary__total { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 4px 12px; margin-top: 4px; }
+.bp-summary__total > * { min-width: 0; overflow-wrap: anywhere; }
+.bp-summary__total > :last-child { margin-left: auto; text-align: right; }
 
 /* ── Tombol ────────────────────────────────────────────── */
 .bp-btn {
