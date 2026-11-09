@@ -137,7 +137,7 @@ export default function AdminFeatureUsagePage() {
           )}
 
           {/* Ranking fitur */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {data.features.map((f, idx) => {
               const meta = FEATURE_META[f.key] || FEATURE_META.game;
               const Icon = meta.icon;

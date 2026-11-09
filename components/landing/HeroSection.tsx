@@ -20,7 +20,7 @@ export default function HeroSection() {
 
       <div className="section-container relative z-10 pt-24 lg:pt-32 pb-16 lg:pb-24">
         <motion.div
-          className="grid lg:grid-cols-2 gap-12 lg:gap-14 items-center"
+          className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-14 items-center"
           variants={staggerContainer}
           {...sectionProps}
         >

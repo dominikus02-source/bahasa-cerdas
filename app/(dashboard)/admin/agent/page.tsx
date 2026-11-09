@@ -154,7 +154,7 @@ export default async function AgentControlCenterPage({
         workerVersion={health.registry?.version ?? null}
       />
 
-      <section aria-label="Ringkasan operasi 24 jam" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+      <section aria-label="Ringkasan operasi 24 jam" className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
         <StatCard label="Task dibuat · 24j" value={operations.created} detail={`${operations.byChannel.WEB ?? 0} web · ${operations.byChannel.TELEGRAM ?? 0} Telegram`} tone="sky" />
         <StatCard label="Selesai · 24j" value={operations.completed} detail={`Rata-rata ${fmtMs(operations.avgCompletedMs)}`} tone="emerald" />
         <StatCard label="Gagal · 24j" value={operations.failed} detail="Terminal FAILED pada jendela 24 jam" tone={operations.failed > 0 ? "red" : "slate"} />
@@ -163,7 +163,7 @@ export default async function AgentControlCenterPage({
         <StatCard label="Approval pending" value={summary.pendingApprovals} detail={`${summary.waitingIntelligence} menunggu intelligence`} tone={summary.pendingApprovals > 0 ? "amber" : "slate"} />
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[1.35fr_1fr]">
+      <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.35fr_1fr]">
         <WorkerHealthCard health={health} />
 
         <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800/90">
@@ -223,7 +223,7 @@ export default async function AgentControlCenterPage({
         </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+      <section className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1fr]">
         <div className="rounded-2xl border border-slate-200 bg-white p-5 dark:border-slate-700 dark:bg-slate-800/90">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Tool activity · 24 jam</h2>

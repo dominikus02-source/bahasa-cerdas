@@ -60,7 +60,7 @@ export default function AboutLegal() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6 max-w-5xl mx-auto mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto mb-10">
           {legalCards.map((c) => {
             const Icon = c.icon;
             return (

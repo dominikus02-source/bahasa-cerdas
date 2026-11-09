@@ -233,7 +233,7 @@ export default function LoginPage() {
         </Link>
       </div>}
 
-<div data-bc-login="grid" className="relative mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
+<div data-bc-login="grid" className="relative mx-auto grid grid-cols-1 w-full max-w-6xl items-center gap-10 lg:grid-cols-2 lg:gap-14">
         {/* ── BRAND HERO ── */}
         <div data-bc-login="hero" className="order-2 lg:order-1">
                     <Link href={isArenaEntry ? "/arena/login" : "/"} className="inline-flex items-center gap-4" aria-label="BahasaCerdas">

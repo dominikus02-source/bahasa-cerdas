@@ -41,7 +41,7 @@ export function TKASimulationClient({ tracks }: Props) {
           <p className="text-sm text-muted-foreground mt-1">Segera tersedia</p>
         </div>
       ) : (
-        <div className="grid gap-4 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {tracks.map((track) => {
             const isAvailable = track.available && track.paketId
             return (

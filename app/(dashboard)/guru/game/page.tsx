@@ -558,7 +558,7 @@ export default function GuruGameHubPage() {
         </div>
 
         {/* ── PROGRESS GURU (Level + Badge progress) ────────── */}
-        <div className="grid lg:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
           <div className="bg-white rounded-xl border border-slate-100 p-5 shadow-sm dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-1">
               <Medal className="w-4 h-4 text-violet-500" />
@@ -621,7 +621,7 @@ export default function GuruGameHubPage() {
         </div>
 
         {/* ── RINGKASAN AKTIVITAS KELAS + MURID TERAKTIF ────── */}
-        <div className="grid lg:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8">
           {/* Ringkasan Aktivitas Kelas */}
           <section className="lg:col-span-2 bg-white rounded-xl border border-slate-100 p-5 shadow-sm dark:bg-slate-900 dark:border-slate-800">
             <div className="flex items-center gap-2 mb-4">

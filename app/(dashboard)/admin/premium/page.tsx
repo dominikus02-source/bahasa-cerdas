@@ -176,7 +176,7 @@ export default function AdminPremiumReportPage() {
 
       {/* Premium Command Center */}
       {data?.summary?.mrr && (
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* MRR */}
           <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 rounded-2xl border border-green-200 dark:border-green-800 p-5">
             <div className="flex items-center gap-2 mb-3">

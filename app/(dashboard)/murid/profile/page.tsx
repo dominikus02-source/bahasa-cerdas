@@ -546,7 +546,7 @@ export default function MuridProfilePage() {
       )}
 
       {/* GRID DESKTOP 2 KOLOM — main konten + sidebar identitas (≥1024px) */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         {/* MAIN — statistik, aktivitas, grafik, galeri karya */}
         <div className="space-y-6 min-w-0 md:col-span-2 lg:col-span-1">
           <PlayerStatsGrid

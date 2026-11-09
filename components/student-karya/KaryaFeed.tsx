@@ -577,7 +577,7 @@ function FeedContent({
         ) : karyaList.length === 0 ? (
           stageEmpty
         ) : (
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             {karyaList.map(cardList)}
             {hasMore && <div id="feed-sentinel" className="h-4 col-span-full" />}
             {loadingMore && <div className="flex justify-center py-4 col-span-full"><Loader2 size={24} className="animate-spin text-violet-400" /></div>}

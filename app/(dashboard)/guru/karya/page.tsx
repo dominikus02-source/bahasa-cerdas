@@ -156,7 +156,7 @@ function KaryaCard({ a }: { a: KaryaItem }) {
 
 function Skeleton() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {[0, 1, 2, 3, 4, 5].map((i) => (
         <div key={i} className="rounded-2xl bg-white border border-violet-100 p-4 animate-pulse">
           <div className="h-28 rounded-xl bg-violet-50" />
@@ -291,7 +291,7 @@ export default function PanggungKaryaGuruPage() {
             </Link>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {items?.map((a) => <KaryaCard key={a.id} a={a} />)}
           </div>
         )}

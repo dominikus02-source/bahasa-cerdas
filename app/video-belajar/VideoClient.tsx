@@ -111,7 +111,7 @@ export default function VideoClient({ initialVideos }: { initialVideos: Video[] 
             <p className="text-gray-400">Video pembelajaran sedang disiapkan.</p>
           </div>
         ) : (
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
             {filtered.map((video: any) => (
               <Link
                 key={video.id}

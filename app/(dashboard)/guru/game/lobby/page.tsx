@@ -59,7 +59,7 @@ export default function GuruGameLobbyPage() {
         {step === "select" ? (
           <div className="mb-8">
             <h2 className="font-bold text-gray-900 mb-4">Pilih Mode Gim</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {GAME_MODES.map((mode) => (
                 <button
                   key={mode.id}

@@ -4,7 +4,7 @@ export default function AboutVision() {
   return (
     <section className="py-16 lg:py-20 bg-white" aria-labelledby="about-visi-heading">
       <div className="section-container">
-        <div className="grid md:grid-cols-2 gap-10 lg:gap-16 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 lg:gap-16 max-w-4xl mx-auto">
           <div className="p-8 lg:p-10 rounded-2xl bg-gradient-to-br from-zinc-50 to-zinc-100 border border-zinc-200 card-hover">
             <div className="w-12 h-12 rounded-xl bg-primary-light text-primary flex items-center justify-center mb-5">
               <Globe size={24} aria-hidden="true" />

@@ -66,7 +66,7 @@ export default function FeaturedWorks() {
       </div>
 
       {items === null ? (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {[0, 1].map((i) => (
             <div
               key={i}
@@ -80,7 +80,7 @@ export default function FeaturedWorks() {
           ))}
         </div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {items.map((k) => {
             const tc = typeColors[k.type] || typeColors.PUISI;
             const primaryMedia =

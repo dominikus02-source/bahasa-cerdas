@@ -53,7 +53,7 @@ export function KuisTempurDisplayChoice({
           Mode layar penuh membuat permainan lebih jelas. Mode biasa tetap tersedia kapan saja.
         </p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
           <button
             onClick={() => choose("fullscreen")}
             className="rounded-2xl border border-cyan-300/25 bg-cyan-300/10 p-4 text-left transition hover:border-cyan-200/45 hover:bg-cyan-300/15"

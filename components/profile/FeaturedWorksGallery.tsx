@@ -95,7 +95,7 @@ export default function FeaturedWorksGallery({
           <p className="text-sm text-bc-text-2">{emptyText}</p>
         </div>
       ) : (
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {filtered.map((k) => {
             const meta = TYPE_BADGE[k.type] ?? { label: k.type, badge: "bg-slate-900/5 dark:bg-slate-900/5 text-bc-text-2 ring-slate-900/10 dark:ring-white/10" };
             return (

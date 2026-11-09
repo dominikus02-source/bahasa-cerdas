@@ -285,7 +285,7 @@ export default function ProfilePage() {
               <p className="text-sm text-gray-400 dark:text-gray-500">Belum ada karya.</p>
             </div>
           ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {user.works.map((w) => (
                 <Link
                   key={w.id}

@@ -90,7 +90,7 @@ export function StudentDailyInspiration() {
   // dua kartu besar bersaing (biru tua + putih) dan memakan satu layar penuh.
   return (
     <section aria-label="Inspirasi dan tips belajar hari ini" className="px-card p-5 sm:p-6">
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8">
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:gap-8">
         <div className="flex min-w-0 items-start gap-4">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-bc-icon bg-bc-info-soft text-bc-info">
             <Lightbulb className="h-5 w-5" strokeWidth={2} />

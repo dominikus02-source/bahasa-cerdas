@@ -472,7 +472,7 @@ export default function TeacherPayoutsPage() {
                 </span>
               </div>
 
-              <div className="mt-2 grid gap-2 text-xs sm:grid-cols-2">
+              <div className="mt-2 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
                 <p className="text-muted-foreground">
                   Run: <span className="font-mono text-foreground">{canary.run.canaryRunId || "—"}</span>
                 </p>
@@ -523,7 +523,7 @@ export default function TeacherPayoutsPage() {
               {/* Aksi operator */}
               <div className="mt-3 space-y-2">
                 {canary.run.finalStatus === "PREPARING" && (
-                  <div className="grid gap-2 sm:grid-cols-3">
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                     <input
                       value={canaryPrepare.teacherId}
                       onChange={(e) => setCanaryPrepare({ ...canaryPrepare, teacherId: e.target.value })}
@@ -659,7 +659,7 @@ export default function TeacherPayoutsPage() {
               </div>
 
               {/* Konfigurasi — tanpa nilai secret */}
-              <div className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+              <div className="mt-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
                 {xenditReady.config.fields.map((f) => (
                   <p key={f.key} className="flex items-center gap-2 text-muted-foreground">
                     <span
@@ -722,7 +722,7 @@ export default function TeacherPayoutsPage() {
               </div>
 
               {/* Pilot teacher readiness + snapshot */}
-              <div className="mt-4 grid gap-2 sm:grid-cols-[240px_auto]">
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-[240px_auto]">
                 <input
                   value={xenditTeacherId}
                   onChange={(e) => setXenditTeacherId(e.target.value)}
@@ -750,7 +750,7 @@ export default function TeacherPayoutsPage() {
               )}
 
               {xenditReady.snapshot && (
-                <div className="mt-3 grid gap-x-6 gap-y-1 rounded-xl bg-muted/40 p-3 text-xs sm:grid-cols-2">
+                <div className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1 rounded-xl bg-muted/40 p-3 text-xs sm:grid-cols-2">
                   {[
                     ["Guru", xenditReady.snapshot.teacher.maskedIdentity],
                     ["Komisi tersedia", xenditReady.snapshot.commission != null ? `Rp${xenditReady.snapshot.commission.toLocaleString("id-ID")}` : "—"],
@@ -814,7 +814,7 @@ export default function TeacherPayoutsPage() {
               ))}
             </div>
 
-            <div className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]">
+            <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-[1fr_auto]">
               <input
                 value={teacherId}
                 onChange={(e) => setTeacherId(e.target.value)}

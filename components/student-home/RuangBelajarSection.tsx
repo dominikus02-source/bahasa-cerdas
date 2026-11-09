@@ -21,7 +21,7 @@ export function RuangBelajarSection() {
         </div>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <Link
           href="/murid/gabung-kelas"
           className="group px-card px-4 py-4 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"

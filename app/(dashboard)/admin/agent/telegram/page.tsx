@@ -159,7 +159,7 @@ export default async function TelegramBindingPage() {
         submitClassName="rounded bg-violet-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-violet-700"
       >
         <h2 className="text-sm font-semibold">Tambah / perbarui binding</h2>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label className="text-xs font-medium">
             Telegram User ID (angka)
             <input name="telegramUserId" required pattern="\d{3,20}" className="mt-1 w-full rounded border px-2 py-1.5 text-sm dark:bg-slate-800 dark:border-slate-600" />

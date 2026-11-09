@@ -231,7 +231,7 @@ export function DokumenLatihanView({
       )}
 
       {/* Link ke AI Review Center & Pusat Evaluasi (tab lain di dalam hub) */}
-      <div className="grid sm:grid-cols-2 gap-3 mt-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
         <Link href={tinjauHref} className="rounded-2xl border border-violet-100 bg-violet-50/50 p-4 flex items-center gap-3 hover:border-violet-300 transition-colors">
           <div className="w-10 h-10 rounded-xl bg-violet-600 text-white flex items-center justify-center"><span className="text-lg">🧠</span></div>
           <div>

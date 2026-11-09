@@ -189,7 +189,7 @@ export default function LombaInfoPage() {
                 <Clock className="w-5 h-5 text-orange-500" />
                 Lomba Aktif & Mendatang
               </h2>
-              <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {upcoming.map((lomba) => (
                   <Card key={lomba.id} className="p-5 border border-slate-100 hover:shadow-lg transition-all hover:border-orange-200">
                     <div className="flex items-start gap-3 mb-3">
@@ -277,7 +277,7 @@ export default function LombaInfoPage() {
           {past.length > 0 && (
             <div>
               <h2 className="text-lg font-bold text-slate-500 mb-4">Lomba yang Sudah Ditutup</h2>
-              <div className="grid md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {past.map((lomba) => (
                   <Card key={lomba.id} className="p-4 border border-slate-100 opacity-60">
                     <div className="flex items-center gap-3">
