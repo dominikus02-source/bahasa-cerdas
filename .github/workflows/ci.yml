@@ -39,6 +39,8 @@ jobs:
         run: QA_OUT=qa-output/android-visual/behavior node scripts/qa-android-behavior.mjs
       - name: Arena shared brand header regression
         run: QA_OUT=qa-output/android-visual/arena node scripts/qa-arena-brand.mjs
+      - name: Login cold-start session resume (mock verification, real component)
+        run: QA_OUT=qa-output/android-visual/login-resume node scripts/qa-login-session-resume.mjs
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -75,6 +77,9 @@ jobs:
 
       - name: Prisma generate
         run: npx prisma generate
+
+      - name: Login cold-start session policy tests
+        run: npx tsx scripts/test-resume-login-session.ts
 
       - name: Typecheck
         run: npm run typecheck
