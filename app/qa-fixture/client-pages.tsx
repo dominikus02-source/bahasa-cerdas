@@ -4,8 +4,8 @@ import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
 // Halaman dinamis menerima props params/searchParams (Promise); diisi QaClientPage.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const QA_CLIENT_PAGES: Record<string, ComponentType<any>> = {
+type QaPageProps = { params?: Promise<Record<string, string>>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
+export const QA_CLIENT_PAGES: Record<string, ComponentType<QaPageProps>> = {
   "/confirm": dynamic(() => import("@/app/(auth)/confirm/page"), { ssr: false }),
   "/login": dynamic(() => import("@/app/(auth)/login/page"), { ssr: false }),
   "/onboarding": dynamic(() => import("@/app/(auth)/onboarding/page"), { ssr: false }),
