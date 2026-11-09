@@ -4,8 +4,7 @@ import dynamic from "next/dynamic";
 import type { ComponentType } from "react";
 
 // Halaman dinamis menerima props params/searchParams (Promise); diisi QaClientPage.
-type QaPageProps = { params?: Promise<Record<string, string>>; searchParams?: Promise<Record<string, string | string[] | undefined>> };
-export const QA_CLIENT_PAGES: Record<string, ComponentType<QaPageProps>> = {
+export const QA_CLIENT_PAGES: Record<string, ComponentType<any>> = {
   "/confirm": dynamic(() => import("@/app/(auth)/confirm/page"), { ssr: false }),
   "/login": dynamic(() => import("@/app/(auth)/login/page"), { ssr: false }),
   "/onboarding": dynamic(() => import("@/app/(auth)/onboarding/page"), { ssr: false }),
