@@ -841,7 +841,7 @@ export default function TekaTekiSilang({ backHref = "/arena/game" }: { backHref?
                 Tetap Main
               </button>
               {/* KUIS TTS 1.1 (§21): keluar = benar-benar keluar ke Game Hub, bukan ke pilih level. */}
-              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#1A1535]`} onClick={() => { setConfirmExit(false); router.push(backHref); }}>
+              <button className={`${btn} px-5 py-3 bg-white dark:bg-[#1A1535]`} onClick={() => { setConfirmExit(false); router.push("/arena/game"); }}>
                 Keluar
               </button>
             </div>

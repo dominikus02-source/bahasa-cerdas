@@ -116,11 +116,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       // Replika markup app/(dashboard)/admin/layout.tsx (layout server butuh sesi).
       const user = { fullName: "QA Founder Palsu", avatar: null, email: founderEmail, isFounder: true };
       return (<>{controls}<QaPathname pathname={pathname}><ShellLayout
-        rootClassName="bg-slate-50 dark:bg-slate-950"
+        rootClassName="bg-slate-50 dark:bg-slate-950" /* warna-izin: replika fixture QA dari app/(dashboard)/admin/layout.tsx */
         mainClassName="bc-admin flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
         sidebar={<AdminSidebar user={{ fullName: user.fullName, avatar: user.avatar }} />}
         header={
-          <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800">
+          <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800" /* warna-izin: replika fixture QA dari app/(dashboard)/admin/layout.tsx */>
             <div className="flex items-center gap-2 min-w-0"><BackHome href="/admin" /></div>
             <div className="flex items-center gap-2"><FounderDashboardSwitcher user={user} compact /><ThemeToggle /></div>
           </header>
