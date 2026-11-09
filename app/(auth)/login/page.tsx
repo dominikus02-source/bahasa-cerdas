@@ -3,12 +3,13 @@
 import { authErrorMessage } from "@/lib/auth/auth-error-message";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { LogIn, Eye, EyeOff, ShieldCheck, GraduationCap, BookOpen, Smartphone } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { resumeLoginSession } from "@/lib/auth/resume-login-session";
 import { loginWithBrowserPassword } from "@/lib/auth/browser-password-login";
 import { isSafeNext, resolvePostAuthDestinationForUser } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
@@ -37,6 +38,19 @@ export default function LoginPage() {
       "BahasaCerdasMobile" in window
     );
   }, []);
+  const resumeAbort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    const controller = new AbortController();
+    resumeAbort.current = controller;
+    // Bounded, cancellable probe: never hold the form hostage on an offline cold start.
+    const timer = window.setTimeout(() => controller.abort(), 8000);
+    void resumeLoginSession({ search: window.location.search, arenaEntry: isArenaEntry, signal: controller.signal })
+      .then((target) => {
+        if (target && !controller.signal.aborted) window.location.replace(target);
+      });
+    return () => { window.clearTimeout(timer); controller.abort(); };
+  }, [isArenaEntry]);
+
   const [guideOpen, setGuideOpen] = useState(false);
   const [offerAppReturn, setOfferAppReturn] = useState(false);
   const [isInstalled, setIsInstalled] = useState(true);
@@ -101,6 +115,7 @@ export default function LoginPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    resumeAbort.current?.abort(); // explicit login wins over an in-flight cold-start probe
     if (cooldownSeconds > 0) return;
     setLoading(true);
     setError("");
@@ -144,6 +159,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = async () => {
+    resumeAbort.current?.abort();
     setGoogleLoading(true);
     setError("");
 
@@ -322,7 +338,7 @@ export default function LoginPage() {
                   type="text"
                   inputMode="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => { resumeAbort.current?.abort(); setEmail(e.target.value); }}
                   className={inputCls}
                   placeholder="nama@sekolah.sch.id atau username"
                   autoComplete="username"
@@ -341,6 +357,7 @@ export default function LoginPage() {
                   <Button type="button" variant="quiet" size="sm" disabled={recoveryLoading || recoveryCooldown > 0 || loading} onClick={async () => {
                     const emailVal = email.trim();
                     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) { setError("Masukkan alamat email yang valid terlebih dahulu."); return; }
+                    resumeAbort.current?.abort();
                     setRecoveryLoading(true);
                     setError("");
                     setRecoveryMessage("");
@@ -369,7 +386,7 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={(e) => { resumeAbort.current?.abort(); setPassword(e.target.value); }}
                     className={`${inputCls} pr-11`}
                     placeholder="Masukkan kata sandi"
                     autoComplete="current-password"
