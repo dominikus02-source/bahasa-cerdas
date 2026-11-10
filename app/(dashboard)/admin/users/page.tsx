@@ -109,7 +109,7 @@ export default function AdminUsersPage() {
       <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700">
         <div className="p-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex flex-wrap items-center gap-3">
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative min-w-0 w-full flex-1 sm:min-w-[200px]">
               <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input type="text" placeholder="Cari nama atau email..." value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
                 className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-violet-500/20 focus:border-violet-400" />
@@ -158,8 +158,46 @@ export default function AdminUsersPage() {
           </div>
         ) : (
           <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+              {users.map((u: any) => {
+                const st = statusBadge(u);
+                return (
+                  <div key={u.id} className={`p-4 ${selected.has(u.id) ? "bg-violet-50 dark:bg-violet-950/40" : ""}`}>
+                    <div className="flex items-start gap-3 min-w-0">
+                      <input type="checkbox" checked={selected.has(u.id)} onChange={() => toggleSelect(u.id)}
+                        className="mt-1 shrink-0 rounded border-slate-300 text-violet-600 dark:text-violet-400 focus:ring-violet-500" />
+                      <div className="w-8 h-8 shrink-0 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-white text-[10px] font-bold">
+                        {(u.fullName || "?").slice(0, 2).toUpperCase()}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <p className="font-medium text-slate-900 dark:text-slate-100 [overflow-wrap:anywhere]">{u.fullName}</p>
+                          {u.isFounder && <Crown size={12} className="shrink-0 text-amber-500 dark:text-amber-400" />}
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 [overflow-wrap:anywhere]">{u.email}</p>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${u.role === "GURU" ? "bg-emerald-100 text-emerald-700 dark:text-emerald-300" : "bg-violet-100 text-violet-700 dark:text-violet-300"}`}>{u.role}</span>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${st.color}`}>{st.label}</span>
+                          <span className={`text-[10px] px-2 py-0.5 rounded-full font-semibold ${
+                            u.plan === "FOUNDER" ? "bg-amber-100 text-amber-700 dark:text-amber-300"
+                            : u.plan === "PRO" ? "bg-yellow-100 text-yellow-700 dark:text-yellow-300"
+                            : "bg-slate-100 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400"
+                          }`}>{u.plan}</span>
+                          {u.simLimit > 0 && (
+                            <span className={`text-[10px] ${u.simUsage >= u.simLimit ? "text-red-500 dark:text-red-400 font-semibold" : "text-slate-400"}`}>
+                              Simulasi {u.simUsage}/{u.simLimit}
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-1 text-[11px] text-slate-400">XP {u.xp} · Level {u.level || 0} · {new Date(u.createdAt).toLocaleDateString("id-ID")}</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full min-w-[720px] text-sm">
                 <thead>
                   <tr className="border-b border-slate-100 dark:border-slate-800 text-left text-slate-500 dark:text-slate-400">
                     <th className="pb-3 pl-4 pt-3 w-10">
@@ -190,7 +228,7 @@ export default function AdminUsersPage() {
                             <div className="w-7 h-7 rounded-full bg-gradient-to-br from-slate-300 to-slate-400 flex items-center justify-center text-white text-[10px] font-bold">
                               {(u.fullName || "?").slice(0, 2).toUpperCase()}
                             </div>
-                            <span className="font-medium text-slate-900 dark:text-slate-100">{u.fullName}</span>
+                            <span className="min-w-0 font-medium text-slate-900 dark:text-slate-100 [overflow-wrap:anywhere]">{u.fullName}</span>
                             {u.isFounder && <Crown size={12} className="text-amber-500 dark:text-amber-400" />}
                           </div>
                         </td>

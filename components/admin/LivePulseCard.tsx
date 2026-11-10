@@ -230,7 +230,7 @@ export function LivePulseCard() {
               </p>
             </div>
             <p className="text-xs text-slate-400 dark:text-slate-500">
-              Presence data belum aktif. Periksa konfigurasi Redis di Vercel.
+              Data kehadiran belum terhubung ke Redis. Muat ulang halaman, atau periksa REDIS_URL pada server.
             </p>
           </div>
 

@@ -372,7 +372,7 @@ export default function AdminAiQuotaPage() {
         <>
           {/* Filters */}
           <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative min-w-0 w-full flex-1 sm:min-w-[200px]">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 value={searchInput}
@@ -412,7 +412,7 @@ export default function AdminAiQuotaPage() {
           </div>
 
           {/* Stats bar */}
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
               <p className="text-xs text-slate-500 dark:text-slate-400">Total Pengguna</p>
               <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">{total}</p>
@@ -557,7 +557,7 @@ export default function AdminAiQuotaPage() {
         <>
           {/* Audit filters */}
           <div className="flex flex-wrap items-center gap-3 bg-white dark:bg-slate-800/90 p-4 rounded-2xl border border-slate-200 dark:border-slate-700">
-            <div className="relative flex-1 min-w-[200px]">
+            <div className="relative min-w-0 w-full flex-1 sm:min-w-[200px]">
               <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 value={auditSearchInput}

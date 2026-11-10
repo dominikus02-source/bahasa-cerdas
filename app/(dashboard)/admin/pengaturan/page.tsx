@@ -250,7 +250,7 @@ function MgmpMediaCard() {
               </button>
 
               {photos.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                   {photos.map(p => (
                     <div key={p.key} className="relative aspect-square rounded-lg overflow-hidden border border-slate-200 dark:border-slate-700 group">
                       <img src={p.url} alt="" className="w-full h-full object-cover" />

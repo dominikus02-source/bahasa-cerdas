@@ -61,7 +61,8 @@ assert(presence.includes("getOnlineUsers"), "Must export getOnlineUsers")
 assert(presence.includes("getTotalKaryaCount"), "Must export getTotalKaryaCount")
 assert(presence.includes("isUserOnline"), "Must export isUserOnline")
 assert(presence.includes("removePresence"), "Must export removePresence")
-assert(presence.includes("@upstash/redis"), "Must use Upstash Redis")
+assert(presence.includes("@upstash/redis"), "Must keep Upstash Redis when REST env is set")
+assert(presence.includes("REDIS_URL") || presence.includes("standaloneKv") || presence.includes("redis-standalone"), "Must fall back to REDIS_URL / VPS Redis when Upstash is absent")
 // Check privacy: presence stores role + coarse menu key, never identity/IP/full URL
 assert(!presence.includes("email:") && !presence.includes("email ="), "Must not store email as data field")
 assert(!presence.includes("ipAddress") && !presence.includes("ip_address"), "Must not store IP address")
@@ -78,7 +79,7 @@ assert(presence.includes("catch") && presence.includes("return false"), "setPres
 assert(presence.includes("return empty") || presence.includes("return { total: 0"), "getOnlineUsers must fail-open (return empty on error)")
 
 // Check TTL constant
-assert(presence.includes("ex: PRESENCE_TTL_SECONDS") || presence.includes("ex: 60"), "Redis SET must use TTL")
+assert(presence.includes("ex: PRESENCE_TTL_SECONDS") || presence.includes("ex: 60") || presence.includes("{ ex: ttl }"), "Redis SET must use TTL")
 
 // ═══════════════════════════════════════════════════════════════
 // SECTION 3: Heartbeat API
@@ -181,6 +182,8 @@ assert(card.includes("Live Pulse"), "Must have 'Live Pulse' heading")
 assert(card.includes("Near-real-time"), "Must use 'Near-real-time' terminology")
 assert(card.includes("presenceAvailable"), "Must handle presenceAvailable field")
 assert(card.includes("Live Pulse tidak tersedia"), "Must show unavailable state when presenceAvailable=false")
+assert(!card.includes("Vercel"), "Unavailable copy must not mention Vercel")
+assert(card.includes("REDIS_URL"), "Unavailable copy must point to REDIS_URL")
 assert(card.includes("WifiOff"), "Must import WifiOff icon for unavailable state")
 assert(card.includes("detik lalu"), "Time label must use 'detik lalu' (not 'd lalu')")
 assert(card.includes("detik"), "Footer must use 'detik' (not 'd')")
@@ -211,9 +214,11 @@ assert(providers.includes("<HeartbeatProvider"), "providers.tsx must render Hear
 // ═══════════════════════════════════════════════════════════════
 console.log("SECTION 8: Executive dashboard wiring")
 
-const executive = readFile("app/(dashboard)/admin/executive/page.tsx")
-assert(executive.includes("LivePulseCard"), "Executive page must import LivePulseCard")
-assert(executive.includes("<LivePulseCard"), "Executive page must render LivePulseCard")
+const executivePage = readFile("app/(dashboard)/admin/executive/page.tsx")
+const executiveView = readFile("components/admin/ExecutiveDashboardView.tsx")
+assert(executivePage.includes("ExecutiveDashboardView"), "Executive page must render the extracted view")
+assert(executiveView.includes("LivePulseCard"), "Executive view must import LivePulseCard")
+assert(executiveView.includes("<LivePulseCard"), "Executive view must render LivePulseCard")
 
 // ═══════════════════════════════════════════════════════════════
 // SECTION 9: Privacy & security

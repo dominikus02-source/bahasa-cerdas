@@ -8,6 +8,7 @@ import { BackHome } from "@/components/shared/BackHome";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ShellSidebarToggle } from "@/components/dashboard/ShellSidebarToggle";
 import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
+import "@/components/admin/admin-mobile.css";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const user = await getUser();
@@ -16,7 +17,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <ShellLayout
       rootClassName="bg-slate-50 dark:bg-slate-950"
-      mainClassName="bc-admin flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+      mainClassName="bc-admin min-w-0 flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
       sidebar={
         <>
           <AdminSidebar user={{ fullName: user.fullName, avatar: user.avatar }} />

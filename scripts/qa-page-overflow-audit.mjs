@@ -49,11 +49,37 @@ const QA_USER = {
   province: "DKI Jakarta", subject: "Bahasa Indonesia", grade: "IX", xp: 120, level: 3, streak: 2,
   isPremium: false, isFounder: false, badgeKind: null, coins: 10, league: "bronze", totalLikes: 0, totalViews: 0,
 };
+
+const QA_FOUNDER = { ...QA_USER, id: "qa-founder-1", fullName: "QA Founder Palsu", email: "qa-founder@bahasacerdas.test", isFounder: true, role: "ADMIN", isPremium: true, badgeKind: "founder" };
+const LONG_EMAIL = "musyawarah.guru.mata.pelajaran.bahasa.indonesia@kabupatenbandungbarat.example.test";
+const QA_ADMIN_USERS = [
+  { id: "u1", fullName: longName, email: LONG_EMAIL, role: "GURU", isFounder: false, isPremium: true, premiumUntil: "2027-01-01T00:00:00.000Z", trialEndsAt: null, plan: "PRO", xp: 2400, level: 12, simLimit: 10, simUsage: 3, createdAt: "2026-01-15T00:00:00.000Z" },
+  { id: "u2", fullName: "Siti Nurhaliza BahasaCerdas", email: "siti.nurhaliza@bahasacerdas.test", role: "MURID", isFounder: false, isPremium: false, premiumUntil: null, trialEndsAt: null, plan: "FREE", xp: 80, level: 2, simLimit: 0, simUsage: 0, createdAt: "2026-03-02T00:00:00.000Z" },
+  { id: "u3", fullName: "QA Founder Palsu", email: "qa-founder@bahasacerdas.test", role: "ADMIN", isFounder: true, isPremium: true, premiumUntil: null, trialEndsAt: null, plan: "FOUNDER", xp: 9999, level: 50, simLimit: 0, simUsage: 0, createdAt: "2025-01-01T00:00:00.000Z" },
+];
+const QA_USER_ANALYTICS = {
+  generatedAt: "2026-11-10T13:00:00.000Z",
+  summary: { totalUsers: 1280, murid: 1100, guru: 180, other: 0, active30d: 510, new30d: 190 },
+  roles: [{ key: "MURID", label: "Murid", value: 1100 }, { key: "GURU", label: "Guru", value: 180 }],
+  statuses: [{ key: "free", label: "Free", value: 1000 }, { key: "premium", label: "Pro", value: 280 }],
+  growth: [{ key: "2026-10", label: "Okt", murid: 80, guru: 12, other: 0, total: 92 }, { key: "2026-11", label: "Nov", murid: 60, guru: 8, other: 0, total: 68 }],
+};
+const QA_LIVE_PULSE = {
+  onlineUsers: 7, onlineGuru: 2, onlineMurid: 4, onlineAdmin: 1, onlineUmum: 0,
+  onlineLocations: [{ key: "guru:beranda", label: "Guru · Beranda", total: 2, guru: 2, murid: 0, admin: 0, umum: 0 }],
+  totalKarya: 120, generatedAt: "2026-11-10T13:00:00.000Z", presenceWindowSeconds: 60, presenceAvailable: true,
+};
+
 function mockApi(url, mode) {
   const p = new URL(url).pathname;
   if (p === "/api/komunitas/mine") return { communities: MINE };
   if (p === "/api/komunitas") return { communities: COMMUNITIES };
   if (p === "/api/user/me") return { user: QA_USER };
+  if (p === "/api/admin/users") return { users: QA_ADMIN_USERS, total: QA_ADMIN_USERS.length, pages: 1 };
+  if (p === "/api/admin/users/analytics") return QA_USER_ANALYTICS;
+  if (p === "/api/analytics/live") return QA_LIVE_PULSE;
+  if (p === "/api/admin/monitoring/live") return QA_LIVE_PULSE;
+  if (p.startsWith("/api/admin/")) return mode === "array" ? [] : { items: [], users: QA_ADMIN_USERS, total: QA_ADMIN_USERS.length, pages: 1, rows: [], payments: [], subscriptions: [], payouts: [], withdrawals: [], works: [], communities: [], videos: [], articles: [], logs: [], quotas: [], features: [] };
   if (p === "/api/user/rekening") return { bank: "", holder: "", number: "" };
   if (p === "/api/group") return { groups: [{ id: "g1", name: "Kelas QA 9A", accessCode: "QA1", grade: "IX", _count: { members: 0 } }] };
   if (p.startsWith("/api/guru/quiz/")) return { quiz: { id: "qa-1", title: "Kuis QA", assignments: [] } };
