@@ -137,7 +137,7 @@ console.log("\n📋 Test 9: Health API detects old pending transactions");
 console.log("\n📋 Test 10: Admin health card on payments page");
 {
   try {
-    const payments = readFile("app/(dashboard)/admin/payments/page.tsx");
+    const payments = readFile("app/(dashboard)/admin/payments/payments-view.tsx");
     assert(payments.includes("Payment Health") || payments.includes("health"), "Health card exists");
     assert(payments.includes("/api/admin/payments/health"), "Calls health API");
   } catch {}

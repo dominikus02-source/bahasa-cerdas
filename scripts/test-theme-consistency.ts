@@ -375,7 +375,9 @@ for (const n of profileCards) {
 test("admin root hanya redirect ke /admin/executive", () => read("app/(dashboard)/admin/page.tsx").includes('redirect("/admin/executive")'));
 const adminPages = [
   "app/(dashboard)/admin/executive/page.tsx",
-  "app/(dashboard)/admin/payments/page.tsx",
+  "app/(dashboard)/admin/payments/payments-view.tsx",
+  "app/(dashboard)/admin/keuangan/page.tsx",
+  "components/admin/finance/FinanceHub.tsx",
   "app/(dashboard)/admin/ai-quota/page.tsx",
   "app/(dashboard)/admin/data-center/page.tsx",
   "components/admin/AdminSidebar.tsx",

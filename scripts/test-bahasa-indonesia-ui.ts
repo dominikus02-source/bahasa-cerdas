@@ -167,7 +167,7 @@ async function main() {
   // 12. Admin pages — status labels in Indonesian
   console.log("\n── Admin Status Labels ──")
   test("Admin payments: 'Menunggu' bukan 'Pending' sebagai label UI", () => {
-    const content = readFileSync("app/(dashboard)/admin/payments/page.tsx", "utf-8")
+    const content = readFileSync("app/(dashboard)/admin/payments/payments-view.tsx", "utf-8")
     return content.includes("Menunggu")
   })
   test("Admin komunitas: label error pakai 'Gagal'", () => {
