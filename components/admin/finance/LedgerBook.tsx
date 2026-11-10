@@ -273,31 +273,8 @@ export default function LedgerBook() {
           <p className="text-sm text-slate-500 dark:text-slate-400">Belum ada entri pada rentang ini.</p>
         ) : (
           <>
-            <ul className="space-y-2 sm:hidden">
-              {entries.map((entry) => (
-                <li key={entry.id} className="rounded-lg border border-slate-200 dark:border-slate-700 p-3 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{entry.entryDate}</p>
-                    <p className={`text-xs font-medium shrink-0 ${entry.type === "PEMASUKAN" ? "text-teal-700 dark:text-teal-300" : "text-slate-700 dark:text-slate-300"}`}>
-                      {entry.type === "PEMASUKAN" ? "Pemasukan" : "Pengeluaran"}
-                    </p>
-                  </div>
-                  <p className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100 break-words">{formatRupiah(entry.amount)}</p>
-                  <p className="text-sm text-slate-700 dark:text-slate-300 break-words">{entry.description}</p>
-                  {entry.category && <p className="text-xs text-slate-500 dark:text-slate-400 break-words">{entry.category}</p>}
-                  <p className="mt-1 text-[11px] text-slate-500 dark:text-slate-400 break-words">
-                    Dibuat: {entry.createdByEmail}
-                    {entry.updatedByEmail ? ` · Diubah: ${entry.updatedByEmail}` : ""}
-                  </p>
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    <button type="button" onClick={() => startEdit(entry)} className="text-xs font-medium text-violet-700 dark:text-violet-300">Ubah</button>
-                    <button type="button" onClick={() => remove(entry)} className="text-xs font-medium text-slate-600 dark:text-slate-300">Hapus</button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className="hidden sm:block min-w-0 overflow-x-auto">
-              <table className="w-full text-sm">
+            <div className="min-w-0 overflow-x-auto">
+              <table className="w-full min-w-[36rem] text-sm">
                 <thead>
                   <tr className="text-left text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     <th className="py-2 pr-3">Tanggal</th>
