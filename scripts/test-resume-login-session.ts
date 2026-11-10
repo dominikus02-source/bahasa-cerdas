@@ -21,7 +21,7 @@ assert.equal(await probe({role:"GURU",isFounder:false},"",true),null); count++;
 for (const user of [null,{}, {role:"EVIL",isFounder:false},{role:"MURID",isFounder:"true"}]) {
  assert.equal(await probe(user),null); count++;
 }
-for (const q of ["?error=google_expired","?reset=success","?code=abc","?type=recovery","?token_hash=abc"]) {
+for (const q of ["?error=google_expired","?reset=success","?code=abc","?type=recovery","?token_hash=abc","?logged_out=1"]) {
  let called=false;
  const target=await resumeLoginSession({search:q,arenaEntry:false,signal:new AbortController().signal,fetcher:async()=>{called=true;throw Error();}});
  assert.equal(target,null);assert.equal(called,false);count++;

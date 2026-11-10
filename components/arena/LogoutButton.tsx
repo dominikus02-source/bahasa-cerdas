@@ -2,8 +2,7 @@
 
 import { useState } from "react"
 import { LogOut } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
-import { useRouter } from "next/navigation"
+import { leaveAccount } from "@/lib/auth/leave-account"
 
 export default function LogoutButton({
   variant = "link",
@@ -14,13 +13,14 @@ export default function LogoutButton({
   to?: string;
 }) {
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
 
   const handleLogout = async () => {
     setLoading(true)
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push(to)
+    try {
+      await leaveAccount(to)
+    } finally {
+      setLoading(false)
+    }
   }
 
   // Row inside the Pemain tab's settings list. In the APK this is the ONLY way

@@ -14,7 +14,7 @@ export async function resumeLoginSession({
   fetcher?: typeof fetch;
 }): Promise<string | null> {
   const params = new URLSearchParams(search);
-  if (["error", "reset", "code", "token_hash", "type"].some((key) => params.has(key))) return null;
+  if (["error", "reset", "code", "token_hash", "type", "logged_out"].some((key) => params.has(key))) return null;
   try {
     const response = await fetcher("/api/user/me?fresh=1", {
       credentials: "same-origin", cache: "no-store", signal,

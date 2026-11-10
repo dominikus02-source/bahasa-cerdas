@@ -9,8 +9,7 @@ import {
   BookOpen, Trophy, Calendar, GraduationCap, Brain, Star, Award,
   LogOut, Crown, Zap, Flame, TrendingUp, Bell, Presentation, Sparkles, ExternalLink, BarChart3, PenLine, Baby
 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
-import { useRouter } from "next/navigation"
+import { leaveAccount } from "@/lib/auth/leave-account"
 import { NotificationBell } from "./NotificationBell"
 import { VerifiedBadge } from "@/components/arena/UserName"
 
@@ -90,8 +89,6 @@ interface Props {
 
 export function GuruSidebar({ user }: Props) {
   const pathname = usePathname()
-  const router = useRouter()
-  const supabase = createClient()
   const [expanded, setExpanded] = useState<Record<string, boolean>>({
     Olimpiade: pathname.includes("/olimpiade"),
     Komunitas: pathname.includes("/komunitas"),
@@ -100,8 +97,7 @@ export function GuruSidebar({ user }: Props) {
   })
 
   const handleLogout = async () => {
-    await supabase.auth.signOut()
-    router.push("/login")
+    await leaveAccount("/login")
   }
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/")

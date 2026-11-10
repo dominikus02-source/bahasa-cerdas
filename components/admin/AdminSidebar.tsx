@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import {
   ShoppingBag, Film, FileText, Users, LogOut, Settings,
@@ -11,7 +11,7 @@ import {
   Crown, Target, ChevronDown, Bot, ScrollText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { leaveAccount } from "@/lib/auth/leave-account";
 import {
   NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
   NAV_LINK_BASE, NAV_LINK_ACTIVE, NAV_LINK_INACTIVE, ACTION_ICON_CLASS,
@@ -146,8 +146,6 @@ interface Props {
 
 export function AdminSidebar({ user }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
   const [notifs, setNotifs] = useState<any[]>([]);
   const [unread, setUnread] = useState(0);
   const [showNotifs, setShowNotifs] = useState(false);
@@ -212,8 +210,7 @@ export function AdminSidebar({ user }: Props) {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+    await leaveAccount("/login");
   };
 
   return (
