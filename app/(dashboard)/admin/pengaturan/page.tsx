@@ -206,7 +206,7 @@ function MgmpMediaCard() {
         <div className="py-6 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-slate-400" /></div>
       ) : (
         <>
-          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800/70 rounded-xl mb-4 w-fit">
+          <div className="flex flex-wrap gap-1 p-1 bg-slate-100 dark:bg-slate-800/70 rounded-xl mb-4 w-full min-w-0 max-w-full">
             {[
               { key: "none" as const, label: "Default" },
               { key: "photo" as const, label: "Foto" },
@@ -216,7 +216,7 @@ function MgmpMediaCard() {
                 key={t.key}
                 type="button"
                 onClick={() => setTab(t.key)}
-                className={`px-4 py-1.5 rounded-lg text-sm font-semibold transition-colors ${
+                className={`flex-1 min-w-0 px-2 sm:px-4 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
                   tab === t.key ? "bg-white dark:bg-slate-800/90 text-primary shadow-sm" : "text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200"
                 }`}
               >

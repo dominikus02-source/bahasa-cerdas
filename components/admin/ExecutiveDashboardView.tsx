@@ -60,12 +60,12 @@ function PriorityCard({ p }: { p: { severity: string; title: string; description
   const sev = p.severity as "P1" | "P2" | "P3";
   return (
     <div className={`rounded-xl border p-4 ${colors[sev]}`}>
-      <div className="flex items-start justify-between gap-3 mb-2">
-        <div className="flex items-center gap-2">
-          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold ${badges[sev]}`}>{p.severity}</span>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">{p.title}</h3>
+      <div className="flex flex-wrap items-start justify-between gap-2 mb-2 min-w-0">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <span className={`inline-flex shrink-0 items-center px-1.5 py-0.5 rounded text-[10px] font-bold ${badges[sev]}`}>{p.severity}</span>
+          <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100 min-w-0 [overflow-wrap:anywhere]">{p.title}</h3>
         </div>
-        <Link href={p.href} className="shrink-0 inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+        <Link href={p.href} className="inline-flex items-center gap-1 px-2 py-1 text-[10px] font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
           {p.actionLabel} <ArrowRight size={10} />
         </Link>
       </div>
