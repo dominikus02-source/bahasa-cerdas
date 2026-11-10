@@ -127,15 +127,15 @@ export default function AdminPremiumReportPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3 min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Premium Report</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Laporan lengkap Premium Murid dan Guru Pro dalam satu tampilan.
           </p>
         </div>
         <button onClick={fetchData} disabled={loading}
-          className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2">
+          className="flex shrink-0 items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2">
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
         </button>
       </div>
@@ -309,18 +309,18 @@ export default function AdminPremiumReportPage() {
           <option value="GURU_PRO_MONTHLY">Guru Bulanan</option>
           <option value="GURU_PRO_YEARLY">Guru Tahunan</option>
         </select>
-        <div className="relative">
+        <div className="relative min-w-0 w-full sm:w-auto sm:flex-1 sm:max-w-xs">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input value={search} onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Cari nama / email..."
-            className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90 w-56" />
+            className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90 w-full min-w-0" />
         </div>
       </div>
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-800/90 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabel langganan premium">
-          <table className="w-full text-sm">
+        <div className="overflow-x-auto min-w-0" tabIndex={0} role="region" aria-label="Tabel langganan premium">
+          <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
                 <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 text-xs">Nama</th>

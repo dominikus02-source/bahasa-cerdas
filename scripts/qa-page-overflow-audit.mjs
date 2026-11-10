@@ -49,11 +49,116 @@ const QA_USER = {
   province: "DKI Jakarta", subject: "Bahasa Indonesia", grade: "IX", xp: 120, level: 3, streak: 2,
   isPremium: false, isFounder: false, badgeKind: null, coins: 10, league: "bronze", totalLikes: 0, totalViews: 0,
 };
+
+const QA_FOUNDER = { ...QA_USER, id: "qa-founder-1", fullName: "QA Founder Palsu", email: "qa-founder@bahasacerdas.test", isFounder: true, role: "ADMIN", isPremium: true, badgeKind: "founder" };
+const LONG_EMAIL = "musyawarah.guru.mata.pelajaran.bahasa.indonesia@kabupatenbandungbarat.example.test";
+const QA_ADMIN_USERS = [
+  { id: "u1", fullName: longName, email: LONG_EMAIL, role: "GURU", isFounder: false, isPremium: true, premiumUntil: "2027-01-01T00:00:00.000Z", trialEndsAt: null, plan: "PRO", xp: 2400, level: 12, simLimit: 10, simUsage: 3, createdAt: "2026-01-15T00:00:00.000Z" },
+  { id: "u2", fullName: "Siti Nurhaliza BahasaCerdas", email: "siti.nurhaliza@bahasacerdas.test", role: "MURID", isFounder: false, isPremium: false, premiumUntil: null, trialEndsAt: null, plan: "FREE", xp: 80, level: 2, simLimit: 0, simUsage: 0, createdAt: "2026-03-02T00:00:00.000Z" },
+  { id: "u3", fullName: "QA Founder Palsu", email: "qa-founder@bahasacerdas.test", role: "ADMIN", isFounder: true, isPremium: true, premiumUntil: null, trialEndsAt: null, plan: "FOUNDER", xp: 9999, level: 50, simLimit: 0, simUsage: 0, createdAt: "2025-01-01T00:00:00.000Z" },
+];
+const QA_USER_ANALYTICS = {
+  generatedAt: "2026-11-10T13:00:00.000Z",
+  summary: { totalUsers: 1280, murid: 1100, guru: 180, other: 0, active30d: 510, new30d: 190 },
+  roles: [{ key: "MURID", label: "Murid", value: 1100 }, { key: "GURU", label: "Guru", value: 180 }],
+  statuses: [{ key: "free", label: "Free", value: 1000 }, { key: "premium", label: "Pro", value: 280 }],
+  growth: [{ key: "2026-10", label: "Okt", murid: 80, guru: 12, other: 0, total: 92 }, { key: "2026-11", label: "Nov", murid: 60, guru: 8, other: 0, total: 68 }],
+};
+const QA_LIVE_PULSE = {
+  onlineUsers: 7, onlineGuru: 2, onlineMurid: 4, onlineAdmin: 1, onlineUmum: 0,
+  onlineLocations: [{ key: "guru:beranda", label: "Guru · Beranda", total: 2, guru: 2, murid: 0, admin: 0, umum: 0 }],
+  totalKarya: 120, generatedAt: "2026-11-10T13:00:00.000Z", presenceWindowSeconds: 60, presenceAvailable: true,
+};
+
 function mockApi(url, mode) {
   const p = new URL(url).pathname;
   if (p === "/api/komunitas/mine") return { communities: MINE };
   if (p === "/api/komunitas") return { communities: COMMUNITIES };
   if (p === "/api/user/me") return { user: QA_USER };
+  if (p === "/api/admin/users") return { users: QA_ADMIN_USERS, total: QA_ADMIN_USERS.length, pages: 1 };
+  if (p === "/api/admin/users/analytics") return QA_USER_ANALYTICS;
+  if (p === "/api/analytics/live") return QA_LIVE_PULSE;
+  if (p === "/api/admin/monitoring/live") return QA_LIVE_PULSE;
+  if (p === "/api/admin/analytics/dashboard") return {
+    success: true, generatedAt: "2026-11-10T13:00:00.000Z",
+    range: { days: 30, since: "2026-10-11T00:00:00.000Z", until: "2026-11-10T13:00:00.000Z" },
+    filterApplied: false,
+    funnel: [
+      { stage: "login", label: "Login", users: 800, conversion: 100, change: 2 },
+      { stage: "learn", label: "Belajar", users: 520, conversion: 65, change: 1 },
+      { stage: "create", label: "Berkarya", users: 210, conversion: 26, change: -1 },
+      { stage: "return", label: "Kembali", users: 140, conversion: 18, change: 0 },
+    ],
+    dropoff: [{ from: "Login", to: "Belajar", drop: 280 }],
+    retention: { dau: 120, wau: 410, mau: 890, stickiness: 14, retentionD1: 32, retentionD7: 18, retentionD30: 9, avgStreak: 3, maxStreak: 21, avgActiveDays: 6, activeUsers90d: 980 },
+    engagement: { avgSessionsPerDay: 4, totalActions: 12000, xpEarned: 54000, xpTransactions: 3200, questsCompleted: 180, badgesAwarded: 40, achievementsCompleted: 22, rankUps: 15, levelUps: 60, gamesPlayed: 900, jalurCompleted: 70, karyaCreated: 55, ukbiCompleted: 30 },
+    heatmap: [{ dow: 1, hour: 8, users: 20 }, { dow: 1, hour: 19, users: 40 }],
+    cohort: [{ week: "2026-10-06", users: 80, w1: 40, w2: 28, w3: 20, w4: 16 }],
+    xpDist: [{ bucket: "0-100", users: 200 }, { bucket: "100-500", users: 80 }],
+    rankDist: [{ rank: "BRONZE", users: 400, promotedThisWeek: 12 }],
+    skills: [{ skill: "Membaca", avgLevel: 2.4, users: 300 }],
+    content: { karyaToday: 3, karyaWeek: 18, karyaMonth: 55, karyaTotal: 120, artikel: 40, comments: 90, likes: 300, views: 2000, topTheme: "Puisi", themes: [{ type: "Puisi", count: 40 }] },
+    topGames: [{ source: "benar-salah", label: "Benar Salah", players: 80, totalXp: 4000, avgXp: 50, repeatRate: 20 }],
+    aiGuru: { activeGurus: 12, totalPrompts: 400, totalTokens: 80000, rpp: 40, soal: 80, materi: 30, review: 10, eyd: 20, analisis: 8, asisten: 15, download: 6 },
+    topJourneys: [{ journey: ["Login", "Belajar", "Berkarya"], count: 40 }],
+    insights: [{ tone: "good", text: "Retensi D1 naik pada sampel QA." }],
+  };
+  if (p === "/api/admin/data-center") return {
+    counts: { User: 1280, Profile: 1280, Artikel: 40, Video: 12, Karya: 120, UKBIQuestion: 800, TKAQuestion: 600, PaketKompetensi: 20, LearningLevel: 8, LearningUnit: 40, TestSession: 300, TestAnswer: 2000, AIUsage: 400, AiSavedResult: 90, Transaksi: 70 },
+    backupManifest: { id: "b1", backupId: "bak-1", storagePath: "s3://qa/backup", status: "SUCCESS", trigger: "SCHEDULED", totalRows: 9000, totalTables: 15, totalBytes: 1024000, completedAt: "2026-11-10T10:00:00.000Z", startedAt: "2026-11-10T09:50:00.000Z", errorMessage: null, hoursAgo: 3 },
+  };
+  if (p.startsWith("/api/admin/payments/health")) return { pendingOlder30Min: 0, paymentWithoutPremium: 0, premiumWithoutLedger: 0 };
+  if (p.startsWith("/api/admin/payments")) return {
+    stats: { total: 2, allTimeRevenue: 250000, success: 1, pending: 1, failed: 0, revenueThisMonth: 150000, revenueAllTime: 250000 },
+    transactions: [{
+      id: "trx-1", orderId: "ORD-QA-1", amount: 150000, status: "SUCCESS", planId: "GURU_PRO_MONTHLY",
+      createdAt: "2026-11-01T03:00:00.000Z", updatedAt: "2026-11-01T03:01:00.000Z", midtransId: "mid-qa-1",
+      user: { id: "u1", fullName: longName, email: LONG_EMAIL, isPremium: true, premiumPlan: "GURU_PRO_MONTHLY", premiumUntil: "2027-01-01T00:00:00.000Z" },
+      premiumActivated: true,
+    }],
+    pagination: { page: 1, limit: 20, total: 1, totalPages: 1 },
+  };
+  if (p.startsWith("/api/admin/premium/report")) return {
+    summary: { totalActive: 2, muridActive: 1, guruActive: 1, expiringSoon: 0, expired: 0, mrr: { total: 200000, activeMuridPremium: 80000, activeGuruPremium: 120000 }, cashCollectedByAudience: { murid: 80000, guru: 120000 }, funnel: { registered: 1280, activePremium: 2, renewed: 1 }, churnRisk: { expiringIn7d: 0, expiringIn14d: 0, expiringIn30d: 1 } },
+    data: [{
+      userId: "u1", fullName: longName, email: LONG_EMAIL, audience: "GURU", role: "GURU", isPremium: true,
+      premiumPlan: "GURU_PRO_MONTHLY", premiumUntil: "2027-01-01T00:00:00.000Z", premiumStatus: "ACTIVE", daysUntilExpiry: 52,
+      subscriptionPlan: "GURU_PRO_MONTHLY", amount: 150000,
+      lastTransaction: { id: "trx-1", status: "SUCCESS", reference: "ref-1", orderId: "ORD-QA-1", midtransId: "mid-qa-1", amount: 150000, createdAt: "2026-11-01T03:00:00.000Z" },
+    }],
+    pagination: { page: 1, pageSize: 25, total: 1, totalPages: 1 },
+    filters: { audience: "ALL", status: "ALL", plan: "ALL" },
+  };
+  if (p === "/api/admin/founders") return { founders: [{ id: "qa-founder-1", email: "qa-founder@bahasacerdas.test", fullName: "QA Founder Palsu", role: "ADMIN", isSuperFounder: true }], canManage: true };
+  if (p.startsWith("/api/admin/audit-log")) return { entries: [{ id: "log-1", actorEmail: "qa-founder@bahasacerdas.test", method: "GET", path: "/api/admin/users", status: 200, targetUserId: null, createdAt: "2026-11-10T13:00:00.000Z" }], pages: 1 };
+  if (p.startsWith("/api/admin/settings/promo-video")) return { videoId: null };
+  if (p.startsWith("/api/admin/settings/mgmp-media")) return { type: "none" };
+  if (p.startsWith("/api/admin/teacher-commissions/payout-control")) return {
+    safetyState: "DISABLED", safetyDetail: "Pencairan masih dimatikan pada lingkungan QA.",
+    config: { provider: "xendit", realMoneyEnabled: false, providerEnabled: false, killSwitchActive: false, minimumAmount: 10000, maximumAmount: 1000000, pilotPaused: false, pilotGlobalLimit: 0, globalDailyLimit: 0 },
+    exposure: { pilotDailyTotal: 0, globalDailyTotal: 0, pilotGlobalLimit: 0, globalDailyLimit: 0 },
+    pilot: { teacherIds: [], paused: false },
+    founderGate: { autoChecksPassed: false, autoPass: 0, autoFail: 0, manualRequired: 1, items: [{ id: "gate-1", label: "Siap produksi", status: "PENDING", detail: "QA" }] },
+    alerts: [],
+  };
+  if (p.startsWith("/api/admin/teacher-commissions/pre-canary")) return {
+    decision: "NOT_YET", items: [], automaticFailures: [], manualPending: [],
+    founderDecision: { state: "PENDING", approverEmail: null, decidedAt: null, notes: null },
+    realMoneyEnabled: false, providerEnabled: false, provider: "xendit", killSwitchActive: false,
+  };
+  if (p.startsWith("/api/admin/teacher-commissions/canary")) return {
+    run: { canaryRunId: "c1", selectedTeacherId: null, selectedWithdrawalId: null, intendedGrossAmount: null, intendedDestinationSnapshot: null, provider: null, executionEnvironment: null, receiptStatus: null, finalStatus: "IDLE", stopReason: null, reviewNotes: null, startedAt: null, completedAt: null },
+    preflight: { blocked: true, blockingReason: "QA", checks: [] },
+  };
+  if (p.startsWith("/api/admin/teacher-commissions/xendit-readiness")) return {
+    config: { overall: "NOT_READY", fields: [] },
+    evidence: { updatedAt: null, items: [] },
+    readiness: { ready: false, blocks: [] },
+    confirmation: { confirmed: false, founderEmail: null, timestamp: null, approvalReference: null, canaryTeacherId: null, withdrawalId: null },
+    pilotTeacher: null,
+    snapshot: { teacher: { maskedIdentity: "guru-***" }, commission: null, withdrawal: { id: null, amount: null }, destination: null, provider: "xendit", providerFee: "0", teacherReceives: null, risk: "low", exposureRemaining: 0, dailyGlobalExposure: 0, killSwitch: false, pilot: false, founderGateReady: false },
+  };
+  if (p.startsWith("/api/admin/")) return mode === "array" ? [] : { items: [], users: QA_ADMIN_USERS, total: QA_ADMIN_USERS.length, pages: 1, rows: [], payments: [], subscriptions: [], payouts: [], withdrawals: [], works: [], communities: [], videos: [], articles: [], logs: [], quotas: [], features: [] };
   if (p === "/api/user/rekening") return { bank: "", holder: "", number: "" };
   if (p === "/api/group") return { groups: [{ id: "g1", name: "Kelas QA 9A", accessCode: "QA1", grade: "IX", _count: { members: 0 } }] };
   if (p.startsWith("/api/guru/quiz/")) return { quiz: { id: "qa-1", title: "Kuis QA", assignments: [] } };

@@ -71,7 +71,7 @@ export default function AdminKaryaPage() {
             placeholder="Cari produk..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-9 pr-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 w-64"
+            className="pl-9 pr-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 w-full min-w-0 sm:max-w-xs"
           />
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function AdminKaryaPage() {
         </div>
       ) : (
         <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-gray-100 dark:border-slate-700">
                 <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-slate-400">Produk</th>
@@ -136,7 +136,7 @@ export default function AdminKaryaPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
 
           {/* Pagination */}
           {pages > 1 && (

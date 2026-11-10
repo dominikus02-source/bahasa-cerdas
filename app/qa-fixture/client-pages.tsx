@@ -11,6 +11,7 @@ export const QA_CLIENT_PAGES: Record<string, ComponentType<any>> = {
   "/register": dynamic(() => import("@/app/(auth)/register/page"), { ssr: false }),
   "/reset-password": dynamic(() => import("@/app/(auth)/reset-password/page"), { ssr: false }),
   "/verify-email": dynamic(() => import("@/app/(auth)/verify-email/page"), { ssr: false }),
+  "/admin/executive": dynamic(() => import("@/app/qa-fixture/admin-executive-page"), { ssr: false }),
   "/admin/ai-analytics": dynamic(() => import("@/app/(dashboard)/admin/ai-analytics/page"), { ssr: false }),
   "/admin/ai-quota": dynamic(() => import("@/app/(dashboard)/admin/ai-quota/page"), { ssr: false }),
   "/admin/analytics": dynamic(() => import("@/app/(dashboard)/admin/analytics/page"), { ssr: false }),

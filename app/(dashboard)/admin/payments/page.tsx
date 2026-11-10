@@ -123,12 +123,12 @@ export default function AdminPaymentsPage() {
   return (
     <div className="space-y-6">
       {dialogKonfirmasi}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-wrap items-start justify-between gap-3 min-w-0">
+        <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Pembayaran</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Kelola transaksi Guru Pro dan pantau pendapatan.</p>
         </div>
-        <button onClick={fetchData} disabled={loading} className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2">
+        <button onClick={fetchData} disabled={loading} className="flex shrink-0 items-center gap-2 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2">
           <RefreshCw size={14} className={loading ? "animate-spin" : ""} /> Refresh
         </button>
       </div>
@@ -185,13 +185,13 @@ export default function AdminPaymentsPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative">
+        <div className="relative min-w-0 w-full sm:w-auto sm:flex-1 sm:max-w-xs">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
           <input
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
             placeholder="Cari user / email / orderId..."
-            className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90 w-64"
+            className="pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90 w-full min-w-0"
           />
         </div>
         <select aria-label="Filter status pembayaran" value={statusFilter} onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }} className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-sm bg-white dark:bg-slate-800/90">
@@ -214,8 +214,45 @@ export default function AdminPaymentsPage() {
 
       {/* Table */}
       <div className="bg-white dark:bg-slate-800/90 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Tabel pembayaran">
-          <table className="w-full text-sm">
+        <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          {loading ? (
+            <div className="py-16 text-center text-slate-400"><Loader2 className="w-5 h-5 animate-spin mx-auto" /></div>
+          ) : data?.transactions.length === 0 ? (
+            <div className="py-16 text-center text-slate-400">Belum ada transaksi.</div>
+          ) : (
+            data?.transactions.map((t) => (
+              <div key={t.id} className="p-4 min-w-0 space-y-2">
+                <div className="flex items-start justify-between gap-3 min-w-0">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-medium text-slate-900 dark:text-slate-100 text-sm [overflow-wrap:anywhere]">{t.user.fullName}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 [overflow-wrap:anywhere]">{t.user.email}</p>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    <button onClick={() => setDetail(t)} className="p-1.5 rounded-lg hover:bg-slate-100 dark:bg-slate-800/70 text-slate-400 hover:text-slate-600 dark:text-slate-300" title="Detail">
+                      <Eye size={14} />
+                    </button>
+                    {t.status === "PENDING" && (
+                      <button onClick={() => { setManualActivateId(t.id); setManualReason(""); setManualError(""); }} className="p-1.5 rounded-lg hover:bg-amber-100 text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:text-amber-300" title="Aktivasi Manual">
+                        <Shield size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className={`inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full border ${STATUS_BADGE[t.status] || "bg-gray-50 dark:bg-slate-800/60 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700"}`}>
+                    {STATUS_ICON[t.status]} {t.status}
+                  </span>
+                  <span className="text-[10px] text-slate-500 dark:text-slate-400">{t.planId === "GURU_PRO_YEARLY" ? "Tahunan" : t.planId === "GURU_PRO_MONTHLY" ? "Bulanan" : "-"}</span>
+                  <span className="text-xs font-semibold text-slate-900 dark:text-slate-100">{formatRupiah(t.amount)}</span>
+                  {t.premiumActivated ? <CheckCircle2 className="w-4 h-4 text-emerald-500 dark:text-emerald-400" /> : <XCircle className="w-4 h-4 text-gray-300" />}
+                </div>
+                <p className="text-[11px] text-slate-400">{formatDate(t.createdAt)} · <span className="font-mono [overflow-wrap:anywhere]">{t.orderId}</span></p>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="hidden md:block overflow-x-auto" tabIndex={0} role="region" aria-label="Tabel pembayaran">
+          <table className="w-full min-w-[720px] text-sm">
             <thead>
               <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
                 <th className="text-left py-3 px-4 font-semibold text-slate-600 dark:text-slate-300 text-xs">Tanggal</th>
@@ -238,8 +275,8 @@ export default function AdminPaymentsPage() {
                   <tr key={t.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:bg-slate-800/50/50">
                     <td className="py-3 px-4 text-xs text-slate-500 dark:text-slate-400">{formatDate(t.createdAt)}</td>
                     <td className="py-3 px-4">
-                      <p className="font-medium text-slate-900 dark:text-slate-100 text-xs">{t.user.fullName}</p>
-                      <p className="text-[10px] text-slate-400">{t.user.email}</p>
+                      <p className="font-medium text-slate-900 dark:text-slate-100 text-xs [overflow-wrap:anywhere]">{t.user.fullName}</p>
+                      <p className="text-[10px] text-slate-400 [overflow-wrap:anywhere]">{t.user.email}</p>
                     </td>
                     <td className="py-3 px-4 text-xs">
                       {t.planId === "GURU_PRO_YEARLY" ? "Tahunan" : t.planId === "GURU_PRO_MONTHLY" ? "Bulanan" : "-"}

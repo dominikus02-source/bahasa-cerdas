@@ -1,0 +1,9 @@
+/* Keep admin pages inside the mobile viewport. Wide tables scroll inside the card. */
+.bc-admin {
+  min-width: 0;
+}
+.bc-admin .overflow-x-auto {
+  min-width: 0;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}

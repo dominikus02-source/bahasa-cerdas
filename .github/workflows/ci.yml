@@ -42,7 +42,7 @@ jobs:
       - name: Login cold-start session resume (mock verification, real component)
         run: QA_OUT=qa-output/android-visual/login-resume node scripts/qa-login-session-resume.mjs
       - name: Page overflow/overlap audit (Komunitas + fixed routes; 32 combos incl. old-APK JS)
-        run: QA_OUT=qa-output/android-visual/overflow AUDIT_WORKERS=2 AUDIT_REQUIRE_RENDER=1 AUDIT_ROUTES="/guru/komunitas,/,/login,/kamus,/kebijakan-privasi,/jumpa,/admin/ai-quota,/admin/bank-soal,/admin/feature-usage,/admin/karya,/admin/loker,/arena/mystery-box,/arena/notifikasi,/guru/game/benar-salah,/guru/game/menara,/guru/game/leaderboard,/guru/feed-karya,/guru/profile,/murid/profile,/guru/kuis/[id]/assign,/guru/kuis/[id]/results,/guru/bank-soal-tka,/guru/bank-soal-ukbi,/guru/buat-tka,/guru/dokumen-latihan,/guru/game/lobby,/guru/kuis,/guru/olimpiade/info,/guru/tinjau-simulasi,/murid/premium" node scripts/qa-page-overflow-audit.mjs
+        run: QA_OUT=qa-output/android-visual/overflow AUDIT_WORKERS=2 AUDIT_REQUIRE_RENDER=1 AUDIT_ROUTES="/guru/komunitas,/,/login,/kamus,/kebijakan-privasi,/jumpa,/admin/executive,/admin/users,/admin/premium,/admin/payments,/admin/monitoring,/admin/ai-quota,/admin/bank-soal,/admin/feature-usage,/admin/karya,/admin/loker,/admin/analytics,/admin/ai-analytics,/admin/teacher-payouts,/admin/teacher-risk,/admin/withdrawals,/admin/komunitas,/admin/pengaturan,/admin/founder,/admin/data-center,/admin/video,/admin/artikel,/admin/materi/generate-ppt,/arena/mystery-box,/arena/notifikasi,/guru/game/benar-salah,/guru/game/menara,/guru/game/leaderboard,/guru/feed-karya,/guru/profile,/murid/profile,/guru/kuis/[id]/assign,/guru/kuis/[id]/results,/guru/bank-soal-tka,/guru/bank-soal-ukbi,/guru/buat-tka,/guru/dokumen-latihan,/guru/game/lobby,/guru/kuis,/guru/olimpiade/info,/guru/tinjau-simulasi,/murid/premium" node scripts/qa-page-overflow-audit.mjs
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -85,6 +85,9 @@ jobs:
 
       - name: Logout clears session and skips login resume
         run: npx tsx scripts/test-logout-clears-session.ts
+
+      - name: Live Pulse Redis URL + presence policy
+        run: npm run test:redis-standalone && npm run test:live-pulse
 
       - name: Typecheck
         run: npm run typecheck
