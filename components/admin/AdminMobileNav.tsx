@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
   Target, Presentation, ShoppingBag, Film, Briefcase, MessageCircle,
@@ -10,7 +10,7 @@ import {
   Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, ScrollText,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { leaveAccount } from "@/lib/auth/leave-account";
 import {
   NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
   NAV_LINK_BASE, NAV_LINK_ACTIVE, NAV_LINK_INACTIVE,
@@ -68,14 +68,12 @@ const GROUPS = ["Premium & Revenue", "Content", "Learning & Analytics", "AI & Pl
 
 export default function AdminMobileNav() {
   const pathname = usePathname();
-  const router = useRouter();
   const [drawer, setDrawer] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
 
   const handleLogout = async () => {
-    await createClient().auth.signOut();
-    router.push("/login");
+    await leaveAccount("/login");
   };
 
   return (

@@ -83,6 +83,9 @@ jobs:
       - name: Login cold-start session policy tests
         run: npx tsx scripts/test-resume-login-session.ts
 
+      - name: Logout clears session and skips login resume
+        run: npx tsx scripts/test-logout-clears-session.ts
+
       - name: Typecheck
         run: npm run typecheck
 
