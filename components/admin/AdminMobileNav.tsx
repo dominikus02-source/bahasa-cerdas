@@ -7,7 +7,7 @@ import {
   FileText, Users, DollarSign, Menu as MenuIcon, X, LogOut,
   Target, Presentation, ShoppingBag, Film, Briefcase, MessageCircle,
   BarChart3, LineChart, TrendingUp, Trophy, Activity, Coins,
-  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, ScrollText,
+  Crown, Wallet, ShieldAlert, ShieldCheck, Database, Settings, ScrollText, BookOpen,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { leaveAccount } from "@/lib/auth/leave-account";
