@@ -107,6 +107,17 @@ function mockApi(url, mode) {
     counts: { User: 1280, Profile: 1280, Artikel: 40, Video: 12, Karya: 120, UKBIQuestion: 800, TKAQuestion: 600, PaketKompetensi: 20, LearningLevel: 8, LearningUnit: 40, TestSession: 300, TestAnswer: 2000, AIUsage: 400, AiSavedResult: 90, Transaksi: 70 },
     backupManifest: { id: "b1", backupId: "bak-1", storagePath: "s3://qa/backup", status: "SUCCESS", trigger: "SCHEDULED", totalRows: 9000, totalTables: 15, totalBytes: 1024000, completedAt: "2026-11-10T10:00:00.000Z", startedAt: "2026-11-10T09:50:00.000Z", errorMessage: null, hoursAgo: 3 },
   };
+  if (p.startsWith("/api/admin/finance/ledger/export")) return null;
+  if (p.startsWith("/api/admin/finance/ledger")) return {
+    from: "2026-11-01",
+    to: "2026-11-30",
+    truncated: false,
+    totals: { pemasukan: 15000000, pengeluaran: 3250000, saldo: 11750000 },
+    entries: [
+      { id: "le-1", entryDate: "2026-11-10", type: "PEMASUKAN", amount: 15000000, description: "Setoran premi uji QA dengan keterangan panjang supaya kartu buku kas tidak overflow di layar sempit", category: "Premium", createdById: "u3", createdByEmail: "qa-founder@bahasacerdas.test", updatedById: null, updatedByEmail: null, createdAt: "2026-11-10T13:00:00.000Z", updatedAt: "2026-11-10T13:00:00.000Z" },
+      { id: "le-2", entryDate: "2026-11-08", type: "PENGELUARAN", amount: 3250000, description: "Biaya infrastruktur dan domain bulan November", category: "Infrastruktur", createdById: "u3", createdByEmail: "qa-founder@bahasacerdas.test", updatedById: "u3", updatedByEmail: "qa-founder@bahasacerdas.test", createdAt: "2026-11-08T04:00:00.000Z", updatedAt: "2026-11-08T05:00:00.000Z" },
+    ],
+  };
   if (p.startsWith("/api/admin/payments/health")) return { pendingOlder30Min: 0, paymentWithoutPremium: 0, premiumWithoutLedger: 0 };
   if (p.startsWith("/api/admin/payments")) return {
     stats: { total: 2, allTimeRevenue: 250000, success: 1, pending: 1, failed: 0, revenueThisMonth: 150000, revenueAllTime: 250000 },

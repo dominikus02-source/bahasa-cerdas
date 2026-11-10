@@ -106,8 +106,8 @@ function main() {
     () => (muridMobileNav.match(/label: "/g) || []).filter((s, i, arr) => i < 4).length >= 4 && muridMobileNav.includes('label: "Beranda"') && muridMobileNav.includes('label: "Arena"') && muridMobileNav.includes('label: "Karya"') && muridMobileNav.includes('label: "Profil"'));
   test("GuruMobileNav tabs = 4 (Beranda/Literasi/Gim/Profil) + Menu",
     () => ["Beranda", "Literasi", "Gim", "Profil"].every((l) => guruNav.includes(`label: "${l}"`)));
-  test("AdminMobileNav tabs = 4 (Tower/Konten/Pengguna/Bayaran) + Menu",
-    () => ["Tower", "Konten", "Pengguna", "Bayaran"].every((l) => adminMobileNav.includes(`label: "${l}"`)));
+  test("AdminMobileNav tabs = 4 (Tower/Konten/Pengguna/Finance) + Menu",
+    () => ["Tower", "Konten", "Pengguna", "Finance"].every((l) => adminMobileNav.includes(`label: "${l}"`)));
   test("BottomNav APK = 5 items", () => (arenaBottomNav.match(/href: "\//g) || []).length === 5);
 
   // 9. Active route detection

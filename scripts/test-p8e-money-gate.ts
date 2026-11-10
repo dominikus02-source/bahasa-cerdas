@@ -173,7 +173,7 @@ assert(controlApi.includes("PAYOUT_PILOT_PAUSED") && controlApi.includes("PAYOUT
 assert(controlApi.includes("evaluateFounderGate"), "G6 founder gate tampil");
 assert(controlApi.includes("evaluateAlertConditions"), "G7 alerts tampil");
 assert(has("app/(dashboard)/admin/teacher-payouts/page.tsx"), "G8 halaman admin ada");
-const pageSrc = read("app/(dashboard)/admin/teacher-payouts/page.tsx");
+const pageSrc = read("app/(dashboard)/admin/teacher-payouts/teacher-payouts-view.tsx");
 assert(pageSrc.includes("MANUAL VERIFICATION REQUIRED"), "G9 UI tidak memalsukan status manual");
 assert(pageSrc.includes("state diturunkan dari sistem"), "G10 copy jujur");
 assert(read("components/admin/AdminSidebar.tsx").includes("/admin/teacher-payouts"), "G11 sidebar item");

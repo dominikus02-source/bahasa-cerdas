@@ -354,6 +354,8 @@ model User {
   // P8I — Sesi TTS (anggaran petunjuk sisi server)
   ttsSessions           TtsSession[]
   taskShareTokens       TaskShareToken[]
+  financeLedgerCreated  FinanceLedgerEntry[] @relation("FinanceLedgerCreatedBy")
+  financeLedgerUpdated  FinanceLedgerEntry[] @relation("FinanceLedgerUpdatedBy")
 
   @@index([role, lastActiveAt])
   @@index([xp])
@@ -2474,6 +2476,34 @@ model AdminQuotaAuditLog {
 /// /api/admin/*), ditulis oleh lib/admin/guard.ts. Sengaja TANPA relasi ke
 /// User supaya log tetap utuh walau akun pelaku/target dihapus. Hanya kunci &
 /// nilai aman (id, status, jumlah) — rahasia/token/URL tidak pernah disimpan.
+enum FinanceLedgerType {
+  PEMASUKAN
+  PENGELUARAN
+}
+
+/// Manual founder/admin cash book (Buku Kas). Amount is always positive rupiah.
+model FinanceLedgerEntry {
+  id              String             @id @default(cuid())
+  entryDate       DateTime           @db.Date
+  type            FinanceLedgerType
+  amount          BigInt
+  description     String
+  category        String?
+  createdById     String?
+  createdByEmail  String
+  updatedById     String?
+  updatedByEmail  String?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  createdBy       User?              @relation("FinanceLedgerCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  updatedBy       User?              @relation("FinanceLedgerUpdatedBy", fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@index([entryDate])
+  @@index([type])
+  @@index([entryDate, type])
+  @@index([createdAt])
+}
+
 model AdminAuditLog {
   id           String   @id @default(cuid())
   actorId      String

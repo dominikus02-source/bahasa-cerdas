@@ -109,6 +109,7 @@
     "test:dokumen-latihan-sanitization": "npx tsx scripts/test-dokumen-latihan-sanitization.ts",
     "test:simulation-workflow": "npx tsx scripts/test-phase-simulation-workflow.ts",
     "test:admin-premium-report": "npx tsx scripts/test-admin-premium-report.ts",
+    "test:admin-finance-ledger": "npx tsx scripts/test-admin-finance-ledger.ts",
     "test:executive-dashboard": "npx tsx scripts/test-executive-dashboard.ts",
     "test:premium-command-center": "npx tsx scripts/test-premium-command-center.ts",
     "test:payment-health": "npx tsx scripts/test-payment-health.ts",

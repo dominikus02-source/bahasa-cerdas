@@ -122,7 +122,7 @@ function main() {
   test("AdminSidebar item NAV memakai NAV_ICON_CLASS (22px)",
     () => adminSidebar.includes("NAV_ICON_CLASS"));
   test("AdminSidebar 7 top-level groups present (Control Tower through System & Operations)",
-    () => ["Control Tower", "Pengguna", "Premium & Revenue", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"].every((l) => adminSidebar.includes(l)) && adminSidebar.includes('href: "/admin/payments"'));
+    () => ["Control Tower", "Pengguna", "Keuangan", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"].every((l) => adminSidebar.includes(l)) && adminSidebar.includes('href: "/admin/payments"'));
   test("AdminSidebar bell memakai ACTION_ICON_CLASS (20px)",
     () => adminSidebar.includes("ACTION_ICON_CLASS") && adminSidebar.includes('<BellRing className={`${ACTION_ICON_CLASS}'));
   test("AdminSidebar footer Ke Website/Keluar memakai ikon 20px (bukan size 16)",

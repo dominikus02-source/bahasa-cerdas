@@ -180,7 +180,7 @@ assert(orchSrc.includes("submitPayoutForWithdrawal"), "I3 P7D utuh");
 assert(read("lib/commission/payout/safety.ts").includes("PAYOUT_REAL_MONEY_DISABLED"), "I4 gate P7E utuh");
 assert(read("lib/guru/risk/signals.ts").includes("evaluateRiskGate"), "I5 P8C utuh");
 assert(has("lib/commission/payout/pre-canary.ts"), "I6 P8F utuh");
-const pageSrc = read("app/(dashboard)/admin/teacher-payouts/page.tsx");
+const pageSrc = read("app/(dashboard)/admin/teacher-payouts/teacher-payouts-view.tsx");
 assert(pageSrc.includes("Canary Pertama (P8G)"), "I7 UI canary di control center");
 
 // ═══════════════════════════════════════════════════════════════════════════════

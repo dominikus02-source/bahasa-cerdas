@@ -15,6 +15,7 @@ import {
   NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
   NAV_LINK_BASE, NAV_LINK_ACTIVE, NAV_LINK_INACTIVE,
 } from "@/components/shell/icon-tokens";
+import { isFinanceHubPath } from "@/lib/finance/nav";
 
 /**
  * Mobile bottom tabs — 4 quick-access items + Menu drawer.
@@ -24,7 +25,7 @@ const TABS = [
   { label: "Tower", href: "/admin/executive", icon: Target },
   { label: "Konten", href: "/admin/bank-soal", icon: FileText },
   { label: "Pengguna", href: "/admin/users", icon: Users },
-  { label: "Bayaran", href: "/admin/premium", icon: DollarSign },
+  { label: "Finance", href: "/admin/keuangan", icon: DollarSign },
 ];
 
 /**
@@ -36,12 +37,14 @@ const ALL_ITEMS: FlatItem[] = [
   // Standalone
   { label: "Control Tower", href: "/admin/executive", icon: Target },
   { label: "Pengguna", href: "/admin/users", icon: Users },
-  // Premium & Revenue
-  { label: "Premium Report", href: "/admin/premium", icon: Crown, group: "Premium & Revenue" },
-  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign, group: "Premium & Revenue" },
-  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck, group: "Premium & Revenue" },
-  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet, group: "Premium & Revenue" },
-  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert, group: "Premium & Revenue" },
+  // Keuangan
+  { label: "Keuangan", href: "/admin/keuangan", icon: DollarSign, group: "Keuangan" },
+  { label: "Premium Report", href: "/admin/premium", icon: Crown, group: "Keuangan" },
+  { label: "Pembayaran", href: "/admin/payments", icon: DollarSign, group: "Keuangan" },
+  { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck, group: "Keuangan" },
+  { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet, group: "Keuangan" },
+  { label: "Buku Kas", href: "/admin/keuangan/buku-kas", icon: BookOpen, group: "Keuangan" },
+  { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert, group: "Keuangan" },
   // Content
   { label: "Materi Ajar", href: "/admin/materi/generate-ppt", icon: Presentation, group: "Content" },
   { label: "Bank Soal", href: "/admin/bank-soal", icon: FileText, group: "Content" },
@@ -64,13 +67,14 @@ const ALL_ITEMS: FlatItem[] = [
   { label: "Founder & Audit", href: "/admin/founder", icon: ScrollText, group: "System & Operations" },
 ];
 
-const GROUPS = ["Premium & Revenue", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"];
+const GROUPS = ["Keuangan", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"];
 
 export default function AdminMobileNav() {
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const isTabActive = (href: string) => href === "/admin/keuangan" ? isFinanceHubPath(pathname) : isActive(href);
 
   const handleLogout = async () => {
     await leaveAccount("/login");
@@ -81,7 +85,7 @@ export default function AdminMobileNav() {
       <div className="bc-mobile-nav fixed bottom-0 inset-x-0 z-40 md:hidden bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_20px_rgba(0,0,0,0.06)] safe-area-bottom">
         <div className="grid grid-cols-5">
           {TABS.map((tab) => {
-            const active = isActive(tab.href);
+            const active = isTabActive(tab.href);
             return (
               <Link
                 key={tab.href}

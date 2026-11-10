@@ -47,9 +47,11 @@ const LOCATION_RULES: Array<{ prefix: string; key: string; label: string }> = [
   // Admin
   { prefix: "/admin/executive", key: "admin:control-tower", label: "Admin · Control Tower" },
   { prefix: "/admin/users", key: "admin:pengguna", label: "Admin · Pengguna" },
+  { prefix: "/admin/keuangan", key: "admin:keuangan", label: "Admin · Keuangan" },
   { prefix: "/admin/premium", key: "admin:premium", label: "Admin · Premium" },
   { prefix: "/admin/payments", key: "admin:pembayaran", label: "Admin · Pembayaran" },
   { prefix: "/admin/teacher-payouts", key: "admin:payout", label: "Admin · Payout" },
+  { prefix: "/admin/withdrawals", key: "admin:penarikan", label: "Admin · Penarikan" },
   { prefix: "/admin/monitoring", key: "admin:live-pulse", label: "Admin · Live Pulse" },
   { prefix: "/admin/analytics", key: "admin:analytics", label: "Admin · Analytics" },
   { prefix: "/admin/ai-analytics", key: "admin:ai", label: "Admin · Analitik AI" },

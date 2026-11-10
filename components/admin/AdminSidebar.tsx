@@ -8,7 +8,7 @@ import {
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
-  Crown, Target, ChevronDown, Bot, ScrollText,
+  Crown, Target, ChevronDown, Bot, ScrollText, BookOpen,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { leaveAccount } from "@/lib/auth/leave-account";
@@ -50,7 +50,7 @@ function isItem(e: NavEntry): e is NavItem {
  * 1. Control Tower       — standalone, founder intelligence
  * 2. BC Agent            — standalone, founder operations agent
  * 3. Pengguna            — standalone, user management
- * 4. Premium & Revenue   — business/financial intelligence
+ * 4. Keuangan             — business/financial intelligence
  * 5. Content             — content management (group)
  * 6. Learning & Analytics — product learning analytics (group)
  * 7. AI & Platform       — AI usage diagnostics (group)
@@ -68,13 +68,15 @@ const NAV: NavEntry[] = [
 
   // ── 4. Business / financial intelligence ──
   {
-    label: "Premium & Revenue",
-    icon: Crown,
+    label: "Keuangan",
+    icon: DollarSign,
     items: [
+      { label: "Keuangan", href: "/admin/keuangan", icon: DollarSign },
       { label: "Premium Report", href: "/admin/premium", icon: Crown },
       { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
       { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
       { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
+      { label: "Buku Kas", href: "/admin/keuangan/buku-kas", icon: BookOpen },
       { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
     ],
   },
