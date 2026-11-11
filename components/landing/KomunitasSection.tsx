@@ -101,8 +101,8 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
               Bahasa Indonesia
             </h2>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-5 max-w-xl">
-              Berbagi pengalaman, pengetahuan, materi, dan karya bersama guru
-              Bahasa Indonesia dari berbagai sekolah.
+              Berbagi pengalaman, pengetahuan, materi, dan karya bersama guru, murid,
+              dan pegiat Bahasa Indonesia dari berbagai sekolah dan kota.
             </p>
 
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">

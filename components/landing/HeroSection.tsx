@@ -30,7 +30,16 @@ const ROLE_CHIPS = [
   { href: "/register?role=guru", label: "Guru" },
 ] as const;
 
-const PRODUCTS = ["AKSARA", "NARA", "BIGT", "Jalur Cerdas", "Arena", "MAIN BERSAMA", "Toko Karya", "MGMP"];
+const PRODUCTS = [
+  { label: "AKSARA", href: "/artikel" },
+  { label: "NARA", href: "/arena/ai" },
+  { label: "BIGT", href: "/#bigt" },
+  { label: "Jalur Cerdas", href: "/arena/jalur-cerdas" },
+  { label: "Arena", href: "/arena" },
+  { label: "MAIN BERSAMA", href: "/main-bersama" },
+  { label: "Toko Karya", href: "/marketplace" },
+  { label: "MGMP", href: "/guru/komunitas" },
+] as const;
 
 export default function HeroSection({
   initial = null,
@@ -93,7 +102,11 @@ export default function HeroSection({
         />
         <div
           className="absolute inset-x-0 bottom-0 h-2/3 opacity-90"
-          style={{ backgroundImage: "var(--bc-grad-tint)" }}
+          style={{
+            backgroundImage: "var(--bc-grad-tint)",
+            maskImage: "linear-gradient(to bottom, transparent, black 45%)",
+            WebkitMaskImage: "linear-gradient(to bottom, transparent, black 45%)",
+          }}
         />
         <div
           className="absolute inset-0 opacity-[0.07]"
@@ -180,14 +193,25 @@ export default function HeroSection({
                   {valueFor(s.key)}
                 </dd>
                 <div className="mt-1.5 text-xs font-semibold text-bc-text sm:text-sm">{s.label}</div>
-                <div className="text-[11px] leading-snug text-bc-text-3">{s.note}</div>
+                <div className="text-xs leading-snug text-bc-text-2">{s.note}</div>
               </div>
             ))}
           </motion.dl>
 
-          <p className="mt-6 hidden min-w-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-bc-text-3 sm:block">
-            {PRODUCTS.join("  ·  ")}
-          </p>
+          <nav
+            aria-label="Produk BahasaCerdas"
+            className="mt-6 hidden min-w-0 flex-wrap gap-x-5 gap-y-2 sm:flex"
+          >
+            {PRODUCTS.map((p) => (
+              <Link
+                key={p.label}
+                href={p.href}
+                className="rounded text-xs font-semibold text-bc-text-2 transition-colors hover:text-bc-accent-strong focus-ring"
+              >
+                {p.label}
+              </Link>
+            ))}
+          </nav>
         </motion.div>
       </div>
     </section>

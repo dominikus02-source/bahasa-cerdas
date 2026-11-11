@@ -11,13 +11,13 @@ import EcosystemSection from "@/components/landing/EcosystemSection";
 import LearningLoopSection from "@/components/landing/LearningLoopSection";
 import PilihPeranmuSection from "@/components/landing/PilihPeranmuSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
-import FiturUnggulanSection from "@/components/landing/FiturUnggulanSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
 import BigtSection from "@/components/landing/BigtSection";
 import KomunitasSection from "@/components/landing/KomunitasSection";
 import AboutBridge from "@/components/landing/AboutBridge";
 import { getMgmpMedia } from "@/lib/site-settings";
 import FAQSection from "@/components/landing/FAQSection";
+import { LANDING_FAQS } from "@/lib/landing-faqs";
 import FinalCTA from "@/components/landing/FinalCTA";
 import { getSocialProofSnapshot } from "@/lib/social-proof";
 // Jawaban Singkat (AnswerBlock) tidak lagi dirender di landing — jawaban
@@ -104,14 +104,7 @@ export default async function HomePage() {
     getSocialProofSnapshot(),
   ]);
 
-  const faqs = [
-    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang terbuka untuk masyarakat umum, murid, dan guru. Belajar, mengajar, berkarya, dan bertumbuh — artikel AKSARA, NARA, Arena, kelas, hingga Toko Karya — dalam satu platform." },
-    { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru dapat mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket Guru Pro mulai Rp 49.000/bulan." },
-    { q: "Apa yang bisa dilakukan murid di BahasaCerdas?", a: "Murid bisa belajar di Jalur Cerdas, berlatih soal, bermain gim edukasi, menulis dan mempublikasikan karya, mengumpulkan XP dan lencana, naik peringkat di liga mingguan, serta mengikuti simulasi UKBI/TKA." },
-    { q: "Apa yang bisa dilakukan guru?", a: "Guru bisa mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas." },
-    { q: "Bagaimana cara NARA, AI BahasaCerdas, bekerja?", a: "NARA — AI BahasaCerdas — membantu pekerjaan berulang — menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan — agar guru memiliki lebih banyak waktu untuk membimbing murid. NARA membantu, guru yang memutuskan." },
-    { q: "Apakah tersedia untuk siswa?", a: "Ya. Siswa bisa bergabung melalui kode kelas dari guru, atau langsung belajar melalui Arena: Jalur Cerdas, gim, karya, simulasi, dan liga tersedia untuk semua murid." },
-  ];
+  const faqs = LANDING_FAQS;
 
   return (
     <>
@@ -139,9 +132,10 @@ export default async function HomePage() {
         {/* 3 · PILIH PERANMU — tiga jalur setara: Umum, Murid, Guru */}
         <PilihPeranmuSection />
 
-        {/* 4 · PRODUK / EKOSISTEM */}
-        <FiturUnggulanSection />
-        <EcosystemSection />
+        {/* 4 · PRODUK / EKOSISTEM — satu bagian; #produk dan #ekosistem sama-sama mengarah ke sini */}
+        <div id="produk" className="scroll-mt-24">
+          <EcosystemSection />
+        </div>
 
         {/* 7 · LEARNING LOOP — belajar tidak berhenti ketika soal selesai */}
         <LearningLoopSection />

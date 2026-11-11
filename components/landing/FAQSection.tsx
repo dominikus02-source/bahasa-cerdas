@@ -5,37 +5,9 @@ import Link from "next/link";
 import { Plus, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { fadeInUp } from "@/lib/motion";
+import { LANDING_FAQS } from "@/lib/landing-faqs";
 
-const faqs = [
-  {
-    q: "Apa itu BahasaCerdas?",
-    a: "BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang menghubungkan guru, murid, kelas, materi, latihan, permainan, karya, komunitas, dan asesmen dalam satu platform. Bukan sekadar tempat belajar atau alat AI — melainkan ekosistem yang dirancang mengelilingi perjalanan belajar Bahasa Indonesia.",
-  },
-  {
-    q: "Apakah BahasaCerdas gratis?",
-    a: "Ya. Guru dan murid dapat memulai tanpa biaya. Guru mendapat uji coba Guru Pro selama 30 hari tanpa komitmen, lalu tersedia paket Guru Pro mulai Rp 49.000/bulan bagi yang ingin mengakses AI tools dan kuota ekspor lebih besar.",
-  },
-  {
-    q: "Apa yang bisa dilakukan murid di BahasaCerdas?",
-    a: "Murid bisa belajar di Jalur Cerdas, berlatih soal, bermain gim edukasi, menulis dan mempublikasikan karya (puisi, cerpen, pantun), mengumpulkan XP dan lencana, naik peringkat di liga mingguan, serta mengikuti simulasi UKBI/TKA.",
-  },
-  {
-    q: "Apa yang bisa dilakukan guru?",
-    a: "Guru dapat mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas.",
-  },
-  {
-    q: "Apa itu NARA, AI di BahasaCerdas?",
-    a: "NARA adalah AI BahasaCerdas — Narasumber Andalan, Rekan Anda. NARA membantu pekerjaan berulang seperti menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan — agar guru memiliki lebih banyak waktu untuk membimbing murid. NARA membantu, guru yang memutuskan.",
-  },
-  {
-    q: "Apakah tersedia untuk siswa?",
-    a: "Ya! Siswa bisa bergabung melalui kode kelas yang diberikan guru, atau langsung belajar melalui Arena — Jalur Cerdas, gim, karya, simulasi, dan liga tersedia untuk semua murid.",
-  },
-  {
-    q: "Bagaimana keamanan data saya?",
-    a: "Kami menggunakan enkripsi SSL 256-bit dan server yang aman. Data pribadi dan karya Anda dilindungi dan tidak akan dibagikan ke pihak ketiga tanpa izin.",
-  },
-];
+const faqs = LANDING_FAQS;
 
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);

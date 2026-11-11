@@ -20,14 +20,14 @@ export default async function OGImage() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#B91C1C",
+          background: "linear-gradient(135deg, #047857 0%, #2563eb 55%, #7c3aed 100%)",
           color: "white",
           fontFamily: "sans-serif",
         }}
       >
         <div style={{ fontSize: 80, fontWeight: 800 }}>BahasaCerdas</div>
         <div style={{ fontSize: 28, opacity: 0.9, marginTop: 16 }}>
-          Platform Edukasi Bahasa Indonesia
+          Ekosistem Belajar Bahasa Indonesia
         </div>
         <div style={{ fontSize: 20, opacity: 0.7, marginTop: 32 }}>
           www.bahasacerdas.com
@@ -46,7 +46,7 @@ export default async function OGImage() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #B91C1C 0%, #991b1b 100%)",
+        background: "linear-gradient(135deg, #047857 0%, #2563eb 55%, #7c3aed 100%)",
         color: "white",
         fontFamily: "Inter",
         position: "relative",
@@ -112,7 +112,7 @@ export default async function OGImage() {
           lineHeight: 1.4,
         }}
       >
-        Platform Edukasi Bahasa Indonesia
+        Ekosistem Belajar Bahasa Indonesia
       </div>
 
       <div

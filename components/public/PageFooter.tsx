@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Youtube, Mail } from "lucide-react";
+import { COMPANY } from "@/lib/company";
 
 const footerLinks = [
   {
@@ -115,7 +116,9 @@ export default function PageFooter() {
       <div className="border-t border-zinc-800">
         <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-zinc-400">
-            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia.
+            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia. NIB {COMPANY.nib}.
+            <br />
+            {COMPANY.address}
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-400">
             <Link href="/kebijakan-privasi" className="hover:text-zinc-200 transition-colors focus-ring rounded">

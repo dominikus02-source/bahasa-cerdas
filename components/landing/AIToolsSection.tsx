@@ -85,12 +85,12 @@ export default function AIToolsSection() {
             </span>
           </div>
           <h2 id="ai-heading" className="heading-lg text-zinc-900 mb-5">
-            AI membantu guru.{" "}
-            <span className="text-primary">Ekosistem membantu belajar.</span>
+            AI membantu guru dan murid.{" "}
+            <span className="text-primary">Manusia tetap memutuskan.</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            Teknologi AI mengambil alih pekerjaan yang berulang, agar guru memiliki
-            lebih banyak waktu untuk hal yang benar-benar penting: membimbing murid.
+            AI mengambil alih pekerjaan yang berulang, agar guru punya lebih banyak
+            waktu untuk membimbing murid, dan setiap pembelajar punya teman berlatih.
           </p>
         </motion.div>
 

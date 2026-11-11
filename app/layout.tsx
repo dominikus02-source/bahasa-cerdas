@@ -7,14 +7,14 @@ import { publicPeopleLd } from "@/lib/json-ld";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
-const DEFAULT_DESC = "Platform edukasi Bahasa Indonesia untuk guru dan murid. AI Rencana Pembelajaran generator, bank soal interaktif, kuis battle, simulasi UKBI/TKA, toko karya, dan marketplace bahan ajar — all-in-one!";
-const OG_TITLE = `${SITE_NAME} — Platform Edukasi Bahasa Indonesia #BahasaCerdas`;
-const OG_DESC = "Belajar Bahasa Indonesia makin seru! AI bikin Rencana Pembelajaran, bank soal, kuis game, UKBI, komunitas MGMP, dan toko karya guru. Cobain gratis sekarang!";
+const DEFAULT_DESC = "Ekosistem belajar Bahasa Indonesia untuk masyarakat umum, murid, dan guru. Belajar, berlatih, bermain, dan berkarya dalam satu platform.";
+const OG_TITLE = `${SITE_NAME} — Ekosistem Belajar Bahasa Indonesia`;
+const OG_DESC = "Belajar, berlatih, bermain, dan berkarya dalam Bahasa Indonesia, untuk masyarakat umum, murid, dan guru. Mulai gratis.";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#B91C1C" },
-    { media: "(prefers-color-scheme: dark)", color: "#B91C1C" },
+    { media: "(prefers-color-scheme: light)", color: "#2563eb" }, // warna-izin: meta theme-color tidak mendukung var(); = --clr-info terang
+    { media: "(prefers-color-scheme: dark)", color: "#0f1117" }, // warna-izin: meta theme-color tidak mendukung var(); = --clr-bg gelap
   ],
   width: "device-width",
   initialScale: 1,
@@ -24,7 +24,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Platform edukasi Bahasa Indonesia`,
+    default: `${SITE_NAME} — Ekosistem Belajar Bahasa Indonesia`,
     template: `%s | ${SITE_NAME}`,
   },
   description: DEFAULT_DESC,
@@ -155,7 +155,7 @@ export default async function RootLayout({
         />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Arena BC" />
+        <meta name="apple-mobile-web-app-title" content="BahasaCerdas" />
         <meta name="format-detection" content="telephone=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <link rel="dns-prefetch" href="https://www.gravatar.com" />

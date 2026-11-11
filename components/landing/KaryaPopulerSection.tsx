@@ -42,8 +42,8 @@ export default async function KaryaPopulerSection() {
               Temukan karya pembelajaran dari <span className="text-primary">guru Indonesia</span>
             </h2>
             <p className="text-zinc-500 leading-relaxed">
-              RPP, modul, soal, presentasi, dan media ajar — dibuat oleh guru,
-              untuk guru. Beli sekali, pakai selama.
+              RPP, modul, soal, presentasi, media ajar, dan ebook — karya guru dan
+              penulis Indonesia. Beli sekali, pakai selamanya.
             </p>
           </div>
           <div className="flex flex-col items-start lg:items-end gap-2">

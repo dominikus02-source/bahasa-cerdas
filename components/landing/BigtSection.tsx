@@ -56,8 +56,8 @@ export default function BigtSection() {
             <span className="text-amber-400">mengukur kemampuan.</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-400 leading-relaxed">
-            Setelah belajar dan berlatih, murid mengukur kemampuan melalui simulasi
-            UKBI/TKA yang terstruktur — dan melanjutkan langkah berikutnya.
+            Setelah belajar dan berlatih, siapa pun bisa mengukur kemampuannya lewat
+            simulasi UKBI/TKA yang terstruktur, lalu melanjutkan ke langkah belajar berikutnya.
           </p>
         </motion.div>
 
