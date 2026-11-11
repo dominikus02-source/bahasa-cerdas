@@ -27,12 +27,14 @@ const coreTeam: Member[] = [
     name: "Sugeng Riyanto",
     role: "CTO",
     initials: "SR",
+    image: "/founders/sugeng.jpg",
     desc: "Chief Technology Officer BahasaCerdas.",
   },
   {
     name: "Soleh Ahmad Nugraha",
     role: "CBO",
     initials: "SA",
+    image: "/founders/soleh.jpg",
     desc: "Chief Business Officer BahasaCerdas.",
   },
 ];
@@ -42,12 +44,14 @@ const advisors: Member[] = [
     name: "Melany Kusumawati",
     role: "Advisor",
     initials: "MK",
+    image: "/founders/melany.jpg",
     desc: "Advisor BahasaCerdas.",
   },
   {
     name: "Dr. B. Widharyanto, M.Pd.",
     role: "Advisor",
     initials: "BW",
+    image: "/founders/widharyanto.jpg",
     desc: "Universitas Sanata Dharma — menelaah validitas akademik materi, kaidah, dan pendekatan pembelajaran Bahasa Indonesia.",
   },
 ];
