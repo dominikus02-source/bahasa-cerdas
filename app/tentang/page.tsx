@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import JsonLd from "@/components/aeo/JsonLd";
-import { breadcrumbLd } from "@/lib/json-ld";
+import { breadcrumbLd, publicPeopleLd } from "@/lib/json-ld";
 import AboutHero from "@/components/tentang/AboutHero";
 import AboutIdentity from "@/components/tentang/AboutIdentity";
 import AboutEcosystem from "@/components/tentang/AboutEcosystem";

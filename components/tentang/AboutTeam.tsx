@@ -18,22 +18,22 @@ const coreTeam: Member[] = [
   },
   {
     name: "Alexander Suryanta",
-    role: "Co-Founder & Head of Content",
+    role: "Co-Founder & CLO (Chief Learning Officer)",
     initials: "AS",
     image: "/founders/alexander.jpg",
     desc: "Menguatkan fondasi konten dan pedagogi BahasaCerdas melalui pengalaman panjang dalam pengajaran Bahasa Indonesia, penulisan buku teks, dan pengembangan materi pembelajaran.",
   },
   {
     name: "Sugeng Riyanto",
-    role: "Co-Founder & CTO",
+    role: "CTO",
     initials: "SR",
-    desc: "Co-Founder dan Chief Technology Officer BahasaCerdas.",
+    desc: "Chief Technology Officer BahasaCerdas.",
   },
   {
     name: "Soleh Ahmad Nugraha",
-    role: "Co-Founder & CBO",
+    role: "CBO",
     initials: "SA",
-    desc: "Co-Founder dan Chief Business Officer BahasaCerdas.",
+    desc: "Chief Business Officer BahasaCerdas.",
   },
 ];
 

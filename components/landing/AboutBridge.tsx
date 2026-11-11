@@ -9,9 +9,9 @@ type TeamMember = { name: string; role: string; image?: string; initials: string
 
 const coreTeam: TeamMember[] = [
   { name: "Dominikus Wahyu Heru Cahyadi", role: "Founder & CEO", image: "/founders/dominikus.png", initials: "DW" },
-  { name: "Alexander Suryanta", role: "Co-Founder & Head of Content", image: "/founders/alexander.jpg", initials: "AS" },
-  { name: "Sugeng Riyanto", role: "Co-Founder & CTO", initials: "SR" },
-  { name: "Soleh Ahmad Nugraha", role: "Co-Founder & CBO", initials: "SA" },
+  { name: "Alexander Suryanta", role: "Co-Founder & CLO (Chief Learning Officer)", image: "/founders/alexander.jpg", initials: "AS" },
+  { name: "Sugeng Riyanto", role: "CTO", initials: "SR" },
+  { name: "Soleh Ahmad Nugraha", role: "CBO", initials: "SA" },
 ];
 
 const advisors: TeamMember[] = [

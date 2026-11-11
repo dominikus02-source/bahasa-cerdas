@@ -36,14 +36,14 @@ const docSource = readFileSync(join(BASE, "docs/BAHASACERDAS_IDENTITY_REGISTRY.m
 // ── 1. Fakta identitas inti ───────────────────────────────────────────────
 ok("Founder tercatat", BAHASA_CERDAS_IDENTITY.founder.name === "Dominikus Wahyu Heru Cahyadi");
 ok("Founder peran CEO", BAHASA_CERDAS_IDENTITY.founder.role === "Founder & CEO");
-ok("Co-Founder Content tercatat", BAHASA_CERDAS_IDENTITY.team[0].name === "Alexander Suryanta");
-ok("Co-Founder CTO tercatat", BAHASA_CERDAS_IDENTITY.team[1].name === "Sugeng Riyanto");
-ok("Co-Founder CBO tercatat", BAHASA_CERDAS_IDENTITY.team[2].name === "Soleh Ahmad Nugraha");
+ok("Co-Founder CLO tercatat", BAHASA_CERDAS_IDENTITY.team[0].name === "Alexander Suryanta" && BAHASA_CERDAS_IDENTITY.team[0].role === "Co-Founder & CLO (Chief Learning Officer)");
+ok("CTO tercatat", BAHASA_CERDAS_IDENTITY.team[1].name === "Sugeng Riyanto" && BAHASA_CERDAS_IDENTITY.team[1].role === "CTO");
+ok("CBO tercatat", BAHASA_CERDAS_IDENTITY.team[2].name === "Soleh Ahmad Nugraha" && BAHASA_CERDAS_IDENTITY.team[2].role === "CBO");
 ok("Advisor Melany tercatat", BAHASA_CERDAS_IDENTITY.advisors[0].name === "Melany Kusumawati");
 ok("Advisor Widharyanto tercatat", BAHASA_CERDAS_IDENTITY.advisors[1].name === "Dr. B. Widharyanto, M.Pd.");
 ok(
   "Tidak ada posisi palsu (semua peran dari daftar resmi)",
-  ["Founder & CEO", "Co-Founder & Head of Content", "Co-Founder & CTO", "Co-Founder & CBO", "Advisor"]
+  ["Founder & CEO", "Co-Founder & CLO (Chief Learning Officer)", "CTO", "CBO", "Advisor"]
     .every((r) =>
       [BAHASA_CERDAS_IDENTITY.founder.role, ...BAHASA_CERDAS_IDENTITY.team.map((t) => t.role), ...BAHASA_CERDAS_IDENTITY.advisors.map((a) => a.role)]
         .some((actual) => actual.startsWith(r)),

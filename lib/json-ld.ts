@@ -1,3 +1,14 @@
+import { BAHASA_CERDAS_IDENTITY } from "@/lib/ai/knowledge/bahasa-cerdas-identity";
+
+export function publicPeopleLd() {
+  const { founder, team, advisors } = BAHASA_CERDAS_IDENTITY;
+  return [founder, ...team, ...advisors].map((person) => ({
+    "@type": "Person" as const,
+    name: person.name,
+    jobTitle: person.role,
+  }));
+}
+
 export function organizationLd() {
   return {
     "@context": "https://schema.org",
@@ -30,6 +41,7 @@ export function organizationLd() {
       name: "BahasaCerdas",
       description: "Ekosistem Belajar Bahasa Indonesia.",
     },
+    member: publicPeopleLd(),
   };
 }
 

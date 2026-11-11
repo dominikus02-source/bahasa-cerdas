@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 import "./android-app.css";
 import { Providers } from "./providers";
+import { publicPeopleLd } from "@/lib/json-ld";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
@@ -87,6 +88,7 @@ const jsonLdOrganization = {
     addressCountry: "ID",
   },
   brand: { "@type": "Brand", name: "BahasaCerdas" },
+  member: publicPeopleLd(),
   areaServed: { "@type": "Country", name: "ID" },
   knowsLanguage: "id",
   email: "halo@bahasacerdas.com",

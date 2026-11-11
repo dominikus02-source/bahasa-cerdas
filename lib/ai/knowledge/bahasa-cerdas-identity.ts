@@ -117,19 +117,19 @@ export const BAHASA_CERDAS_IDENTITY = {
   team: [
     {
       name: "Alexander Suryanta",
-      role: "Co-Founder & Head of Content",
+      role: "Co-Founder & CLO (Chief Learning Officer)",
       summary:
         "Praktisi pengajaran Bahasa Indonesia sejak 1991 (35+ tahun), penulis SOS Bahasa Indonesia untuk SPK Santa Laurensia, buku teks bahasa Indonesia Erlangga sejak 1999, serta seri Bupena dan Fokus AKM.",
     },
     {
       name: "Sugeng Riyanto",
-      role: "Co-Founder & CTO",
-      summary: "Co-Founder dan Chief Technology Officer BahasaCerdas.",
+      role: "CTO",
+      summary: "Chief Technology Officer BahasaCerdas.",
     },
     {
       name: "Soleh Ahmad Nugraha",
-      role: "Co-Founder & CBO",
-      summary: "Co-Founder dan Chief Business Officer BahasaCerdas.",
+      role: "CBO",
+      summary: "Chief Business Officer BahasaCerdas.",
     },
   ] satisfies IdentityPerson[],
 
@@ -215,7 +215,7 @@ export function buildBahasaCerdasIdentityInstruction(): string {
     `### Pengurus yang ditampilkan secara publik`,
     `- Direktur: Dominikus Wahyu Heru Cahyadi`,
     `- Peran publik Melany Kusumawati dan Dr. B. Widharyanto, M.Pd. adalah Advisor saja.`,
-    `- Peran publik Alexander Suryanta adalah Co-Founder & Head of Content.`,
+    `- Peran publik Alexander Suryanta adalah Co-Founder & CLO (Chief Learning Officer).`,
     ``,
     `### Pendiri & Kepemimpinan`,
     `- ${founder.role}: ${founder.name} — ${founder.summary}`,

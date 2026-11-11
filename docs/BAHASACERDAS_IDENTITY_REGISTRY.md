@@ -21,9 +21,9 @@
 | Orang | Peran publik BahasaCerdas |
 |-------|---------------------------|
 | Dominikus Wahyu Heru Cahyadi | Founder & CEO |
-| Alexander Suryanta | Co-Founder & Head of Content |
-| Sugeng Riyanto | Co-Founder & CTO |
-| Soleh Ahmad Nugraha | Co-Founder & CBO |
+| Alexander Suryanta | Co-Founder & CLO (Chief Learning Officer) |
+| Sugeng Riyanto | CTO |
+| Soleh Ahmad Nugraha | CBO |
 | Melany Kusumawati | Advisor |
 | Dr. B. Widharyanto, M.Pd. | Advisor |
 
@@ -107,13 +107,13 @@ AI menggunakan lokasi publik ringkas (Jakarta Selatan, DKI Jakarta). Alamat leng
 - **Dominikus Wahyu Heru Cahyadi** — Founder & CEO.
 - Profil ringkas: eks guru Bahasa Indonesia (±10 tahun); merancang arsitektur platform, mengembangkan aplikasi (full-stack + AI); penulis di Amazon KDP.
 
-## 11. Co-Founders
+## 11. Tim Inti
 
-- **Alexander Suryanta** — Co-Founder & Head of Content.
+- **Alexander Suryanta** — Co-Founder & CLO (Chief Learning Officer).
   - 35+ tahun mengajar Bahasa Indonesia (sejak 1991 — SOS Bahasa Indonesia, SPK Santa Laurensia).
   - Penulis buku teks bahasa Indonesia Erlangga (sejak 1999) — seri Bupena, Fokus AKM.
-- **Sugeng Riyanto** — Co-Founder & CTO.
-- **Soleh Ahmad Nugraha** — Co-Founder & CBO.
+- **Sugeng Riyanto** — CTO.
+- **Soleh Ahmad Nugraha** — CBO.
 
 ## 12. Advisor
 

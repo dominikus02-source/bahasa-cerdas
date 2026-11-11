@@ -270,10 +270,13 @@ test("24. tim inti + dewan penasihat terpisah, tanpa jabatan pengurus di kartu t
   const widhar = advisorBlock.indexOf("Dr. B. Widharyanto, M.Pd.");
   return coreBlock.includes('role: "Founder & CEO"') &&
     !coreBlock.includes("Direktur") &&
-    coreBlock.includes('role: "Co-Founder & Head of Content"') &&
+    coreBlock.includes('role: "Co-Founder & CLO (Chief Learning Officer)"') &&
     !coreBlock.includes("Komisaris") &&
-    coreBlock.includes('role: "Co-Founder & CTO"') &&
-    coreBlock.includes('role: "Co-Founder & CBO"') &&
+    coreBlock.includes('role: "CTO"') &&
+    coreBlock.includes('role: "CBO"') &&
+    !coreBlock.includes("Co-Founder & CTO") &&
+    !coreBlock.includes("Co-Founder & CBO") &&
+    !coreBlock.includes("Head of Content") &&
     aboutTeam.includes('id="advisor"') &&
     melany >= 0 && widhar > melany &&
     advisorBlock.includes('role: "Advisor"') &&
@@ -290,6 +293,17 @@ test("24. tim inti + dewan penasihat terpisah, tanpa jabatan pengurus di kartu t
     !aboutBridge.includes("Validator Akademik") &&
     !aboutBridge.includes("Dewan Penasihat") &&
     !aboutTeam.includes("Washadi");
+});
+test("24b. JSON-LD memakai gelar publik final, tanpa Head of Content atau Co-Founder pada CTO/CBO", () => {
+  const jsonLd = read("lib/json-ld.ts");
+  const layout = read("app/layout.tsx");
+  return jsonLd.includes("publicPeopleLd") &&
+    tentangPage.includes("publicPeopleLd") &&
+    layout.includes("publicPeopleLd") &&
+    jsonLd.includes("jobTitle: person.role") &&
+    !jsonLd.includes("Head of Content") &&
+    !tentangPage.includes("Head of Content") &&
+    !layout.includes("Komisaris");
 });
 test("25. footer copyright PT, tautan Tim ke /tentang#tim", () =>
   footer.includes("PT Bahasa Cerdas Indonesia") &&
