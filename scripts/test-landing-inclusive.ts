@@ -247,32 +247,48 @@ test("23. legalitas memuat PT, alamat CFX, akta, SK, NIB, KBLI, pengurus, kontak
   aboutLegal.includes("usaha mikro") &&
   aboutLegal.includes("85610") &&
   aboutLegal.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
-  aboutLegal.includes("Komisaris Utama: Melany Kusumawati") &&
-  aboutLegal.includes("Komisaris: Alexander Suryanta") &&
+  !aboutLegal.includes("Komisaris") &&
   aboutLegal.includes("halo@bahasacerdas.com") &&
   aboutLegal.includes("Pemegang Hak Cipta: PT Bahasa Cerdas Indonesia") &&
   !aboutLegal.includes("NPWP"));
-test("24. tim publik sesuai keputusan CEO, tanpa Washadi", () => {
-  const order = [
+test("24. tim inti + dewan penasihat terpisah, tanpa jabatan pengurus di kartu tim", () => {
+  const coreBlock = aboutTeam.slice(aboutTeam.indexOf("const coreTeam"), aboutTeam.indexOf("const advisors"));
+  const advisorBlock = aboutTeam.slice(aboutTeam.indexOf("const advisors"), aboutTeam.indexOf("function Avatar"));
+  const core = [
     "Dominikus Wahyu Heru Cahyadi",
-    "Melany Kusumawati",
     "Alexander Suryanta",
     "Sugeng Riyanto",
     "Soleh Ahmad Nugraha",
-    "Dr. B. Widharyanto, M.Pd.",
   ];
   let last = -1;
-  for (const name of order) {
-    const i = aboutTeam.indexOf(name);
+  for (const name of core) {
+    const i = coreBlock.indexOf(name);
     if (i < 0 || i < last) return false;
     last = i;
   }
-  return aboutTeam.includes("Founder & CEO (Direktur)") &&
-    aboutTeam.includes("Komisaris Utama") &&
-    aboutTeam.includes("Co-Founder, Komisaris & Head of Content") &&
-    aboutTeam.includes("Co-Founder & CTO") &&
-    aboutTeam.includes("Co-Founder & CBO") &&
-    aboutTeam.includes("Validator Akademik") &&
+  const melany = advisorBlock.indexOf("Melany Kusumawati");
+  const widhar = advisorBlock.indexOf("Dr. B. Widharyanto, M.Pd.");
+  return coreBlock.includes('role: "Founder & CEO"') &&
+    !coreBlock.includes("Direktur") &&
+    coreBlock.includes('role: "Co-Founder & Head of Content"') &&
+    !coreBlock.includes("Komisaris") &&
+    coreBlock.includes('role: "Co-Founder & CTO"') &&
+    coreBlock.includes('role: "Co-Founder & CBO"') &&
+    aboutTeam.includes('id="advisor"') &&
+    melany >= 0 && widhar > melany &&
+    advisorBlock.includes('role: "Advisor"') &&
+    !advisorBlock.includes("Dewan Penasihat") &&
+    !advisorBlock.includes("Validator Akademik") &&
+    !advisorBlock.includes("Komisaris") &&
+    !aboutTeam.includes("Komisaris") &&
+    !aboutTeam.includes("Validator Akademik") &&
+    !aboutTeam.includes("Dewan Penasihat") &&
+    !aboutLegal.includes("Komisaris") &&
+    aboutLegal.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
+    aboutBridge.includes('role: "Advisor"') &&
+    !aboutBridge.includes("Komisaris") &&
+    !aboutBridge.includes("Validator Akademik") &&
+    !aboutBridge.includes("Dewan Penasihat") &&
     !aboutTeam.includes("Washadi");
 });
 test("25. footer copyright PT, tautan Tim ke /tentang#tim", () =>

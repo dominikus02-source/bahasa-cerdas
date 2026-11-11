@@ -35,19 +35,34 @@ const docSource = readFileSync(join(BASE, "docs/BAHASACERDAS_IDENTITY_REGISTRY.m
 
 // ── 1. Fakta identitas inti ───────────────────────────────────────────────
 ok("Founder tercatat", BAHASA_CERDAS_IDENTITY.founder.name === "Dominikus Wahyu Heru Cahyadi");
-ok("Founder peran CEO", BAHASA_CERDAS_IDENTITY.founder.role === "Founder & CEO (Direktur)");
-ok("Komisaris Utama tercatat", BAHASA_CERDAS_IDENTITY.team[0].name === "Melany Kusumawati");
-ok("Co-Founder Content tercatat", BAHASA_CERDAS_IDENTITY.team[1].name === "Alexander Suryanta");
-ok("Co-Founder CTO tercatat", BAHASA_CERDAS_IDENTITY.team[2].name === "Sugeng Riyanto");
-ok("Co-Founder CBO tercatat", BAHASA_CERDAS_IDENTITY.team[3].name === "Soleh Ahmad Nugraha");
-ok("Validator Akademik tercatat", BAHASA_CERDAS_IDENTITY.advisors[0].name === "Dr. B. Widharyanto, M.Pd.");
+ok("Founder peran CEO", BAHASA_CERDAS_IDENTITY.founder.role === "Founder & CEO");
+ok("Co-Founder Content tercatat", BAHASA_CERDAS_IDENTITY.team[0].name === "Alexander Suryanta");
+ok("Co-Founder CTO tercatat", BAHASA_CERDAS_IDENTITY.team[1].name === "Sugeng Riyanto");
+ok("Co-Founder CBO tercatat", BAHASA_CERDAS_IDENTITY.team[2].name === "Soleh Ahmad Nugraha");
+ok("Advisor Melany tercatat", BAHASA_CERDAS_IDENTITY.advisors[0].name === "Melany Kusumawati");
+ok("Advisor Widharyanto tercatat", BAHASA_CERDAS_IDENTITY.advisors[1].name === "Dr. B. Widharyanto, M.Pd.");
 ok(
   "Tidak ada posisi palsu (semua peran dari daftar resmi)",
-  ["Founder & CEO (Direktur)", "Komisaris Utama", "Co-Founder, Komisaris & Head of Content", "Co-Founder & CTO", "Co-Founder & CBO", "Validator Akademik"]
+  ["Founder & CEO", "Co-Founder & Head of Content", "Co-Founder & CTO", "Co-Founder & CBO", "Advisor"]
     .every((r) =>
       [BAHASA_CERDAS_IDENTITY.founder.role, ...BAHASA_CERDAS_IDENTITY.team.map((t) => t.role), ...BAHASA_CERDAS_IDENTITY.advisors.map((a) => a.role)]
         .some((actual) => actual.startsWith(r)),
     ),
+);
+ok(
+  "Peran publik advisor hanya Advisor",
+  BAHASA_CERDAS_IDENTITY.advisors.every((person) => person.role === "Advisor") &&
+    !BAHASA_CERDAS_IDENTITY.team.some((person) => /Komisaris|Direktur|Validator/.test(person.role)),
+);
+ok(
+  "Instruksi publik hanya Direktur, tanpa komisaris atau validator",
+  identityInstruction.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
+    !identityInstruction.includes("Komisaris") &&
+    !identityInstruction.includes("Validator Akademik") &&
+    !identityInstruction.includes("Dewan Penasihat") &&
+    !registrySource.includes("Komisaris") &&
+    !docSource.includes("Komisaris") &&
+    !docSource.includes("Validator Akademik"),
 );
 ok(
   "Washadi tidak ada di registry publik",

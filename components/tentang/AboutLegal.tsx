@@ -25,8 +25,6 @@ const legalCards = [
     title: "Pengurus",
     lines: [
       "Direktur: Dominikus Wahyu Heru Cahyadi",
-      "Komisaris Utama: Melany Kusumawati",
-      "Komisaris: Alexander Suryanta",
     ],
   },
   {

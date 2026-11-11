@@ -109,22 +109,17 @@ export const BAHASA_CERDAS_IDENTITY = {
 
   founder: {
     name: "Dominikus Wahyu Heru Cahyadi",
-    role: "Founder & CEO (Direktur)",
+    role: "Founder & CEO",
     summary:
-      "Eks guru Bahasa Indonesia (±10 tahun), membangun BahasaCerdas sebagai pengembang full-stack dan AI, serta penulis di Amazon KDP. Direktur PT Bahasa Cerdas Indonesia.",
+      "Eks guru Bahasa Indonesia (±10 tahun), membangun BahasaCerdas sebagai pengembang full-stack dan AI, serta penulis di Amazon KDP.",
   } satisfies IdentityPerson,
 
   team: [
     {
-      name: "Melany Kusumawati",
-      role: "Komisaris Utama",
-      summary: "Komisaris Utama PT Bahasa Cerdas Indonesia.",
-    },
-    {
       name: "Alexander Suryanta",
-      role: "Co-Founder, Komisaris & Head of Content",
+      role: "Co-Founder & Head of Content",
       summary:
-        "Praktisi pengajaran Bahasa Indonesia sejak 1991 (35+ tahun), penulis SOS Bahasa Indonesia untuk SPK Santa Laurensia, buku teks bahasa Indonesia Erlangga sejak 1999, serta seri Bupena dan Fokus AKM. Komisaris PT Bahasa Cerdas Indonesia.",
+        "Praktisi pengajaran Bahasa Indonesia sejak 1991 (35+ tahun), penulis SOS Bahasa Indonesia untuk SPK Santa Laurensia, buku teks bahasa Indonesia Erlangga sejak 1999, serta seri Bupena dan Fokus AKM.",
     },
     {
       name: "Sugeng Riyanto",
@@ -140,8 +135,13 @@ export const BAHASA_CERDAS_IDENTITY = {
 
   advisors: [
     {
+      name: "Melany Kusumawati",
+      role: "Advisor",
+      summary: "Advisor BahasaCerdas.",
+    },
+    {
       name: "Dr. B. Widharyanto, M.Pd.",
-      role: "Validator Akademik (Academic Validator)",
+      role: "Advisor",
       summary: "Dosen Universitas Sanata Dharma.",
     },
   ] satisfies IdentityPerson[],
@@ -211,6 +211,11 @@ export function buildBahasaCerdasIdentityInstruction(): string {
     `- Merek/produk: ${company.product}`,
     `- Lokasi publik: ${company.location}`,
     `- NIB: ${company.nib}`,
+    ``,
+    `### Pengurus yang ditampilkan secara publik`,
+    `- Direktur: Dominikus Wahyu Heru Cahyadi`,
+    `- Peran publik Melany Kusumawati dan Dr. B. Widharyanto, M.Pd. adalah Advisor saja.`,
+    `- Peran publik Alexander Suryanta adalah Co-Founder & Head of Content.`,
     ``,
     `### Pendiri & Kepemimpinan`,
     `- ${founder.role}: ${founder.name} — ${founder.summary}`,

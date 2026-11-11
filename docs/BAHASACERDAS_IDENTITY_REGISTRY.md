@@ -18,14 +18,14 @@
 
 ## 2. Nama & Peran Resmi
 
-| Orang | Peran Resmi BahasaCerdas |
+| Orang | Peran publik BahasaCerdas |
 |-------|---------------------------|
-| Dominikus Wahyu Heru Cahyadi | Founder & CEO (Direktur) |
-| Melany Kusumawati | Komisaris Utama |
-| Alexander Suryanta | Co-Founder, Komisaris & Head of Content |
+| Dominikus Wahyu Heru Cahyadi | Founder & CEO |
+| Alexander Suryanta | Co-Founder & Head of Content |
 | Sugeng Riyanto | Co-Founder & CTO |
 | Soleh Ahmad Nugraha | Co-Founder & CBO |
-| Dr. B. Widharyanto, M.Pd. | Validator Akademik (Universitas Sanata Dharma) |
+| Melany Kusumawati | Advisor |
+| Dr. B. Widharyanto, M.Pd. | Advisor |
 
 **Aturan:**
 - Jangan menambahkan posisi, kredensial, institusi, penghargaan, atau tanggung jawab yang tidak tercantum di sini.
@@ -56,7 +56,7 @@
 | NIB | 0911260094193 (9 November 2026, usaha mikro) |
 | Akta Pendirian | No. 27 tanggal 5 November 2026, Notaris Siti Aminah, S.H., M.Kn., Kabupaten Purwakarta |
 | SK Kemenkumham | AHU-0089503.AH.01.01.TAHUN 2026 tanggal 7 November 2026 |
-| Pengurus | Direktur: Dominikus Wahyu Heru Cahyadi; Komisaris Utama: Melany Kusumawati; Komisaris: Alexander Suryanta |
+| Pengurus (tampilan publik) | Direktur: Dominikus Wahyu Heru Cahyadi |
 | Kontak publik | halo@bahasacerdas.com |
 
 AI menggunakan lokasi publik ringkas (Jakarta Selatan, DKI Jakarta). Alamat lengkap hanya ditampilkan pada bagian Legalitas di `/tentang`. Jangan menyebut NPWP.
@@ -104,21 +104,23 @@ AI menggunakan lokasi publik ringkas (Jakarta Selatan, DKI Jakarta). Alamat leng
 
 ## 10. Pendiri
 
-- **Dominikus Wahyu Heru Cahyadi** — Founder & CEO (Direktur).
+- **Dominikus Wahyu Heru Cahyadi** — Founder & CEO.
 - Profil ringkas: eks guru Bahasa Indonesia (±10 tahun); merancang arsitektur platform, mengembangkan aplikasi (full-stack + AI); penulis di Amazon KDP.
 
-## 11. Co-Founders & Pengurus
+## 11. Co-Founders
 
-- **Melany Kusumawati** — Komisaris Utama PT Bahasa Cerdas Indonesia.
-- **Alexander Suryanta** — Co-Founder, Komisaris & Head of Content.
+- **Alexander Suryanta** — Co-Founder & Head of Content.
   - 35+ tahun mengajar Bahasa Indonesia (sejak 1991 — SOS Bahasa Indonesia, SPK Santa Laurensia).
   - Penulis buku teks bahasa Indonesia Erlangga (sejak 1999) — seri Bupena, Fokus AKM.
 - **Sugeng Riyanto** — Co-Founder & CTO.
 - **Soleh Ahmad Nugraha** — Co-Founder & CBO.
 
-## 12. Validator Akademik
+## 12. Advisor
 
-- **Dr. B. Widharyanto, M.Pd.** — Validator Akademik. Dosen Universitas Sanata Dharma.
+- **Melany Kusumawati** — Advisor.
+- **Dr. B. Widharyanto, M.Pd.** — Advisor. Dosen Universitas Sanata Dharma.
+
+Pada bagian Legalitas di `/tentang`, pengurus yang ditampilkan hanya Direktur: Dominikus Wahyu Heru Cahyadi.
 
 ## 13. Catatan Rekonsiliasi
 

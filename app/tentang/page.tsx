@@ -94,7 +94,7 @@ export default function TentangPage() {
       {/* 5 — Mengapa Tim Ini */}
       <AboutWhyTeam />
 
-      {/* 6 — Tim Pendiri + Dewan Penasihat & Validator */}
+      {/* 6 — Tim Pendiri + Advisor */}
       <AboutTeam />
 
       {/* 7 — Legalitas & Transparansi */}
