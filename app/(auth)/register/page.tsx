@@ -12,6 +12,7 @@ import { isSafeNext } from "@/lib/auth/redirect";
 import { BRAND_ICON, BRAND_ICON_DARK, BRAND_TAGLINE } from "@/lib/brand";
 import BatikAccent from "@/components/decorations/BatikAccent";
 import { useRoleUmumAvailable } from "@/components/auth/useRoleUmumAvailable";
+import { parseRegisterRoleParam } from "@/lib/auth/register-role-param";
 
 /**
  * REGISTER 4.0 — Role Gate 1.0
@@ -87,10 +88,10 @@ const ROLE_CONFIG: Record<Role, {
 };
 
 const ROLE_CARDS = [
-  { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "AI Rencana Pembelajaran, Bank Soal, Kuis Game" },
+  // Urutan audiens: Umum, Murid, Guru. UMUM hanya tampil bila ENABLE_ROLE_UMUM aktif.
+  { key: "UMUM" as const, icon: Compass, label: "Umum", sub: "NARA, AKSARA, BIGT & Toko Karya" },
   { key: "MURID" as const, icon: BookOpen, label: "Murid", sub: "Belajar, Kuis, UKBI" },
-  // Hanya tampil bila server mengaktifkan ENABLE_ROLE_UMUM.
-  { key: "UMUM" as const, icon: Compass, label: "Umum", sub: "NARA, JUMPA, gim kata & Toko Karya" },
+  { key: "GURU" as const, icon: GraduationCap, label: "Guru", sub: "AI Rencana Pembelajaran, Bank Soal, Kuis Game" },
 ];
 
 function RoleIcon({ role, className }: { role: Role; className?: string }) {
@@ -156,6 +157,13 @@ export default function RegisterPage() {
     const authError = authErrorMessage(new URLSearchParams(window.location.search).get("error"));
     if (authError) setError(authError);
   }, []);
+  // Preselect the role card from ?role= (UI only; user can still change it).
+  useEffect(() => {
+    const pre = parseRegisterRoleParam(new URLSearchParams(window.location.search).get("role"));
+    if (!pre) return;
+    if (pre === "UMUM" && !umumAvailable) return;
+    setRole(pre);
+  }, [umumAvailable]);
   const nextQuery = next ? `?next=${encodeURIComponent(next)}` : "";
   const backToLoginQuery = `${nextQuery}${nextQuery ? "&" : "?"}bc_app=1`;
   const [isMobileApp, setIsMobileApp] = useState(false);

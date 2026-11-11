@@ -330,6 +330,7 @@
     "test:login-ux": "npx tsx scripts/test-login-ux.ts",
     "test:login-materi-session-guards": "npx tsx scripts/test-login-materi-session-guards.ts",
     "test:register-ux": "npx tsx scripts/test-register-ux.ts",
+    "test:landing-inclusive": "npx tsx scripts/test-landing-inclusive.ts",
     "test:auth-provisioning-security": "npx tsx scripts/test-auth-provisioning-security.ts",
     "test:premium-production": "npx tsx scripts/test-premium-production.ts",
     "test:my-day-home": "npx tsx scripts/test-my-day-home.ts",

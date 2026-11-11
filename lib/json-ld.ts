@@ -1,13 +1,35 @@
+import { BAHASA_CERDAS_IDENTITY } from "@/lib/ai/knowledge/bahasa-cerdas-identity";
+
+export function publicPeopleLd() {
+  const { founder, team, advisors } = BAHASA_CERDAS_IDENTITY;
+  return [founder, ...team, ...advisors].map((person) => ({
+    "@type": "Person" as const,
+    name: person.name,
+    jobTitle: person.role,
+  }));
+}
+
 export function organizationLd() {
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    name: "BahasaCerdas",
+    name: "PT Bahasa Cerdas Indonesia",
+    legalName: "PT Bahasa Cerdas Indonesia",
+    alternateName: "BahasaCerdas",
     url: "https://www.bahasacerdas.com",
     description:
-      "Ekosistem belajar Bahasa Indonesia untuk guru dan murid: belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform.",
-    foundingDate: "2025",
+      "Ekosistem belajar Bahasa Indonesia untuk masyarakat umum, murid, dan guru: belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform.",
+    foundingDate: "2026-11-05",
+    identifier: "0911260094193",
     email: "halo@bahasacerdas.com",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
+      addressLocality: "Jakarta Selatan",
+      addressRegion: "DKI Jakarta",
+      postalCode: "12950",
+      addressCountry: "ID",
+    },
     areaServed: { "@type": "Country", name: "ID" },
     sameAs: [
       "https://www.instagram.com/bahasacerdas",
@@ -19,6 +41,7 @@ export function organizationLd() {
       name: "BahasaCerdas",
       description: "Ekosistem Belajar Bahasa Indonesia.",
     },
+    member: publicPeopleLd(),
   };
 }
 
@@ -37,7 +60,7 @@ export function softwareAppLd() {
     },
     author: {
       "@type": "Organization",
-      name: "BahasaCerdas Team",
+      name: "PT Bahasa Cerdas Indonesia",
     },
   };
 }

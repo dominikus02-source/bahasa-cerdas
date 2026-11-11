@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import "./globals.css";
 import "./android-app.css";
 import { Providers } from "./providers";
+import { publicPeopleLd } from "@/lib/json-ld";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
@@ -70,11 +71,24 @@ const jsonLdOrganization = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
   "@id": `${SITE_URL}/#organization`,
-  name: SITE_NAME,
+  name: "PT Bahasa Cerdas Indonesia",
+  legalName: "PT Bahasa Cerdas Indonesia",
+  alternateName: "BahasaCerdas",
   url: SITE_URL,
   description: "Platform edukasi Bahasa Indonesia lengkap dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
   logo: `${SITE_URL}/brand/bc2026-icon.png`,
-  foundingDate: "2024",
+  foundingDate: "2026-11-05",
+  identifier: "0911260094193",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
+    addressLocality: "Jakarta Selatan",
+    addressRegion: "DKI Jakarta",
+    postalCode: "12950",
+    addressCountry: "ID",
+  },
+  brand: { "@type": "Brand", name: "BahasaCerdas" },
+  member: publicPeopleLd(),
   areaServed: { "@type": "Country", name: "ID" },
   knowsLanguage: "id",
   email: "halo@bahasacerdas.com",

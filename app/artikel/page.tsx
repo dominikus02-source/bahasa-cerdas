@@ -93,7 +93,7 @@ export default function ArtikelPage() {
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Ketik nama penulis, misalnya Washadi, Alexander, atau Dominikus"
+                placeholder="Ketik nama penulis, misalnya Alexander atau Dominikus"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-bc-line text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-bc-surface"
               />
             </div>

@@ -1,113 +1,130 @@
 import Image from "next/image";
-import { GraduationCap, Landmark } from "lucide-react";
 
-const founders = [
+type Member = {
+  name: string;
+  role: string;
+  desc: string;
+  image?: string;
+  initials: string;
+};
+
+const coreTeam: Member[] = [
   {
-    name: "Dominikus Wahyu",
+    name: "Dominikus Wahyu Heru Cahyadi",
     role: "Founder & CEO",
+    initials: "DW",
     image: "/founders/dominikus.png",
     desc: "Memimpin visi produk, arsitektur platform, pengembangan teknologi, AI, dan arah pertumbuhan BahasaCerdas. Sekaligus pendidik yang memahami pekerjaan guru Bahasa Indonesia dari dalam.",
-    tag: "Pendidikan · Teknologi · Produk",
   },
   {
     name: "Alexander Suryanta",
-    role: "Co-Founder & Head of Content",
+    role: "Co-Founder & CLO (Chief Learning Officer)",
+    initials: "AS",
     image: "/founders/alexander.jpg",
     desc: "Menguatkan fondasi konten dan pedagogi BahasaCerdas melalui pengalaman panjang dalam pengajaran Bahasa Indonesia, penulisan buku teks, dan pengembangan materi pembelajaran.",
-    tag: "Konten · Buku Teks · Pedagogi",
   },
   {
-    name: "Washadi, S.Pd., M.M.",
-    role: "Co-Founder & Head of Community",
-    image: "/founders/washadi.png",
-    desc: "Menghubungkan BahasaCerdas dengan kebutuhan nyata guru dan komunitas Bahasa Indonesia melalui pengalaman sebagai pendidik, penggerak MGMP, dan pengembang jejaring komunitas.",
-    tag: "Komunitas · MGMP · Pendidik",
+    name: "Sugeng Riyanto",
+    role: "CTO",
+    initials: "SR",
+    image: "/founders/sugeng.jpg",
+    desc: "Chief Technology Officer BahasaCerdas.",
+  },
+  {
+    name: "Soleh Ahmad Nugraha",
+    role: "CBO",
+    initials: "SA",
+    image: "/founders/soleh.jpg",
+    desc: "Chief Business Officer BahasaCerdas.",
   },
 ];
 
-const advisors = [
+const advisors: Member[] = [
   {
-    initial: "MG",
-    name: "Melany Kusumawati Gigir, S.Pd., M.S.",
-    role: "Dewan Penasihat",
-    desc: "Praktisi Pendidikan — memberikan perspektif praktik pendidikan terhadap arah dan penggunaan BahasaCerdas di lapangan.",
+    name: "Melany Kusumawati",
+    role: "Advisor",
+    initials: "MK",
+    image: "/founders/melany.jpg",
+    desc: "Advisor BahasaCerdas.",
   },
   {
-    initial: "BW",
     name: "Dr. B. Widharyanto, M.Pd.",
-    role: "Validator Akademik",
+    role: "Advisor",
+    initials: "BW",
+    image: "/founders/widharyanto.jpg",
     desc: "Universitas Sanata Dharma — menelaah validitas akademik materi, kaidah, dan pendekatan pembelajaran Bahasa Indonesia.",
   },
 ];
 
+function Avatar({ member }: { member: Member }) {
+  if (member.image) {
+    return (
+      <div className="relative mx-auto mb-4 h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-lg">
+        <Image
+          src={member.image}
+          alt={member.name}
+          fill
+          className="object-cover"
+          sizes="112px"
+        />
+      </div>
+    );
+  }
+  return (
+    <div
+      className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full border-4 border-white text-2xl font-bold text-white shadow-lg"
+      style={{ backgroundImage: "var(--bc-grad-brand)" }}
+      aria-hidden="true"
+    >
+      {member.initials}
+    </div>
+  );
+}
+
+function MemberCard({ member }: { member: Member }) {
+  return (
+    <div className="card-hover rounded-2xl border border-zinc-100 bg-white p-6 text-center lg:p-8">
+      <Avatar member={member} />
+      <h3 className="text-lg font-bold text-zinc-900">{member.name}</h3>
+      <p className="mb-3 text-sm font-semibold text-primary">{member.role}</p>
+      <p className="text-sm leading-relaxed text-zinc-500">{member.desc}</p>
+    </div>
+  );
+}
+
 export default function AboutTeam() {
   return (
-    <section id="tim" className="py-16 lg:py-20 bg-zinc-50 scroll-mt-24" aria-labelledby="about-tim-heading">
+    <section id="tim" className="scroll-mt-24 bg-zinc-50 py-16 lg:py-20" aria-labelledby="about-tim-heading">
       <div className="section-container">
-        <div className="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
-            <span className="text-xs font-semibold text-primary">Tim Pendiri</span>
+        <div className="mx-auto mb-12 max-w-3xl text-center lg:mb-16">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-primary/10 bg-primary-light px-4 py-1.5">
+            <span className="text-xs font-semibold text-primary">Tim</span>
           </div>
-          <h2 id="about-tim-heading" className="heading-md text-zinc-900 mb-4">
+          <h2 id="about-tim-heading" className="heading-md mb-4 text-zinc-900">
             Siapa di balik <span className="text-primary">BahasaCerdas</span>
           </h2>
-          <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            Tiga pendiri dengan perpaduan pengalaman pendidikan, teknologi,
-            konten, dan komunitas guru.
+          <p className="text-base leading-relaxed text-zinc-500 lg:text-lg">
+            Pendiri dan advisor yang menopang produk dan mutu
+            pembelajaran Bahasa Indonesia.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-5xl mx-auto mb-16">
-          {founders.map((f) => (
-            <div key={f.name} className="text-center p-6 lg:p-8 rounded-2xl bg-white border border-zinc-100 card-hover">
-              <div className="relative w-28 h-28 mx-auto mb-4 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                <Image
-                  src={f.image}
-                  alt={f.name}
-                  fill
-                  className="object-cover"
-                  sizes="112px"
-                />
-              </div>
-              <h3 className="text-lg font-bold text-zinc-900">{f.name}</h3>
-              <p className="text-sm font-semibold text-primary mb-3">{f.role}</p>
-              <p className="text-sm text-zinc-500 leading-relaxed mb-4">{f.desc}</p>
-              <span className="inline-block text-[11px] font-semibold text-zinc-600 bg-zinc-100 px-3 py-1 rounded-full">
-                {f.tag}
-              </span>
-            </div>
+        <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
+          {coreTeam.map((m) => (
+            <MemberCard key={m.name} member={m} />
           ))}
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-8">
-            <h3 className="text-xl lg:text-2xl font-bold text-zinc-900 mb-2">
-              Dewan Penasihat & Validasi Akademik
+        <div id="advisor" className="mx-auto mt-14 max-w-5xl scroll-mt-24 lg:mt-16">
+          <div className="mb-8 text-center">
+            <h3 className="text-xl font-bold text-zinc-900 lg:text-2xl">
+              Advisor
             </h3>
-            <p className="text-sm text-zinc-500">
-              Kepemimpinan sekolah dan dunia akademik ikut memastikan arah
-              BahasaCerdas tetap berpijak pada praktik.
-            </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {advisors.map((a) => (
-              <div key={a.name} className="flex items-start gap-4 p-6 rounded-2xl bg-white border border-zinc-100 card-hover">
-                <div className="w-14 h-14 shrink-0 rounded-full bg-primary-light text-primary flex items-center justify-center">
-                  <span className="text-sm font-bold">{a.initial}</span>
-                </div>
-                <div>
-                  <h4 className="text-base font-bold text-zinc-900">{a.name}</h4>
-                  <p className="text-sm font-semibold text-primary mb-2">{a.role}</p>
-                  <p className="text-sm text-zinc-500 leading-relaxed">{a.desc}</p>
-                </div>
-              </div>
+          <div className="mx-auto grid max-w-3xl grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
+            {advisors.map((m) => (
+              <MemberCard key={m.name} member={m} />
             ))}
-          </div>
-          <div className="flex items-center justify-center gap-2 mt-8 text-xs text-zinc-600">
-            <GraduationCap size={14} aria-hidden="true" />
-            <span>Dunia akademik</span>
-            <Landmark size={14} aria-hidden="true" />
-            <span>Sekolah & komunitas</span>
           </div>
         </div>
       </div>

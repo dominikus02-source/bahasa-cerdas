@@ -21,7 +21,7 @@ export default function KebijakanPrivasiPage() {
         <div className="prose prose-zinc prose-lg max-w-none space-y-8 text-zinc-800 leading-relaxed">
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900">1. Pendahuluan</h2>
-            <p>Kebijakan Privasi ini menjelaskan bagaimana aplikasi dan platform BahasaCerdas ("Aplikasi", "kami", "kita") mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi pengguna ("Anda", "Pengguna").</p>
+            <p>Kebijakan Privasi ini menjelaskan bagaimana aplikasi dan platform BahasaCerdas ("Aplikasi", "kami", "kita"), yang dikelola oleh <strong>PT Bahasa Cerdas Indonesia</strong>, mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi pengguna ("Anda", "Pengguna").</p>
             <p>Kebijakan ini berlaku untuk <strong>website</strong> (bahasacerdas.com) dan <strong>aplikasi Android</strong> BahasaCerdas. Dengan mengunduh, menginstal, atau menggunakan Aplikasi/Platform, Anda menyetujui pengumpulan dan penggunaan informasi sesuai dengan Kebijakan Privasi ini.</p>
           </section>
 
@@ -117,8 +117,8 @@ export default function KebijakanPrivasiPage() {
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900">11. Kontak</h2>
             <p>Untuk pertanyaan terkait privasi atau permintaan data, hubungi:</p>
-            <p><strong>Email:</strong> <a href="mailto:halo@bahasacerdas.com" className="text-primary hover:underline">halo@bahasacerdas.com</a><br />
-            <strong>Pengembang:</strong> Dominikus Wahyu<br />
+            <p><strong>Pengelola:</strong> PT Bahasa Cerdas Indonesia<br />
+            <strong>Email:</strong> <a href="mailto:halo@bahasacerdas.com" className="text-primary hover:underline">halo@bahasacerdas.com</a><br />
             <strong>Website:</strong> <a href="https://www.bahasacerdas.com" className="text-primary hover:underline">https://www.bahasacerdas.com</a></p>
           </section>
         </div>

@@ -178,13 +178,13 @@ async function main() {
     undefined
   );
 
-  // 11. Check navbar has FAQ link
+  // 11. FAQ and Tentang live in the footer, not the marketing navbar
   const navbarContent = await import("fs").then((fs) =>
     fs.readFileSync(`${BASE_PATH}/components/public/PageNavbar.tsx`, "utf-8")
   );
   check(
-    navbarContent.includes('/faq"') || navbarContent.includes("/faq,"),
-    "FAQ link in navbar",
+    !navbarContent.includes('href: "/faq"') && !navbarContent.includes('href: "/tentang"'),
+    "FAQ and Tentang are not in the marketing navbar",
     undefined
   );
 

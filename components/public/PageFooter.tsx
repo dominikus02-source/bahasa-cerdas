@@ -6,8 +6,10 @@ const footerLinks = [
   {
     title: "Produk",
     links: [
+      { href: "/#untuk-umum", label: "Untuk Umum" },
       { href: "/#untuk-murid", label: "Untuk Murid" },
       { href: "/#untuk-guru", label: "Untuk Guru" },
+      { href: "/#ekosistem", label: "Ekosistem" },
       { href: "/arena", label: "Arena" },
       { href: "/arena/jalur-cerdas", label: "Jalur Cerdas" },
       { href: "/#bigt", label: "BIGT" },
@@ -18,7 +20,7 @@ const footerLinks = [
     title: "Perusahaan",
     links: [
       { href: "/tentang", label: "Tentang BahasaCerdas" },
-      { href: "/tentang", label: "Tim" },
+      { href: "/tentang#tim", label: "Tim" },
       { href: "/loker", label: "Kontak & Karier" },
       { href: "/faq", label: "FAQ" },
       { href: "/artikel", label: "AKSARA" },
@@ -63,7 +65,7 @@ export default function PageFooter() {
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed mb-5 max-w-sm">
               Satu ekosistem untuk belajar, berlatih, bermain, berkarya, dan bertumbuh —
-              menghubungkan guru, murid, dan komunitas Bahasa Indonesia.
+              terbuka untuk masyarakat umum, murid, dan guru.
             </p>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <a
@@ -113,7 +115,7 @@ export default function PageFooter() {
       <div className="border-t border-zinc-800">
         <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-zinc-400">
-            &copy; {new Date().getFullYear()} BahasaCerdas. Ekosistem Belajar Bahasa Indonesia.
+            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-400">
             <Link href="/kebijakan-privasi" className="hover:text-zinc-200 transition-colors focus-ring rounded">

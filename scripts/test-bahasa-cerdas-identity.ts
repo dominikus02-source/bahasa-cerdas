@@ -36,24 +36,59 @@ const docSource = readFileSync(join(BASE, "docs/BAHASACERDAS_IDENTITY_REGISTRY.m
 // ── 1. Fakta identitas inti ───────────────────────────────────────────────
 ok("Founder tercatat", BAHASA_CERDAS_IDENTITY.founder.name === "Dominikus Wahyu Heru Cahyadi");
 ok("Founder peran CEO", BAHASA_CERDAS_IDENTITY.founder.role === "Founder & CEO");
-ok("Co-Founder Content tercatat", BAHASA_CERDAS_IDENTITY.team[0].name === "Alexander Suryanta");
-ok("Co-Founder Community tercatat", BAHASA_CERDAS_IDENTITY.team[1].name === "Washadi, S.Pd., M.M.");
-ok("Dewan Penasihat tercatat", BAHASA_CERDAS_IDENTITY.advisors[0].name === "Melany K. Gigir, S.Pd., M.S.");
-ok("Validator Akademik tercatat", BAHASA_CERDAS_IDENTITY.advisors[1].name === "Dr. B. Widharyanto, M.Pd.");
+ok("Co-Founder CLO tercatat", BAHASA_CERDAS_IDENTITY.team[0].name === "Alexander Suryanta" && BAHASA_CERDAS_IDENTITY.team[0].role === "Co-Founder & CLO (Chief Learning Officer)");
+ok("CTO tercatat", BAHASA_CERDAS_IDENTITY.team[1].name === "Sugeng Riyanto" && BAHASA_CERDAS_IDENTITY.team[1].role === "CTO");
+ok("CBO tercatat", BAHASA_CERDAS_IDENTITY.team[2].name === "Soleh Ahmad Nugraha" && BAHASA_CERDAS_IDENTITY.team[2].role === "CBO");
+ok("Advisor Melany tercatat", BAHASA_CERDAS_IDENTITY.advisors[0].name === "Melany Kusumawati");
+ok("Advisor Widharyanto tercatat", BAHASA_CERDAS_IDENTITY.advisors[1].name === "Dr. B. Widharyanto, M.Pd.");
 ok(
   "Tidak ada posisi palsu (semua peran dari daftar resmi)",
-  ["Founder & CEO", "Co-Founder & Head of Content", "Co-Founder & Head of Community", "Dewan Penasihat", "Validator Akademik"]
+  ["Founder & CEO", "Co-Founder & CLO (Chief Learning Officer)", "CTO", "CBO", "Advisor"]
     .every((r) =>
       [BAHASA_CERDAS_IDENTITY.founder.role, ...BAHASA_CERDAS_IDENTITY.team.map((t) => t.role), ...BAHASA_CERDAS_IDENTITY.advisors.map((a) => a.role)]
         .some((actual) => actual.startsWith(r)),
     ),
 );
+ok(
+  "Peran publik advisor hanya Advisor",
+  BAHASA_CERDAS_IDENTITY.advisors.every((person) => person.role === "Advisor") &&
+    !BAHASA_CERDAS_IDENTITY.team.some((person) => /Komisaris|Direktur|Validator/.test(person.role)),
+);
+ok(
+  "Instruksi publik tanpa jabatan pengurus, komisaris, atau validator",
+  !identityInstruction.includes("Direktur:") &&
+    !identityInstruction.includes("Komisaris") &&
+    !identityInstruction.includes("Validator Akademik") &&
+    !identityInstruction.includes("Dewan Penasihat") &&
+    !identityInstruction.includes("Akta Pendirian") &&
+    !identityInstruction.includes("Siti Aminah") &&
+    !identityInstruction.includes("AHU-0089503") &&
+    !identityInstruction.includes("KBLI") &&
+    !identityInstruction.includes("usaha mikro") &&
+    identityInstruction.includes("0911260094193") &&
+    identityInstruction.includes("CFX Tower, Jl. Gatot Subroto Kav. 35-36") &&
+    !registrySource.includes("Komisaris") &&
+    !docSource.includes("Komisaris") &&
+    !docSource.includes("Validator Akademik") &&
+    !docSource.includes("Siti Aminah") &&
+    !docSource.includes("AHU-0089503"),
+);
+ok(
+  "Washadi tidak ada di registry publik",
+  !registrySource.includes("Washadi") &&
+    !identityInstruction.includes("Washadi"),
+);
 
 // ── 2. Badan usaha & legal ────────────────────────────────────────────────
-ok("Badan usaha CV Obah Mamah", BAHASA_CERDAS_IDENTITY.company.legalName === "CV Obah Mamah");
-ok("Nama dagang Teras Kata", BAHASA_CERDAS_IDENTITY.company.tradeName === "Teras Kata");
-ok("NIB benar", BAHASA_CERDAS_IDENTITY.company.nib === "1217000151443");
-ok("Lokasi publik ringkas (privasi)", BAHASA_CERDAS_IDENTITY.company.location === "Tangerang, Banten");
+ok("Badan usaha PT Bahasa Cerdas Indonesia", BAHASA_CERDAS_IDENTITY.company.legalName === "PT Bahasa Cerdas Indonesia");
+ok("Merek BahasaCerdas", BAHASA_CERDAS_IDENTITY.company.tradeName === "BahasaCerdas");
+ok("NIB benar", BAHASA_CERDAS_IDENTITY.company.nib === "0911260094193");
+ok("Lokasi publik ringkas (privasi)", BAHASA_CERDAS_IDENTITY.company.location === "Jakarta Selatan, DKI Jakarta");
+ok(
+  "Alamat kantor publik CFX",
+  BAHASA_CERDAS_IDENTITY.company.officeAddress ===
+    "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950",
+);
 ok("Produk BahasaCerdas", BAHASA_CERDAS_IDENTITY.company.product === "BahasaCerdas");
 
 // ── 3. Hak cipta — pencipta ≠ pemegang ────────────────────────────────────
@@ -66,10 +101,11 @@ ok(
     BAHASA_CERDAS_IDENTITY.founder.name === "Dominikus Wahyu Heru Cahyadi",
 );
 ok(
-  "Pemegang hak cipta = CV Obah Mamah (bukan founder)",
-  BAHASA_CERDAS_IDENTITY.answerTemplates.copyright.includes("CV Obah Mamah") &&
+  "Pemegang hak cipta = PT Bahasa Cerdas Indonesia (bukan founder)",
+  BAHASA_CERDAS_IDENTITY.answerTemplates.copyright.includes("PT Bahasa Cerdas Indonesia") &&
     !BAHASA_CERDAS_IDENTITY.answerTemplates.copyright.includes("patent") &&
-    !BAHASA_CERDAS_IDENTITY.answerTemplates.copyright.includes("paten"),
+    !BAHASA_CERDAS_IDENTITY.answerTemplates.copyright.includes("paten") &&
+    !BAHASA_CERDAS_IDENTITY.answerTemplates.copyright.includes("CV Obah Mamah"),
 );
 ok("Hak cipta: pengumuman pertama 3 Maret 2026", BAHASA_CERDAS_IDENTITY.legal.firstPublishedDate === "3 Maret 2026");
 ok("Hak cipta: status TERCATAT", BAHASA_CERDAS_IDENTITY.legal.status.includes("TERCATAT"));
@@ -111,8 +147,9 @@ ok(
 
 // ── 7. Privasi ────────────────────────────────────────────────────────────
 ok(
-  "Instruksi melarang alamat lengkap/nomor HP/email pribadi",
-  identityInstruction.includes("Jangan menyebut alamat lengkap, nomor HP, atau email pribadi siapa pun"),
+  "Instruksi melarang alamat rumah/nomor HP/email pribadi, dan membatasi alamat kantor publik",
+  identityInstruction.includes("Jangan menyebut alamat rumah, nomor HP, atau email pribadi siapa pun") &&
+    identityInstruction.includes("Alamat kantor publik yang boleh disebut hanya:"),
 );
 
 // ── 8. Istilah MURID ──────────────────────────────────────────────────────
@@ -171,7 +208,7 @@ ok(
 // ── 13. Dokumen kanonik lengkap ───────────────────────────────────────────
 ok(
   "docs registry memuat NIB",
-  docSource.includes("1217000151443"),
+  docSource.includes("0911260094193") && !docSource.includes("1217000151443"),
 );
 ok(
   "docs registry memuat nomor permohonan & pencatatan",
@@ -189,11 +226,11 @@ ok(
 // ── 14. Kesesuaian dokumen ↔ machine registry ─────────────────────────────
 ok(
   "docs ↔ registry sinkron (nama pencipta & pemegang)",
-  docSource.includes("Dominikus Wahyu Heru Cahyadi") && docSource.includes("CV Obah Mamah"),
+  docSource.includes("Dominikus Wahyu Heru Cahyadi") && docSource.includes("PT Bahasa Cerdas Indonesia"),
 );
 ok(
   "docs ↔ registry sinkron (Melany sesuai registry)",
-  docSource.includes("Melany K. Gigir"),
+  docSource.includes("Melany Kusumawati") && !docSource.includes("Washadi"),
 );
 
 console.log(`\n════════════════════════════════════════`);
