@@ -23,14 +23,14 @@ export default async function PromoVideoSection() {
         <div className={`grid gap-8 lg:gap-12 items-start ${announcements.length > 0 ? "lg:grid-cols-[11fr_9fr]" : ""}`}>
           {/* Kiri (≈55%) — video pengenalan */}
           <div>
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
-              <span className="text-xs font-semibold text-primary">Kenali BahasaCerdas</span>
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-bc-accent-soft border border-bc-accent/15 mb-5">
+              <span className="text-xs font-semibold text-bc-accent">Kenali BahasaCerdas</span>
             </div>
             <h2 id="promo-video-heading" className="heading-lg text-zinc-900">
-              Lihat bagaimana <span className="text-primary">BahasaCerdas</span> bekerja.
+              Lihat bagaimana <span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--bc-grad-brand)" }}>BahasaCerdas</span> bekerja.
             </h2>
             <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mt-4 max-w-xl">
-              Satu ekosistem yang menghubungkan guru, murid, pembelajaran,
+              Satu ekosistem yang menghubungkan masyarakat umum, murid, dan guru — pembelajaran,
               latihan, karya, dan komunitas Bahasa Indonesia.
             </p>
 

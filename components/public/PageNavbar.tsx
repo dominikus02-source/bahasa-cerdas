@@ -7,11 +7,11 @@ import { usePathname } from "next/navigation";
 import { Menu, X, ShoppingCart, Package, User, LogOut } from "lucide-react";
 
 const navLinks = [
+  { href: "/#produk", label: "Produk" },
+  { href: "/#untuk-umum", label: "Untuk Umum" },
+  { href: "/#untuk-murid", label: "Untuk Murid" },
+  { href: "/#untuk-guru", label: "Untuk Guru" },
   { href: "/marketplace", label: "Toko Karya" },
-  { href: "/#ekosistem", label: "Ekosistem" },
-  { href: "/#bigt", label: "BIGT" },
-  { href: "/tentang", label: "Tentang" },
-  { href: "/faq", label: "FAQ" },
 ];
 
 const marketplacePaths = ["/marketplace", "/cart", "/checkout", "/orders"];
@@ -80,6 +80,7 @@ export default function PageNavbar() {
   const getDashboardHref = (role: string) => {
     if (role === "ADMIN") return "/admin";
     if (role === "MURID") return "/arena";
+    if (role === "UMUM") return "/umum";
     return "/guru/beranda";
   };
 
@@ -88,7 +89,7 @@ export default function PageNavbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
           ? "bg-bc-surface/95 border-b border-bc-line shadow-sm"
-          : "bg-transparent"
+          : "bg-bc-surface/75 border-b border-transparent backdrop-blur-md"
       }`}
     >
       <div className="section-container min-w-0">
@@ -106,7 +107,7 @@ export default function PageNavbar() {
             </div>
             <div className="min-w-0 flex flex-col">
               <span className="truncate font-bold text-base lg:text-lg text-bc-text leading-tight">
-                Bahasa<span className="text-primary">Cerdas</span>
+                Bahasa<span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--bc-grad-brand)" }}>Cerdas</span>
               </span>
               <span className="truncate text-[10px] lg:text-[11px] text-bc-text-3 font-medium leading-tight -mt-0.5 hidden sm:block">
                 Ekosistem Belajar Bahasa Indonesia
@@ -115,15 +116,15 @@ export default function PageNavbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav aria-label="Navigasi utama" className="hidden lg:flex items-center gap-1">
+          <nav aria-label="Navigasi utama" className="hidden xl:flex items-center gap-0.5 min-w-0">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 focus-ring ${
+                className={`relative px-2.5 py-2 text-sm font-medium rounded-xl transition-all duration-200 focus-ring whitespace-nowrap ${
                   pathname === link.href || pathname.startsWith(link.href + "/")
-                    ? "text-primary bg-primary-light/50"
-                    : "text-zinc-600 dark:text-zinc-300 hover:text-primary hover:bg-primary-light/50"
+                    ? "text-bc-accent bg-bc-accent-soft"
+                    : "text-zinc-600 dark:text-zinc-300 hover:text-bc-accent hover:bg-bc-accent-soft"
                 }`}
               >
                 {link.label}
@@ -133,14 +134,14 @@ export default function PageNavbar() {
               <>
                 <Link
                   href="/orders"
-                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-bc-accent transition-colors rounded-xl hover:bg-bc-accent-soft"
                   aria-label="Pesanan Saya"
                 >
                   <Package size={20} />
                 </Link>
                 <Link
                   href="/cart"
-                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-primary transition-colors rounded-xl hover:bg-primary-light/50"
+                  className="relative ml-1 px-3 py-2 text-bc-text-2 hover:text-bc-accent transition-colors rounded-xl hover:bg-bc-accent-soft"
                   aria-label={`Keranjang, ${cartCount} item`}
                 >
                   <ShoppingCart size={20} />
@@ -155,13 +156,13 @@ export default function PageNavbar() {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-3">
+          <div className="hidden xl:flex items-center gap-3 shrink-0">
             {userLoading ? null : user ? (
               <Link
                 href={getDashboardHref(user.role)}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-bc-text-2 bg-bc-surface-2 hover:bg-primary-light/50 rounded-xl transition-colors border border-bc-line"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-bc-text-2 bg-bc-surface-2 hover:bg-bc-accent-soft rounded-xl transition-colors border border-bc-line"
               >
-                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-[10px] font-bold">
+                <div className="w-6 h-6 rounded-full bg-gradient-to-br from-bc-accent to-bc-violet flex items-center justify-center text-white text-[10px] font-bold">
                   {user.fullName.charAt(0).toUpperCase()}
                 </div>
                 <span className="max-w-[120px] truncate">{user.fullName}</span>
@@ -170,13 +171,13 @@ export default function PageNavbar() {
               <>
                 <Link
                   href={`/login?next=${encodeURIComponent(pathname)}`}
-                  className="px-5 py-2.5 text-sm font-semibold text-bc-text-2 hover:text-primary transition-colors focus-ring rounded-lg"
+                  className="px-5 py-2.5 text-sm font-semibold text-bc-text-2 hover:text-bc-accent transition-colors focus-ring rounded-lg"
                 >
                   Masuk
                 </Link>
                 <Link
                   href="/register"
-                  className="relative px-6 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-xl transition-all duration-200 shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5 focus-ring"
+                  className="relative px-6 py-2.5 text-sm font-semibold text-bc-on-brand bg-bc-brand rounded-xl transition-all duration-200 shadow-bc-glow hover:-translate-y-0.5 focus-ring"
                 >
                   Mulai Gratis
                 </Link>
@@ -188,7 +189,7 @@ export default function PageNavbar() {
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             onKeyDown={handleKeyDown}
-            className="lg:hidden relative z-50 grid h-11 w-11 shrink-0 place-items-center rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
+            className="xl:hidden relative z-50 grid h-11 w-11 shrink-0 place-items-center rounded-xl hover:bg-bc-surface-2 transition-colors focus-ring"
             aria-controls="mobile-menu"
             aria-expanded={mobileOpen}
             aria-label={mobileOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
@@ -206,7 +207,7 @@ export default function PageNavbar() {
       {mobileOpen && (
         <div
           id="mobile-menu"
-          className="lg:hidden fixed inset-0 top-0 z-40 bg-bc-surface animate-fade-in"
+          className="xl:hidden fixed inset-0 top-0 z-40 bg-bc-surface animate-fade-in"
           role="dialog"
           aria-modal="true"
           aria-label="Menu navigasi"
@@ -221,8 +222,8 @@ export default function PageNavbar() {
                   onClick={() => setMobileOpen(false)}
                   className={`block px-4 py-3.5 text-base font-medium rounded-xl transition-all focus-ring ${
                     pathname === link.href || pathname.startsWith(link.href + "/")
-                      ? "text-primary bg-primary-light/50"
-                      : "text-zinc-700 hover:text-primary hover:bg-primary-light/50"
+                      ? "text-bc-accent bg-bc-accent-soft"
+                      : "text-zinc-700 hover:text-bc-accent hover:bg-bc-accent-soft"
                   }`}
                 >
                   {link.label}
@@ -233,14 +234,14 @@ export default function PageNavbar() {
                   <Link
                     href="/orders"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-bc-text-2 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
+                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-bc-text-2 hover:text-bc-accent hover:bg-bc-accent-soft rounded-xl transition-all focus-ring"
                   >
                     <span className="flex items-center gap-2"><Package size={18} /> Pesanan Saya</span>
                   </Link>
                   <Link
                     href="/cart"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-bc-text-2 hover:text-primary hover:bg-primary-light/50 rounded-xl transition-all focus-ring"
+                    className="flex items-center justify-between px-4 py-3.5 text-base font-medium text-bc-text-2 hover:text-bc-accent hover:bg-bc-accent-soft rounded-xl transition-all focus-ring"
                   >
                     <span className="flex items-center gap-2"><ShoppingCart size={18} /> Keranjang</span>
                     {cartCount > 0 && (
@@ -258,9 +259,9 @@ export default function PageNavbar() {
                   <Link
                     href={getDashboardHref(user.role)}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-bc-text-2 bg-bc-surface-2 rounded-xl hover:bg-primary-light/50 transition-colors"
+                    className="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-bc-text-2 bg-bc-surface-2 rounded-xl hover:bg-bc-accent-soft transition-colors"
                   >
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-dark flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-bc-accent to-bc-violet flex items-center justify-center text-white text-xs font-bold">
                       {user.fullName.charAt(0).toUpperCase()}
                     </div>
                     <span className="truncate">{user.fullName}</span>
@@ -278,7 +279,7 @@ export default function PageNavbar() {
                   <Link
                     href="/register"
                     onClick={() => setMobileOpen(false)}
-                    className="block w-full text-center px-4 py-3 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary-dark transition-colors shadow-lg shadow-primary/25 focus-ring"
+                    className="block w-full text-center px-4 py-3 text-sm font-semibold text-bc-on-brand bg-bc-brand rounded-xl transition-colors shadow-bc-glow focus-ring"
                   >
                     Mulai Gratis
                   </Link>

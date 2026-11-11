@@ -6,6 +6,7 @@ const footerLinks = [
   {
     title: "Produk",
     links: [
+      { href: "/#untuk-umum", label: "Untuk Umum" },
       { href: "/#untuk-murid", label: "Untuk Murid" },
       { href: "/#untuk-guru", label: "Untuk Guru" },
       { href: "/arena", label: "Arena" },
@@ -63,7 +64,7 @@ export default function PageFooter() {
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed mb-5 max-w-sm">
               Satu ekosistem untuk belajar, berlatih, bermain, berkarya, dan bertumbuh —
-              menghubungkan guru, murid, dan komunitas Bahasa Indonesia.
+              terbuka untuk masyarakat umum, murid, dan guru.
             </p>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <a
