@@ -106,6 +106,9 @@ jobs:
       - name: Login UX regression
         run: npm run test:login-ux
 
+      - name: Inclusive landing copy and role paths
+        run: npm run test:landing-inclusive
+
       - name: Unified login routing regression
         run: npm run test:login-unified
 
