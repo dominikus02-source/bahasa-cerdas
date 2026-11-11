@@ -5,10 +5,15 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { HeartHandshake, ArrowRight } from "lucide-react";
 
-const founders = [
-  { name: "Dominikus Wahyu", role: "Founder & CEO", image: "/founders/dominikus.png" },
-  { name: "Alexander Suryanta", role: "Co-Founder & Konten", image: "/founders/alexander.jpg" },
-  { name: "Washadi", role: "Co-Founder & Komunitas", image: "/founders/washadi.png" },
+type TeamMember = { name: string; role: string; image?: string; initials: string };
+
+const team: TeamMember[] = [
+  { name: "Dominikus Wahyu Heru Cahyadi", role: "Founder & CEO", image: "/founders/dominikus.png", initials: "DW" },
+  { name: "Melany Kusumawati", role: "Komisaris Utama", initials: "MK" },
+  { name: "Alexander Suryanta", role: "Co-Founder & Head of Content", image: "/founders/alexander.jpg", initials: "AS" },
+  { name: "Sugeng Riyanto", role: "Co-Founder & CTO", initials: "SR" },
+  { name: "Soleh Ahmad Nugraha", role: "Co-Founder & CBO", initials: "SA" },
+  { name: "Dr. B. Widharyanto, M.Pd.", role: "Validator Akademik", initials: "BW" },
 ];
 
 export default function AboutBridge() {
@@ -45,18 +50,28 @@ export default function AboutBridge() {
                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
               </Link>
             </div>
-            <div className="grid grid-cols-3 gap-4">
-              {founders.map((f) => (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {team.map((f) => (
                 <div key={f.name} className="text-center">
-                  <div className="relative w-14 h-14 mx-auto rounded-2xl overflow-hidden border-2 border-white shadow-md mb-2">
-                    <Image
-                      src={f.image}
-                      alt={f.name}
-                      fill
-                      sizes="56px"
-                      className="object-cover"
-                    />
-                  </div>
+                  {f.image ? (
+                    <div className="relative w-14 h-14 mx-auto rounded-2xl overflow-hidden border-2 border-white shadow-md mb-2">
+                      <Image
+                        src={f.image}
+                        alt={f.name}
+                        fill
+                        sizes="56px"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div
+                      className="w-14 h-14 mx-auto rounded-2xl border-2 border-white shadow-md mb-2 flex items-center justify-center text-white text-xs font-bold"
+                      style={{ backgroundImage: "var(--bc-grad-brand)" }}
+                      aria-hidden="true"
+                    >
+                      {f.initials}
+                    </div>
+                  )}
                   <p className="text-xs font-semibold text-zinc-800 leading-tight">{f.name}</p>
                   <p className="text-[10px] text-zinc-400 mt-0.5">{f.role}</p>
                 </div>

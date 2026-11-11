@@ -2,7 +2,7 @@
 
 **Dokumen kanonik identitas & fakta resmi BahasaCerdas** untuk seluruh asisten AI (AI BC chat, alat AI guru, AI murid, sistem agent) serta komunikasi publik.
 
-- **Tanggal pembaruan**: Agustus 2026
+- **Tanggal pembaruan**: November 2026
 - **Sumber kebenaran (SSOT)**: dokumen ini + `lib/ai/knowledge/bahasa-cerdas-identity.ts` (versi machine-readable). Keduanya wajib sinkron.
 - **Aturan dasar**: Semua fakta di bawah ini terverifikasi. AI JANGAN menambah, mengira-ngira, atau mengarang fakta di luar daftar ini.
 
@@ -11,47 +11,55 @@
 ## 1. Identitas
 
 - **Produk**: BahasaCerdas
-- **Badan usaha**: CV Obah Mamah
-- **Nama dagang**: Teras Kata
-- **Lokasi publik**: Tangerang, Banten
-- **NIB**: 1217000151443
+- **Badan usaha**: PT Bahasa Cerdas Indonesia
+- **Merek**: BahasaCerdas
+- **Lokasi publik**: Jakarta Selatan, DKI Jakarta
+- **NIB**: 0911260094193 (tanggal 9 November 2026, usaha mikro)
 
 ## 2. Nama & Peran Resmi
 
 | Orang | Peran Resmi BahasaCerdas |
 |-------|---------------------------|
-| Dominikus Wahyu Heru Cahyadi | Founder & CEO |
-| Alexander Suryanta | Co-Founder & Head of Content |
-| Washadi, S.Pd., M.M. | Co-Founder & Head of Community |
-| Melany K. Gigir, S.Pd., M.S. | Member of Board of Advisors / Dewan Penasihat (profesi: Head of School) |
+| Dominikus Wahyu Heru Cahyadi | Founder & CEO (Direktur) |
+| Melany Kusumawati | Komisaris Utama |
+| Alexander Suryanta | Co-Founder, Komisaris & Head of Content |
+| Sugeng Riyanto | Co-Founder & CTO |
+| Soleh Ahmad Nugraha | Co-Founder & CBO |
 | Dr. B. Widharyanto, M.Pd. | Validator Akademik (Universitas Sanata Dharma) |
 
 **Aturan:**
-- Jangan deskripsikan co-founder, advisor, atau validator sebagai "Founder/Co-Founder".
 - Jangan menambahkan posisi, kredensial, institusi, penghargaan, atau tanggung jawab yang tidak tercantum di sini.
+- Jangan menyebut NPWP, porsi saham, alamat rumah, nomor HP, atau email pribadi.
 
 ## 3. Sumber Otorisasi & Aturan Sumber
 
 - Fakta legal & identitas perusahaan bersumber dari dokumen resmi:
-  - NIB 1217000151443 (CV Obah Mamah, Tangerang, Banten)
+  - Akta Pendirian No. 27 tanggal 5 November 2026, Notaris Siti Aminah, S.H., M.Kn., Kabupaten Purwakarta
+  - SK Kemenkumham AHU-0089503.AH.01.01.TAHUN 2026 tanggal 7 November 2026
+  - NIB 0911260094193 (PT Bahasa Cerdas Indonesia, Jakarta Selatan, DKI Jakarta)
   - Pencatatan Hak Cipta (lihat §6)
-- Halaman publik `/tentang` (www.bahasacerdas.com/tentang) memuat fakta yang sama dan berfungsi sebagai rekonsiliasi eksternal.
-- Catatan perbedaan: profil Melany di situs live saat ini tertulis "Melany Kusumawati Gigir — Praktisi Pendidikan" (revisi sebelumnya). Registry ini mengikuti dokumen resmi resmi "Melany K. Gigir, S.Pd., M.S. — Member of Board of Advisors (profesi Head of School)". Baris ini perlu diselaraskan (lihat Sec. 13).
+- Halaman publik `/tentang` (www.bahasacerdas.com/tentang) memuat fakta yang sama dan berfungsi sebagai rekonsiliasi eksternal, termasuk alamat kedudukan lengkap di bagian Legalitas.
 
 ## 4. Nama Perusahaan Resmi
 
-- Nama resmi badan usaha: **CV Obah Mamah**
-- Nama dagang: **Teras Kata**
-- BahasaCerdas dikembangkan di bawah CV Obah Mamah.
+- Nama resmi badan usaha: **PT Bahasa Cerdas Indonesia**
+- Merek/produk: **BahasaCerdas**
+- BahasaCerdas dikembangkan oleh PT Bahasa Cerdas Indonesia.
 
 ## 5. Data Legal & Nomor Perusahaan
 
 | Item | Nilai |
 |------|-------|
-| NIB | 1217000151443 |
-| Badan usaha | CV Obah Mamah |
-| Nama dagang | Teras Kata |
-| Lokasi publik | Tangerang, Banten |
+| Badan usaha | PT Bahasa Cerdas Indonesia |
+| Kedudukan | Jakarta Selatan, DKI Jakarta |
+| Alamat kedudukan (halaman Legalitas) | CFX Tower, Jl. Gatot Subroto No. Kav. 35-36, Kel. Kuningan Timur, Kec. Setiabudi, Kota Jakarta Selatan 12950 |
+| NIB | 0911260094193 (9 November 2026, usaha mikro) |
+| Akta Pendirian | No. 27 tanggal 5 November 2026, Notaris Siti Aminah, S.H., M.Kn., Kabupaten Purwakarta |
+| SK Kemenkumham | AHU-0089503.AH.01.01.TAHUN 2026 tanggal 7 November 2026 |
+| Pengurus | Direktur: Dominikus Wahyu Heru Cahyadi; Komisaris Utama: Melany Kusumawati; Komisaris: Alexander Suryanta |
+| Kontak publik | halo@bahasacerdas.com |
+
+AI menggunakan lokasi publik ringkas (Jakarta Selatan, DKI Jakarta). Alamat lengkap hanya ditampilkan pada bagian Legalitas di `/tentang`. Jangan menyebut NPWP.
 
 ## 6. Hak Cipta untuk BahasaCerdas
 
@@ -60,7 +68,7 @@
 | Judul karya | BahasaCerdas — Platform Pembelajaran Bahasa Indonesia Berbasis Kecerdasan Buatan |
 | Jenis karya | Program Komputer |
 | Pencipta | Dominikus Wahyu Heru Cahyadi |
-| Pemegang hak cipta | CV Obah Mamah |
+| Pemegang hak cipta | PT Bahasa Cerdas Indonesia |
 | Nomor permohonan | EC002026106361 |
 | Tanggal permohonan | 6 Juli 2026 |
 | Nomor pencatatan | 001326318 |
@@ -70,12 +78,13 @@
 
 **Aturan:**
 - Hak cipta = **pencatatan program komputer**. JANGAN pernah menyebut "patent/paten".
-- Pencipta ≠ pemegang hak cipta: pencipta = Dominikus, pemegang = CV Obah Mamah.
+- Pencipta ≠ pemegang hak cipta: pencipta = Dominikus, pemegang = PT Bahasa Cerdas Indonesia.
 
 ## 7. Riwayat & Garis Waktu
 
 - **Mulai dikembangkan**: April 2026
 - 3 Maret 2026 = tanggal **pengumuman pertama karya berhak cipta** (bukan tanggal mulai pengembangan).
+- November 2026: PT Bahasa Cerdas Indonesia resmi berdiri.
 - JANGAN pernah menjawab "mulai Maret 2026" atau tanggal lain sebagai awal pengembangan.
 
 ## 8. Tanggal Pertanyaan (dalam jawaban AI)
@@ -95,28 +104,26 @@
 
 ## 10. Pendiri
 
-- **Dominikus Wahyu Heru Cahyadi** — Founder & CEO.
+- **Dominikus Wahyu Heru Cahyadi** — Founder & CEO (Direktur).
 - Profil ringkas: eks guru Bahasa Indonesia (±10 tahun); merancang arsitektur platform, mengembangkan aplikasi (full-stack + AI); penulis di Amazon KDP.
 
-## 11. Co-Founders
+## 11. Co-Founders & Pengurus
 
-- **Alexander Suryanta** — Co-Founder & Head of Content.
+- **Melany Kusumawati** — Komisaris Utama PT Bahasa Cerdas Indonesia.
+- **Alexander Suryanta** — Co-Founder, Komisaris & Head of Content.
   - 35+ tahun mengajar Bahasa Indonesia (sejak 1991 — SOS Bahasa Indonesia, SPK Santa Laurensia).
   - Penulis buku teks bahasa Indonesia Erlangga (sejak 1999) — seri Bupena, Fokus AKM.
-- **Washadi, S.Pd., M.M.** — Co-Founder & Head of Community.
-  - Ketua MGMP Bahasa Indonesia Tangerang Selatan.
-  - Dosen Universitas Pamulang.
-  - Penulis.
+- **Sugeng Riyanto** — Co-Founder & CTO.
+- **Soleh Ahmad Nugraha** — Co-Founder & CBO.
 
-## 12. Dewan Penasihat & Validator
+## 12. Validator Akademik
 
-- **Melany K. Gigir, S.Pd., M.S.** — Member of Board of Advisors / Dewan Penasihat. Profesi: Head of School.
 - **Dr. B. Widharyanto, M.Pd.** — Validator Akademik. Dosen Universitas Sanata Dharma.
 
-## 13. Catatan Rekonsiliasi (Open Item)
+## 13. Catatan Rekonsiliasi
 
-1. **Melany**: registry mengikuti dokumen resmi ("Melany K. Gigir, S.Pd., M.S." — Member of Board of Advisors, profesi Head of School). Situs live `/tentang` saat ini menampilkan "Melany Kusumawati Gigir — Praktisi Pendidikan" (revisi terdahulu atas instruksi user). Perlu keputusan penyelarasan.
-2. **Prioritas provider**: spec menetapkan DeepSeek (PRIMARY) → Groq (FALLBACK) → Gemini (SECOND FALLBACK). Route `app/api/ai/chat` saat ini menempatkan groq lebih dulu (komentar: "Prioritas: Groq dulu"). Knowledge layer tidak mengubah prioritas; hanya menjamin instruksi identitas identik untuk semua provider.
+- Identitas badan usaha dan tim publik telah diselaraskan dengan Akta Pendirian November 2026, SK Kemenkumham, dan NIB. Halaman `/tentang` adalah sumber tampilan publik yang sama.
+- **Prioritas provider**: spec menetapkan DeepSeek (PRIMARY) → Groq (FALLBACK) → Gemini (SECOND FALLBACK). Route `app/api/ai/chat` saat ini menempatkan groq lebih dulu (komentar: "Prioritas: Groq dulu"). Knowledge layer tidak mengubah prioritas; hanya menjamin instruksi identitas identik untuk semua provider.
 
 ## 14. Aturan "Tidak Tahu" (Uncertainty Rule)
 
@@ -131,19 +138,18 @@ Jika tidak ada fakta terverifikasi di registry ini (mis. investor, pendanaan, va
 
 | Pertanyaan | Jawaban |
 |------------|---------|
-| Siapa pendiri BahasaCerdas? | Founder dan CEO BahasaCerdas adalah Dominikus Wahyu Heru Cahyadi — eks guru Bahasa Indonesia (±10 tahun) yang merancang arsitektur platform, mengembangkan aplikasi (full-stack dan AI), dan aktif menulis (Amazon KDP). BahasaCerdas sendiri dikembangkan di bawah badan usaha CV Obah Mamah. |
-| Perusahaan / apa itu BahasaCerdas? | BahasaCerdas dikembangkan di bawah CV Obah Mamah, dengan nama dagang Teras Kata, berkedudukan di Tangerang, Banten. NIB: 1217000151443. Produk resminya bernama BahasaCerdas. |
-| Hak cipta / legalitas? | BahasaCerdas — Platform Pembelajaran Bahasa Indonesia Berbasis Kecerdasan Buatan (Program Komputer) telah dicatatkan pada Direktorat Jenderal Kekayaan Intelektual dengan nomor pencatatan 001326318. Permohonan diajukan dengan nomor EC002026106361 pada 6 Juli 2026, dengan pencipta Dominikus Wahyu Heru Cahyadi dan pemegang hak cipta CV Obah Mamah. |
+| Siapa pendiri BahasaCerdas? | Founder dan CEO BahasaCerdas adalah Dominikus Wahyu Heru Cahyadi — eks guru Bahasa Indonesia (±10 tahun) yang merancang arsitektur platform, mengembangkan aplikasi (full-stack dan AI), dan aktif menulis (Amazon KDP). BahasaCerdas sendiri dikembangkan oleh PT Bahasa Cerdas Indonesia. |
+| Perusahaan / apa itu BahasaCerdas? | BahasaCerdas dikembangkan oleh PT Bahasa Cerdas Indonesia, berkedudukan di Jakarta Selatan, DKI Jakarta. NIB: 0911260094193. Produk resminya bernama BahasaCerdas. |
+| Hak cipta / legalitas? | BahasaCerdas — Platform Pembelajaran Bahasa Indonesia Berbasis Kecerdasan Buatan (Program Komputer) telah dicatatkan pada Direktorat Jenderal Kekayaan Intelektual dengan nomor pencatatan 001326318. Permohonan diajukan dengan nomor EC002026106361 pada 6 Juli 2026, dengan pencipta Dominikus Wahyu Heru Cahyadi dan pemegang hak cipta PT Bahasa Cerdas Indonesia. |
 
 ## 16. Daftar Hal yang JANGAN Pernah Dikatakan AI
 
 1. Klaim wow: terbaik, nomor satu, terbesar, paling lengkap, revolusioner, 10x, satu-satunya.
 2. "Patent/paten" untuk hak cipta program komputer.
 3. "Mulai Maret 2026" sebagai awal pengembangan.
-4. Deskripsi co-founder/advisor/validator sebagai founder.
-5. Gelar/institusi/penghargaan/tanggung jawab buatan untuk tim.
-6. Alamat lengkap, nomor HP, atau email pribadi siapa pun.
-7. Angka pengguna/sekolah/pendanaan yang tidak terverifikasi.
+4. Gelar/institusi/penghargaan/tanggung jawab buatan untuk tim.
+5. Alamat rumah, nomor HP, atau email pribadi siapa pun. NPWP dan porsi saham juga tidak disebutkan.
+6. Angka pengguna/sekolah/pendanaan yang tidak terverifikasi.
 
 ## 17. Aturan Gaya untuk AI
 
@@ -156,14 +162,14 @@ Jika tidak ada fakta terverifikasi di registry ini (mis. investor, pendanaan, va
 | Versi | Tanggal | Perubahan |
 |-------|---------|-----------|
 | 1.0 | Agustus 2026 | Pembuatan awal: registry identitas & fakta resmi untuk knowledge layer AI |
+| 2.0 | November 2026 | Badan hukum PT Bahasa Cerdas Indonesia (NIB baru), pengurus sesuai akta, merek BahasaCerdas |
 
 ## 19. Perbedaan Antara hal-Hal Terkait (disambiguasi)
 
 | Istilah | Makna |
 |---------|-------|
 | BahasaCerdas | Produk/platform pembelajaran Bahasa Indonesia (bahasacerdas.com) |
-| CV Obah Mamah | Badan usaha yang mengembangkan/memegang BahasaCerdas |
-| Teras Kata | Nama dagang CV Obah Mamah |
+| PT Bahasa Cerdas Indonesia | Badan hukum yang mengembangkan/memegang BahasaCerdas |
 | BIGT | Bahasa Indonesia Global Test (bahasacerdas.site) — produk ekosistem BahasaCerdas |
 | Hak cipta BahasaCerdas | Pencatatan program komputer (bukan paten) |
 
@@ -189,5 +195,5 @@ Jika tidak ada fakta terverifikasi di registry ini (mis. investor, pendanaan, va
 
 ## 22. Setiap Hal-Hal — Verifikasi Akhir
 
-- Fakta di registry ini diverifikasi terhadap dokumen resmi (NIB, pencatatan hak cipta) dan spec pengguna terbaru.
+- Fakta di registry ini diverifikasi terhadap dokumen resmi (akta pendirian, SK Kemenkumham, NIB, pencatatan hak cipta) dan keputusan publik terbaru.
 - Semua check otomatis: `scripts/test-bahasa-cerdas-identity.ts` (lihat package.json `test:bahasa-cerdas-identity`).

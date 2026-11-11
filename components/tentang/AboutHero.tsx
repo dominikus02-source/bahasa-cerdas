@@ -36,8 +36,7 @@ export default function AboutHero() {
         </div>
         <p className="mt-8 text-xs text-zinc-400 max-w-xl mx-auto leading-relaxed">
           <ShieldCheck size={12} className="inline-block mr-1 text-primary" aria-hidden="true" />
-          BahasaCerdas dikembangkan oleh CV Obah Mamah (nama dagang Teras Kata),
-          badan usaha berkedudukan di Tangerang, Banten.
+          Dikembangkan oleh PT Bahasa Cerdas Indonesia.
         </p>
       </div>
     </section>

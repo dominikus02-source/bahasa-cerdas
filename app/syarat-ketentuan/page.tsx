@@ -21,7 +21,7 @@ export default function SyaratKetentuanPage() {
         <div className="prose prose-zinc prose-lg max-w-none space-y-8 text-zinc-800 leading-relaxed">
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900">1. Penerimaan Syarat</h2>
-            <p>Dengan mengunduh, menginstal, atau menggunakan aplikasi dan platform BahasaCerdas ("Aplikasi"), Anda setuju untuk terikat oleh Syarat dan Ketentuan ini. Jika Anda tidak setuju, mohon berhenti menggunakan layanan kami.</p>
+            <p>Dengan mengunduh, menginstal, atau menggunakan aplikasi dan platform BahasaCerdas ("Aplikasi"), yang dikelola oleh <strong>PT Bahasa Cerdas Indonesia</strong>, Anda setuju untuk terikat oleh Syarat dan Ketentuan ini. Jika Anda tidak setuju, mohon berhenti menggunakan layanan kami.</p>
           </section>
 
           <section>
@@ -78,8 +78,8 @@ export default function SyaratKetentuanPage() {
           <section>
             <h2 className="text-2xl font-semibold text-zinc-900">10. Kontak</h2>
             <p>Untuk pertanyaan terkait Syarat dan Ketentuan, hubungi:</p>
-            <p><strong>Email:</strong> halo@bahasacerdas.com<br />
-            <strong>Pengembang:</strong> Dominikus Wahyu<br />
+            <p><strong>Pengelola:</strong> PT Bahasa Cerdas Indonesia<br />
+            <strong>Email:</strong> halo@bahasacerdas.com<br />
             <strong>Website:</strong> <a href="https://www.bahasacerdas.com" className="text-primary hover:underline">https://www.bahasacerdas.com</a></p>
           </section>
         </div>

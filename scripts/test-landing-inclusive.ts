@@ -3,7 +3,7 @@
  * Run: npx tsx scripts/test-landing-inclusive.ts
  */
 
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseRegisterRoleParam } from "../lib/auth/register-role-param";
 
@@ -204,6 +204,96 @@ test("20. wording lama 'Untuk Mahasiswa, Umum & Investor' tidak muncul di UI lan
   ];
   return files.every((f) => !read(f).includes("Untuk Mahasiswa, Umum & Investor"));
 });
+
+
+console.log("\n── Tentang, legalitas, dan copy publik ──");
+const tentangPage = read("app/tentang/page.tsx");
+const aboutHero = read("components/tentang/AboutHero.tsx");
+const aboutTeam = read("components/tentang/AboutTeam.tsx");
+const aboutLegal = read("components/tentang/AboutLegal.tsx");
+const aboutBridge = read("components/landing/AboutBridge.tsx");
+const aboutJourney = read("components/tentang/AboutJourney.tsx");
+const privacy = read("app/kebijakan-privasi/page.tsx");
+const terms = read("app/syarat-ketentuan/page.tsx");
+const llms = read("public/llms.txt");
+const publicFiles = [
+  "app/tentang/page.tsx",
+  "components/tentang/AboutHero.tsx",
+  "components/tentang/AboutTeam.tsx",
+  "components/tentang/AboutLegal.tsx",
+  "components/tentang/AboutJourney.tsx",
+  "components/landing/AboutBridge.tsx",
+  "components/public/PageFooter.tsx",
+  "app/kebijakan-privasi/page.tsx",
+  "app/syarat-ketentuan/page.tsx",
+  "public/llms.txt",
+  "lib/json-ld.ts",
+  "app/layout.tsx",
+  "app/artikel/page.tsx",
+];
+test("21. hero Tentang: 'Dikembangkan oleh PT Bahasa Cerdas Indonesia.'", () =>
+  aboutHero.includes("Dikembangkan oleh PT Bahasa Cerdas Indonesia."));
+test("22. legalitas tetap section di /tentang, bukan halaman baru", () =>
+  tentangPage.includes("AboutLegal") &&
+  aboutLegal.includes('id="legalitas"') &&
+  !existsSync(join(ROOT, "app/legalitas/page.tsx")));
+test("23. legalitas memuat PT, alamat CFX, akta, SK, NIB, KBLI, pengurus, kontak", () =>
+  aboutLegal.includes("PT Bahasa Cerdas Indonesia") &&
+  aboutLegal.includes("CFX Tower, Jl. Gatot Subroto No. Kav. 35-36") &&
+  aboutLegal.includes("Akta Pendirian No. 27 tanggal 5 November 2026") &&
+  aboutLegal.includes("Siti Aminah, S.H., M.Kn.") &&
+  aboutLegal.includes("AHU-0089503.AH.01.01.TAHUN 2026") &&
+  aboutLegal.includes("0911260094193") &&
+  aboutLegal.includes("usaha mikro") &&
+  aboutLegal.includes("85610") &&
+  aboutLegal.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
+  aboutLegal.includes("Komisaris Utama: Melany Kusumawati") &&
+  aboutLegal.includes("Komisaris: Alexander Suryanta") &&
+  aboutLegal.includes("halo@bahasacerdas.com") &&
+  aboutLegal.includes("Pemegang Hak Cipta: PT Bahasa Cerdas Indonesia") &&
+  !aboutLegal.includes("NPWP"));
+test("24. tim publik sesuai keputusan CEO, tanpa Washadi", () => {
+  const order = [
+    "Dominikus Wahyu Heru Cahyadi",
+    "Melany Kusumawati",
+    "Alexander Suryanta",
+    "Sugeng Riyanto",
+    "Soleh Ahmad Nugraha",
+    "Dr. B. Widharyanto, M.Pd.",
+  ];
+  let last = -1;
+  for (const name of order) {
+    const i = aboutTeam.indexOf(name);
+    if (i < 0 || i < last) return false;
+    last = i;
+  }
+  return aboutTeam.includes("Founder & CEO (Direktur)") &&
+    aboutTeam.includes("Komisaris Utama") &&
+    aboutTeam.includes("Co-Founder, Komisaris & Head of Content") &&
+    aboutTeam.includes("Co-Founder & CTO") &&
+    aboutTeam.includes("Co-Founder & CBO") &&
+    aboutTeam.includes("Validator Akademik") &&
+    !aboutTeam.includes("Washadi");
+});
+test("25. footer copyright PT, tautan Tim ke /tentang#tim", () =>
+  footer.includes("PT Bahasa Cerdas Indonesia") &&
+  footer.includes('href: "/tentang#tim"'));
+test("26. privasi, syarat, JSON-LD, dan llms.txt memakai PT (bukan CV lama)", () =>
+  privacy.includes("PT Bahasa Cerdas Indonesia") &&
+  terms.includes("PT Bahasa Cerdas Indonesia") &&
+  llms.includes("PT Bahasa Cerdas Indonesia") &&
+  llms.includes("0911260094193") &&
+  tentangPage.includes('name: "PT Bahasa Cerdas Indonesia"') &&
+  tentangPage.includes('identifier: "0911260094193"') &&
+  aboutJourney.includes("November 2026: PT Bahasa Cerdas Indonesia resmi berdiri"));
+test("27. copy publik tidak memuat Washadi, CV Obah Mamah, Teras Kata, atau NIB lama", () =>
+  publicFiles.every((f) => {
+    const src = read(f);
+    return !src.includes("Washadi") &&
+      !src.includes("Obah Mamah") &&
+      !src.includes("Teras Kata") &&
+      !src.includes("1217000151443");
+  }) && !aboutBridge.includes("Washadi"));
 
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal\n`);
 if (failed > 0) process.exit(1);
