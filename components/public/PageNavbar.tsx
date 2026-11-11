@@ -5,7 +5,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, ShoppingCart, Package, ChevronDown } from "lucide-react";
-import { BRAND_SLOGAN } from "@/lib/brand";
 
 const navLinks = [
   { href: "/#produk", label: "Produk" },
@@ -128,7 +127,7 @@ export default function PageNavbar() {
         }`}
       >
       <div className="mx-auto flex h-16 min-w-0 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[4.5rem] sm:px-6 lg:h-20 lg:px-8">
-        <Link href="/" className="group flex min-w-0 items-center gap-2 sm:gap-2.5 lg:max-w-[min(100%,20rem)]">
+        <Link href="/" className="group flex min-w-0 items-center gap-2 sm:gap-2.5">
           <div className="relative h-8 w-8 shrink-0 lg:h-9 lg:w-9">
             <Image
               src="/brand/bc2026-icon-dark.png"
@@ -139,14 +138,9 @@ export default function PageNavbar() {
               priority
             />
           </div>
-          <div className="hidden min-w-0 flex-col sm:flex">
-            <span className="truncate font-bold text-base leading-tight text-bc-text lg:text-lg">
-              Bahasa<span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--bc-grad-brand)" }}>Cerdas</span>
-            </span>
-            <span className="max-w-[14rem] text-[10px] font-medium leading-tight text-bc-text-3 xl:max-w-none xl:whitespace-nowrap xl:text-[11px]">
-              {BRAND_SLOGAN}
-            </span>
-          </div>
+          <span className="hidden truncate font-bold text-base leading-tight text-bc-text sm:inline lg:text-lg">
+            Bahasa<span className="bg-clip-text text-transparent" style={{ backgroundImage: "var(--bc-grad-brand)" }}>Cerdas</span>
+          </span>
         </Link>
 
         {/* Desktop Nav: at most 3 text items */}

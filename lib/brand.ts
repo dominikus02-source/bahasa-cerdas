@@ -20,5 +20,3 @@ export const BRAND_APP_ICON = "/brand/bc2026-appicon.png";
 
 export const BRAND_NAME = "BahasaCerdas";
 export const BRAND_TAGLINE = "ekosistem belajar bahasa indonesia";
-/** Slogan pemasaran di landing (navbar/hero). Tidak menggantikan tagline resmi pada lockup logo. */
-export const BRAND_SLOGAN = "Kini belajar Bahasa Indonesia lebih menyenangkan";

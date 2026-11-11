@@ -2,10 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
-import { ChevronRight, Compass, GraduationCap, BookOpen } from "lucide-react";
-import { BRAND_ICON, BRAND_NAME, BRAND_SLOGAN, BRAND_TAGLINE } from "@/lib/brand";
+import { ChevronRight } from "lucide-react";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 import { formatSocialProofNumber } from "@/lib/format-social-proof";
 
@@ -18,18 +16,18 @@ interface SocialProofInput {
 }
 
 const TRUST_STATS = [
-  { key: "users", label: "Pengguna", note: "umum, murid, dan guru" },
-  { key: "students", label: "Murid", note: "belajar aktif di platform" },
+  { key: "users", label: "Pengguna", note: "dari umum, murid, hingga guru" },
+  { key: "students", label: "Murid", note: "aktif belajar" },
   { key: "teachers", label: "Guru", note: "mengajar dan membimbing" },
   { key: "works", label: "Karya Siswa", note: "puisi, cerpen, pantun, dan lainnya" },
 ] as const;
 
 type StatKey = (typeof TRUST_STATS)[number]["key"];
 
-const ROLE_BUTTONS = [
-  { href: "/register?role=umum", label: "Saya Umum", icon: Compass },
-  { href: "/register?role=murid", label: "Saya Murid", icon: BookOpen },
-  { href: "/register?role=guru", label: "Saya Guru", icon: GraduationCap },
+const ROLE_CHIPS = [
+  { href: "/register?role=umum", label: "Umum" },
+  { href: "/register?role=murid", label: "Murid" },
+  { href: "/register?role=guru", label: "Guru" },
 ] as const;
 
 const PRODUCTS = ["AKSARA", "NARA", "BIGT", "Jalur Cerdas", "Arena", "MAIN BERSAMA", "Toko Karya", "MGMP"];
@@ -109,48 +107,11 @@ export default function HeroSection({
 
       <div className="section-container relative z-10 min-w-0 w-full py-8 sm:py-10 lg:py-12">
         <motion.div
-          className="mx-auto min-w-0 max-w-5xl"
+          className="mx-auto min-w-0 max-w-6xl"
           variants={staggerContainer}
           initial="hidden"
           animate="visible"
         >
-          <motion.div
-            variants={fadeInUp}
-            className="mb-6 flex min-w-0 items-center gap-3 sm:mb-7 sm:gap-4"
-          >
-            <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-bc-tile shadow-bc-glow sm:h-14 sm:w-14 lg:h-16 lg:w-16">
-              <Image
-                src={BRAND_ICON}
-                alt=""
-                fill
-                sizes="80px"
-                className="object-contain"
-                priority
-              />
-            </div>
-            <div className="min-w-0">
-              <p className="truncate font-sans text-lg font-extrabold leading-tight tracking-tight text-bc-text sm:text-xl lg:text-2xl">
-                {BRAND_NAME.replace("Cerdas", "")}
-                <span
-                  className="bg-clip-text text-transparent"
-                  style={{ backgroundImage: "var(--bc-grad-brand)" }}
-                >
-                  Cerdas
-                </span>
-              </p>
-              <p className="truncate text-[11px] font-medium lowercase leading-tight text-bc-text-3 sm:text-xs">
-                {BRAND_TAGLINE}
-              </p>
-            </div>
-          </motion.div>
-
-          <motion.p
-            variants={fadeInUp}
-            className="mb-4 max-w-xl text-sm font-medium leading-snug text-bc-text-2 sm:mb-5 sm:text-base"
-          >
-            {BRAND_SLOGAN}
-          </motion.p>
-
           <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.18em] text-bc-accent sm:mb-5 sm:text-xs">
             Untuk umum, murid, dan guru
           </p>
@@ -158,16 +119,14 @@ export default function HeroSection({
           <motion.h1
             id="hero-heading"
             variants={fadeInUp}
-            className="mb-5 min-w-0 break-words font-sans text-[clamp(1.85rem,7.2vw,4.25rem)] font-extrabold leading-[0.98] tracking-tight text-bc-text"
+            className="mb-5 min-w-0 break-words font-sans text-[clamp(1.85rem,6.4vw,4rem)] font-extrabold leading-[1.05] tracking-tight text-bc-text"
           >
-            <span className="block text-[0.55em] font-bold tracking-tight text-bc-text-2 sm:text-[0.5em]">
-              Bahasa Menghubungkan
-            </span>
+            <span className="block">Bahasa menghubungkan</span>
             <span
               className="mt-1 block bg-clip-text text-transparent"
               style={{ backgroundImage: "var(--bc-grad-brand)" }}
             >
-              Gagasan, Manusia, dan Masa Depan.
+              gagasan, manusia, dan masa depan.
             </span>
           </motion.h1>
 
@@ -175,7 +134,7 @@ export default function HeroSection({
             variants={fadeInUp}
             className="mb-6 max-w-2xl text-base font-medium leading-relaxed text-bc-text-2 sm:mb-8 sm:text-lg"
           >
-            Belajar, mengajar, dan berkarya dalam Bahasa Indonesia, untuk siapa saja.
+            Satu tempat untuk belajar, berlatih, bermain, dan berkarya dalam Bahasa Indonesia, untuk siapa saja.
           </motion.p>
 
           <motion.div variants={fadeInUp} className="mb-8 flex min-w-0 flex-col gap-3 sm:mb-9 sm:gap-4">
@@ -187,20 +146,25 @@ export default function HeroSection({
               Mulai Gratis
               <ChevronRight size={18} className="transition-transform group-hover:translate-x-0.5" aria-hidden="true" />
             </Link>
-            <div className="grid min-w-0 grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3" role="group" aria-label="Pilih peran Anda">
-              {ROLE_BUTTONS.map((btn) => {
-                const Icon = btn.icon;
-                return (
-                  <Link
-                    key={btn.href}
-                    href={btn.href}
-                    className="inline-flex min-h-11 min-w-0 items-center justify-center gap-1.5 rounded-bc-ctl border border-bc-border bg-bc-surface/80 px-2 py-2.5 text-center text-[11px] font-semibold text-bc-text backdrop-blur-sm transition-all duration-200 hover:border-bc-accent hover:text-bc-accent-strong focus-ring sm:gap-2 sm:px-5 sm:text-sm"
-                  >
-                    <Icon size={14} className="hidden shrink-0 sm:inline" aria-hidden="true" />
-                    <span className="min-w-0 break-words">{btn.label}</span>
-                  </Link>
-                );
-              })}
+            <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-2">
+              <span className="text-xs font-medium text-bc-text-3 sm:text-sm">Atau mulai sebagai:</span>
+              <div className="flex min-w-0 flex-wrap items-center gap-1.5" role="group" aria-label="Mulai sebagai">
+                {ROLE_CHIPS.map((chip, i) => (
+                  <span key={chip.href} className="inline-flex min-w-0 items-center gap-1.5">
+                    {i > 0 && (
+                      <span className="text-bc-text-3" aria-hidden="true">
+                        ·
+                      </span>
+                    )}
+                    <Link
+                      href={chip.href}
+                      className="inline-flex min-h-9 items-center justify-center rounded-full border border-bc-border bg-bc-surface/80 px-3.5 py-1.5 text-sm font-semibold text-bc-text backdrop-blur-sm transition-all duration-200 hover:border-bc-accent hover:text-bc-accent-strong focus-ring"
+                    >
+                      {chip.label}
+                    </Link>
+                  </span>
+                ))}
+              </div>
             </div>
           </motion.div>
 
