@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { ChevronRight, Compass, GraduationCap, BookOpen } from "lucide-react";
-import { BRAND_ICON, BRAND_NAME, BRAND_TAGLINE } from "@/lib/brand";
+import { BRAND_ICON, BRAND_NAME, BRAND_SLOGAN, BRAND_TAGLINE } from "@/lib/brand";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 import { formatSocialProofNumber } from "@/lib/format-social-proof";
 
@@ -143,6 +143,13 @@ export default function HeroSection({
               </p>
             </div>
           </motion.div>
+
+          <motion.p
+            variants={fadeInUp}
+            className="mb-4 max-w-xl text-sm font-medium leading-snug text-bc-text-2 sm:mb-5 sm:text-base"
+          >
+            {BRAND_SLOGAN}
+          </motion.p>
 
           <p className="mb-4 text-[11px] font-extrabold uppercase tracking-[0.18em] text-bc-accent sm:mb-5 sm:text-xs">
             Untuk umum, murid, dan guru

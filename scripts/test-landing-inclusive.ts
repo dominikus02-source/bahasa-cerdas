@@ -36,6 +36,8 @@ const nav = read("components/public/PageNavbar.tsx");
 const footer = read("components/public/PageFooter.tsx");
 const register = read("app/(auth)/register/page.tsx");
 const cta = read("components/landing/FinalCTA.tsx");
+const brand = read("lib/brand.ts");
+const SLOGAN = "Kini belajar Bahasa Indonesia lebih menyenangkan";
 
 const HEADLINE = "Bahasa Menghubungkan Gagasan, Manusia, dan Masa Depan.";
 const SUB = "Belajar, mengajar, dan berkarya dalam Bahasa Indonesia, untuk siapa saja.";
@@ -68,6 +70,10 @@ test("5. empat angka kepercayaan dari social-proof (bukan angka statis)", () =>
   !/\b(users|students|teachers|works):\s*\d{2,}/.test(hero));
 test("6. hero tidak memosisikan situs sebagai khusus guru", () =>
   !/khusus guru/i.test(hero) && !hero.includes("Guru mengajar. Murid belajar."));
+test("6b. slogan resmi tampil di hero dekat logo/headline", () =>
+  brand.includes(`BRAND_SLOGAN = "${SLOGAN}"`) &&
+  hero.includes("BRAND_SLOGAN") &&
+  hero.includes("BRAND_TAGLINE"));
 
 console.log("\n── Pilih Peranmu ──");
 test("7. section Pilih Peranmu dirender di beranda", () =>
@@ -88,16 +94,34 @@ test("9. tiap jalur 3 manfaat + CTA ke rute yang ada", () =>
   peran.includes("MGMP digital"));
 
 console.log("\n── Navigasi & footer ──");
-test("10. nav: Produk, Untuk Umum, Untuk Murid, Untuk Guru, Toko Karya", () => {
-  const labels = ["Produk", "Untuk Umum", "Untuk Murid", "Untuk Guru", "Toko Karya"];
+test("10. nav sederhana: Produk, Toko Karya, dan menu Untuk Siapa", () => {
+  const top = ["Produk", "Toko Karya"];
   let last = -1;
-  for (const label of labels) {
+  for (const label of top) {
     const i = nav.indexOf(`label: "${label}"`);
     if (i < 0 || i < last) return false;
     last = i;
   }
-  return nav.includes('href: "/#produk"') && nav.includes('href: "/marketplace"');
+  const audience = ["Untuk Umum", "Untuk Murid", "Untuk Guru"];
+  last = -1;
+  for (const label of audience) {
+    const i = nav.indexOf(`label: "${label}"`);
+    if (i < 0 || i < last) return false;
+    last = i;
+  }
+  const topLevelCount = (nav.match(/const navLinks = \[/g) || []).length;
+  return topLevelCount === 1 &&
+    nav.includes("Untuk Siapa") &&
+    nav.includes('href: "/#produk"') &&
+    nav.includes('href: "/marketplace"') &&
+    nav.includes('href: "/#untuk-umum"') &&
+    nav.includes('href: "/#untuk-murid"') &&
+    nav.includes('href: "/#untuk-guru"') &&
+    !nav.includes('href: "/faq"') &&
+    (nav.match(/href: "\/#produk"/g) || []).length >= 1;
 });
+test("10b. slogan tampil di navbar bersama logo", () =>
+  nav.includes("BRAND_SLOGAN") && brand.includes(`BRAND_SLOGAN = "${SLOGAN}"`));
 test("11. FAQ dan Tentang tidak di navbar, ada di footer", () =>
   !nav.includes('href: "/faq"') &&
   !nav.includes('href: "/tentang"') &&
