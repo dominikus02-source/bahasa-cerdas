@@ -24,7 +24,7 @@ export function organizationLd() {
     email: "halo@bahasacerdas.com",
     address: {
       "@type": "PostalAddress",
-      streetAddress: "CFX Tower, Jl. Gatot Subroto No. Kav. 35-36",
+      streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
       addressLocality: "Jakarta Selatan",
       addressRegion: "DKI Jakarta",
       postalCode: "12950",

@@ -1,40 +1,16 @@
-import { Building2, Copyright, FileText, Landmark, ListChecks, Mail, Users } from "lucide-react";
+import { Building2, Copyright, FileText, Mail } from "lucide-react";
+
+const OFFICE_ADDRESS =
+  "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950";
 
 const legalCards = [
   {
     icon: Building2,
     title: "Badan Usaha",
     lines: [
-      "PT Bahasa Cerdas Indonesia",
-      "Kedudukan: Jakarta Selatan, DKI Jakarta",
-      "CFX Tower, Jl. Gatot Subroto No. Kav. 35-36, Kel. Kuningan Timur, Kec. Setiabudi, Kota Jakarta Selatan 12950",
-      "NIB 0911260094193 tanggal 9 November 2026 (usaha mikro)",
-    ],
-  },
-  {
-    icon: Landmark,
-    title: "Akta & Pengesahan",
-    lines: [
-      "Akta Pendirian No. 27 tanggal 5 November 2026",
-      "Notaris Siti Aminah, S.H., M.Kn., Kabupaten Purwakarta",
-      "SK Kemenkumham AHU-0089503.AH.01.01.TAHUN 2026 tanggal 7 November 2026",
-    ],
-  },
-  {
-    icon: Users,
-    title: "Pengurus",
-    lines: [
-      "Direktur: Dominikus Wahyu Heru Cahyadi",
-    ],
-  },
-  {
-    icon: ListChecks,
-    title: "Kegiatan Usaha (KBLI)",
-    lines: [
-      "Pendidikan dan jasa tutor (85610, 85699, 85593, 85599)",
-      "Perangkat lunak, pemrograman, dan kecerdasan buatan (62194, 62199, 62209)",
-      "Penerbitan dan perdagangan terbitan (58110, 58190, 46452)",
-      "Distribusi konten (60390), konvensi dan pameran (82300), serta konsultasi manajemen dan bisnis (70209)",
+      "BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia",
+      OFFICE_ADDRESS,
+      "NIB 0911260094193",
     ],
   },
   {
@@ -75,12 +51,11 @@ export default function AboutLegal() {
             Dikelola secara <span className="text-primary">terbuka dan tercatat.</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            BahasaCerdas dikembangkan oleh PT Bahasa Cerdas Indonesia, badan
-            hukum yang sah, dengan pencatatan kekayaan intelektual atas platform.
+            BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl mx-auto mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
           {legalCards.map((c) => {
             const Icon = c.icon;
             return (

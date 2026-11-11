@@ -55,14 +55,23 @@ ok(
     !BAHASA_CERDAS_IDENTITY.team.some((person) => /Komisaris|Direktur|Validator/.test(person.role)),
 );
 ok(
-  "Instruksi publik hanya Direktur, tanpa komisaris atau validator",
-  identityInstruction.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
+  "Instruksi publik tanpa jabatan pengurus, komisaris, atau validator",
+  !identityInstruction.includes("Direktur:") &&
     !identityInstruction.includes("Komisaris") &&
     !identityInstruction.includes("Validator Akademik") &&
     !identityInstruction.includes("Dewan Penasihat") &&
+    !identityInstruction.includes("Akta Pendirian") &&
+    !identityInstruction.includes("Siti Aminah") &&
+    !identityInstruction.includes("AHU-0089503") &&
+    !identityInstruction.includes("KBLI") &&
+    !identityInstruction.includes("usaha mikro") &&
+    identityInstruction.includes("0911260094193") &&
+    identityInstruction.includes("CFX Tower, Jl. Gatot Subroto Kav. 35-36") &&
     !registrySource.includes("Komisaris") &&
     !docSource.includes("Komisaris") &&
-    !docSource.includes("Validator Akademik"),
+    !docSource.includes("Validator Akademik") &&
+    !docSource.includes("Siti Aminah") &&
+    !docSource.includes("AHU-0089503"),
 );
 ok(
   "Washadi tidak ada di registry publik",
@@ -75,6 +84,11 @@ ok("Badan usaha PT Bahasa Cerdas Indonesia", BAHASA_CERDAS_IDENTITY.company.lega
 ok("Merek BahasaCerdas", BAHASA_CERDAS_IDENTITY.company.tradeName === "BahasaCerdas");
 ok("NIB benar", BAHASA_CERDAS_IDENTITY.company.nib === "0911260094193");
 ok("Lokasi publik ringkas (privasi)", BAHASA_CERDAS_IDENTITY.company.location === "Jakarta Selatan, DKI Jakarta");
+ok(
+  "Alamat kantor publik CFX",
+  BAHASA_CERDAS_IDENTITY.company.officeAddress ===
+    "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950",
+);
 ok("Produk BahasaCerdas", BAHASA_CERDAS_IDENTITY.company.product === "BahasaCerdas");
 
 // ── 3. Hak cipta — pencipta ≠ pemegang ────────────────────────────────────
@@ -133,8 +147,9 @@ ok(
 
 // ── 7. Privasi ────────────────────────────────────────────────────────────
 ok(
-  "Instruksi melarang alamat lengkap/nomor HP/email pribadi",
-  identityInstruction.includes("Jangan menyebut alamat lengkap, nomor HP, atau email pribadi siapa pun"),
+  "Instruksi melarang alamat rumah/nomor HP/email pribadi, dan membatasi alamat kantor publik",
+  identityInstruction.includes("Jangan menyebut alamat rumah, nomor HP, atau email pribadi siapa pun") &&
+    identityInstruction.includes("Alamat kantor publik yang boleh disebut hanya:"),
 );
 
 // ── 8. Istilah MURID ──────────────────────────────────────────────────────

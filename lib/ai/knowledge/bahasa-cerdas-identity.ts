@@ -34,8 +34,10 @@ export interface IdentityCompany {
   legalName: string;
   /** Trade name / brand of the legal entity. */
   tradeName: string;
-  /** Public location — city + province only (privacy rule: no street address). */
+  /** Public location — city + province. */
   location: string;
+  /** Public office address shown on /tentang and Syarat. */
+  officeAddress: string;
   /** National Business Identification Number (NIB). */
   nib: string;
   /** Official product name. */
@@ -103,6 +105,8 @@ export const BAHASA_CERDAS_IDENTITY = {
     legalName: "PT Bahasa Cerdas Indonesia",
     tradeName: "BahasaCerdas",
     location: "Jakarta Selatan, DKI Jakarta",
+    officeAddress:
+      "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950",
     nib: "0911260094193",
     product: "BahasaCerdas",
   } satisfies IdentityCompany,
@@ -181,7 +185,7 @@ export const BAHASA_CERDAS_IDENTITY = {
     founder:
       "Founder dan CEO BahasaCerdas adalah Dominikus Wahyu Heru Cahyadi — eks guru Bahasa Indonesia (±10 tahun) yang merancang arsitektur platform, mengembangkan aplikasi (full-stack dan AI), dan aktif menulis (Amazon KDP). BahasaCerdas sendiri dikembangkan oleh PT Bahasa Cerdas Indonesia.",
     company:
-      "BahasaCerdas dikembangkan oleh PT Bahasa Cerdas Indonesia, berkedudukan di Jakarta Selatan, DKI Jakarta. Nomor Induk Berusaha (NIB): 0911260094193. Produk resminya bernama BahasaCerdas.",
+      "BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia, beralamat di CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950. NIB: 0911260094193. Produk resminya bernama BahasaCerdas.",
     copyright:
       "BahasaCerdas — Platform Pembelajaran Bahasa Indonesia Berbasis Kecerdasan Buatan (Program Komputer) telah dicatatkan pada Direktorat Jenderal Kekayaan Intelektual dengan nomor pencatatan 001326318. Permohonan diajukan dengan nomor EC002026106361 pada 6 Juli 2026, dengan pencipta Dominikus Wahyu Heru Cahyadi dan pemegang hak cipta PT Bahasa Cerdas Indonesia.",
     unsure:
@@ -210,12 +214,9 @@ export function buildBahasaCerdasIdentityInstruction(): string {
     `- Badan usaha: ${company.legalName}`,
     `- Merek/produk: ${company.product}`,
     `- Lokasi publik: ${company.location}`,
+    `- Alamat kantor publik: ${company.officeAddress}`,
     `- NIB: ${company.nib}`,
-    ``,
-    `### Pengurus yang ditampilkan secara publik`,
-    `- Direktur: Dominikus Wahyu Heru Cahyadi`,
-    `- Peran publik Melany Kusumawati dan Dr. B. Widharyanto, M.Pd. adalah Advisor saja.`,
-    `- Peran publik Alexander Suryanta adalah Co-Founder & CLO (Chief Learning Officer).`,
+    `- JANGAN menyebut nomor akta, nama notaris, SK AHU, daftar klasifikasi baku lapangan usaha, skala usaha, atau NPWP. Jangan memakai gelar organ perseroan; gunakan hanya peran publik di bagian kepemimpinan.`,
     ``,
     `### Pendiri & Kepemimpinan`,
     `- ${founder.role}: ${founder.name} — ${founder.summary}`,
@@ -252,7 +253,7 @@ export function buildBahasaCerdasIdentityInstruction(): string {
     `### Jika Tidak Ada Fakta Terverifikasi`,
     `- Untuk investor, pendanaan, valuasi, pendapatan, jumlah sekolah/pengguna, partnership, penghargaan, akreditasi, endorsement pemerintah, atau sertifikasi yang tidak disebut di atas, jawab: "${answerTemplates.unsure}"`,
     `- Jangan gunakan kata "sepertinya", "mungkin", atau membuat perkiraan sebagai fakta.`,
-    `- Jangan menyebut alamat lengkap, nomor HP, atau email pribadi siapa pun — cukup "${company.location}".`,
+    `- Jangan menyebut alamat rumah, nomor HP, atau email pribadi siapa pun. Alamat kantor publik yang boleh disebut hanya: "${company.officeAddress}".`,
     ``,
     `### Gaya`,
     `- Bahasa Indonesia yang baik dan benar (default untuk semua pengguna).`,

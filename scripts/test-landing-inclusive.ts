@@ -237,20 +237,25 @@ test("22. legalitas tetap section di /tentang, bukan halaman baru", () =>
   tentangPage.includes("AboutLegal") &&
   aboutLegal.includes('id="legalitas"') &&
   !existsSync(join(ROOT, "app/legalitas/page.tsx")));
-test("23. legalitas memuat PT, alamat CFX, akta, SK, NIB, KBLI, pengurus, kontak", () =>
-  aboutLegal.includes("PT Bahasa Cerdas Indonesia") &&
-  aboutLegal.includes("CFX Tower, Jl. Gatot Subroto No. Kav. 35-36") &&
-  aboutLegal.includes("Akta Pendirian No. 27 tanggal 5 November 2026") &&
-  aboutLegal.includes("Siti Aminah, S.H., M.Kn.") &&
-  aboutLegal.includes("AHU-0089503.AH.01.01.TAHUN 2026") &&
-  aboutLegal.includes("0911260094193") &&
-  aboutLegal.includes("usaha mikro") &&
-  aboutLegal.includes("85610") &&
-  aboutLegal.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
+test("23. legalitas ringkas: PT, alamat CFX, NIB, kontak, hak cipta; tanpa akta/SK/KBLI/pengurus", () =>
+  aboutLegal.includes("BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia") &&
+  aboutLegal.includes("CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950") &&
+  aboutLegal.includes("NIB 0911260094193") &&
+  !aboutLegal.includes("tanggal 9 November 2026") &&
+  !aboutLegal.includes("usaha mikro") &&
+  !aboutLegal.includes("Akta Pendirian") &&
+  !aboutLegal.includes("Siti Aminah") &&
+  !aboutLegal.includes("AHU-0089503") &&
+  !aboutLegal.includes("KBLI") &&
+  !aboutLegal.includes("85610") &&
+  !aboutLegal.includes("Direktur") &&
   !aboutLegal.includes("Komisaris") &&
   aboutLegal.includes("halo@bahasacerdas.com") &&
   aboutLegal.includes("Pemegang Hak Cipta: PT Bahasa Cerdas Indonesia") &&
-  !aboutLegal.includes("NPWP"));
+  aboutLegal.includes("001326318") &&
+  aboutLegal.includes("EC002026106361") &&
+  !aboutLegal.includes("NPWP") &&
+  !aboutLegal.includes("PSE"));
 test("24. tim inti + dewan penasihat terpisah, tanpa jabatan pengurus di kartu tim", () => {
   const coreBlock = aboutTeam.slice(aboutTeam.indexOf("const coreTeam"), aboutTeam.indexOf("const advisors"));
   const advisorBlock = aboutTeam.slice(aboutTeam.indexOf("const advisors"), aboutTeam.indexOf("function Avatar"));
@@ -287,7 +292,7 @@ test("24. tim inti + dewan penasihat terpisah, tanpa jabatan pengurus di kartu t
     !aboutTeam.includes("Validator Akademik") &&
     !aboutTeam.includes("Dewan Penasihat") &&
     !aboutLegal.includes("Komisaris") &&
-    aboutLegal.includes("Direktur: Dominikus Wahyu Heru Cahyadi") &&
+    !aboutLegal.includes("Direktur") &&
     aboutBridge.includes('role: "Advisor"') &&
     !aboutBridge.includes("Komisaris") &&
     !aboutBridge.includes("Validator Akademik") &&
@@ -310,7 +315,9 @@ test("25. footer copyright PT, tautan Tim ke /tentang#tim", () =>
   footer.includes('href: "/tentang#tim"'));
 test("26. privasi, syarat, JSON-LD, dan llms.txt memakai PT (bukan CV lama)", () =>
   privacy.includes("PT Bahasa Cerdas Indonesia") &&
+  terms.includes("dikelola oleh") &&
   terms.includes("PT Bahasa Cerdas Indonesia") &&
+  terms.includes("beralamat di CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950") &&
   llms.includes("PT Bahasa Cerdas Indonesia") &&
   llms.includes("0911260094193") &&
   tentangPage.includes('name: "PT Bahasa Cerdas Indonesia"') &&
@@ -324,6 +331,18 @@ test("27. copy publik tidak memuat Washadi, CV Obah Mamah, Teras Kata, atau NIB 
       !src.includes("Teras Kata") &&
       !src.includes("1217000151443");
   }) && !aboutBridge.includes("Washadi"));
+test("28. copy publik tidak memuat akta, notaris, SK AHU, KBLI, usaha mikro, atau jabatan pengurus", () =>
+  publicFiles.every((f) => {
+    const src = read(f);
+    return !src.includes("Akta Pendirian") &&
+      !src.includes("Siti Aminah") &&
+      !src.includes("AHU-0089503") &&
+      !src.includes("usaha mikro") &&
+      !src.includes("KBLI") &&
+      !src.includes("Direktur:") &&
+      !src.includes("Komisaris") &&
+      !src.includes("PSE");
+  }));
 
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal\n`);
 if (failed > 0) process.exit(1);
