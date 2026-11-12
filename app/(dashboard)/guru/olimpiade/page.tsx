@@ -10,7 +10,7 @@ export default function GuruOlimpiadePage() {
         <p className="mt-1 text-sm text-gray-600">Info dan kalender event, lomba, serta webinar bahasa Indonesia</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <a href="/guru/olimpiade/info">
           <Card className="p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
             <div className="flex items-start gap-4">

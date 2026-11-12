@@ -161,7 +161,9 @@ function starsFor(score: number): number {
 }
 
 /* ---------- Komponen ---------- */
-export default function IramaKata() {
+export default function IramaKata({ backHref = "/arena/game" }: { backHref?: string } = {}) {
+  // Dari dasbor Guru tombol kembali menuju menu gim Guru, bukan Arena.
+  const backLabel = backHref === "/arena/game" ? "Kembali ke Arena" : "Menu Gim";
   const [screen, setScreen] = useState<"start" | "levels" | "game" | "result">("start");
   const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {} });
   const [muted, setMuted] = useState(false);
@@ -658,7 +660,7 @@ export default function IramaKata() {
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
+            <GameBackButton href={backHref} label={backLabel} title={backLabel} />
             <div className={`ik-logo w-11 h-11 bg-[#FF6B6B] rounded-2xl ${chunky} !shadow-[4px_4px_0_#DB2777] flex items-center justify-center`}>
               <Music4 className="w-6 h-6 text-white" />
             </div>

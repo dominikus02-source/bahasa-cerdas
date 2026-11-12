@@ -59,7 +59,7 @@ const features = [
 
 export default function FiturUnggulanSection() {
   return (
-    <section className="py-12 lg:py-16 bg-white" aria-labelledby="fitur-heading">
+    <section id="produk" className="py-12 lg:py-16 bg-white scroll-mt-24" aria-labelledby="fitur-heading">
       <div className="section-container">
         <motion.div
           className="text-center mb-8"
@@ -73,7 +73,7 @@ export default function FiturUnggulanSection() {
         </motion.div>
 
         <motion.div
-          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"

@@ -81,7 +81,7 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
       />
 
       <div className="section-container relative z-10">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           {/* Left Content */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}

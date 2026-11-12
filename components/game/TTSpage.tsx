@@ -209,7 +209,9 @@ function calcCoins(stars: number, levelId: number) {
   return stars * levelId;
 }
 
-export default function TekaTekiSilang() {
+export default function TekaTekiSilang({ backHref = "/arena/game" }: { backHref?: string } = {}) {
+  // Dari dasbor Guru tombol kembali menuju menu gim Guru, bukan Arena.
+  const backLabel = backHref === "/arena/game" ? "Kembali ke Arena" : "Menu Gim";
   const router = useRouter();
   // DARK MODE — game ini full-screen di atas shell Arena yang theme-aware.
   // Semua warna permukaan mengikuti tema; warna aksen/brand tetap sama.
@@ -861,7 +863,7 @@ export default function TekaTekiSilang() {
           </div>
           <div className="flex items-center gap-2">
             {(screen === "start" || screen === "hearts") && (
-              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
+              <GameBackButton href={backHref} label={backLabel} title={backLabel} />
             )}
             <button className={`${btn} game-sound-btn w-11 h-11 text-[#161B3A] dark:text-[#F1EDFF] hover:bg-slate-50 dark:hover:bg-slate-700`} onClick={() => setSoundOn((m) => { toggleSound(); return !m; })} aria-label={soundOn ? "Matikan suara" : "Nyalakan suara"}>
               {soundOn ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
@@ -1425,7 +1427,7 @@ export default function TekaTekiSilang() {
                   <RotateCcw className="w-4 h-4" /> Main Lagi
                 </button>
               )}
-              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
+              <GameBackButton href={backHref} label={backLabel} title={backLabel} />
             </div>
           </div>
         )}

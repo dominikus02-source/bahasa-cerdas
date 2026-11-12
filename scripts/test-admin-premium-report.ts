@@ -104,7 +104,7 @@ async function main() {
 
   // ── 3. Admin UI Page ──
   console.log(`\n${YELLOW}--- 3. Admin UI Page ---${RESET}`);
-  const uiPath = "app/(dashboard)/admin/premium/page.tsx";
+  const uiPath = "app/(dashboard)/admin/premium/premium-view.tsx";
   assert(existsSync(join(process.cwd(), uiPath)), `UI page exists: ${uiPath}`);
 
   assertContains(uiPath, '"use client"', "UI page is client component");

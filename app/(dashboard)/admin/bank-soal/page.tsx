@@ -125,7 +125,7 @@ export default function AdminBankSoalPage() {
         <h3 className="font-semibold text-gray-900 dark:text-slate-100 mb-3">
           Distribusi Tema {themesMeta.length > 0 && <span className="text-xs font-normal text-gray-400">({themesMeta.length} tema aktif)</span>}
         </h3>
-        <div className="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-9 gap-2">
           {themesMeta.map(t => (
             <div key={t.id} className="p-2 rounded-lg bg-gray-50 dark:bg-slate-800/60 border text-center">
               <p className="text-xs font-medium text-gray-900 dark:text-slate-100 truncate" title={t.id}>{t.id}</p>
@@ -136,8 +136,8 @@ export default function AdminBankSoalPage() {
       </Card>
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative min-w-0 flex-1 basis-full sm:basis-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <Input
             value={search}

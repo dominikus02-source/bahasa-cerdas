@@ -9,6 +9,50 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  android-visual:
+    name: Android visual QA (local fixture, fake data)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+      BC_QA_FIXTURE: "1"
+      DATABASE_URL: "postgresql://qa:qa@127.0.0.1:9/qa"
+      NEXT_PUBLIC_SUPABASE_URL: "http://127.0.0.1:9"
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "qa-placeholder"
+      NEXT_PUBLIC_SITE_URL: "http://127.0.0.1:3100"
+      CHROME_PATH: /usr/bin/google-chrome
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+      - run: npm ci
+      - run: npx prisma generate
+      - name: Start fixture dev server
+        run: |
+          nohup npx next dev -p 3100 -H 127.0.0.1 > fixture.log 2>&1 &
+          for i in $(seq 1 90); do curl -sf -o /dev/null --max-time 120 "http://127.0.0.1:3100/qa-fixture/frame?view=guru" && break; sleep 2; done
+      - name: Rendered checks (320–768, landscape, light/dark)
+        run: QA_OUT=qa-output/android-visual node scripts/qa-android-visual.mjs
+      - name: Behavioral checks (Guru return, drawer, font 130%, keyboard)
+        run: QA_OUT=qa-output/android-visual/behavior node scripts/qa-android-behavior.mjs
+      - name: Arena shared brand header regression
+        run: QA_OUT=qa-output/android-visual/arena node scripts/qa-arena-brand.mjs
+      - name: Login cold-start session resume (mock verification, real component)
+        run: QA_OUT=qa-output/android-visual/login-resume node scripts/qa-login-session-resume.mjs
+      - name: Page overflow/overlap audit (Komunitas + fixed routes; 32 combos incl. old-APK JS)
+        run: QA_OUT=qa-output/android-visual/overflow AUDIT_WORKERS=2 AUDIT_REQUIRE_RENDER=1 AUDIT_ROUTES="/guru/komunitas,/,/login,/kamus,/kebijakan-privasi,/jumpa,/admin/executive,/admin/users,/admin/keuangan,/admin/keuangan/buku-kas,/admin/premium,/admin/payments,/admin/monitoring,/admin/ai-quota,/admin/bank-soal,/admin/feature-usage,/admin/karya,/admin/loker,/admin/analytics,/admin/ai-analytics,/admin/teacher-payouts,/admin/teacher-risk,/admin/withdrawals,/admin/komunitas,/admin/pengaturan,/admin/founder,/admin/data-center,/admin/video,/admin/artikel,/admin/materi/generate-ppt,/arena/mystery-box,/arena/notifikasi,/guru/game/benar-salah,/guru/game/menara,/guru/game/leaderboard,/guru/feed-karya,/guru/profile,/murid/profile,/guru/kuis/[id]/assign,/guru/kuis/[id]/results,/guru/bank-soal-tka,/guru/bank-soal-ukbi,/guru/buat-tka,/guru/dokumen-latihan,/guru/game/lobby,/guru/kuis,/guru/olimpiade/info,/guru/tinjau-simulasi,/murid/premium" node scripts/qa-page-overflow-audit.mjs
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-visual-${{ github.sha }}
+          path: |
+            qa-output/android-visual
+            fixture.log
+          retention-days: 14
+
   build:
     runs-on: ubuntu-latest
     # Placeholder values — CI only type-checks/builds, it never connects to real
@@ -36,6 +80,15 @@ jobs:
       - name: Prisma generate
         run: npx prisma generate
 
+      - name: Login cold-start session policy tests
+        run: npx tsx scripts/test-resume-login-session.ts
+
+      - name: Logout clears session and skips login resume
+        run: npx tsx scripts/test-logout-clears-session.ts
+
+      - name: Live Pulse Redis URL + presence policy
+        run: npm run test:redis-standalone && npm run test:live-pulse
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -53,8 +106,34 @@ jobs:
       - name: Login UX regression
         run: npm run test:login-ux
 
+      - name: Inclusive landing copy and role paths
+        run: npm run test:landing-inclusive
+
       - name: Unified login routing regression
         run: npm run test:login-unified
+
+      - name: Android Google OAuth handoff regression
+        run: npm run test:mobile-oauth-handoff
+
+      - name: Founder compact role switcher labels and access
+        run: npm run test:founder-role-labels
+
+      - name: Android Google OAuth return-to-app regression (behavioural)
+        run: npx tsx scripts/test-mobile-oauth-return.ts
+
+      - name: Founder navbar + JUMPA screen regression
+        run: npx tsx scripts/test-founder-nav-jumpa-screen.ts
+
+      - name: JUMPA native screen share regression
+        run: npx tsx scripts/test-jumpa-native-screen-share.ts
+
+      - name: Android security/RBAC sample
+        run: npx tsx scripts/test-android-security-sample.ts
+
+      - name: Android WebView style gate (real Chromium)
+        env:
+          CHROME_PATH: /usr/bin/google-chrome
+        run: node scripts/test-android-webview-gate.mjs
 
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
@@ -92,6 +171,8 @@ jobs:
         run: npm run test:midtrans-activation
       - name: Payment pages gate
         run: npm run test:payment-pages
+      - name: Admin finance hub and ledger gate
+        run: npm run test:admin-finance-ledger
       - name: Premium Umum gate (paket, checkout, webhook, uji coba, kupon)
         run: |
           npm run test:umum-premium
@@ -102,6 +183,8 @@ jobs:
 
       - name: Route slug guard (outage 30 Okt — slug dinamis berbeda di level sama)
         run: npm run test:route-slugs
+      - name: Origin akun (standalone 0.0.0.0 di balik proxy, tolak origin asing)
+        run: npm run test:account-origin
       - name: AKU SASTRAWAN gate (Premium tulis, baca/ekspor setelah premium berakhir)
         run: npm run test:aku-sastrawan
       - name: AKU SASTRAWAN bahasa (tidak boleh ada teks bahasa Inggris)
@@ -124,6 +207,10 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: QA fixture is not in the production build
+        run: |
+          test ! -e .next/server/app/qa-fixture && ! grep -rqs "QA FIXTURE" .next/server/app && echo "OK: qa-fixture tidak ada di build produksi"
 
       - name: Kerahasiaan penyedia AI (bundle publik .next/static)
         run: npm run test:no-ai-provider-bundle

@@ -121,7 +121,7 @@ export default function ArenaHomepage(props: ArenaHomepageProps) {
         ))}
       </section>
       <ArenaGameHub featured={featured} games={liveGames} />
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(340px,0.75fr)]">
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(340px,0.75fr)]">
         <ArenaLeaderboard />
         <div className="space-y-5">
           <ArenaRankProgress level={level} rank={rank} />

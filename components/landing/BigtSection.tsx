@@ -94,7 +94,7 @@ export default function BigtSection() {
         </motion.div>
 
         <motion.div
-          className="grid sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl mx-auto mb-10"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}

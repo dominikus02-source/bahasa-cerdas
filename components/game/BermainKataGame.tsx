@@ -347,7 +347,7 @@ export default function BermainKataGame() {
           </div>
         </section>
 
-        <section className="mx-auto mt-5 grid max-w-3xl gap-3 sm:grid-cols-2">
+        <section className="mx-auto mt-5 grid grid-cols-1 max-w-3xl gap-3 sm:grid-cols-2">
           {(Object.keys(MODE_META) as Mode[]).map((m)=>{
             const meta=MODE_META[m]
             const Icon=meta.icon
@@ -355,7 +355,7 @@ export default function BermainKataGame() {
           })}
         </section>
 
-        <section className="mx-auto mt-5 grid max-w-3xl gap-3 sm:grid-cols-2">
+        <section className="mx-auto mt-5 grid grid-cols-1 max-w-3xl gap-3 sm:grid-cols-2">
           <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#263452] dark:bg-[#10182d]"><div className="flex items-center gap-3"><Trophy className="text-amber-500"/><div><p className="text-xs font-bold text-slate-400">Skor terbaik</p><p className="text-xl font-black dark:text-white">{best}</p></div></div></div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-[#263452] dark:bg-[#10182d]"><div className="flex items-center gap-3"><Star className="text-sky-500" fill="currentColor"/><div><p className="text-xs font-bold text-slate-400">Koleksi stiker</p><p className="text-xl font-black text-slate-900 dark:text-white">{stickers.length}/30</p></div>{stickers.length>0&&<span className="ml-auto rounded-xl bg-sky-50 px-2 py-1 text-xs font-black text-sky-700 dark:bg-sky-400/15 dark:text-sky-200">{stickers[stickers.length - 1]}</span>}</div></div>
         </section>
@@ -386,7 +386,7 @@ export default function BermainKataGame() {
         </div>
       </header>
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(260px,.55fr)]">
+      <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1.45fr)_minmax(260px,.55fr)]">
         <section className="relative overflow-hidden rounded-[34px] border border-slate-200 bg-white shadow-[0_22px_60px_rgba(15,23,42,.10)] dark:border-[#263452] dark:bg-[#10182d] dark:shadow-[0_24px_70px_rgba(0,0,0,.48)]">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_12%,rgba(125,211,252,.18),transparent_24%),radial-gradient(circle_at_88%_8%,rgba(167,243,208,.20),transparent_22%)]"/>
           <div className="relative px-5 pb-6 pt-5 sm:px-7 sm:pb-8 sm:pt-6">

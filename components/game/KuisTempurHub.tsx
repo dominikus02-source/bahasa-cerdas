@@ -550,7 +550,7 @@ export default function KuisTempurHub() {
             </div>
           </div>
 
-          <section className="mx-auto mt-5 grid w-full max-w-4xl flex-1 items-center gap-5 lg:grid-cols-[1.05fr_.95fr]">
+          <section className="mx-auto mt-5 grid grid-cols-1 w-full max-w-4xl flex-1 items-center gap-5 lg:grid-cols-[1.05fr_.95fr]">
             <div className="relative overflow-hidden rounded-[34px] border border-white/12 bg-[radial-gradient(circle_at_50%_30%,rgba(34,211,238,.22),transparent_31%),linear-gradient(180deg,#0b2347,#071126)] p-5 shadow-[0_28px_80px_rgba(0,0,0,.34)]">
               <div className="text-center">
                 <div className="text-[10px] font-black tracking-[.22em] text-cyan-300">PILIH PETARUNG</div>
@@ -714,7 +714,7 @@ export default function KuisTempurHub() {
               <Loader2 className="animate-spin text-cyan-300" size={30} />
             </div>
           ) : visibleFriends.length ? (
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {visibleFriends.map((friend) => (
                 <button
                   key={friend.id}
@@ -828,7 +828,7 @@ export default function KuisTempurHub() {
             </div>
           </header>
 
-          <div className="kt-lobby-layout grid gap-5 lg:grid-cols-[1fr_360px]">
+          <div className="kt-lobby-layout grid grid-cols-1 gap-5 lg:grid-cols-[1fr_360px]">
             <section className="overflow-hidden rounded-[30px] border border-cyan-100/15 bg-[#061225] shadow-[0_25px_65px_rgba(0,0,0,.4)]">
               <style jsx>{`
                 @keyframes ktCharacterIn {
@@ -1271,8 +1271,8 @@ export default function KuisTempurHub() {
           </div>
         </section>
 
-        <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_.94fr]">
-          <section className="grid gap-4 sm:grid-cols-2">
+        <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_.94fr]">
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <button
               onClick={() => openMultiplayerSetup("private")}
               disabled={creating || serverOffline}
@@ -1327,7 +1327,7 @@ export default function KuisTempurHub() {
           </section>
         </div>
 
-        <section className="mt-5 grid gap-3 rounded-[26px] border border-white/10 bg-white/[.04] p-3 sm:grid-cols-3 sm:p-4">
+        <section className="mt-5 grid grid-cols-1 gap-3 rounded-[26px] border border-white/10 bg-white/[.04] p-3 sm:grid-cols-3 sm:p-4">
           {[
             { n: "01", title: "JAWAB SOAL", caption: "Kumpulkan energi dari jawaban benar", icon: <Sparkles size={19} /> },
             { n: "02", title: "BERTEMPUR", caption: "Hadapi monster dan pemain lain", icon: <Swords size={19} /> },

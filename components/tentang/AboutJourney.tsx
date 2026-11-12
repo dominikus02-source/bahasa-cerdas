@@ -1,4 +1,4 @@
-import { Rocket, Sprout, TrendingUp, CalendarDays } from "lucide-react";
+import { Rocket, Landmark, Sprout, TrendingUp, CalendarDays } from "lucide-react";
 
 const timeline = [
   {
@@ -6,6 +6,13 @@ const timeline = [
     date: "April 2026",
     title: "Awal Perjalanan",
     desc: "Pengembangan BahasaCerdas dimulai — gagasan ekosistem pembelajaran Bahasa Indonesia dirancang dan dibangun.",
+    active: false,
+  },
+  {
+    icon: Landmark,
+    date: "November 2026",
+    title: "Badan Hukum Resmi",
+    desc: "November 2026: PT Bahasa Cerdas Indonesia resmi berdiri.",
     active: false,
   },
   {
@@ -48,7 +55,7 @@ export default function AboutJourney() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
           {timeline.map((t) => {
             const Icon = t.icon;
             return (

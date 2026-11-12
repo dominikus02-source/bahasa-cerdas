@@ -91,7 +91,7 @@ export default async function AkuSastrawanCurriculumPage({
           </div>
         )}
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2">
           {(["cerpen", "novel"] as const).map((key) => {
             const item = curriculum[key];
             const ItemIcon = item.icon;

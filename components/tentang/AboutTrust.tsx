@@ -40,7 +40,7 @@ export default function AboutTrust() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-4xl mx-auto">
           {trustPoints.map((t) => {
             const Icon = t.icon;
             return (

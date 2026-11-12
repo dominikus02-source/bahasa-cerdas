@@ -93,7 +93,7 @@ export default function ArtikelPage() {
               <input
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                placeholder="Ketik nama penulis, misalnya Washadi, Alexander, atau Dominikus"
+                placeholder="Ketik nama penulis, misalnya Alexander atau Dominikus"
                 className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-bc-line text-sm focus:border-red-400 focus:outline-none focus:ring-2 focus:ring-red-100 bg-bc-surface"
               />
             </div>
@@ -163,7 +163,7 @@ export default function ArtikelPage() {
                       <div className="p-7 flex flex-col justify-center">
                         <div className="flex flex-wrap items-center gap-2 text-xs text-bc-text-3 mb-3">
                           {a.tags?.slice(0, 2).map(t => (
-                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-600 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
+                            <span key={t} className="px-2 py-0.5 bg-red-50 text-red-700 dark:bg-red-500/15 dark:text-red-300 rounded-full font-medium">{t}</span>
                           ))}
                           <span className="flex items-center gap-1"><Calendar size={12} /> {new Date(a.publishedAt ?? a.createdAt).toLocaleDateString("id")}</span>
                           <span className="flex items-center gap-1">{a.readCount} dibaca</span>

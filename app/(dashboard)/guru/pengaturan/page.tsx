@@ -1,5 +1,6 @@
 "use client";
 import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
+import ArenaLogoutButton from "@/components/arena/LogoutButton";
 
 import { useState, useEffect, useMemo } from "react";
 import { Card } from "@/components/ui/card";
@@ -161,7 +162,7 @@ export default function GuruPengaturanPage() {
         )}
       </Card>
 
-      <div className="grid lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1 space-y-1">
           {[
             { id: "rekening", icon: Banknote, label: "Rekening" },
@@ -184,6 +185,9 @@ export default function GuruPengaturanPage() {
               <User className="w-4 h-4" />
               Edit Profil
             </Link>
+            <div className="mt-2 border-t border-slate-100 pt-2 dark:border-slate-800" data-guru-settings-logout>
+              <ArenaLogoutButton variant="settings" to="/login" />
+            </div>
           </div>
         </div>
         <div className="lg:col-span-3">

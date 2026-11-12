@@ -4,23 +4,15 @@ import { dashboardForUser } from "@/lib/auth/redirect";
 import { headers } from "next/headers";
 import Link from "next/link";
 import Image from "next/image";
-import { GraduationCap } from "lucide-react";
 import AIFloatingButton from "@/components/shared/AIFloatingButton";
-import { BackHome } from "@/components/shared/BackHome";
-import { NotificationBell } from "@/components/dashboard/NotificationBell";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
 import { ShellLayout } from "@/components/shell/ShellLayout";
 import { RoleSections } from "@/components/shell/RoleSections";
-import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
 import { ShellSidebarFooter } from "@/components/shell/ShellSidebarFooter";
 import { levelFromXp } from "@/lib/gamification/levels"
 import { rankFromLevel } from "@/lib/gamification/ranks"
-import { RankChip } from "@/components/gamification/RankChip"
 import { SidebarPremiumBadge } from "@/components/guru/SidebarPremiumBadge";
-import { VerifiedBadge } from "@/components/arena/UserName";
-import UserAvatar from "@/components/arena/UserAvatar";
-import ArenaLogoutButton from "@/components/arena/LogoutButton";
 import { GuruNavList, GuruMobileNav } from "@/components/dashboard/GuruNav";
+import { GuruHeader } from "@/components/shell/GuruHeader";
 import { startGuruTrialIfEligible, shouldStartGuruTrial, getTrialStatus } from "@/lib/ai-gateway/trial-service";
 import { resolveUserAiPlan } from "@/lib/ai-gateway/plan-resolver";
 import { getRemainingCredits } from "@/lib/ai-gateway/quota-checker";
@@ -150,53 +142,7 @@ export default async function GuruLayout({ children }: { children: React.ReactNo
         </>
       }
       header={
-        <header className="shrink-0 sticky top-0 z-30 flex h-14 items-center justify-between gap-3 border-b border-blue-100/80 bg-white/88 px-4 backdrop-blur-xl md:px-6 dark:border-blue-950/70 dark:bg-[#08182b]/92">
-          <div className="flex min-w-0 items-center gap-2">
-            <BackHome href="/guru/beranda" className="hover:text-blue-700 hover:bg-blue-50 dark:hover:text-blue-300 dark:hover:bg-blue-950/50" />
-            <div className="hidden shrink-0 items-center gap-2 sm:flex">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white shadow-sm shadow-blue-500/20">
-                <GraduationCap className="h-4 w-4" strokeWidth={2} />
-              </span>
-              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Guru</span>
-            </div>
-          </div>
-
-          <div className="flex min-w-0 items-center gap-1.5 md:gap-2">
-            <FounderDashboardSwitcher user={user} compact />
-            <Link
-              href="/guru/profile"
-              className="group flex min-w-0 items-center gap-2 rounded-xl px-1.5 py-1 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/50"
-              aria-label="Buka profil guru"
-            >
-              <UserAvatar
-                size={36}
-                avatar={user.avatar}
-                initials={user.fullName?.charAt(0).toUpperCase() || "G"}
-                gradient="from-blue-600 to-sky-500"
-                textClassName="text-sm"
-                className="shrink-0 shadow-md"
-              />
-              <span className="hidden min-w-0 text-left lg:block">
-                <span className="flex items-center gap-1.5">
-                  <span className="max-w-[190px] truncate text-xs font-bold text-slate-800 dark:text-slate-100">
-                    {user.fullName}
-                  </span>
-                  <VerifiedBadge isFounder={user.isFounder} isPremium={user.isPremium} badgeKind={user.badgeKind} size={13} />
-                </span>
-                <span className="mt-0.5 flex items-center gap-1.5 text-[10px] text-slate-500 dark:text-slate-400">
-                  <span>Guru</span>
-                  <span aria-hidden>•</span>
-                  <RankChip rank={rank} size={11} showTitle={false} compact />
-                  <span aria-hidden>•</span>
-                  <span>Tkt {user.level}</span>
-                </span>
-              </span>
-            </Link>
-            <NotificationBell allHref="/guru/notifikasi" />
-            <ThemeToggle />
-            <ArenaLogoutButton variant="icon" to="/login" />
-          </div>
-        </header>
+        <GuruHeader user={user} rank={rank} />
       }
       mainClassName="bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
       bottomNav={<GuruMobileNav role={user.role} isFounder={user.isFounder} />}

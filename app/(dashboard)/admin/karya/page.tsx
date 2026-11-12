@@ -59,19 +59,19 @@ export default function AdminKaryaPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Toko Guru</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">{total} produk marketplace</p>
         </div>
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
             placeholder="Cari produk..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="pl-9 pr-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 w-64"
+            className="pl-9 pr-4 py-2 border border-gray-200 dark:border-slate-700 rounded-lg text-sm bg-white dark:bg-slate-800 w-full min-w-0 sm:max-w-xs"
           />
         </div>
       </div>
@@ -86,7 +86,7 @@ export default function AdminKaryaPage() {
         </div>
       ) : (
         <div className="bg-white dark:bg-slate-800/90 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
-          <table className="w-full text-sm">
+          <div className="overflow-x-auto"><table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="border-b border-gray-100 dark:border-slate-700">
                 <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-slate-400">Produk</th>
@@ -136,7 +136,7 @@ export default function AdminKaryaPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+          </table></div>
 
           {/* Pagination */}
           {pages > 1 && (

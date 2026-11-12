@@ -80,13 +80,13 @@ function main() {
 
   // ── 3. GURU ──
   console.log("\n── 3. Guru memakai Unified Shell ──");
-  const guruLayout = read("app/(dashboard)/guru/layout.tsx");
+  const guruLayout = read("app/(dashboard)/guru/layout.tsx") + read("components/shell/GuruHeader.tsx");
   test("guru layout memakai ShellLayout",
     () => guruLayout.includes("ShellLayout"));
   test("guru sidebar = GuruNavList kanonik (tanpa sidebar baru)",
     () => guruLayout.includes("GuruNavList") && exists("components/dashboard/GuruNav.tsx"));
-  test("guru header = BackHome deterministik → /guru/beranda",
-    () => guruLayout.includes("BackHome") && (guruLayout.includes('href="/guru/beranda"') || guruLayout.includes('href = "/guru/beranda"')));
+  test("guru header = merek BahasaCerdas (BrandMark) → /guru/beranda, tanpa panah kembali",
+    () => guruLayout.includes("BrandMark") && !guruLayout.includes("<BackHome") && (guruLayout.includes('href="/guru/beranda"') || guruLayout.includes('href = "/guru/beranda"')));
   test("guru memakai ThemeToggle + NotificationBell di header",
     () => guruLayout.includes("<ThemeToggle />") && guruLayout.includes("NotificationBell"));
   test("guru sidebar collapsible (shell-label di GuruNav; shell-link via NAV_LINK_BASE token 5.1)",

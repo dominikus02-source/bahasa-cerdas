@@ -8,7 +8,9 @@ export function ArenaClientWrapper({ children }: { children: React.ReactNode }) 
   return (
     <PlayerProvider>
       <PlayerOverlay />
-      <InstallBanner />
+      <div className="px-4 pt-3 empty:hidden md:hidden">
+        <InstallBanner />
+      </div>
       {children}
     </PlayerProvider>
   )

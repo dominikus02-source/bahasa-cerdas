@@ -6,8 +6,10 @@ const footerLinks = [
   {
     title: "Produk",
     links: [
+      { href: "/#untuk-umum", label: "Untuk Umum" },
       { href: "/#untuk-murid", label: "Untuk Murid" },
       { href: "/#untuk-guru", label: "Untuk Guru" },
+      { href: "/#ekosistem", label: "Ekosistem" },
       { href: "/arena", label: "Arena" },
       { href: "/arena/jalur-cerdas", label: "Jalur Cerdas" },
       { href: "/#bigt", label: "BIGT" },
@@ -18,7 +20,7 @@ const footerLinks = [
     title: "Perusahaan",
     links: [
       { href: "/tentang", label: "Tentang BahasaCerdas" },
-      { href: "/tentang", label: "Tim" },
+      { href: "/tentang#tim", label: "Tim" },
       { href: "/loker", label: "Kontak & Karier" },
       { href: "/faq", label: "FAQ" },
       { href: "/artikel", label: "AKSARA" },
@@ -58,14 +60,14 @@ export default function PageFooter() {
               </div>
               <div>
                 <span className="text-xl font-bold text-white">BahasaCerdas</span>
-                <p className="text-xs text-zinc-500">Ekosistem Belajar Bahasa Indonesia</p>
+                <p className="text-xs text-zinc-400">Ekosistem Belajar Bahasa Indonesia</p>
               </div>
             </Link>
             <p className="text-sm text-zinc-400 leading-relaxed mb-5 max-w-sm">
               Satu ekosistem untuk belajar, berlatih, bermain, berkarya, dan bertumbuh —
-              menghubungkan guru, murid, dan komunitas Bahasa Indonesia.
+              terbuka untuk masyarakat umum, murid, dan guru.
             </p>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <a
                 href="mailto:halo@bahasacerdas.com"
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-800/80 border border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors focus-ring"
@@ -80,7 +82,7 @@ export default function PageFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className={`flex items-center justify-center w-9 h-9 rounded-xl bg-zinc-800/80 border border-zinc-700 text-zinc-300 ${hoverColor} transition-colors focus-ring`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700 text-zinc-300 ${hoverColor} transition-colors focus-ring`}
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -112,15 +114,15 @@ export default function PageFooter() {
 
       <div className="border-t border-zinc-800">
         <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-zinc-500">
-            &copy; {new Date().getFullYear()} BahasaCerdas. Ekosistem Belajar Bahasa Indonesia.
+          <p className="text-xs text-zinc-400">
+            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia.
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-600">
-            <Link href="/kebijakan-privasi" className="hover:text-zinc-400 transition-colors focus-ring rounded">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-400">
+            <Link href="/kebijakan-privasi" className="hover:text-zinc-200 transition-colors focus-ring rounded">
               Privasi
             </Link>
             <span aria-hidden="true">&bull;</span>
-            <Link href="/syarat-ketentuan" className="hover:text-zinc-400 transition-colors focus-ring rounded">
+            <Link href="/syarat-ketentuan" className="hover:text-zinc-200 transition-colors focus-ring rounded">
               Ketentuan
             </Link>
             <span aria-hidden="true">&bull;</span>

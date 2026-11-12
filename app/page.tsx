@@ -6,12 +6,10 @@ import { withQueryTimeout as queryWithTimeout } from "@/lib/db/with-query-timeou
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
-import SocialProof from "@/components/landing/SocialProof";
 import PromoVideoSection from "@/components/landing/PromoVideoSection";
 import EcosystemSection from "@/components/landing/EcosystemSection";
 import LearningLoopSection from "@/components/landing/LearningLoopSection";
-import TeacherSection from "@/components/landing/TeacherSection";
-import StudentSection from "@/components/landing/StudentSection";
+import PilihPeranmuSection from "@/components/landing/PilihPeranmuSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
 import FiturUnggulanSection from "@/components/landing/FiturUnggulanSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
@@ -33,11 +31,11 @@ export const revalidate = 300;
 export const metadata: Metadata = {
   title: "BahasaCerdas — Ekosistem Belajar Bahasa Indonesia",
   description:
-    "BahasaCerdas adalah ekosistem pembelajaran Bahasa Indonesia untuk guru dan murid. Belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform.",
+    "BahasaCerdas terbuka untuk masyarakat umum, murid, dan guru. Belajar, mengajar, dan berkarya dalam Bahasa Indonesia, untuk siapa saja.",
   openGraph: {
     title: "BahasaCerdas — Ekosistem Belajar Bahasa Indonesia",
     description:
-      "Belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu ekosistem Bahasa Indonesia.",
+      "Belajar, mengajar, dan berkarya dalam Bahasa Indonesia, untuk masyarakat umum, murid, dan guru.",
     url: "https://www.bahasacerdas.com",
     type: "website",
   },
@@ -107,7 +105,7 @@ export default async function HomePage() {
   ]);
 
   const faqs = [
-    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang menghubungkan guru, murid, kelas, materi, latihan, permainan, karya, komunitas, dan asesmen dalam satu platform. Bukan sekadar tempat belajar atau alat AI — melainkan ekosistem yang dirancang mengelilingi perjalanan belajar Bahasa Indonesia." },
+    { q: "Apa itu BahasaCerdas?", a: "BahasaCerdas adalah ekosistem belajar Bahasa Indonesia yang terbuka untuk masyarakat umum, murid, dan guru. Belajar, mengajar, berkarya, dan bertumbuh — artikel AKSARA, NARA, Arena, kelas, hingga Toko Karya — dalam satu platform." },
     { q: "Apakah BahasaCerdas gratis?", a: "Ya, BahasaCerdas gratis untuk memulai. Guru dapat mencoba Guru Pro selama 30 hari tanpa komitmen. Setelah itu tersedia paket Guru Pro mulai Rp 49.000/bulan." },
     { q: "Apa yang bisa dilakukan murid di BahasaCerdas?", a: "Murid bisa belajar di Jalur Cerdas, berlatih soal, bermain gim edukasi, menulis dan mempublikasikan karya, mengumpulkan XP dan lencana, naik peringkat di liga mingguan, serta mengikuti simulasi UKBI/TKA." },
     { q: "Apa yang bisa dilakukan guru?", a: "Guru bisa mengelola kelas, menyiapkan materi ajar, membuat dan membagikan latihan, menilai karya dan tugas, memantau buku nilai, menyusun perangkat ajar dengan bantuan AI, serta menjual karya di Toko Karya BahasaCerdas." },
@@ -132,24 +130,18 @@ export default async function HomePage() {
       <PageNavbar />
 
       <main id="main-content" className="min-h-screen">
-        {/* 1 · HERO — positioning: satu ekosistem untuk semua */}
-        <HeroSection />
+        {/* 1 · HERO — inklusif + angka kepercayaan riil */}
+        <HeroSection initial={socialProof} />
 
         {/* 2 · VIDEO + KABAR — video kiri (55%), pengumuman kanan (45%) */}
         <PromoVideoSection />
 
-        {/* 3 · BUKTI SOSIAL — angka riil dari database */}
-        <SocialProof initial={socialProof} />
+        {/* 3 · PILIH PERANMU — tiga jalur setara: Umum, Murid, Guru */}
+        <PilihPeranmuSection />
 
-        {/* 4 · EKOSISTEM — pilar BELAJAR/MENGAJAR/BERLATIH & BERMAIN/BERKARYA & BERTUMBUH */}
+        {/* 4 · PRODUK / EKOSISTEM */}
         <FiturUnggulanSection />
         <EcosystemSection />
-
-        {/* 5 · GURU — ruang untuk mengajar */}
-        <TeacherSection />
-
-        {/* 6 · MURID — perjalanan untuk belajar */}
-        <StudentSection />
 
         {/* 7 · LEARNING LOOP — belajar tidak berhenti ketika soal selesai */}
         <LearningLoopSection />
@@ -195,7 +187,7 @@ export default async function HomePage() {
               </div>
             </div>
 
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {artikel.length > 0 ? (
                 artikel.slice(0, 3).map((a: any) => (
                   <Link
@@ -220,7 +212,7 @@ export default async function HomePage() {
                       <h4 className="font-bold text-zinc-900 group-hover:text-primary transition-colors line-clamp-2 mb-2">
                         {a.title}
                       </h4>
-                      <p className="text-xs text-zinc-400 mt-3">
+                      <p className="text-xs text-zinc-600 dark:text-zinc-400 mt-3">
                         {a.author?.fullName} &middot;{" "}
                         {new Date(a.createdAt).toLocaleDateString("id-ID", {
                           day: "numeric",

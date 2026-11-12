@@ -143,7 +143,7 @@ export default function NovelChaptersPage({ params }: { params: Promise<{ projec
         )}
       </header>
 
-      <div className="mx-auto grid max-w-6xl gap-8 px-4 pb-32 pt-6 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-12">
+      <div className="mx-auto grid grid-cols-1 max-w-6xl gap-8 px-4 pb-32 pt-6 sm:px-6 lg:grid-cols-[220px_minmax(0,1fr)] lg:pt-12">
         <nav aria-label="Daftar bab" className="lg:sticky lg:top-20 lg:self-start">
           <p className="hidden px-2 pb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-muted-foreground lg:block">Bab · {chapters.length}</p>
           {loading ? <p className="px-2 text-sm text-muted-foreground">Memuat bab…</p> : chapters.length ? (

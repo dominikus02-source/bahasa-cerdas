@@ -187,7 +187,7 @@ section("G. Wiring & regression");
 
 assert(has("app/api/admin/teacher-commissions/pre-canary/route.ts"), "G1 GET API ada");
 assert(has("app/api/admin/teacher-commissions/pre-canary/decision/route.ts"), "G2 decision API ada");
-const pageSrc = read("app/(dashboard)/admin/teacher-payouts/page.tsx");
+const pageSrc = read("app/(dashboard)/admin/teacher-payouts/teacher-payouts-view.tsx");
 assert(pageSrc.includes("Pra-Canary GO/NO-GO"), "G3 UI pre-canary di control center");
 assert(pageSrc.includes("APPROVE CANARY"), "G4 tombol keputusan founder di UI");
 assert(read("lib/commission/payout/config.ts").includes('?? "mock"'), "G5 real money tetap OFF (mock default)");

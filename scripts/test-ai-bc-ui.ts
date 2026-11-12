@@ -145,8 +145,7 @@ test("FAB guru memakai karakter zelby_reading", () =>
 test("FAB tidak memakai kata Chat", () =>
   !read("components/shared/AIFloatingButton.tsx").includes("Chat dengan AI") &&
   read("components/shared/AIFloatingButton.tsx").includes("Ngobrol dengan Nara"));
-test("kartu beranda murid memakai karakter zelby_reading", () =>
-  read("components/student-home/AIBCHomeCard.tsx").includes('gambarKarakter("zelby", "reading")'));
+test("kartu beranda murid memakai ikon NARA resmi", () => read("components/student-home/AIBCHomeCard.tsx").includes("<NaraIcon"));
 test("halaman publik hero memakai karakter zelby_reading", () =>
   publicPage.includes("<AICompanionCharacter") &&
   /state="idle"/.test(publicPage) && character.includes('"thinking" ? "thinking" : "reading"'));

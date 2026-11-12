@@ -163,7 +163,7 @@ assert(read("lib/commission/engine.ts").includes("entryType: \"COMMISSION\""), "
 assert(read("lib/commission/payout/orchestrator.ts").includes("submitPayoutForWithdrawal"), "I5 P7D utuh");
 assert(read("lib/commission/payout/xendit-provider.ts").includes("mapXenditStatusToInternal"), "I6 adapter Xendit P7E utuh");
 assert(read("lib/guru/risk/signals.ts").includes("evaluateRiskGate"), "I7 P8C utuh");
-const pageSrc = read("app/(dashboard)/admin/teacher-payouts/page.tsx");
+const pageSrc = read("app/(dashboard)/admin/teacher-payouts/teacher-payouts-view.tsx");
 assert(pageSrc.includes("Xendit Production Readiness (P8H)"), "I8 UI section ada");
 
 // ═══════════════════════════════════════════════════════════════════════════════

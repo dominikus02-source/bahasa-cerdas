@@ -41,7 +41,12 @@ const publicPaths = [
   // Parents install the APK before anyone has an account — gating this behind
   // login would put the download on the far side of the thing it unlocks.
   "/unduh",
+  // Demo Android (Appetize) — publik, tidak perlu login.
+  "/android-demo",
   "/robots.txt", "/sitemap.xml", "/manifest.webmanifest", "/opengraph-image",
+  // Fixture QA visual lokal: hanya dev dengan BC_QA_FIXTURE=1. Di produksi
+  // jalur ini tidak publik dan halamannya tidak dikompilasi (pageExtensions).
+  ...(process.env.BC_QA_FIXTURE === "1" && process.env.NODE_ENV !== "production" ? ["/qa-fixture"] : []),
 ];
 
 // Routes that handle their own auth — skip middleware getUser() to avoid rate limit

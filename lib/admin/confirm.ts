@@ -19,6 +19,9 @@ const CONFIRM_RULES: { method: string; pattern: RegExp }[] = [
   { method: "POST", pattern: /^\/api\/admin\/teacher-commissions\/(payout-control|payout-safety|canary|backfill)$/ },
   { method: "POST", pattern: /^\/api\/admin\/teacher-commissions\/pre-canary\/decision$/ },
   { method: "POST", pattern: /^\/api\/admin\/payments\/manual-activate$/ },
+  { method: "POST", pattern: /^\/api\/admin\/finance\/ledger$/ },
+  { method: "PATCH", pattern: /^\/api\/admin\/finance\/ledger\/[^/]+$/ },
+  { method: "DELETE", pattern: /^\/api\/admin\/finance\/ledger\/[^/]+$/ },
   { method: "POST", pattern: /^\/api\/admin\/analytics\/(payment-health\/fix|reconciliation)$/ },
   { method: "POST", pattern: /^\/api\/admin\/teacher-risk\/[^/]+\/decision$/ },
   // Massal / akses

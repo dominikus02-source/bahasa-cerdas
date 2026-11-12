@@ -132,7 +132,7 @@ function MentorRoom() {
           <div className="absolute inset-0 opacity-[0.045]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, white 1px, transparent 0)", backgroundSize: "24px 24px" }} />
         </div>
 
-        <div className="relative grid gap-8 px-6 py-8 sm:px-9 sm:py-10 lg:grid-cols-[1fr_310px] lg:items-center lg:px-12 lg:py-12">
+        <div className="relative grid grid-cols-1 gap-8 px-6 py-8 sm:px-9 sm:py-10 lg:grid-cols-[1fr_310px] lg:items-center lg:px-12 lg:py-12">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-100 backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 text-[#ffd24a]" />
@@ -213,7 +213,7 @@ function MentorRoom() {
       )}
 
       {result ? (
-        <section className="mt-7 grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
+        <section className="mt-7 grid grid-cols-1 gap-5 lg:grid-cols-[1.35fr_0.65fr]">
           <article className="relative overflow-hidden rounded-[1.75rem] border border-violet-200/70 bg-white p-6 shadow-[0_25px_65px_-40px_rgba(79,70,229,0.7)] dark:border-white/10 dark:bg-white/[0.055] dark:shadow-[0_25px_65px_-40px_rgba(0,0,0,0.8)] sm:p-8">
             <div className="absolute -right-16 -top-20 h-48 w-48 rounded-full bg-violet-400/15 blur-3xl" />
             <div className="relative">
@@ -228,7 +228,7 @@ function MentorRoom() {
                 {result.diagnosis}
               </p>
 
-              <div className="mt-7 grid gap-3 sm:grid-cols-3">
+              <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="rounded-2xl border border-cyan-100 bg-cyan-50/80 p-4 dark:border-cyan-300/10 dark:bg-cyan-400/[0.06]">
                   <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-700 dark:text-cyan-300">1 · Lakukan</p>
                   <p className="mt-2 text-sm leading-6 text-slate-700 dark:text-slate-200/80">{result.doNow}</p>

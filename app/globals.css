@@ -37,7 +37,7 @@
     --secondary: 240 4.8% 95.9%;
     --secondary-foreground: 240 5.9% 10%;
     --muted: 60 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --muted-foreground: 240 4% 41%;
     --accent: 60 5% 96%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 73% 41%;
@@ -92,6 +92,9 @@
 
   body {
     @apply bg-background text-foreground antialiased;
+    /* URL/kata panjang patah di tepi baris alih-alih melebarkan halaman
+       (break-word tidak mengubah ukuran min-content tata letak flex/grid). */
+    overflow-wrap: break-word;
   }
 
   ::selection {
@@ -332,6 +335,41 @@
   /* Grup accordion (mis. GuruNav): children disembunyikan utuh saat ciut —
      item anak tidak punya ikon, jadi teks saja yang ditampilkan. */
   [data-shell-collapsed="1"] .shell-accordion { display: none; }
+}
+
+/* ---- Drawer Guru mobile: maksimal 50% lebar layar (permintaan pengguna) ----
+   Selektor ID ganda + !important sengaja: harus menang atas CSS lama yang disuntik
+   APK terpasang (`#guru-mobile-menu {width:min(70vw,260px)!important}` dsb.).
+   Teks boleh membungkus; target sentuh tetap ≥44px. */
+html #guru-mobile-menu#guru-mobile-menu {
+  box-sizing: border-box;
+  width: min(50vw, 300px) !important;
+  max-width: 50vw !important;
+  min-width: 0 !important;
+}
+html #guru-mobile-menu#guru-mobile-menu nav { padding: 8px 4px !important; }
+html #guru-mobile-menu#guru-mobile-menu .shell-link {
+  min-height: 44px;
+  gap: 8px !important;
+  padding: 6px 6px !important;
+  font-size: 13px !important;
+  line-height: 1.25;
+}
+html #guru-mobile-menu#guru-mobile-menu .shell-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+html #guru-mobile-menu#guru-mobile-menu .shell-accordion {
+  margin: 0 0 4px 12px !important;
+  padding-left: 6px !important;
+}
+html #guru-mobile-menu#guru-mobile-menu .shell-accordion a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 8px !important;
+  overflow-wrap: anywhere;
 }
 
 /* ---- DARK/LIGHT 2.2 — kartu premium profil (theme-aware) ----
@@ -1477,3 +1515,7 @@
     transition: none;
   }
 }
+
+/* P1 kontras — text-primary (merah merek 0 73% 41%) hanya ≈2:1 di latar gelap.
+   Di mode gelap teks memakai varian merah terang dari token; latar bg-primary tidak berubah. */
+.dark .text-primary { color: var(--clr-primary-text); }

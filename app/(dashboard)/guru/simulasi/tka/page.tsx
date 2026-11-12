@@ -46,7 +46,7 @@ export default async function GuruTKASimulasiPage() {
       </div>
 
       {/* Track Cards */}
-      <div className="grid gap-4 md:grid-cols-2 mb-6">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 mb-6">
         {tracks.map(track => (
           <div key={track.id} className={`bg-white rounded-xl border border-gray-100 p-5 ${track.available ? "" : "opacity-60"}`}>
             <div className="flex items-center gap-3 mb-3">

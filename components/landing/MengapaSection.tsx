@@ -65,7 +65,7 @@ export default function MengapaSection() {
         </motion.div>
 
         <motion.div
-          className="grid md:grid-cols-2 gap-6 lg:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8"
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"

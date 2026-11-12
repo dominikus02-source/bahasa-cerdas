@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { leaveAccount } from "@/lib/auth/leave-account";
 
 /** Keluar lewat endpoint logout yang sudah ada, lalu ke halaman login. */
 export function LogoutButton() {
@@ -12,9 +13,9 @@ export function LogoutButton() {
       onClick={async () => {
         setBusy(true);
         try {
-          await fetch("/api/auth/logout", { method: "POST" });
+          await leaveAccount("/login");
         } finally {
-          window.location.href = "/login";
+          setBusy(false);
         }
       }}
       className="inline-flex items-center justify-center rounded-bc-ctl bg-bc-brand px-4 py-2 text-sm font-semibold text-bc-on-brand disabled:opacity-60"

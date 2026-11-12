@@ -7,7 +7,8 @@ import { db } from "@/lib/db";
 import { roomEndsAt } from "./caps";
 import { chatRetentionCutoff } from "./chat";
 import { attendanceOnJoin, attendanceOnLeave, sweepActionFor, webhookDedupeKey } from "./lifecycle";
-import { sendServerSignal } from "./livekit";
+import { listLivekitIdentities, removeLivekitParticipant, sendServerSignal } from "./livekit";
+import { isScreenIdentity, screenIdentityOrNull, screenOwnerOf, shouldEvictScreen } from "./screen-identity";
 import { closeAttendance, endRoomForAll } from "./room-actions";
 import { JUMPA_TOPICS } from "./signals";
 
@@ -88,6 +89,14 @@ export async function handleJumpaWebhook(evt: JumpaWebhookEvent, now = new Date(
   }
 
   if (!evt.identity) return "ok";
+  // Identitas layar Android bukan kehadiran. Bila pemilik keluar/terputus,
+  // putuskan juga layarnya (pembersihan sisi server bila aplikasi mati).
+  if (isScreenIdentity(evt.identity)) {
+    if (evt.event === "participant_joined") await evictOrphanScreen(room, evt.identity).catch(() => undefined);
+    return "ok";
+  }
+  const ownedScreen = evt.event !== "participant_joined" ? screenIdentityOrNull(evt.identity) : null;
+  if (ownedScreen) await removeLivekitParticipant(room.livekitRoomName, ownedScreen).catch(() => undefined);
   const p = await db.jumpaParticipant.findUnique({
     where: { roomId_userId: { roomId: room.id, userId: evt.identity } },
     select: { id: true, lastJoinedAt: true, lastLeftAt: true, totalSeconds: true, joinCount: true },
@@ -100,4 +109,22 @@ export async function handleJumpaWebhook(evt: JumpaWebhookEvent, now = new Date(
     data: { lastJoinedAt: next.lastJoinedAt, lastLeftAt: next.lastLeftAt, totalSeconds: next.totalSeconds, joinCount: next.joinCount },
   });
   return "ok";
+}
+
+/**
+ * Balapan token layar: pemilik keluar/di-kick setelah token dicetak tetapi
+ * sebelum layar tersambung → putuskan identitas layar yatim.
+ */
+async function evictOrphanScreen(room: { id: string; livekitRoomName: string }, identity: string): Promise<void> {
+  const owner = screenOwnerOf(identity);
+  const participant = owner
+    ? await db.jumpaParticipant.findUnique({ where: { roomId_userId: { roomId: room.id, userId: owner } }, select: { removedAt: true } })
+    : null;
+  const connected = owner ? await listLivekitIdentities(room.livekitRoomName) : [];
+  const evict = shouldEvictScreen({
+    ownerKnown: Boolean(owner && participant),
+    ownerRemoved: Boolean(participant?.removedAt),
+    ownerConnected: connected.some((p) => p.identity === owner),
+  });
+  if (evict) await removeLivekitParticipant(room.livekitRoomName, identity);
 }

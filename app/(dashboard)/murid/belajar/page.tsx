@@ -95,7 +95,7 @@ export default function BelajarPage() {
           />
         </div>
 
-        <div className="relative grid gap-8 px-6 py-8 sm:px-9 sm:py-10 lg:grid-cols-[1fr_360px] lg:items-center lg:px-12">
+        <div className="relative grid grid-cols-1 gap-8 px-6 py-8 sm:px-9 sm:py-10 lg:grid-cols-[1fr_360px] lg:items-center lg:px-12">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-100 backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 text-[#ffd24a]" />
@@ -231,7 +231,7 @@ export default function BelajarPage() {
           </h2>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {QUESTS.filter((quest) => !quest.primary).map(
             ({ href, label, eyebrow, description, icon: Icon, tone, reward }) => (
               <Link
@@ -244,7 +244,7 @@ export default function BelajarPage() {
                   <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${tone} shadow-lg`}>
                     <Icon className="h-5 w-5 text-white" />
                   </div>
-                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[8px] font-black tracking-[0.15em] text-slate-500 dark:bg-white/[0.07] dark:text-slate-300/70">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-black tracking-[0.15em] text-slate-600 dark:bg-white/[0.07] dark:text-slate-300">
                     {eyebrow}
                   </span>
                 </div>
@@ -261,7 +261,7 @@ export default function BelajarPage() {
       </section>
 
       {/* SOSIAL / MENTOR */}
-      <section className="mt-9 grid gap-4 lg:grid-cols-2">
+      <section className="mt-9 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Link
           href="/arena/chat"
           className="group relative overflow-hidden rounded-[1.5rem] border border-cyan-100 bg-gradient-to-br from-cyan-50 via-white to-blue-50 p-6 transition-all hover:-translate-y-1 hover:shadow-xl dark:border-cyan-300/15 dark:from-cyan-400/[0.08] dark:via-white/[0.035] dark:to-blue-500/[0.08] dark:hover:border-cyan-300/25 dark:hover:bg-white/[0.055]"

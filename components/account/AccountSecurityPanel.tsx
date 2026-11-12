@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Shield, LockKeyhole, Trash2, Loader2, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { leaveAccount } from "@/lib/auth/leave-account";
 import { useUserStore } from "@/store";
 
 type VerificationMode = "password" | "email" | "google";
@@ -30,9 +31,8 @@ export default function AccountSecurityPanel() {
   }, []);
   const input = "mt-1 block w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 dark:border-slate-600 dark:bg-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500";
   async function leave() {
-    await createClient().auth.signOut({ scope: "local" });
     useUserStore.getState().clearUser();
-    window.location.assign("/login");
+    await leaveAccount("/login");
   }
   async function sendCode() {
     setBusy(true); setMessage(""); setError("");
@@ -57,6 +57,8 @@ export default function AccountSecurityPanel() {
   async function submit(action: "password" | "delete") {
     setError(""); setMessage("");
     if (action === "password" && nextPassword !== confirmPassword) { setError("Konfirmasi password tidak cocok."); return; }
+    if (mode === "password" && !password) { setError("Masukkan password saat ini terlebih dahulu."); return; }
+    if (mode === "email" && !emailReauth && !/^\d{6,10}$/.test(code)) { setError("Masukkan kode verifikasi dari email terlebih dahulu."); return; }
     setBusy(true);
     try {
       const res = await fetch(action === "password" ? "/api/user/password" : "/api/user/account", {

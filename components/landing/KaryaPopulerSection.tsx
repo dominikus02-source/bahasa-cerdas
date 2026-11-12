@@ -64,7 +64,7 @@ export default async function KaryaPopulerSection() {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {karya.length > 0 ? (
             karya.map((k: any) => {
               const imgs = (() => { try { return JSON.parse(k.images || "[]"); } catch { return []; } })();
@@ -91,7 +91,7 @@ export default async function KaryaPopulerSection() {
                     <h3 className="text-sm font-semibold text-zinc-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-1">
                       {k.title}
                     </h3>
-                    <p className="text-[11px] text-zinc-400 mb-3">
+                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
                       {k.seller?.fullName || "Guru Bahasa Indonesia"}
                     </p>
                     <div className="flex items-center justify-between pt-3 border-t border-zinc-100">

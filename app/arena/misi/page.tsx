@@ -87,7 +87,7 @@ export default async function MisiHarianPage() {
                   </p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-sm font-bold text-amber-600 dark:text-amber-400">+{quest.rewardCoins} Koin</p>
+                  <p className="text-sm font-bold text-amber-700 dark:text-amber-400">+{quest.rewardCoins} Koin</p>
                   {isDone && <ClaimButton questId={quest.id} alreadyClaimed={claimedIds.has(quest.id)} />}
                 </div>
               </div>

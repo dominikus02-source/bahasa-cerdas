@@ -1,10 +1,11 @@
 "use client";
+import ArenaLogoutButton from "@/components/arena/LogoutButton";
 import { VerifiedBadge } from "@/components/arena/UserName";
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import {
-  Settings, X, Camera, Save, CheckCircle2, AlertCircle, LogOut, Loader2,
+  Settings, X, Camera, Save, CheckCircle2, AlertCircle, Loader2,
   Award, History, Pencil, BookOpen, ChevronRight, TrendingUp,
 } from "lucide-react";
 import "@/app/arena/player-theme.css";
@@ -326,11 +327,6 @@ export default function MuridProfilePage() {
     setShowNicknameHistory(true);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/login";
-  };
-
   const handleDeleteKarya = async (id: string) => {
     if (!confirm("Yakin ingin menghapus karya ini?")) return;
     const res = await fetch(`/api/siswa/karya/${id}`, { method: "DELETE" });
@@ -550,7 +546,7 @@ export default function MuridProfilePage() {
       )}
 
       {/* GRID DESKTOP 2 KOLOM — main konten + sidebar identitas (≥1024px) */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
         {/* MAIN — statistik, aktivitas, grafik, galeri karya */}
         <div className="space-y-6 min-w-0 md:col-span-2 lg:col-span-1">
           <PlayerStatsGrid
@@ -793,9 +789,8 @@ export default function MuridProfilePage() {
               </Button>
             </div>
             <div className="border-t border-bc-line p-5 space-y-2">
-              <button onClick={handleLogout} className="flex items-center gap-2 text-sm text-bc-danger hover:text-bc-danger dark:text-red-300 font-medium">
-                <LogOut size={16} /> Keluar
-              </button>
+              {/* Keluar netral (merah hanya untuk error), sama dengan Profil Guru. */}
+              <ArenaLogoutButton variant="settings" to="/login" />
             </div>
           </div>
         </div>

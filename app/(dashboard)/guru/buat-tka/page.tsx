@@ -58,7 +58,7 @@ export default function BuatTKAPage() {
       </div>
 
       {/* Step indicators */}
-      <div className="flex items-center gap-2 mb-8">
+      <div className="flex flex-wrap items-center gap-2 mb-8">
         {[1, 2, 3].map((s) => (
           <div key={s} className={`flex items-center gap-2 ${s > 1 ? "ml-2" : ""}`}>
             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= s ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-400"}`}>{s}</div>

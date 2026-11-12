@@ -165,7 +165,7 @@ export default function MysteryBoxPage() {
 
       {/* Siklus 7 hari */}
       <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Siklus 7 Hari</h2>
-      <div className="flex gap-2 mb-6">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-6">
         {BOX_SLOTS.map((box) => {
           const hariIni = status?.cycleDay === box.hari
           const sudahLewat = (status?.cycleDay ?? 1) > box.hari
@@ -175,7 +175,7 @@ export default function MysteryBoxPage() {
           return (
             <div
               key={box.hari}
-              className={`flex-1 flex flex-col items-center gap-1 p-2.5 rounded-xl border transition-all ${
+              className={`min-w-0 flex flex-col items-center gap-1 px-0.5 py-2 sm:p-2.5 rounded-xl border transition-all ${
                 selesai
                   ? "bg-gray-100 dark:bg-slate-800/80 border-gray-200 dark:border-slate-700 opacity-50"
                   : hariIni
@@ -183,7 +183,7 @@ export default function MysteryBoxPage() {
                     : "bg-gray-50 dark:bg-slate-800/60 border-gray-100 dark:border-slate-800"
               }`}
             >
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white ${
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br flex items-center justify-center text-white ${
                 selesai
                   ? "from-gray-300 to-gray-400"
                   : box.misteri

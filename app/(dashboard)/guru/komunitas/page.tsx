@@ -205,12 +205,12 @@ export default function KomunitasPage() {
   };
 
   return (
-    <div className="p-6 max-w-6xl mx-auto">
+    <div className="min-w-0 sm:p-6 max-w-6xl mx-auto">
       <div className="flex items-center gap-3 mb-6">
-        <Link aria-label="Kembali ke Beranda" href="/guru/beranda" className="p-2 hover:bg-slate-100 rounded-lg">
+        <Link aria-label="Kembali ke Beranda" href="/guru/beranda" className="shrink-0 p-2 hover:bg-slate-100 rounded-lg">
           <ChevronLeft className="w-5 h-5 text-slate-600" />
         </Link>
-        <div>
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
             <Users className="w-7 h-7 text-emerald-600" />
             Komunitas Guru
@@ -273,9 +273,9 @@ export default function KomunitasPage() {
             </Button>
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {communities.map((c) => (
-              <Link key={c.id} href={`/guru/komunitas/${c.id}`}>
+              <Link key={c.id} href={`/guru/komunitas/${c.id}`} className="block min-w-0">
                 <Card className="p-5 h-full hover:shadow-lg transition-all border border-slate-100 hover:border-emerald-200">
                   <div className="flex items-start gap-3 mb-3">
                     <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
@@ -285,37 +285,39 @@ export default function KomunitasPage() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <h3 className="font-bold text-slate-900 text-sm truncate">{c.name}</h3>
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <h3 className="min-w-0 font-bold text-slate-900 text-sm truncate" title={c.name}>{c.name}</h3>
                         {c.isVerified && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
                       </div>
-                      <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>
-                        {getTypeIcon(c.type)}
-                        {c.type}
-                      </span>
-                      {!c.creator && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-violet-100 text-violet-700 border-violet-200">
-                          Ruang BahasaCerdas
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        <span className={`inline-flex max-w-full items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>
+                          {getTypeIcon(c.type)}
+                          {c.type}
                         </span>
-                      )}
-                      {!c.isVerified && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-slate-100 text-slate-500 border-slate-200">
-                          Belum Terverifikasi
-                        </span>
-                      )}
-                      {c.isVerified && (
-                        <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-100 text-emerald-700 border-emerald-200">
-                          Terverifikasi
-                        </span>
-                      )}
+                        {!c.creator && (
+                          <span className="inline-flex max-w-full items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-violet-100 text-violet-700 border-violet-200">
+                            Ruang BahasaCerdas
+                          </span>
+                        )}
+                        {!c.isVerified && (
+                          <span className="inline-flex max-w-full items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-slate-100 text-slate-500 border-slate-200">
+                            Belum Terverifikasi
+                          </span>
+                        )}
+                        {c.isVerified && (
+                          <span className="inline-flex max-w-full items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-100 text-emerald-700 border-emerald-200">
+                            Terverifikasi
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                   {c.description && (
-                    <p className="text-xs text-slate-500 line-clamp-2 mb-3">{c.description}</p>
+                    <p className="text-xs text-slate-500 line-clamp-2 mb-3 [overflow-wrap:anywhere]">{c.description}</p>
                   )}
                   {c.province && (
-                    <div className="flex items-center gap-1 text-xs text-slate-400 mb-3">
-                      <MapPin className="w-3 h-3" />
+                    <div className="flex min-w-0 items-center gap-1 text-xs text-slate-400 mb-3">
+                      <MapPin className="w-3 h-3 shrink-0" />
                       {c.city ? `${c.city}, ${c.province}` : c.province}
                     </div>
                   )}
@@ -344,9 +346,9 @@ export default function KomunitasPage() {
         ) : (
           <div className="space-y-4">
             {myCommunities.map((c) => (
-              <Card key={c.id} className="p-5 border border-slate-100">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-3 flex-1">
+              <Card key={c.id} className="p-4 sm:p-5 border border-slate-100">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="flex min-w-0 items-start gap-3 flex-1">
                     <div className="relative w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 flex items-center justify-center text-white font-bold text-lg shrink-0 overflow-hidden">
                       <span className="relative z-0">{c.name.charAt(0)}</span>
                       {c.avatarUrl && (
@@ -355,30 +357,30 @@ export default function KomunitasPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <h3 className="font-bold text-slate-900">{c.name}</h3>
+                        <h3 className="min-w-0 max-w-full font-bold text-slate-900 [overflow-wrap:anywhere]">{c.name}</h3>
                         <span className={`inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border ${getTypeColor(c.type)}`}>{c.type}</span>
                         {c.status === "PENDING" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-amber-50 text-amber-700 border-amber-200">⏳ Menunggu Peninjauan</span>}
                         {c.status === "APPROVED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-emerald-50 text-emerald-700 border-emerald-200">✅ Disetujui</span>}
                         {c.status === "REJECTED" && <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full border bg-red-50 text-red-700 border-red-200">❌ Ditolak</span>}
                       </div>
-                      {c.description && <p className="text-sm text-slate-500 line-clamp-1">{c.description}</p>}
+                      {c.description && <p className="text-sm text-slate-500 line-clamp-1 [overflow-wrap:anywhere]">{c.description}</p>}
                       {c.status === "REJECTED" && c.reviewNote && (
                         <div className="mt-2 bg-red-50 border border-red-200 rounded-lg p-2">
                           <p className="text-xs font-medium text-red-700">Alasan Penolakan:</p>
-                          <p className="text-xs text-red-600 mt-0.5">{c.reviewNote}</p>
+                          <p className="text-xs text-red-600 mt-0.5 [overflow-wrap:anywhere]">{c.reviewNote}</p>
                         </div>
                       )}
-                      <div className="flex items-center gap-4 mt-2 text-xs text-slate-400">
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-xs text-slate-400">
                         <span>{c.memberCount} anggota</span>
                         <span>{c.postCount} postingan</span>
                         <span>{new Date(c.createdAt).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex shrink-0 items-center justify-end gap-2">
                     {c.status === "APPROVED" && (
                       <Link href={`/guru/komunitas/${c.id}`}>
-                        <Button size="sm" variant="outline" className="ml-4">Buka</Button>
+                        <Button size="sm" variant="outline">Buka</Button>
                       </Link>
                     )}
                     <button

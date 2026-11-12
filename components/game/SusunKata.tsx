@@ -257,6 +257,8 @@ function scrambleWord(word: string): string {
 }
 
 export default function SusunKataGame({ hideBackButton, backHref = "/arena/game" }: { hideBackButton?: boolean; backHref?: string }) {
+  // Dari dasbor Guru tombol kembali menuju menu gim Guru, bukan Arena.
+  const backLabel = backHref === "/arena/game" ? "Kembali ke Arena" : "Menu Gim";
   const [screen, setScreen] = useState<Screen>("start");
   const [saved, setSaved] = useState<Saved>({ unlocked: [1], best: {}, stars: {} });
   const [soundOn, setSoundOn] = useState(true);
@@ -497,7 +499,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
         <div className="relative max-w-xl mx-auto px-4 py-5 min-h-full flex flex-col">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <GameBackButton href="/arena/game" label="Kembali ke Arena" title="Kembali ke Arena" />
+              <GameBackButton href={backHref} label={backLabel} title={backLabel} />
               <div className={`sk-logo w-11 h-11 bg-[#10B981] rounded-2xl ${chunky} !shadow-[4px_4px_0_#D97706] flex items-center justify-center`}>
                 <Shuffle className="w-6 h-6 text-white" />
               </div>
@@ -738,7 +740,7 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
             <button onClick={() => setScreen("levels")} className={`${btnBase} w-full py-3.5 bg-[#FBBF24]`}>
               Pilih Tingkat
             </button>
-            {!hideBackButton && <GameBackButton href={backHref} label="Kembali ke Arena" title="Kembali ke Arena" />}
+            {!hideBackButton && <GameBackButton href={backHref} label={backLabel} title={backLabel} />}
           </div>
         </div>
       </div>

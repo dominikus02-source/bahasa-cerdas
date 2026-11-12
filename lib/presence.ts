@@ -14,22 +14,16 @@
  *  - Only aggregate role + coarse menu counts exposed to founder dashboard
  *
  * Scale:
- *  - Upstash REST (stateless HTTP, no connection pooling)
+ *  - Upstash REST when UPSTASH_REDIS_REST_* / KV_REST_API_* is set
+ *  - Otherwise REDIS_URL (redis:// / rediss://) on the production VPS
  *  - Current platform: <3,000 users, ~100 concurrent peak
- *  - Redis SCAN for aggregation is acceptable at current scale
+ *  - Redis KEYS/MGET for aggregation is acceptable at current scale
  *  - Future: Redis Sets or HyperLogLog if scale demands
  */
 
 import { Redis } from "@upstash/redis"
 import { labelForPresenceLocation } from "@/lib/presence-location"
-
-const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
-const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
-
-const isValidRedisUrl = (v: string | undefined): v is string =>
-  !!v && v.startsWith("https://")
-
-const redis = isValidRedisUrl(url) && token ? new Redis({ url, token }) : null
+import { hasUpstashConfig, standaloneKv } from "@/lib/redis-standalone"
 
 // ─── Constants ───────────────────────────────────────────────
 const PRESENCE_TTL_SECONDS = 60
@@ -42,6 +36,59 @@ interface PresenceValue {
   r: PresenceRole
   p?: string
 }
+
+type PresenceStore = {
+  set: (key: string, value: PresenceValue, ttl: number) => Promise<void>
+  get: (key: string) => Promise<PresenceValue | null>
+  del: (key: string) => Promise<void>
+  keys: (pattern: string) => Promise<string[]>
+  mget: (keys: string[]) => Promise<(PresenceValue | null)[]>
+}
+
+function parsePresence(raw: unknown): PresenceValue | null {
+  if (!raw) return null
+  try {
+    const value = typeof raw === "string" ? JSON.parse(raw) as unknown : raw
+    if (!value || typeof value !== "object") return null
+    return value as PresenceValue
+  } catch {
+    return null
+  }
+}
+
+function upstashStore(): PresenceStore {
+  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
+  const client = new Redis({ url: url!, token: token! })
+  return {
+    async set(key, value, ttl) { await client.set(key, value, { ex: ttl }) },
+    async get(key) { return parsePresence(await client.get(key)) },
+    async del(key) { await client.del(key) },
+    async keys(pattern) { return client.keys(pattern) },
+    async mget(keys) {
+      const values = await client.pipeline().mget(...keys).exec<unknown[]>()
+      return values.map(parsePresence)
+    },
+  }
+}
+
+function standaloneStore(): PresenceStore {
+  return {
+    async set(key, value, ttl) { await standaloneKv.set(key, JSON.stringify(value), ttl) },
+    async get(key) { return parsePresence(await standaloneKv.get(key)) },
+    async del(key) { await standaloneKv.del(key) },
+    async keys(pattern) { return standaloneKv.keys(pattern) },
+    async mget(keys) { return (await standaloneKv.mget(keys)).map(parsePresence) },
+  }
+}
+
+function getPresenceStore(): PresenceStore | null {
+  if (hasUpstashConfig()) return upstashStore()
+  if (standaloneKv.available()) return standaloneStore()
+  return null
+}
+
+const redis = getPresenceStore()
 
 export interface PresenceLocationBreakdown {
   key: string
@@ -75,7 +122,7 @@ export async function setPresence(
   try {
     const key = `${PRESENCE_KEY_PREFIX}${userId}`
     const value: PresenceValue = locationKey ? { r: role, p: locationKey } : { r: role }
-    await redis.set(key, value, { ex: PRESENCE_TTL_SECONDS })
+    await redis.set(key, value, PRESENCE_TTL_SECONDS)
     return true
   } catch {
     return false
@@ -95,7 +142,7 @@ export async function getOnlineUsers(): Promise<OnlineBreakdown> {
     if (keys.length === 0) return { ...empty, available: true }
 
     // Pipeline MGET to fetch all values in one round trip
-    const values = await redis.pipeline().mget(...keys).exec<PresenceValue[]>()
+    const values = await redis.mget(keys)
 
     let guru = 0
     let murid = 0
@@ -150,7 +197,7 @@ export async function isUserOnline(userId: string): Promise<boolean> {
   if (!redis) return false
   try {
     const key = `${PRESENCE_KEY_PREFIX}${userId}`
-    const val = await redis.get<PresenceValue>(key)
+    const val = await redis.get(key)
     return val !== null
   } catch {
     return false
@@ -183,5 +230,6 @@ export async function getTotalKaryaCount(): Promise<number> {
 export function isPresenceAvailable(): boolean {
   return redis !== null
 }
+
 
 export { PRESENCE_TTL_SECONDS }

@@ -118,7 +118,7 @@ export default function FiturPage() {
 
       <section className="py-16 lg:py-20 bg-white">
         <div className="section-container">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-6">
             {features.map((f) => {
               const Icon = f.icon;
               return (

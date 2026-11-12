@@ -5,7 +5,13 @@
  * kontrol host), Undang, Laporkan. Desktop: panel samping. Mobile: sheet.
  */
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { useParticipants } from "@livekit/components-react";
+import { useParticipants as useAllParticipants } from "@livekit/components-react";
+import { isScreenIdentity } from "@/lib/jumpa/screen-identity";
+
+/** Peserta manusia saja: identitas layar Android disembunyikan dari daftar/laporan. */
+function useParticipants() {
+  return useAllParticipants().filter((p) => !isScreenIdentity(p.identity));
+}
 import type { Participant } from "livekit-client";
 import {
   Check,

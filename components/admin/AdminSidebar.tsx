@@ -1,17 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import {
   ShoppingBag, Film, FileText, Users, LogOut, Settings,
   ChevronRight, BarChart3, Briefcase, MessageCircle, Presentation,
   Bell, BellRing, X, Coins, DollarSign, Database, Activity, Wallet,
   TrendingUp, Trophy, LineChart, ShieldAlert, ShieldCheck,
-  Crown, Target, ChevronDown, Bot, ScrollText,
+  Crown, Target, ChevronDown, Bot, ScrollText, BookOpen,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { leaveAccount } from "@/lib/auth/leave-account";
 import {
   NAV_ICON_CLASS, NAV_ICON_STROKE, NAV_ICON_ACTIVE, NAV_ICON_INACTIVE,
   NAV_LINK_BASE, NAV_LINK_ACTIVE, NAV_LINK_INACTIVE, ACTION_ICON_CLASS,
@@ -50,7 +50,7 @@ function isItem(e: NavEntry): e is NavItem {
  * 1. Control Tower       — standalone, founder intelligence
  * 2. BC Agent            — standalone, founder operations agent
  * 3. Pengguna            — standalone, user management
- * 4. Premium & Revenue   — business/financial intelligence
+ * 4. Keuangan             — business/financial intelligence
  * 5. Content             — content management (group)
  * 6. Learning & Analytics — product learning analytics (group)
  * 7. AI & Platform       — AI usage diagnostics (group)
@@ -68,13 +68,15 @@ const NAV: NavEntry[] = [
 
   // ── 4. Business / financial intelligence ──
   {
-    label: "Premium & Revenue",
-    icon: Crown,
+    label: "Keuangan",
+    icon: DollarSign,
     items: [
+      { label: "Keuangan", href: "/admin/keuangan", icon: DollarSign },
       { label: "Premium Report", href: "/admin/premium", icon: Crown },
       { label: "Pembayaran", href: "/admin/payments", icon: DollarSign },
       { label: "Payout Kontrol", href: "/admin/teacher-payouts", icon: ShieldCheck },
       { label: "Penarikan Saldo", href: "/admin/withdrawals", icon: Wallet },
+      { label: "Buku Kas", href: "/admin/keuangan/buku-kas", icon: BookOpen },
       { label: "Risiko Guru", href: "/admin/teacher-risk", icon: ShieldAlert },
     ],
   },
@@ -146,8 +148,6 @@ interface Props {
 
 export function AdminSidebar({ user }: Props) {
   const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
   const [notifs, setNotifs] = useState<any[]>([]);
   const [unread, setUnread] = useState(0);
   const [showNotifs, setShowNotifs] = useState(false);
@@ -212,8 +212,7 @@ export function AdminSidebar({ user }: Props) {
   };
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push("/login");
+    await leaveAccount("/login");
   };
 
   return (
@@ -224,7 +223,7 @@ export function AdminSidebar({ user }: Props) {
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center text-white font-bold text-sm shrink-0">BC</div>
           <div className="min-w-0">
             <p className="shell-label font-bold text-slate-900 text-sm truncate dark:text-white">Panel Admin</p>
-            <p className="shell-label text-[10px] text-slate-400">Founder</p>
+            <p className="shell-label text-[11px] text-bc-text-2">Founder</p>
           </div>
         </Link>
       </div>

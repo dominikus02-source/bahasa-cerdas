@@ -1,14 +1,16 @@
-import { Building2, Copyright, Globe, FileText, Mail } from "lucide-react";
+import { Building2, Copyright, FileText, Mail } from "lucide-react";
+
+const OFFICE_ADDRESS =
+  "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950";
 
 const legalCards = [
   {
     icon: Building2,
     title: "Badan Usaha",
     lines: [
-      "CV Obah Mamah",
-      "Nama dagang: Teras Kata",
-      "Kedudukan: Tangerang, Banten",
-      "NIB 1217000151443",
+      "BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia",
+      OFFICE_ADDRESS,
+      "NIB 0911260094193",
     ],
   },
   {
@@ -26,26 +28,20 @@ const legalCards = [
     title: "Pencipta & Pemegang Hak Cipta",
     lines: [
       "Pencipta: Dominikus Wahyu Heru Cahyadi",
-      "Pemegang Hak Cipta: CV Obah Mamah",
+      "Pemegang Hak Cipta: PT Bahasa Cerdas Indonesia",
       "Pertama kali diumumkan: 3 Maret 2026",
       "Tempat: Kabupaten Tangerang · Status: Tercatat",
-    ],
-  },
-  {
-    icon: Globe,
-    title: "Layanan Resmi",
-    lines: [
-      "bahasacerdas.com — ekosistem utama",
-      "bahasacerdas.site — BIGT (Tes Global Bahasa Indonesia)",
-      "Aplikasi Android: BahasaCerdas",
-      "Tersedia untuk guru, murid, dan sekolah",
     ],
   },
 ];
 
 export default function AboutLegal() {
   return (
-    <section className="py-16 lg:py-20 bg-white" aria-labelledby="about-legal-heading">
+    <section
+      id="legalitas"
+      className="py-16 lg:py-20 bg-white scroll-mt-24"
+      aria-labelledby="about-legal-heading"
+    >
       <div className="section-container">
         <div className="text-center max-w-3xl mx-auto mb-12 lg:mb-16">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
@@ -55,12 +51,11 @@ export default function AboutLegal() {
             Dikelola secara <span className="text-primary">terbuka dan tercatat.</span>
           </h2>
           <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            BahasaCerdas dikembangkan oleh badan usaha yang sah, dengan
-            pencatatan kekayaan intelektual atas platform.
+            BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia.
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-6 max-w-5xl mx-auto mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mb-10">
           {legalCards.map((c) => {
             const Icon = c.icon;
             return (
@@ -74,7 +69,7 @@ export default function AboutLegal() {
                 <h3 className="text-lg font-bold text-zinc-900 mb-3">{c.title}</h3>
                 <ul className="space-y-2">
                   {c.lines.map((line) => (
-                    <li key={line} className="flex items-start gap-2 text-sm text-zinc-600 leading-relaxed">
+                    <li key={line} className="flex min-w-0 items-start gap-2 break-words text-sm leading-relaxed text-zinc-600">
                       <span className="mt-2 w-1.5 h-1.5 rounded-full bg-primary shrink-0" aria-hidden="true" />
                       {line}
                     </li>
@@ -93,7 +88,7 @@ export default function AboutLegal() {
           </p>
           <a
             href="mailto:halo@bahasacerdas.com"
-            className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded-lg px-3 py-2"
+            className="mt-4 inline-flex max-w-full min-w-0 items-center gap-2 break-all px-3 py-2 text-sm font-semibold text-primary transition-colors hover:text-primary-dark focus-ring rounded-lg"
             aria-label="Kirim email ke halo@bahasacerdas.com"
           >
             <Mail size={16} aria-hidden="true" />

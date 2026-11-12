@@ -2,8 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { accountContext, reauthenticate, validatePassword, readAccountBody, accountFailure, AccountError } from "@/lib/account/security";
 
 export async function POST(req: NextRequest) {
+  let userId: string | undefined;
   try {
     const { supabase, user } = await accountContext(req);
+    userId = user.id;
     const body = await readAccountBody(req);
     const newPassword = validatePassword(body.currentPassword, body.newPassword);
     const { verifier, cleanup } = await reauthenticate(user, body, supabase);
@@ -17,7 +19,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Password berhasil diubah. Silakan masuk kembali.", signOut: true });
     } finally { await cleanup(); }
   } catch (error) {
-    const failure = accountFailure(error);
+    const failure = accountFailure(error, { route: "account.password", userId });
     return NextResponse.json({ error: failure.error }, { status: failure.status });
   }
 }

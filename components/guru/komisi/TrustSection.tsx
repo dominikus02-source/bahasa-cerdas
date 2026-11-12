@@ -76,7 +76,7 @@ export function TrustSection({ classes }: { classes: KelasInfo[] }) {
       {/* Benefits */}
       <section aria-label="Mengapa Guru Cerdas Sejahtera" className="rounded-2xl bg-card border border-border p-4 lg:p-6">
         <h2 className="text-base font-semibold text-foreground">Mengapa Guru Cerdas Sejahtera?</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           {BENEFITS.map((b) => (
             <div key={b.title} className="rounded-xl bg-muted/40 p-4">
               <b.icon className="h-5 w-5 text-violet-600 dark:text-violet-400" />

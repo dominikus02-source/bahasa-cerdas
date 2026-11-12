@@ -46,7 +46,7 @@ export default function AboutWhyTeam() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
           {whyTeam.map((w) => {
             const Icon = w.icon;
             return (

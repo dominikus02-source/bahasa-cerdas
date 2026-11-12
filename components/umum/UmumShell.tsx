@@ -3,7 +3,6 @@ import Image from "next/image";
 import type { ReactNode } from "react";
 import { Bell } from "lucide-react";
 import { db } from "@/lib/db";
-import { BRAND_ICON, BRAND_ICON_DARK } from "@/lib/brand";
 import {
   UmumMobileBottomNav,
   UmumSidebarNav,
@@ -11,6 +10,7 @@ import {
 import { UmumAvatar } from "@/components/umum/UmumAvatar";
 import { UmumAccountMenu, UmumSearch } from "@/components/umum/UmumTopBar";
 import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
+import { BrandMark } from "@/components/shared/BrandMark";
 
 export { UmumAvatar };
 
@@ -24,36 +24,7 @@ export interface UmumShellUser {
 }
 
 function Logo({ className = "" }: { className?: string }) {
-  return (
-    <Link
-      href="/umum"
-      className={`flex min-w-0 items-center gap-2.5 rounded-bc-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-bc-focus ${className}`}
-      aria-label="Beranda dasbor BahasaCerdas"
-    >
-      <Image
-        src={BRAND_ICON_DARK}
-        alt=""
-        width={40}
-        height={40}
-        className="h-10 w-10 shrink-0 object-contain dark:hidden"
-      />
-      <Image
-        src={BRAND_ICON}
-        alt=""
-        width={40}
-        height={40}
-        className="hidden h-10 w-10 shrink-0 object-contain dark:inline"
-      />
-      <span className="min-w-0">
-        <span className="block truncate text-[17px] font-extrabold leading-tight tracking-tight text-bc-text">
-          BahasaCerdas
-        </span>
-        <span className="block truncate text-xs text-bc-text-3">
-          Dunia Bahasa Indonesia
-        </span>
-      </span>
-    </Link>
-  );
+  return <BrandMark href="/umum" className={className} />;
 }
 
 /** Lonceng → /umum/notifikasi, titik merah hanya bila ada notifikasi belum dibaca (data nyata). */

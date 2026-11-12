@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import "./globals.css";
+import "./android-app.css";
 import { Providers } from "./providers";
+import { publicPeopleLd } from "@/lib/json-ld";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
@@ -69,11 +71,24 @@ const jsonLdOrganization = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
   "@id": `${SITE_URL}/#organization`,
-  name: SITE_NAME,
+  name: "PT Bahasa Cerdas Indonesia",
+  legalName: "PT Bahasa Cerdas Indonesia",
+  alternateName: "BahasaCerdas",
   url: SITE_URL,
   description: "Platform edukasi Bahasa Indonesia lengkap dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
   logo: `${SITE_URL}/brand/bc2026-icon.png`,
-  foundingDate: "2024",
+  foundingDate: "2026-11-05",
+  identifier: "0911260094193",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
+    addressLocality: "Jakarta Selatan",
+    addressRegion: "DKI Jakarta",
+    postalCode: "12950",
+    addressCountry: "ID",
+  },
+  brand: { "@type": "Brand", name: "BahasaCerdas" },
+  member: publicPeopleLd(),
   areaServed: { "@type": "Country", name: "ID" },
   knowsLanguage: "id",
   email: "halo@bahasacerdas.com",
@@ -107,6 +122,9 @@ const jsonLdWebsite = {
   },
 };
 
+const ANDROID_APP_BOOT =
+  "(function(){try{if('BahasaCerdasMobile' in window){var h=document.documentElement;h.classList.add('bc-android-app');h.setAttribute('data-bc-native-styles','1');}}catch(e){}})();";
+
 export default async function RootLayout({
   children,
 }: {
@@ -127,6 +145,14 @@ export default async function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        {/* Boot aplikasi Android: tandai <html> sebelum render bila jembatan
+            native ada, agar gaya aplikasi berasal dari source (android-app.css)
+            dan aplikasi melewati injeksi CSS/DOM lama. Tanpa data pengguna. */}
+        <script
+          nonce={nonce}
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: ANDROID_APP_BOOT }}
+        />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Arena BC" />

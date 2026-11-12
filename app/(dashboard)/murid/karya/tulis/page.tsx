@@ -240,10 +240,10 @@ function TulisKaryaForm() {
               </div>
             </div>
 
-            <div className="grid gap-4 p-5 md:grid-cols-[1.1fr_.9fr] md:p-6">
+            <div className="grid grid-cols-1 gap-4 p-5 md:grid-cols-[1.1fr_.9fr] md:p-6">
               <div>
                 <p className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-bc-text-3">Yang perlu kamu ingat</p>
-                <div className="grid gap-2 sm:grid-cols-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {guide.points.map((point) => (
                     <div key={point} className="rounded-2xl border border-bc-line bg-bc-surface-2/80 p-3">
                       <div className="flex gap-2">

@@ -1,0 +1,144 @@
+/**
+ * FIXTURE QA VISUAL LOKAL — data PALSU berlabel "QA".
+ * Hanya dikompilasi bila BC_QA_FIXTURE=1 (pageExtensions "qa.tsx" di
+ * next.config.ts) dan tidak pernah di build produksi. Tidak ada bypass
+ * autentikasi/RBAC: komponen tampilan dirender langsung dengan props contoh;
+ * setiap panggilan API dari komponen tetap ditolak server (tanpa sesi).
+ */
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import { ArenaHeader } from "@/components/arena/ArenaHeader";
+import { GuruHeader } from "@/components/shell/GuruHeader";
+import { GuruMobileNav } from "@/components/dashboard/GuruNav";
+import { ShellLayout } from "@/components/shell/ShellLayout";
+import { MuridShellFrame } from "@/components/shell/MuridShellFrame";
+import { FOUNDER_DASHBOARD_EMAILS } from "@/lib/auth/founder-access";
+import { levelFromXp } from "@/lib/gamification/levels";
+import { rankFromLevel } from "@/lib/gamification/ranks";
+import LoginPage from "@/app/(auth)/login/page";
+import { QaControls } from "../QaControls";
+import { QaPathname } from "../QaPathname";
+import { QaClientPage } from "../QaClientPage";
+import { AdminSidebar } from "@/components/admin/AdminSidebar";
+import AdminMobileNav from "@/components/admin/AdminMobileNav";
+import { BackHome } from "@/components/shared/BackHome";
+import { ThemeToggle } from "@/components/theme/theme-toggle";
+import { FounderDashboardSwitcher } from "@/components/shared/FounderDashboardSwitcher";
+import "@/components/admin/admin-mobile.css";
+
+export const dynamic = "force-dynamic";
+
+const rank = rankFromLevel(levelFromXp(1800));
+const founderEmail = FOUNDER_DASHBOARD_EMAILS[0] ?? null;
+
+function QaContent({ label }: { label: string }) {
+  return (
+    <div className="space-y-3" data-qa-content>
+      <p className="rounded-xl border border-bc-line bg-bc-surface p-3 text-sm font-bold text-bc-text">QA FIXTURE — {label} (data palsu)</p>
+      {Array.from({ length: 6 }, (_, i) => (
+        <div key={i} className="rounded-xl border border-bc-line bg-bc-surface p-4 text-sm text-bc-text-2">
+          Kartu contoh QA #{i + 1}: teks panjang untuk memeriksa pemotongan, pembungkusan, dan overflow horizontal di layar sempit.
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | undefined>> }) {
+  if (process.env.NODE_ENV === "production" || process.env.BC_QA_FIXTURE !== "1") notFound();
+  const q = await searchParams;
+  const view = q.view ?? "guru-founder";
+  const theme = q.theme === "dark" ? "dark" : "light";
+  const app = q.app !== "0";
+  const font = Math.min(200, Math.max(80, Number(q.font) || 100));
+  // Jalur yang disimulasikan untuk usePathname() (hanya jalur internal relatif).
+  const path = q.path && /^\/[a-z0-9\-/]*$/.test(q.path) ? q.path : null;
+  const controls = <QaControls theme={theme} app={app} font={font} />;
+
+  if (view === "guru-founder" || view === "guru") {
+    const isFounder = view === "guru-founder";
+    const user = { fullName: isFounder ? "QA Founder Palsu" : "QA Guru Palsu", avatar: null, email: isFounder ? founderEmail : "qa-guru@example.invalid", isFounder, isPremium: false, badgeKind: null, level: 12 };
+    return (
+      <>
+        {controls}
+        <QaPathname pathname={path ?? "/guru/beranda"}>
+        <ShellLayout
+          rootClassName="bc-guru-shell ui-app-bg"
+          header={<GuruHeader user={user} rank={rank} />}
+          mainClassName="bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+          bottomNav={<GuruMobileNav role="GURU" isFounder={isFounder} />}
+        >
+          <QaContent label={isFounder ? "Founder di peran Guru" : "Guru biasa"} />
+        </ShellLayout>
+        </QaPathname>
+      </>
+    );
+  }
+  if (view === "murid" || view === "murid-founder") {
+    const isFounder = view === "murid-founder";
+    return (
+      <>
+        {controls}
+        <QaPathname pathname={path ?? "/murid/beranda"}>
+        <MuridShellFrame user={{ fullName: isFounder ? "QA Founder Palsu" : "QA Murid Palsu", avatar: null, role: isFounder ? "GURU" : "MURID", isFounder, email: isFounder ? founderEmail : "qa-murid@example.invalid" }} rank={rank}>
+          <QaContent label={isFounder ? "Founder di peran Murid" : "Murid biasa"} />
+        </MuridShellFrame>
+        </QaPathname>
+      </>
+    );
+  }
+  if (view === "arena") {
+    return <>{controls}<QaPathname pathname={path ?? "/arena"}><ShellLayout
+      header={<ArenaHeader fullName="QA Murid Palsu" avatar={null} homeHref="/murid/beranda" />}
+      mainClassName="p-3"><QaContent label="Arena (header asli)" /></ShellLayout></QaPathname></>;
+  }
+  // Halaman klien asli dalam shell asli; API dimock oleh skrip audit (tanpa sesi).
+  // `route` = kunci registri (boleh berisi [param]); pathname = segmen diisi "qa-1".
+  const route = q.route && /^\/[a-zA-Z0-9\-/\[\]]*$/.test(q.route) ? q.route : null;
+  if (view === "page" && route) {
+    const pathname = route.replace(/\[[^\]]+\]/g, "qa-1");
+    const page = <QaClientPage route={route} />;
+    if (route.startsWith("/guru/")) {
+      const user = { fullName: "QA Guru Palsu", avatar: null, email: "qa-guru@example.invalid", isFounder: false, isPremium: false, badgeKind: null, level: 12 };
+      return (<>{controls}<QaPathname pathname={pathname}><ShellLayout
+        rootClassName="bc-guru-shell ui-app-bg"
+        header={<GuruHeader user={user} rank={rank} />}
+        mainClassName="bc-guru flex-1 px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-6 lg:py-8 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+        bottomNav={<GuruMobileNav role="GURU" isFounder={false} />}
+      >{page}</ShellLayout></QaPathname></>);
+    }
+    if (route.startsWith("/murid/")) {
+      return (<>{controls}<QaPathname pathname={pathname}>
+        <MuridShellFrame user={{ fullName: "QA Murid Palsu", avatar: null, role: "MURID", isFounder: false, email: "qa-murid@example.invalid" }} rank={rank}>
+          {page}
+        </MuridShellFrame></QaPathname></>);
+    }
+    if (route.startsWith("/admin")) {
+      // Replika markup app/(dashboard)/admin/layout.tsx (layout server butuh sesi).
+      const user = { fullName: "QA Founder Palsu", avatar: null, email: founderEmail, isFounder: true };
+      return (<>{controls}<QaPathname pathname={pathname}><ShellLayout
+        rootClassName="bg-slate-50 dark:bg-slate-950" /* warna-izin: replika fixture QA dari app/(dashboard)/admin/layout.tsx */
+        mainClassName="bc-admin min-w-0 flex-1 px-4 md:px-6 py-6 pb-24 md:pb-8 mx-auto max-w-[1440px] w-full"
+        sidebar={<AdminSidebar user={{ fullName: user.fullName, avatar: user.avatar }} />}
+        header={
+          <header className="shrink-0 sticky top-0 z-30 flex items-center justify-between gap-2 px-4 md:px-6 h-14 bg-white/80 backdrop-blur-xl border-b border-gray-100/50 dark:bg-slate-900/80 dark:border-slate-800" /* warna-izin: replika fixture QA dari app/(dashboard)/admin/layout.tsx */>
+            <div className="flex items-center gap-2 min-w-0"><BackHome href="/admin" /></div>
+            <div className="flex items-center gap-2"><FounderDashboardSwitcher user={user} compact /><ThemeToggle /></div>
+          </header>
+        }
+        bottomNav={<AdminMobileNav />}
+      >{page}</ShellLayout></QaPathname></>);
+    }
+    // Rute tanpa shell dasbor (auth, publik, kompetisi, profil): render apa adanya.
+    return (<>{controls}<QaPathname pathname={pathname}>{page}</QaPathname></>);
+  }
+  if (view === "login") {
+    return (
+      <>
+        {controls}
+        <QaPathname pathname="/login"><Suspense fallback={null}><LoginPage /></Suspense></QaPathname>
+      </>
+    );
+  }
+  notFound();
+}

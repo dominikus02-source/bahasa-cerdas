@@ -2,6 +2,7 @@ import { createClient as createIsolatedClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/security";
 import type { NextRequest } from "next/server";
+import { isAllowedOrigin, normalizeOrigin } from "@/lib/http/origin";
 
 export class AccountError extends Error {
   constructor(message: string, public status = 400) { super(message); }
@@ -12,8 +13,13 @@ export function validatePassword(current: unknown, next: unknown) {
   return next;
 }
 export async function accountContext(req: NextRequest) {
-  const origin = req.headers.get("origin");
-  if (!origin || origin !== req.nextUrl.origin) throw new AccountError("Permintaan tidak valid. Muat ulang halaman.", 403);
+  // Standalone servers report their bind address (0.0.0.0) as nextUrl.origin, so
+  // the Origin header is checked against an exact allowlist instead.
+  if (!isAllowedOrigin(req)) {
+    const origin = normalizeOrigin(req.headers.get("origin"));
+    console.warn(`[account] origin rejected path=${req.nextUrl.pathname} origin=${origin ?? "missing-or-invalid"}`);
+    throw new AccountError("Permintaan tidak valid. Muat ulang halaman.", 403);
+  }
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
   if (error || !user?.email) throw new AccountError("Silakan masuk kembali.", 401);
@@ -51,7 +57,11 @@ export async function reauthenticate(user: { id: string; email?: string }, body:
   }
   return { verifier, session: result.data.session, cleanup: async () => { await verifier.auth.signOut({ scope: "local" }); } };
 }
-export function accountFailure(error: unknown) {
+/** Maps an error to a safe response. Logs only ids and error codes, never emails or tokens. */
+export function accountFailure(error: unknown, context: { route?: string; userId?: string } = {}) {
+  const where = `route=${context.route ?? "unknown"} user=${context.userId ?? "unknown"}`;
+  if (!(error instanceof AccountError)) console.error(`[account] unexpected failure ${where} error=${describeError(error)}`);
+  else if (error.status >= 500) console.error(`[account] failure ${where} status=${error.status}`);
   return { error: error instanceof AccountError ? error.message : "Layanan akun sedang bermasalah. Silakan coba lagi.", status: error instanceof AccountError ? error.status : 500 };
 }
 
@@ -63,4 +73,11 @@ export async function readAccountBody(req: NextRequest): Promise<Record<string, 
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new Error("invalid");
     return body as Record<string, unknown>;
   } catch { throw new AccountError("Data permintaan tidak valid."); }
+}
+
+/** Error name/code only: messages from Auth/DB clients may contain emails. */
+export function describeError(error: unknown): string {
+  if (!error || typeof error !== "object") return typeof error;
+  const e = error as { name?: unknown; code?: unknown; status?: unknown };
+  return [e.name, e.code, e.status].filter(v => typeof v === "string" || typeof v === "number").join(":") || "unknown";
 }

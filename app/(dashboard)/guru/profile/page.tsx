@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import AccountSecurityPanel from "@/components/account/AccountSecurityPanel";
+import ArenaLogoutButton from "@/components/arena/LogoutButton";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
@@ -725,7 +726,7 @@ export default function GuruProfilePage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Heart size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400 italic max-w-xs">Ceritakan tentang dirimu sebagai guru untuk membantu murid mengenalmu lebih baik.</p>
               <button type="button" onClick={() => openSection("bio")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Tulis Sekarang</button>
             </div>
           )}
@@ -795,7 +796,7 @@ export default function GuruProfilePage() {
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-center">
               <Briefcase size={28} className="text-gray-300 dark:text-slate-600 mb-3" />
-              <p className="text-sm text-gray-400 dark:text-slate-500 italic max-w-xs">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400 italic max-w-xs">Lengkapi informasi profesional untuk memudahkan kolaborasi dengan guru lain.</p>
               <button type="button" onClick={() => openSection("professional")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Lengkapi Sekarang</button>
             </div>
           )}
@@ -845,7 +846,7 @@ export default function GuruProfilePage() {
             <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 rounded-full text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
               <CheckCircle2 size={13} /> Rekening penarikan aktif
             </span>
-            <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2 mt-2">
               <div className="flex items-start gap-3 py-1.5">
                 <span className="text-xs font-semibold text-gray-400 dark:text-slate-500 uppercase tracking-wide w-28 shrink-0 pt-0.5">Bank</span>
                 <span className="text-sm text-gray-800 dark:text-slate-200 font-medium">{BANK_OPTIONS.find((b) => b.value === profile.bank)?.label || profile.bank}</span>
@@ -865,7 +866,7 @@ export default function GuruProfilePage() {
           <div className="flex flex-col items-center justify-center py-8 text-center">
             <Wallet size={32} className="text-gray-300 dark:text-slate-600 mb-3" />
             <p className="text-sm font-medium text-gray-500 dark:text-slate-400">Rekening belum disiapkan</p>
-            <p className="text-sm text-gray-400 dark:text-slate-500 italic mt-1 max-w-xs">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
+            <p className="text-sm text-gray-500 dark:text-slate-400 italic mt-1 max-w-xs">Tambahkan rekening bank untuk menerima pembayaran dari penjualan karya.</p>
             <button type="button" onClick={() => openSection("rekening")} className="mt-3 text-sm text-emerald-600 hover:text-emerald-700 dark:text-emerald-400 dark:hover:text-emerald-300 font-semibold">Atur Rekening</button>
           </div>
         )}
@@ -875,6 +876,9 @@ export default function GuruProfilePage() {
       {/*  SECTION 4 — AKUN                                               */}
       {/* ═══════════════════════════════════════════════════════════════ */}
       <div className="mt-6"><AccountSecurityPanel /></div>
+      <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-2 dark:border-slate-800 dark:bg-slate-900" data-guru-profile-logout>
+        <ArenaLogoutButton variant="settings" to="/login" />
+      </div>
     </div>
   );
 }

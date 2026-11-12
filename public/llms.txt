@@ -1,10 +1,13 @@
 # BahasaCerdas — Platform Edukasi Bahasa Indonesia
 
 ## About
-BahasaCerdas is an Indonesian language education platform combining AI tools, interactive quizzes, teacher marketplace, and MGMP community. Built by teachers, for teachers.
+BahasaCerdas is an Indonesian language education platform for the general public, students, and teachers, combining AI tools, interactive quizzes, teacher marketplace, and MGMP community.
 
+Legal entity: PT Bahasa Cerdas Indonesia (NIB 0911260094193)
+Brand: BahasaCerdas
 Website: https://www.bahasacerdas.com
 Contact: halo@bahasacerdas.com
+About / legal: https://www.bahasacerdas.com/tentang
 
 ## Key Pages
 - Homepage: https://www.bahasacerdas.com

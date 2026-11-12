@@ -39,8 +39,8 @@ export default function AdminLokerPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-slate-100">Kelola Lowongan</h1>
           <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">Posting lowongan guru Bahasa Indonesia</p>
         </div>
@@ -50,7 +50,7 @@ export default function AdminLokerPage() {
       {showForm && (
         <Card className="p-6 mb-6 border-2 border-blue-100 dark:border-blue-900">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium mb-1">Judul Lowongan</label>
                 <input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="w-full rounded-lg border px-4 py-2 text-sm" required />

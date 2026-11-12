@@ -777,11 +777,11 @@ export default function GuruFeedKaryaPage() {
 
             <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
               <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><SchoolIcon size={15} className="text-emerald-600" /> Sekolah Paling Aktif</p>
-              {leaderboard.topSchools.length === 0 ? (
+              {(leaderboard.topSchools?.length ?? 0) === 0 ? (
                 <p className="text-xs text-gray-400">Belum ada data minggu ini.</p>
               ) : (
                 <div className="space-y-2.5">
-                  {leaderboard.topSchools.slice(0, 5).map((s: any) => (
+                  {(leaderboard.topSchools || []).slice(0, 5).map((s: any) => (
                     <div key={s.school} className="flex items-center gap-2.5">
                       <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${s.rank === 1 ? "bg-amber-100 text-amber-700" : s.rank === 2 ? "bg-slate-200 text-slate-600" : s.rank === 3 ? "bg-orange-100 text-orange-700" : "bg-gray-100 text-gray-500"}`}>{s.rank}</span>
                       <div className="flex-1 min-w-0">
@@ -808,11 +808,11 @@ export default function GuruFeedKaryaPage() {
                   ))}
                 </div>
               </div>
-              {leaderboard.leaderboard.length === 0 ? (
+              {(leaderboard.leaderboard?.length ?? 0) === 0 ? (
                 <p className="text-xs text-gray-400 py-4 text-center">Belum ada karya di lingkup ini minggu ini.</p>
               ) : (
                 <div className="space-y-2">
-                  {leaderboard.leaderboard.slice(0, 8).map((c: any) => (
+                  {(leaderboard.leaderboard || []).slice(0, 8).map((c: any) => (
                     <div key={c.user.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-gray-50 transition-colors">
                       <span className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${c.rank === 1 ? "bg-amber-400 text-white" : c.rank === 2 ? "bg-slate-400 text-white" : c.rank === 3 ? "bg-orange-400 text-white" : "bg-gray-100 text-gray-500"}`}>{c.rank}</span>
                       <div className="relative w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center text-violet-700 text-[10px] font-bold shrink-0">
@@ -835,11 +835,11 @@ export default function GuruFeedKaryaPage() {
 
             <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
               <p className="font-bold text-sm text-gray-900 flex items-center gap-2 mb-3"><Medal size={15} className="text-violet-500" /> Guru Penggerak Literasi</p>
-              {leaderboard.topTeachers.length === 0 ? (
+              {(leaderboard.topTeachers?.length ?? 0) === 0 ? (
                 <p className="text-xs text-gray-400">Belum ada karya dari kelasmu minggu ini.</p>
               ) : (
                 <div className="space-y-2.5">
-                  {leaderboard.topTeachers.slice(0, 5).map((s: any) => (
+                  {(leaderboard.topTeachers || []).slice(0, 5).map((s: any) => (
                     <div key={s.school} className="flex items-center gap-2.5">
                       <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${s.rank === 1 ? "bg-violet-100 text-violet-700" : "bg-gray-100 text-gray-500"}`}>{s.rank}</span>
                       <div className="flex-1 min-w-0">

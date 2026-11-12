@@ -34,8 +34,10 @@ export interface IdentityCompany {
   legalName: string;
   /** Trade name / brand of the legal entity. */
   tradeName: string;
-  /** Public location — city + province only (privacy rule: no street address). */
+  /** Public location — city + province. */
   location: string;
+  /** Public office address shown on /tentang and Syarat. */
+  officeAddress: string;
   /** National Business Identification Number (NIB). */
   nib: string;
   /** Official product name. */
@@ -100,10 +102,12 @@ export interface IdentityAnswerTemplates {
 
 export const BAHASA_CERDAS_IDENTITY = {
   company: {
-    legalName: "CV Obah Mamah",
-    tradeName: "Teras Kata",
-    location: "Tangerang, Banten",
-    nib: "1217000151443",
+    legalName: "PT Bahasa Cerdas Indonesia",
+    tradeName: "BahasaCerdas",
+    location: "Jakarta Selatan, DKI Jakarta",
+    officeAddress:
+      "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950",
+    nib: "0911260094193",
     product: "BahasaCerdas",
   } satisfies IdentityCompany,
 
@@ -117,27 +121,31 @@ export const BAHASA_CERDAS_IDENTITY = {
   team: [
     {
       name: "Alexander Suryanta",
-      role: "Co-Founder & Head of Content",
+      role: "Co-Founder & CLO (Chief Learning Officer)",
       summary:
         "Praktisi pengajaran Bahasa Indonesia sejak 1991 (35+ tahun), penulis SOS Bahasa Indonesia untuk SPK Santa Laurensia, buku teks bahasa Indonesia Erlangga sejak 1999, serta seri Bupena dan Fokus AKM.",
     },
     {
-      name: "Washadi, S.Pd., M.M.",
-      role: "Co-Founder & Head of Community",
-      summary:
-        "Ketua MGMP Bahasa Indonesia Tangerang Selatan, dosen Universitas Pamulang, dan penulis.",
+      name: "Sugeng Riyanto",
+      role: "CTO",
+      summary: "Chief Technology Officer BahasaCerdas.",
+    },
+    {
+      name: "Soleh Ahmad Nugraha",
+      role: "CBO",
+      summary: "Chief Business Officer BahasaCerdas.",
     },
   ] satisfies IdentityPerson[],
 
   advisors: [
     {
-      name: "Melany K. Gigir, S.Pd., M.S.",
-      role: "Dewan Penasihat (Member of Board of Advisors)",
-      summary: "Profesi: Head of School.",
+      name: "Melany Kusumawati",
+      role: "Advisor",
+      summary: "Advisor BahasaCerdas.",
     },
     {
       name: "Dr. B. Widharyanto, M.Pd.",
-      role: "Validator Akademik (Academic Validator)",
+      role: "Advisor",
       summary: "Dosen Universitas Sanata Dharma.",
     },
   ] satisfies IdentityPerson[],
@@ -175,11 +183,11 @@ export const BAHASA_CERDAS_IDENTITY = {
 
   answerTemplates: {
     founder:
-      "Founder dan CEO BahasaCerdas adalah Dominikus Wahyu Heru Cahyadi — eks guru Bahasa Indonesia (±10 tahun) yang merancang arsitektur platform, mengembangkan aplikasi (full-stack dan AI), dan aktif menulis (Amazon KDP). BahasaCerdas sendiri dikembangkan di bawah badan usaha CV Obah Mamah.",
+      "Founder dan CEO BahasaCerdas adalah Dominikus Wahyu Heru Cahyadi — eks guru Bahasa Indonesia (±10 tahun) yang merancang arsitektur platform, mengembangkan aplikasi (full-stack dan AI), dan aktif menulis (Amazon KDP). BahasaCerdas sendiri dikembangkan oleh PT Bahasa Cerdas Indonesia.",
     company:
-      "BahasaCerdas dikembangkan di bawah CV Obah Mamah, dengan nama dagang Teras Kata, berkedudukan di Tangerang, Banten. Nomor Induk Berusaha (NIB): 1217000151443. Produk resminya bernama BahasaCerdas.",
+      "BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia, beralamat di CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950. NIB: 0911260094193. Produk resminya bernama BahasaCerdas.",
     copyright:
-      "BahasaCerdas — Platform Pembelajaran Bahasa Indonesia Berbasis Kecerdasan Buatan (Program Komputer) telah dicatatkan pada Direktorat Jenderal Kekayaan Intelektual dengan nomor pencatatan 001326318. Permohonan diajukan dengan nomor EC002026106361 pada 6 Juli 2026, dengan pencipta Dominikus Wahyu Heru Cahyadi dan pemegang hak cipta CV Obah Mamah.",
+      "BahasaCerdas — Platform Pembelajaran Bahasa Indonesia Berbasis Kecerdasan Buatan (Program Komputer) telah dicatatkan pada Direktorat Jenderal Kekayaan Intelektual dengan nomor pencatatan 001326318. Permohonan diajukan dengan nomor EC002026106361 pada 6 Juli 2026, dengan pencipta Dominikus Wahyu Heru Cahyadi dan pemegang hak cipta PT Bahasa Cerdas Indonesia.",
     unsure:
       "Informasi resmi yang saya miliki mengenai hal tersebut belum tersedia.",
   } satisfies IdentityAnswerTemplates,
@@ -204,19 +212,18 @@ export function buildBahasaCerdasIdentityInstruction(): string {
     ``,
     `### Badan Usaha`,
     `- Badan usaha: ${company.legalName}`,
-    `- Nama dagang: ${company.tradeName}`,
+    `- Merek/produk: ${company.product}`,
     `- Lokasi publik: ${company.location}`,
+    `- Alamat kantor publik: ${company.officeAddress}`,
     `- NIB: ${company.nib}`,
-    `- Produk: ${company.product}`,
+    `- JANGAN menyebut nomor akta, nama notaris, SK AHU, daftar klasifikasi baku lapangan usaha, skala usaha, atau NPWP. Jangan memakai gelar organ perseroan; gunakan hanya peran publik di bagian kepemimpinan.`,
     ``,
     `### Pendiri & Kepemimpinan`,
-    `- Founder & CEO: ${founder.name} — ${founder.summary}`,
-    `- Co-Founder & Head of Content: ${team[0].name} — ${team[0].summary}`,
-    `- Co-Founder & Head of Community: ${team[1].name} — ${team[1].summary}`,
-    `- Dewan Penasihat: ${advisors[0].name} (${advisors[0].role}. ${advisors[0].summary})`,
-    `- Validator Akademik: ${advisors[1].name} (${advisors[1].role}. ${advisors[1].summary})`,
-    `- JANGAN sebut co-founder, dewan penasihat, atau validator akademik sebagai "founder" atau "co-founder".`,
+    `- ${founder.role}: ${founder.name} — ${founder.summary}`,
+    ...team.map((person) => `- ${person.role}: ${person.name} — ${person.summary}`),
+    ...advisors.map((person) => `- ${person.role}: ${person.name} — ${person.summary}`),
     `- JANGAN menambahkan gelar, institusi, penghargaan, atau tanggung jawab yang tidak tertulis di sini.`,
+    `- JANGAN menyebut alamat rumah, NPWP, porsi saham, nomor HP, atau email pribadi.`,
     ``,
     `### Legalitas & Hak Cipta`,
     `- Hak cipta adalah PENCATATAN PROGRAM KOMPUTER, BUKAN PATEN. Jangan pernah menyebut "patent/paten".`,
@@ -246,7 +253,7 @@ export function buildBahasaCerdasIdentityInstruction(): string {
     `### Jika Tidak Ada Fakta Terverifikasi`,
     `- Untuk investor, pendanaan, valuasi, pendapatan, jumlah sekolah/pengguna, partnership, penghargaan, akreditasi, endorsement pemerintah, atau sertifikasi yang tidak disebut di atas, jawab: "${answerTemplates.unsure}"`,
     `- Jangan gunakan kata "sepertinya", "mungkin", atau membuat perkiraan sebagai fakta.`,
-    `- Jangan menyebut alamat lengkap, nomor HP, atau email pribadi siapa pun — cukup "${company.location}".`,
+    `- Jangan menyebut alamat rumah, nomor HP, atau email pribadi siapa pun. Alamat kantor publik yang boleh disebut hanya: "${company.officeAddress}".`,
     ``,
     `### Gaya`,
     `- Bahasa Indonesia yang baik dan benar (default untuk semua pengguna).`,

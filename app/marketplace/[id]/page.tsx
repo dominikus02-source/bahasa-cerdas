@@ -65,7 +65,7 @@ export default function MarketplaceDetailPage() {
           <ChevronLeft size={16} /> Kembali
         </button>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left - Images */}
           <div>
             <div className="bg-bc-surface rounded-2xl border border-bc-line p-4 shadow-sm">

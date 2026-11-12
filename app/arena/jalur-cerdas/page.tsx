@@ -70,7 +70,7 @@ export default async function JalurCerdasPage() {
             ← Arena
           </Link>
 
-          <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
               <div className="mb-3 flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-full bg-cyan-300/10 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200 ring-1 ring-cyan-200/15">
@@ -119,11 +119,11 @@ export default async function JalurCerdasPage() {
                   </div>
                 </div>
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-100/50">
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-blue-100/80">
                     Perjalananmu
                   </p>
                   <p className="mt-1 text-lg font-extrabold">
-                    {totalDone} <span className="text-blue-100/45">/ {totalUnits}</span>
+                    {totalDone} <span className="text-blue-100/75">/ {totalUnits}</span>
                   </p>
                   <p className="text-xs text-blue-100/60">unit selesai</p>
                 </div>
@@ -180,7 +180,7 @@ export default async function JalurCerdasPage() {
               Dari dasar sampai mahir
             </h2>
           </div>
-          <span className="text-xs font-bold text-slate-400">
+          <span className="text-xs font-bold text-slate-500">
             {totalDone}/{totalUnits} selesai
           </span>
         </div>

@@ -34,7 +34,7 @@ function buildCsp(nonce: string): string {
     // JUMPA: origin server media (wss + https) dari NEXT_PUBLIC_LIVEKIT_WS_URL,
     // default wss://jumpa.bahasacerdas.com — lib/jumpa/config.ts.
     "connect-src": ["'self'", ...livekitCspOrigins(), "https://*.supabase.co", "wss://*.supabase.co", "https://api.midtrans.com", "https://app.midtrans.com", "https://api.sandbox.midtrans.com", "https://app.sandbox.midtrans.com", "wss://game.bahasacerdas.com", "https://game.bahasacerdas.com", "wss://game-vps.bahasacerdas.com", "https://game-vps.bahasacerdas.com", "https://api.unsplash.com"],
-    "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com"],
+    "frame-src": ["'self'", "https://app.midtrans.com", "https://app.sandbox.midtrans.com", "https://www.youtube.com", "https://*.supabase.co", "https://view.officeapps.live.com", "https://appetize.io"],
     "worker-src": ["'self'", "blob:"],
     "object-src": ["'none'"],
     "base-uri": ["'self'"],
@@ -49,6 +49,13 @@ function buildCsp(nonce: string): string {
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // GoTrue mengalihkan ke SITE_URL ("/") bila state OAuth kedaluwarsa/tidak
+  // ditemukan (redirect_to asli tidak diketahui). Arahkan ke login dengan kode
+  // tetap; teks error dari URL tidak diteruskan (tidak ada open redirect).
+  if (pathname === "/" && request.nextUrl.searchParams.get("error_code") === "bad_oauth_state") {
+    return NextResponse.redirect(new URL("/login?error=google_expired", request.url));
+  }
 
   // Rate limit /api/ai/* routes in middleware (30 req/min blanket — per-route handlers enforce tighter limits).
   // Keyed per session, not per IP: a class shares one NAT IP, so an IP key would
@@ -85,8 +92,13 @@ export async function middleware(request: NextRequest) {
     });
   }
 
-  // CSP hanya untuk HTML — API JSON responses tidak perlu
-  if (pathname.startsWith("/api/")) {
+  // API responses set their own CSP when needed. The one-time Android OAuth
+  // handoff page also sets a stricter, response-specific CSP nonce. Do not
+  // override it with the global page nonce (which would block auto-return).
+  const androidOAuthHandoff = pathname === "/auth/callback" &&
+    request.nextUrl.searchParams.get("bc_app") === "1" &&
+    (request.nextUrl.searchParams.has("code") || request.nextUrl.searchParams.has("error"));
+  if (pathname.startsWith("/api/") || androidOAuthHandoff) {
     return response;
   }
 

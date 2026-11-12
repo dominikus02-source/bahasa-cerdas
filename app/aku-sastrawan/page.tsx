@@ -37,7 +37,7 @@ export default async function AkuSastrawanPage() {
         </Link>
       </header>
 
-      <section className="mx-auto grid w-full max-w-6xl items-center gap-14 px-5 pb-20 pt-12 sm:px-8 md:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
+      <section className="mx-auto grid grid-cols-1 w-full max-w-6xl items-center gap-14 px-5 pb-20 pt-12 sm:px-8 md:pt-20 lg:grid-cols-[1.05fr_0.95fr]">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Akademi menulis · BahasaCerdas</p>
           <h1 className="mt-5 font-display text-[44px] leading-[1.05] tracking-tight sm:text-6xl">
@@ -82,7 +82,7 @@ export default async function AkuSastrawanPage() {
       </section>
 
       <section className="border-t border-border/70">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 px-5 py-16 sm:px-8 md:grid-cols-3 md:py-20">
+        <div className="mx-auto grid grid-cols-1 w-full max-w-6xl gap-10 px-5 py-16 sm:px-8 md:grid-cols-3 md:py-20">
           {pembeda.map(({ icon: Icon, judul, isi }) => (
             <div key={judul}>
               <Icon size={20} className="text-muted-foreground" />
