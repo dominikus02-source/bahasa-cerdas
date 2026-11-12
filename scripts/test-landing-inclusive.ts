@@ -344,5 +344,40 @@ test("28. copy publik tidak memuat akta, notaris, SK AHU, KBLI, usaha mikro, ata
       !src.includes("PSE");
   }));
 
+
+console.log("\n── QA landing modern & konsisten dasbor BC ──");
+const faqUi = read("components/landing/FAQSection.tsx");
+const roleUi = read("components/landing/PilihPeranmuSection.tsx");
+const company = read("lib/company.ts");
+const layoutUi = read("app/layout.tsx");
+const orgLd = read("lib/json-ld.ts");
+const ogImage = read("app/opengraph-image.tsx");
+test("FAQ: tombol native tidak double-toggle pada keyboard", () =>
+  faqUi.includes("aria-expanded={isOpen}") &&
+  faqUi.includes("onClick={() => toggleFAQ(i)}") &&
+  !faqUi.includes("onKeyDown="));
+test("Pilihan audiens: semua kartu terlihat, tombol memakai aria-pressed", () =>
+  roleUi.includes('role="group"') &&
+  roleUi.includes("aria-pressed={selected}") &&
+  !roleUi.includes('role="tab"') &&
+  !roleUi.includes('role="tabpanel"'));
+test("Data PT pada metadata dan JSON-LD berasal dari COMPANY", () =>
+  company.includes("streetAddress") &&
+  layoutUi.includes("COMPANY.legalName") &&
+  layoutUi.includes("COMPANY.nib") &&
+  orgLd.includes("COMPANY.nib") &&
+  footer.includes("COMPANY.address"));
+test("OG image tersedia tanpa fetch font atau gambar eksternal", () =>
+  ogImage.includes("ImageResponse") &&
+  ogImage.includes("1200") && ogImage.includes("630") &&
+  !ogImage.includes("fetch("));
+test("Produk dapat dinavigasi dari hero mobile", () =>
+  hero.includes('aria-label="Produk BahasaCerdas"') &&
+  hero.includes("overflow-x-auto") &&
+  !hero.includes("mt-6 hidden min-w-0"));
+test("Landing ringkas: pesan perjalanan belajar tidak berulang", () =>
+  page.includes("<EcosystemSection />") &&
+  !page.includes("<LearningLoopSection />"));
+
 console.log(`\nHasil: ${passed} lulus, ${failed} gagal\n`);
 if (failed > 0) process.exit(1);
