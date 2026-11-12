@@ -356,9 +356,10 @@ test("FAQ: tombol native tidak double-toggle pada keyboard", () =>
   faqUi.includes("aria-expanded={isOpen}") &&
   faqUi.includes("onClick={() => toggleFAQ(i)}") &&
   !faqUi.includes("onKeyDown="));
-test("Pilihan audiens: semua kartu terlihat, tombol memakai aria-pressed", () =>
-  roleUi.includes('role="group"') &&
-  roleUi.includes("aria-pressed={selected}") &&
+test("Pilihan audiens: tiga kartu setara tanpa tab dan tombol sorotan palsu", () =>
+  roleUi.includes('className="scroll-mt-24 relative min-w-0 flex flex-col') &&
+  roleUi.includes("href={path.href}") &&
+  !roleUi.includes("aria-pressed=") &&
   !roleUi.includes('role="tab"') &&
   !roleUi.includes('role="tabpanel"'));
 test("Data PT pada metadata dan JSON-LD berasal dari COMPANY", () =>
