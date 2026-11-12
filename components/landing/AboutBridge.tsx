@@ -42,18 +42,18 @@ function BridgePerson({ member }: { member: TeamMember }) {
           {member.initials}
         </div>
       )}
-      <p className="text-xs font-semibold text-zinc-800 leading-tight">{member.name}</p>
-      <p className="text-[10px] text-zinc-400 mt-0.5">{member.role}</p>
+      <p className="text-xs font-semibold text-bc-text leading-tight">{member.name}</p>
+      <p className="text-[10px] text-bc-text-3 mt-0.5">{member.role}</p>
     </div>
   );
 }
 
 export default function AboutBridge() {
   return (
-    <section className="relative py-16 lg:py-20 bg-white" aria-labelledby="tentang-bridge-heading">
+    <section className="relative py-16 lg:py-20 bg-bc-surface" aria-labelledby="tentang-bridge-heading">
       <div className="section-container">
         <motion.div
-          className="rounded-3xl border border-zinc-100 bg-zinc-50/70 overflow-hidden"
+          className="rounded-3xl border border-bc-border bg-bc-surface-2 overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -65,17 +65,17 @@ export default function AboutBridge() {
                 <HeartHandshake size={12} className="text-primary" aria-hidden="true" />
                 <span className="text-xs font-semibold text-primary">Di Balik BahasaCerdas</span>
               </div>
-              <h2 id="tentang-bridge-heading" className="heading-md text-zinc-900 mb-4">
+              <h2 id="tentang-bridge-heading" className="heading-md text-bc-text mb-4">
                 Ingin mengenal siapa di balik BahasaCerdas?
               </h2>
-              <p className="text-base text-zinc-500 leading-relaxed mb-6 max-w-xl">
+              <p className="text-base text-bc-text-2 leading-relaxed mb-6 max-w-xl">
                 Kenali perjalanan, tim, visi, dan nilai yang menjadi dasar BahasaCerdas —
                 dari gagasan hingga platform yang terus berkembang bersama guru dan
                 siswa Indonesia.
               </p>
               <Link
                 href="/tentang"
-                className="group inline-flex items-center gap-2 text-sm font-semibold text-white bg-zinc-900 hover:bg-zinc-800 rounded-xl px-6 py-3 transition-all duration-200 shadow-lg hover:shadow-xl focus-ring"
+                className="group inline-flex items-center gap-2 text-sm font-semibold text-white bg-bc-brand hover:opacity-90 rounded-xl px-6 py-3 transition-all duration-200 shadow-lg hover:shadow-xl focus-ring"
                 aria-label="Halaman tentang BahasaCerdas"
               >
                 Tentang BahasaCerdas
@@ -88,7 +88,7 @@ export default function AboutBridge() {
                   <BridgePerson key={f.name} member={f} />
                 ))}
               </div>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-400 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-bc-text-3 text-center">
                 Advisor
               </p>
               <div className="grid grid-cols-2 gap-4">

@@ -28,7 +28,7 @@ export default async function KaryaPopulerSection() {
   const karya = await getPopularWorks();
 
   return (
-    <section className="relative py-14 lg:py-20 bg-zinc-50">
+    <section className="relative py-14 lg:py-20 bg-bc-surface-2">
       <div className="section-container">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 lg:mb-16">
           <div className="max-w-xl">
@@ -38,10 +38,10 @@ export default async function KaryaPopulerSection() {
                 Toko Karya
               </span>
             </div>
-            <h2 className="heading-lg text-zinc-900 mb-4">
+            <h2 className="heading-lg text-bc-text mb-4">
               Temukan karya pembelajaran dari <span className="text-primary">guru Indonesia</span>
             </h2>
-            <p className="text-zinc-500 leading-relaxed">
+            <p className="text-bc-text-2 leading-relaxed">
               RPP, modul, soal, presentasi, media ajar, dan ebook — karya guru dan
               penulis Indonesia. Beli sekali, pakai selamanya.
             </p>
@@ -56,7 +56,7 @@ export default async function KaryaPopulerSection() {
             </Link>
             <Link
               href="/login"
-              className="group inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 hover:text-primary transition-colors shrink-0"
+              className="group inline-flex items-center gap-2 text-sm font-semibold text-bc-text-2 hover:text-primary transition-colors shrink-0"
             >
               Punya karya? Jual di Toko Karya
               <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
@@ -72,7 +72,7 @@ export default async function KaryaPopulerSection() {
                 <Link
                   key={k.id}
                   href={`/marketplace/${k.id}`}
-                  className="group relative bg-white rounded-2xl border border-zinc-100 overflow-hidden card-hover"
+                  className="group relative bg-bc-surface rounded-2xl border border-bc-border overflow-hidden card-hover"
                 >
                   <div className="h-32 bg-gradient-to-br from-zinc-50 to-zinc-100 flex items-center justify-center overflow-hidden">
                     {imgs[0] ? (
@@ -88,19 +88,19 @@ export default async function KaryaPopulerSection() {
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-md bg-primary-light text-primary text-[10px] font-semibold mb-2">
                       {TYPE_LABELS[k.type] || k.type}
                     </span>
-                    <h3 className="text-sm font-semibold text-zinc-900 leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-1">
+                    <h3 className="text-sm font-semibold text-bc-text leading-snug line-clamp-2 group-hover:text-primary transition-colors mb-1">
                       {k.title}
                     </h3>
-                    <p className="text-xs text-zinc-600 dark:text-zinc-400 mb-3">
+                    <p className="text-xs text-bc-text-2 dark:text-bc-text-3 mb-3">
                       {k.seller?.fullName || "Guru Bahasa Indonesia"}
                     </p>
-                    <div className="flex items-center justify-between pt-3 border-t border-zinc-100">
-                      <span className="text-base font-bold text-zinc-900">
+                    <div className="flex items-center justify-between pt-3 border-t border-bc-border">
+                      <span className="text-base font-bold text-bc-text">
                         {k.price > 0
                           ? `Rp ${k.price.toLocaleString("id")}`
                           : "Gratis"}
                       </span>
-                      <span className="text-[10px] text-zinc-400 flex items-center gap-1">
+                      <span className="text-[10px] text-bc-text-3 flex items-center gap-1">
                         <Download size={10} />
                         {k._count?.purchases || k.downloads || 0}
                       </span>
@@ -110,8 +110,8 @@ export default async function KaryaPopulerSection() {
               );
             })
           ) : (
-            <div className="col-span-full text-center py-12 bg-white rounded-2xl border border-dashed border-zinc-200">
-              <p className="text-zinc-400">Toko Karya sedang dikurasi.</p>
+            <div className="col-span-full text-center py-12 bg-bc-surface rounded-2xl border border-dashed border-bc-border">
+              <p className="text-bc-text-3">Toko Karya sedang dikurasi.</p>
               <p className="text-sm text-zinc-300 mt-1">Produk akan tampil setelah diverifikasi.</p>
             </div>
           )}
