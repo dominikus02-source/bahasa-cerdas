@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
+import { JumpaIcon, NaraIcon, AksaraIcon, TokoKaryaIcon, GimIcon, JalurCerdasIcon, BigtIcon, KomunitasIcon } from "@/components/shared/FeatureIcons";
 import { fadeInUp, staggerContainer } from "@/lib/motion";
 import { formatSocialProofNumber } from "@/lib/format-social-proof";
 
@@ -31,14 +32,15 @@ const ROLE_CHIPS = [
 ] as const;
 
 const PRODUCTS = [
-  { label: "AKSARA", href: "/artikel" },
-  { label: "NARA", href: "/arena/ai" },
-  { label: "BIGT", href: "/#bigt" },
-  { label: "Jalur Cerdas", href: "/arena/jalur-cerdas" },
-  { label: "Arena", href: "/arena" },
-  { label: "MAIN BERSAMA", href: "/main-bersama" },
-  { label: "Toko Karya", href: "/marketplace" },
-  { label: "MGMP", href: "/guru/komunitas" },
+  { label: "JUMPA", href: "/jumpa", icon: JumpaIcon },
+  { label: "AKSARA", href: "/artikel", icon: AksaraIcon },
+  { label: "NARA", href: "/arena/ai", icon: NaraIcon },
+  { label: "BIGT", href: "/#bigt", icon: BigtIcon },
+  { label: "Jalur Cerdas", href: "/arena/jalur-cerdas", icon: JalurCerdasIcon },
+  { label: "Arena", href: "/arena", icon: GimIcon },
+  { label: "MAIN BERSAMA", href: "/main-bersama", icon: GimIcon },
+  { label: "Toko Karya", href: "/marketplace", icon: TokoKaryaIcon },
+  { label: "MGMP", href: "/guru/komunitas", icon: KomunitasIcon },
 ] as const;
 
 export default function HeroSection({
@@ -200,17 +202,21 @@ export default function HeroSection({
 
           <nav
             aria-label="Produk BahasaCerdas"
-            className="mt-6 flex min-w-0 flex-nowrap gap-x-5 gap-y-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible"
+            className="mt-6 flex min-w-0 flex-nowrap gap-2.5 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible"
           >
-            {PRODUCTS.map((p) => (
-              <Link
-                key={p.label}
-                href={p.href}
-                className="shrink-0 whitespace-nowrap rounded text-xs font-semibold text-bc-text-2 transition-colors hover:text-bc-accent-strong focus-ring"
-              >
-                {p.label}
-              </Link>
-            ))}
+            {PRODUCTS.map((p) => {
+              const Icon = p.icon;
+              return (
+                <Link
+                  key={p.label}
+                  href={p.href}
+                  className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap rounded-bc-ctl border border-bc-line bg-bc-surface/80 px-3 py-2 text-xs font-semibold text-bc-text-2 transition-colors hover:border-bc-accent hover:text-bc-accent-strong focus-ring"
+                >
+                  <Icon size={26} />
+                  {p.label}
+                </Link>
+              );
+            })}
           </nav>
         </motion.div>
       </div>

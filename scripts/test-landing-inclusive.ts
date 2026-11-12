@@ -372,6 +372,10 @@ test("OG image tersedia tanpa fetch font atau gambar eksternal", () =>
   ogImage.includes("ImageResponse") &&
   ogImage.includes("1200") && ogImage.includes("630") &&
   !ogImage.includes("fetch("));
+test("Delapan ikon resmi BC tetap tampil di landing tanpa section duplikat", () =>
+  ["JumpaIcon", "NaraIcon", "AksaraIcon", "TokoKaryaIcon", "GimIcon", "JalurCerdasIcon", "BigtIcon", "KomunitasIcon"].every((n) => hero.includes(n)) &&
+  hero.includes('label: "JUMPA"') &&
+  hero.includes("<Icon size={26} />"));
 test("Produk dapat dinavigasi dari hero mobile", () =>
   hero.includes('aria-label="Produk BahasaCerdas"') &&
   hero.includes("overflow-x-auto") &&
