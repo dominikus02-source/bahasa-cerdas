@@ -28,7 +28,7 @@ const claims = [
 
 export default function BigtSection() {
   return (
-    <section id="bigt" className="relative py-20 lg:py-28 bg-zinc-900 overflow-hidden scroll-mt-24" aria-labelledby="bigt-heading">
+    <section id="bigt" className="relative py-20 lg:py-28 bg-bc-navy overflow-hidden scroll-mt-24" aria-labelledby="bigt-heading">
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none select-none"
         style={{
@@ -55,9 +55,9 @@ export default function BigtSection() {
             Dari belajar hingga{" "}
             <span className="text-amber-400">mengukur kemampuan.</span>
           </h2>
-          <p className="text-base lg:text-lg text-zinc-400 leading-relaxed">
-            Setelah belajar dan berlatih, murid mengukur kemampuan melalui simulasi
-            UKBI/TKA yang terstruktur — dan melanjutkan langkah berikutnya.
+          <p className="text-base lg:text-lg text-white/70 leading-relaxed">
+            Setelah belajar dan berlatih, siapa pun bisa mengukur kemampuannya lewat
+            simulasi UKBI/TKA yang terstruktur, lalu melanjutkan ke langkah belajar berikutnya.
           </p>
         </motion.div>
 
@@ -103,7 +103,7 @@ export default function BigtSection() {
           {claims.map((claim) => (
             <div key={claim} className="flex items-start gap-3 rounded-2xl bg-white/5 border border-white/10 px-5 py-4">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" aria-hidden="true" />
-              <p className="text-sm text-zinc-300 leading-relaxed">{claim}</p>
+              <p className="text-sm text-white/80 leading-relaxed">{claim}</p>
             </div>
           ))}
         </motion.div>

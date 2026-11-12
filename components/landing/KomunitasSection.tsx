@@ -36,7 +36,7 @@ function MgmpPhotoCollage({ photos }: { photos: { url: string; key: string }[] }
   if (shown.length === 0) return null;
 
   return (
-    <div className="rounded-2xl overflow-hidden bg-white border border-zinc-200 shadow-lg shadow-zinc-900/5">
+    <div className="rounded-2xl overflow-hidden bg-bc-surface border border-bc-border shadow-lg shadow-zinc-900/5">
       <div className="grid grid-cols-3 gap-1.5 p-1.5">
         <div className="relative col-span-3 aspect-[16/9] overflow-hidden rounded-lg group">
           <img
@@ -68,7 +68,7 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
   const showCollage = mgmpMedia.type === "photo" && mgmpMedia.photos.length >= 2;
 
   return (
-    <section className="relative py-16 lg:py-20 bg-zinc-50 overflow-hidden">
+    <section className="relative py-16 lg:py-20 bg-bc-surface-2 overflow-hidden">
       {/* Non-blocking batik decor */}
       <div
         className="absolute left-0 top-0 w-[500px] h-full opacity-[0.015] pointer-events-none select-none"
@@ -95,20 +95,20 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
                 Komunitas
               </span>
             </div>
-            <h2 className="heading-lg text-zinc-900 mb-5">
+            <h2 className="heading-lg text-bc-text mb-5">
               Tumbuh bersama{" "}
               <span className="text-primary">komunitas</span>{" "}
               Bahasa Indonesia
             </h2>
-            <p className="text-base lg:text-lg text-zinc-500 leading-relaxed mb-5 max-w-xl">
-              Berbagi pengalaman, pengetahuan, materi, dan karya bersama guru
-              Bahasa Indonesia dari berbagai sekolah.
+            <p className="text-base lg:text-lg text-bc-text-2 leading-relaxed mb-5 max-w-xl">
+              Berbagi pengalaman, pengetahuan, materi, dan karya bersama guru, murid,
+              dan pegiat Bahasa Indonesia dari berbagai sekolah dan kota.
             </p>
 
-            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
-              <span>Guru</span><span className="text-zinc-300">•</span>
-              <span>MGMP</span><span className="text-zinc-300">•</span>
-              <span>Sekolah</span><span className="text-zinc-300">•</span>
+            <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-bc-text-3 mb-8">
+              <span>Guru</span><span className="text-bc-text-3">•</span>
+              <span>MGMP</span><span className="text-bc-text-3">•</span>
+              <span>Sekolah</span><span className="text-bc-text-3">•</span>
               <span>Komunitas</span>
             </div>
 
@@ -133,8 +133,8 @@ export default function KomunitasSection({ mgmpMedia }: { mgmpMedia: MgmpMedia }
                       <Icon size={f.color ? 20 : 40} />
                     </div>
                     <div>
-                      <h4 className="font-semibold text-zinc-900 mb-1">{f.title}</h4>
-                      <p className="text-sm text-zinc-500">{f.description}</p>
+                      <h4 className="font-semibold text-bc-text mb-1">{f.title}</h4>
+                      <p className="text-sm text-bc-text-2">{f.description}</p>
                     </div>
                   </motion.div>
                 );

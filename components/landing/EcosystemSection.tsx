@@ -52,7 +52,7 @@ const pillars = [
 
 export default function EcosystemSection() {
   return (
-    <section id="ekosistem" className="relative py-14 lg:py-20 bg-zinc-50 scroll-mt-24" aria-labelledby="ekosistem-heading">
+    <section id="ekosistem" className="relative py-14 lg:py-20 bg-bc-surface-2 scroll-mt-24" aria-labelledby="ekosistem-heading">
       <BatikDecor position="right-top" variant="batik-bg" />
 
       <div className="section-container relative z-10">
@@ -66,11 +66,11 @@ export default function EcosystemSection() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
             <span className="text-xs font-semibold text-primary">Ekosistem</span>
           </div>
-          <h2 id="ekosistem-heading" className="heading-lg text-zinc-900 mb-5">
+          <h2 id="ekosistem-heading" className="heading-lg text-bc-text mb-5">
             Satu ekosistem.{" "}
             <span className="text-primary">Banyak cara untuk berkembang.</span>
           </h2>
-          <p className="text-base text-zinc-500">
+          <p className="text-base text-bc-text-2">
             Belajar, berlatih, bermain, berkarya — di satu tempat.
           </p>
         </motion.div>
@@ -88,25 +88,25 @@ export default function EcosystemSection() {
               <motion.div key={p.label} variants={fadeInUp} transition={{ duration: 0.5, ease: "easeOut" }}>
                 <Link
                   href={p.href}
-                  className="group relative p-6 lg:p-8 rounded-2xl bg-white border border-zinc-100 hover:border-zinc-200 card-hover block focus-ring"
+                  className="group relative p-6 lg:p-8 rounded-2xl bg-bc-surface border border-bc-border hover:border-bc-accent card-hover block focus-ring"
                   aria-label={`${p.label} — ${p.title}. ${p.description}`}
                 >
                   <div className="flex items-start justify-between mb-5">
                     <div className={`w-12 h-12 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 ${p.label === "MENGAJAR" ? "bg-emerald-50 text-emerald-600" : ""}`}>
                       <Icon size={p.label === "MENGAJAR" ? 24 : 48} />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-zinc-50 border border-zinc-100 text-[11px] font-bold tracking-widest text-zinc-500">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-bc-surface-2 border border-bc-border text-[11px] font-bold tracking-widest text-bc-text-2">
                       {p.label}
                     </span>
                   </div>
-                  <h3 className="text-xl lg:text-2xl font-display font-bold text-zinc-900 mb-3 group-hover:text-primary transition-colors">
+                  <h3 className="text-xl lg:text-2xl font-display font-bold text-bc-text mb-3 group-hover:text-primary transition-colors">
                     {p.title}
                   </h3>
-                  <p className="text-base text-zinc-500 leading-relaxed mb-5">
+                  <p className="text-base text-bc-text-2 leading-relaxed mb-5">
                     {p.description}
                   </p>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-zinc-400 font-medium">{p.chip}</span>
+                    <span className="text-xs text-bc-text-3 font-medium">{p.chip}</span>
                     <ArrowUpRight size={18} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity" aria-hidden="true" />
                   </div>
                 </Link>
@@ -122,7 +122,7 @@ export default function EcosystemSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-2xl border border-zinc-100 bg-white px-6 py-4 text-sm font-semibold text-zinc-700">
+          <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 rounded-2xl border border-bc-border bg-bc-surface px-6 py-4 text-sm font-semibold text-bc-text">
             <span className="text-emerald-600">Guru mengajar</span>
             <ArrowLeftRight size={16} className="text-zinc-300" aria-hidden="true" />
             <span className="text-primary">BahasaCerdas menghubungkan</span>

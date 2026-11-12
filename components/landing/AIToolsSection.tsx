@@ -67,7 +67,7 @@ const tools = [
 
 export default function AIToolsSection() {
   return (
-    <section className="relative py-14 lg:py-20 bg-white overflow-hidden" aria-labelledby="ai-heading">
+    <section className="relative py-14 lg:py-20 bg-bc-surface overflow-hidden" aria-labelledby="ai-heading">
       <BatikDecor position="left-bottom" variant="batik-header" />
 
       <div className="section-container relative z-10">
@@ -84,13 +84,13 @@ export default function AIToolsSection() {
               AI dalam Ekosistem
             </span>
           </div>
-          <h2 id="ai-heading" className="heading-lg text-zinc-900 mb-5">
-            AI membantu guru.{" "}
-            <span className="text-primary">Ekosistem membantu belajar.</span>
+          <h2 id="ai-heading" className="heading-lg text-bc-text mb-5">
+            AI membantu guru dan murid.{" "}
+            <span className="text-primary">Manusia tetap memutuskan.</span>
           </h2>
-          <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
-            Teknologi AI mengambil alih pekerjaan yang berulang, agar guru memiliki
-            lebih banyak waktu untuk hal yang benar-benar penting: membimbing murid.
+          <p className="text-base lg:text-lg text-bc-text-2 leading-relaxed">
+            AI mengambil alih pekerjaan yang berulang, agar guru punya lebih banyak
+            waktu untuk membimbing murid, dan setiap pembelajar punya teman berlatih.
           </p>
         </motion.div>
 
@@ -107,7 +107,7 @@ export default function AIToolsSection() {
               <motion.div key={tool.title} variants={fadeInUp} transition={{ duration: 0.5, ease: "easeOut" }}>
                 <Link
                   href={tool.href}
-                  className="group relative p-6 lg:p-8 rounded-2xl bg-zinc-50/80 border border-zinc-100 hover:border-zinc-200 card-hover block focus-ring"
+                  className="group relative p-6 lg:p-8 rounded-2xl bg-bc-surface-2 border border-bc-border hover:border-bc-accent card-hover block focus-ring"
                   aria-label={`${tool.title} — ${tool.description}`}
                 >
                   <div
@@ -115,10 +115,10 @@ export default function AIToolsSection() {
                   >
                     <Icon size={tool.title === "NARA" ? 44 : 24} aria-hidden="true" />
                   </div>
-                  <h3 className="text-lg font-display font-bold text-zinc-900 mb-2.5 group-hover:text-primary transition-colors">
+                  <h3 className="text-lg font-display font-bold text-bc-text mb-2.5 group-hover:text-primary transition-colors">
                     {tool.title}
                   </h3>
-                  <p className="text-sm text-zinc-500 leading-relaxed mb-4">
+                  <p className="text-sm text-bc-text-2 leading-relaxed mb-4">
                     {tool.description}
                   </p>
                   <div className="flex items-center gap-1 text-sm font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -137,10 +137,10 @@ export default function AIToolsSection() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="inline-flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-2xl border border-zinc-100 bg-zinc-50/60 px-6 py-4">
-            <span className="text-sm font-semibold text-zinc-700">AI membantu.</span>
-            <span className="text-sm font-semibold text-zinc-700">Guru memutuskan.</span>
-            <span className="text-sm font-semibold text-zinc-700">Murid tetap belajar.</span>
+          <div className="inline-flex flex-wrap items-center justify-center gap-x-8 gap-y-3 rounded-2xl border border-bc-border bg-bc-surface-2 px-6 py-4">
+            <span className="text-sm font-semibold text-bc-text">AI membantu.</span>
+            <span className="text-sm font-semibold text-bc-text">Guru memutuskan.</span>
+            <span className="text-sm font-semibold text-bc-text">Murid tetap belajar.</span>
             <span className="text-sm font-semibold text-primary">Manusia tetap menjadi pusat.</span>
           </div>
         </motion.div>

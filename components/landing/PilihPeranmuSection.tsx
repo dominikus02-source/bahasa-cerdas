@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, Compass, GraduationCap, BookOpen, Check } from "lucide-react";
@@ -71,8 +70,6 @@ const PATHS = [
 ] as const;
 
 export default function PilihPeranmuSection() {
-  const [active, setActive] = useState<(typeof PATHS)[number]["key"]>("umum");
-
   return (
     <section
       id="pilih-peranmu"
@@ -99,39 +96,6 @@ export default function PilihPeranmuSection() {
           </p>
         </motion.div>
 
-        <div
-          role="tablist"
-          aria-label="Pilih peran"
-          className="mb-6 grid grid-cols-3 gap-2 min-w-0"
-        >
-          {PATHS.map((path) => {
-            const Icon = path.icon;
-            const selected = active === path.key;
-            return (
-              <button
-                key={path.key}
-                type="button"
-                role="tab"
-                aria-selected={selected}
-                aria-controls={`${path.id}-panel`}
-                id={`${path.id}-tab`}
-                onClick={() => {
-                  setActive(path.key);
-                  document.getElementById(path.id)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-                }}
-                className={`inline-flex min-h-11 min-w-0 w-full items-center justify-center gap-1 sm:gap-2 rounded-xl border px-2 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold transition-all focus-ring ${
-                  selected
-                    ? `${path.soft} ${path.border} ${path.accent}`
-                    : "border-bc-line bg-bc-surface text-bc-text-2 hover:border-bc-border-strong"
-                }`}
-              >
-                <Icon size={16} aria-hidden="true" />
-                {path.title}
-              </button>
-            );
-          })}
-        </div>
-
         <motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6 min-w-0"
           variants={staggerContainer}
@@ -140,17 +104,13 @@ export default function PilihPeranmuSection() {
         >
           {PATHS.map((path) => {
             const Icon = path.icon;
-            const selected = active === path.key;
             return (
               <motion.article
                 key={path.key}
                 id={path.id}
                 {...itemProps}
-                role="tabpanel"
-                aria-labelledby={`${path.id}-tab`}
-                className={`scroll-mt-24 relative min-w-0 flex flex-col overflow-hidden rounded-bc-hero border bg-bc-surface p-5 sm:p-7 shadow-bc-1 transition-all ${
-                  selected ? `${path.border}` : "border-bc-line"
-                }`}
+                aria-label={`Pilihan ${path.title}`}
+                className="scroll-mt-24 relative min-w-0 flex flex-col overflow-hidden rounded-bc-hero border border-bc-line bg-bc-surface p-5 sm:p-7 shadow-bc-1 transition-all hover:-translate-y-1 hover:border-bc-accent hover:shadow-bc-2"
               >
                 <div
                   className="absolute inset-x-0 top-0 h-1.5"

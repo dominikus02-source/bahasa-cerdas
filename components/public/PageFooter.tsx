@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Instagram, Youtube, Mail } from "lucide-react";
+import { COMPANY } from "@/lib/company";
 
 const footerLinks = [
   {
@@ -31,19 +32,19 @@ const footerLinks = [
     links: [
       { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
       { href: "/syarat-ketentuan", label: "Syarat & Ketentuan" },
-      { href: "mailto:halo@bahasacerdas.com", label: "Kontak" },
+      { href: `mailto:${COMPANY.email}`, label: "Kontak" },
     ],
   },
 ];
 
 const socialLinks = [
-  { href: "https://instagram.com/bahasa_cerdas", label: "Instagram", icon: Instagram, hoverColor: "hover:text-pink-400" },
-  { href: "https://www.youtube.com/@bahasacerdasdotcom", label: "YouTube", icon: Youtube, hoverColor: "hover:text-red-400" },
+  { href: COMPANY.social.instagram, label: "Instagram", icon: Instagram, hoverColor: "hover:text-pink-400" },
+  { href: COMPANY.social.youtube, label: "YouTube", icon: Youtube, hoverColor: "hover:text-red-400" },
 ];
 
 export default function PageFooter() {
   return (
-    <footer className="bg-zinc-900 text-zinc-400">
+    <footer className="bg-bc-navy text-white/70">
       <div className="section-container py-16 lg:py-20">
         {/* Satu baris horizontal — tidak pernah pecah jadi 2 kolom */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12">
@@ -60,20 +61,20 @@ export default function PageFooter() {
               </div>
               <div>
                 <span className="text-xl font-bold text-white">BahasaCerdas</span>
-                <p className="text-xs text-zinc-400">Ekosistem Belajar Bahasa Indonesia</p>
+                <p className="text-xs text-white/70">Ekosistem Belajar Bahasa Indonesia</p>
               </div>
             </Link>
-            <p className="text-sm text-zinc-400 leading-relaxed mb-5 max-w-sm">
+            <p className="text-sm text-white/70 leading-relaxed mb-5 max-w-sm">
               Satu ekosistem untuk belajar, berlatih, bermain, berkarya, dan bertumbuh —
               terbuka untuk masyarakat umum, murid, dan guru.
             </p>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <a
-                href="mailto:halo@bahasacerdas.com"
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-800/80 border border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors focus-ring"
+                href={`mailto:${COMPANY.email}`}
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/10 border border-white/15 text-xs font-medium text-white/80 hover:text-white hover:border-white/50 transition-colors focus-ring"
               >
                 <Mail className="w-3.5 h-3.5" />
-                halo@bahasacerdas.com
+                {COMPANY.email}
               </a>
               {socialLinks.map(({ href, label, icon: Icon, hoverColor }) => (
                 <a
@@ -82,7 +83,7 @@ export default function PageFooter() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700 text-zinc-300 ${hoverColor} transition-colors focus-ring`}
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white/10 border border-white/15 text-white/80 ${hoverColor} transition-colors focus-ring`}
                 >
                   <Icon className="w-4 h-4" />
                 </a>
@@ -99,7 +100,7 @@ export default function PageFooter() {
                     <li key={link.label}>
                       <Link
                         href={link.href}
-                        className="text-sm text-zinc-400 hover:text-white transition-colors duration-200 focus-ring rounded"
+                        className="text-sm text-white/70 hover:text-white transition-colors duration-200 focus-ring rounded"
                       >
                         {link.label}
                       </Link>
@@ -112,17 +113,19 @@ export default function PageFooter() {
         </div>
       </div>
 
-      <div className="border-t border-zinc-800">
+      <div className="border-t border-white/10">
         <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-zinc-400">
-            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia.
+          <p className="text-xs text-white/70">
+            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia. NIB {COMPANY.nib}.
+            <br />
+            {COMPANY.address}
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-zinc-400">
-            <Link href="/kebijakan-privasi" className="hover:text-zinc-200 transition-colors focus-ring rounded">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-white/70">
+            <Link href="/kebijakan-privasi" className="hover:text-white transition-colors focus-ring rounded">
               Privasi
             </Link>
             <span aria-hidden="true">&bull;</span>
-            <Link href="/syarat-ketentuan" className="hover:text-zinc-200 transition-colors focus-ring rounded">
+            <Link href="/syarat-ketentuan" className="hover:text-white transition-colors focus-ring rounded">
               Ketentuan
             </Link>
             <span aria-hidden="true">&bull;</span>
