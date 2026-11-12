@@ -44,7 +44,7 @@ const socialLinks = [
 
 export default function PageFooter() {
   return (
-    <footer className="bg-bc-navy text-white/70">
+    <footer className="bg-zinc-900 text-white/70" style={{ backgroundColor: "var(--bc-guru-header-night)" }}>
       <div className="section-container py-16 lg:py-20">
         {/* Satu baris horizontal — tidak pernah pecah jadi 2 kolom */}
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-12">
