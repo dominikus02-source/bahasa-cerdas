@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Briefcase, MapPin, Building, Clock, Search, ExternalLink, ChevronRight } from "lucide-react";
 import PageNavbar from "@/components/public/PageNavbar";
+import PageFooter from "@/components/public/PageFooter";
 
 export default function LokerPage() {
   const [data, setData] = useState<any[]>([]);
@@ -24,9 +25,9 @@ export default function LokerPage() {
   const filtered = data.filter((l) => !search || l.title.toLowerCase().includes(search.toLowerCase()) || l.sekolah.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 to-white">
       <PageNavbar />
-      <div className="max-w-4xl mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto px-4 py-12 flex-1 w-full">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-4">
             <Briefcase size={14} /> Lowongan Guru Bahasa Indonesia
@@ -81,6 +82,7 @@ export default function LokerPage() {
           </div>
         )}
       </div>
+      <PageFooter />
     </div>
   );
 }

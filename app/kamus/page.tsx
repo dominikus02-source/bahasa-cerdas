@@ -2,6 +2,7 @@
 
 import { BookOpen, ExternalLink, Search, Sparkles, ArrowRight, Home } from "lucide-react";
 import Link from "next/link";
+import PageFooter from "@/components/public/PageFooter";
 
 export default function KamusPage() {
   return (
@@ -62,6 +63,7 @@ export default function KamusPage() {
           </div>
         </div>
       </div>
+      <PageFooter />
     </div>
   );
 }
