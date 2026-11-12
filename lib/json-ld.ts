@@ -102,13 +102,5 @@ export function webSiteLd() {
     url: "https://www.bahasacerdas.com",
     description:
       "Ekosistem belajar Bahasa Indonesia: belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform untuk guru dan murid.",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: "https://www.bahasacerdas.com/search?q={search_term_string}",
-      },
-      "query-input": "required name=search_term_string",
-    },
   };
 }

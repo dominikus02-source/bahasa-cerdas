@@ -375,6 +375,9 @@ test("Produk dapat dinavigasi dari hero mobile", () =>
   hero.includes('aria-label="Produk BahasaCerdas"') &&
   hero.includes("overflow-x-auto") &&
   !hero.includes("mt-6 hidden min-w-0"));
+test("SEO: tidak mengiklankan /search yang belum memiliki halaman", () =>
+  !layoutUi.includes('"SearchAction"') &&
+  !orgLd.includes('"SearchAction"'));
 test("Landing ringkas: pesan perjalanan belajar tidak berulang", () =>
   page.includes("<EcosystemSection />") &&
   !page.includes("<LearningLoopSection />"));

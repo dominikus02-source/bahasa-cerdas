@@ -113,14 +113,6 @@ const jsonLdWebsite = {
   url: SITE_URL,
   description: "Platform edukasi Bahasa Indonesia: AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
   inLanguage: "id-ID",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: `${SITE_URL}/search?q={search_term_string}`,
-    },
-    "query-input": "required name=search_term_string",
-  },
 };
 
 const ANDROID_APP_BOOT =
