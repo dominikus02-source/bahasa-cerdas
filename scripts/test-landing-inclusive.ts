@@ -394,8 +394,8 @@ test("Landing ringkas: pesan perjalanan belajar tidak berulang", () =>
   !page.includes("<LearningLoopSection />"));
 
 test("Footer publik punya latar navy yang terdefinisi secara global (bukan token scoped UMUM)", () =>
-  footer.includes('className="bg-zinc-900 text-white/70"') &&
-  footer.includes('backgroundColor: "var(--bc-guru-header-night)"') &&
+  footer.includes('bg-[#111827] text-white/80') &&
+  footer.includes('backgroundColor: "var(--bc-guru-header-night, #111827)"') &&
   !footer.includes("bg-bc-navy") &&
   read("app/theme/tokens.css").includes("--bc-guru-header-night:"));
 
