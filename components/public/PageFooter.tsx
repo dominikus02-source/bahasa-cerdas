@@ -32,7 +32,7 @@ const footerLinks = [
     links: [
       { href: "/kebijakan-privasi", label: "Kebijakan Privasi" },
       { href: "/syarat-ketentuan", label: "Syarat & Ketentuan" },
-      { href: "mailto:halo@bahasacerdas.com", label: "Kontak" },
+      { href: `mailto:${COMPANY.email}`, label: "Kontak" },
     ],
   },
 ];
@@ -70,11 +70,11 @@ export default function PageFooter() {
             </p>
             <div className="flex flex-wrap items-center gap-2 sm:gap-3">
               <a
-                href="mailto:halo@bahasacerdas.com"
+                href={`mailto:${COMPANY.email}`}
                 className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-zinc-800/80 border border-zinc-700 text-xs font-medium text-zinc-300 hover:text-white hover:border-zinc-500 transition-colors focus-ring"
               >
                 <Mail className="w-3.5 h-3.5" />
-                halo@bahasacerdas.com
+                {COMPANY.email}
               </a>
               {socialLinks.map(({ href, label, icon: Icon, hoverColor }) => (
                 <a

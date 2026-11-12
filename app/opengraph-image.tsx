@@ -1,143 +1,37 @@
-import { ImageResponse } from "next/og"
+import { ImageResponse } from "next/og";
 
-export const runtime = "edge"
-export const contentType = "image/png"
-export const size = { width: 1200, height: 630 }
+export const runtime = "edge";
+export const contentType = "image/png";
+export const size = { width: 1200, height: 630 };
 
-export default async function OGImage() {
-  const inter = await fetch(
-    "https://fonts.googleapis.com/css2?family=Inter:wght@700;800&display=swap"
-  ).then((r) => r.text())
-  const interUrl = inter.match(/url\(([^)]+)\)/)?.[1]
-
-  if (!interUrl) {
-    return new ImageResponse(
-      <div
-        style={{
-          width: 1200,
-          height: 630,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "linear-gradient(135deg, #047857 0%, #2563eb 55%, #7c3aed 100%)",
-          color: "white",
-          fontFamily: "sans-serif",
-        }}
-      >
-        <div style={{ fontSize: 80, fontWeight: 800 }}>BahasaCerdas</div>
-        <div style={{ fontSize: 28, opacity: 0.9, marginTop: 16 }}>
-          Ekosistem Belajar Bahasa Indonesia
-        </div>
-        <div style={{ fontSize: 20, opacity: 0.7, marginTop: 32 }}>
-          www.bahasacerdas.com
-        </div>
-      </div>,
-      size
-    )
-  }
-
+export default function OGImage() {
+  // No runtime font or external-image requests: social previews must still render during outages.
   return new ImageResponse(
-    <div
-      style={{
-        width: 1200,
-        height: 630,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "linear-gradient(135deg, #047857 0%, #2563eb 55%, #7c3aed 100%)",
-        color: "white",
-        fontFamily: "Inter",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          position: "absolute",
-          top: -60,
-          right: -60,
-          width: 400,
-          height: 400,
-          borderRadius: "50%",
-          background: "rgba(255,255,255,0.05)",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          bottom: -100,
-          left: -100,
-          width: 500,
-          height: 500,
-          borderRadius: "50%",
-          background: "rgba(255,255,255,0.03)",
-        }}
-      />
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 24,
-          marginBottom: 8,
-        }}
-      >
-        <img
-          src="https://www.bahasacerdas.com/brand/bc2026-icon.png"
-          alt=""
-          width={100}
-          height={100}
-          style={{ borderRadius: 16 }}
-        />
-        <div
-          style={{
-            fontSize: 72,
-            fontWeight: 800,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          BahasaCerdas
-        </div>
+    <div style={{ width: 1200, height: 630, display: "flex", flexDirection: "column",
+      justifyContent: "center", padding: "80px 92px",
+      background: "linear-gradient(135deg, #064E72 0%, #1D66B2 53%, #6354A6 100%)",
+      color: "#FFFFFF", fontFamily: "sans-serif", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: -180, right: -120, width: 570, height: 570,
+        display: "flex", borderRadius: "50%", background: "rgba(255,255,255,0.09)" }} />
+      <div style={{ position: "absolute", bottom: -220, right: 140, width: 570, height: 570,
+        display: "flex", borderRadius: "50%", background: "rgba(45,213,192,0.16)" }} />
+      <div style={{ display: "flex", alignItems: "center", gap: 20, marginBottom: 52 }}>
+        <div style={{ width: 76, height: 76, display: "flex", alignItems: "center", justifyContent: "center",
+          borderRadius: 22, background: "rgba(255,255,255,0.22)", border: "1px solid rgba(255,255,255,0.34)",
+          fontSize: 31, fontWeight: 800 }}>BC</div>
+        <span style={{ fontSize: 46, fontWeight: 800, letterSpacing: -1.8 }}>BahasaCerdas</span>
       </div>
-
-      <div
-        style={{
-          fontSize: 28,
-          opacity: 0.9,
-          marginTop: 8,
-          textAlign: "center",
-          maxWidth: 600,
-          lineHeight: 1.4,
-        }}
-      >
-        Ekosistem Belajar Bahasa Indonesia
+      <div style={{ display: "flex", maxWidth: 960, fontSize: 66, lineHeight: 1.15,
+        fontWeight: 800, letterSpacing: -1.5 }}>
+        Bahasa menghubungkan gagasan, manusia, dan masa depan.
       </div>
-
-      <div
-        style={{
-          marginTop: 40,
-          padding: "12px 32px",
-          borderRadius: 50,
-          border: "1px solid rgba(255,255,255,0.3)",
-          fontSize: 20,
-          opacity: 0.8,
-        }}
-      >
-        www.bahasacerdas.com
+      <div style={{ marginTop: 28, display: "flex", fontSize: 25, color: "rgba(255,255,255,0.86)" }}>
+        Belajar · Berlatih · Bermain · Berkarya
       </div>
-    </div>,
-    {
-      ...size,
-      fonts: [
-        {
-          name: "Inter",
-          data: await fetch(interUrl).then((r) => r.arrayBuffer()),
-          weight: 800,
-          style: "normal",
-        },
-      ],
-    }
-  )
+      <div style={{ position: "absolute", left: 92, bottom: 48, display: "flex",
+        fontSize: 18, letterSpacing: 1.3, color: "rgba(255,255,255,0.78)" }}>
+        WWW.BAHASACERDAS.COM
+      </div>
+    </div>, size
+  );
 }

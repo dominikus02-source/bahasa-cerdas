@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Plus, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
@@ -12,25 +12,15 @@ const faqs = LANDING_FAQS;
 export default function FAQSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
-  const toggleFAQ = useCallback((index: number) => {
+  const toggleFAQ = (index: number) => {
     setOpenIndex((prev) => (prev === index ? null : index));
-  }, []);
+  };
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent, index: number) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        toggleFAQ(index);
-      }
-    },
-    [toggleFAQ]
-  );
-
-  return (
-    <section className="relative py-20 lg:py-28 bg-white" aria-labelledby="faq-heading">
+return (
+    <section className="relative bg-bc-surface py-14 lg:py-20" aria-labelledby="faq-heading">
       <div className="section-container">
         <motion.div
-          className="text-center max-w-2xl mx-auto mb-16 lg:mb-20"
+          className="text-center max-w-2xl mx-auto mb-9 lg:mb-12"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -39,11 +29,11 @@ export default function FAQSection() {
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-light border border-primary/10 mb-5">
             <span className="text-xs font-semibold text-primary">FAQ</span>
           </div>
-          <h2 id="faq-heading" className="heading-lg text-zinc-900 mb-5">
+          <h2 id="faq-heading" className="heading-lg text-bc-text mb-5">
             Pertanyaan yang{" "}
-            <span className="text-primary">Sering Diajukan</span>
+            <span className="text-bc-accent">Sering Diajukan</span>
           </h2>
-          <p className="text-base lg:text-lg text-zinc-500 leading-relaxed">
+          <p className="text-base lg:text-lg text-bc-text-2 leading-relaxed">
             Masih ragu? Temukan jawaban untuk pertanyaan yang paling sering ditanyakan.
           </p>
         </motion.div>
@@ -69,25 +59,24 @@ export default function FAQSection() {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className={`rounded-2xl border transition-all duration-300 ${
                   isOpen
-                    ? "border-primary/20 bg-primary-light/30 shadow-sm"
-                    : "border-zinc-100 bg-zinc-50/50 hover:bg-zinc-50 hover:border-zinc-200"
+                    ? "border-bc-accent bg-bc-accent-soft shadow-bc-1"
+                    : "border-bc-line bg-bc-surface-2 hover:border-bc-border"
                 }`}
               >
                 <h3>
                   <button
                     id={buttonId}
                     onClick={() => toggleFAQ(i)}
-                    onKeyDown={(e) => handleKeyDown(e, i)}
                     aria-expanded={isOpen}
                     aria-controls={panelId}
                     className="flex items-center justify-between w-full p-5 lg:p-6 text-left focus-ring rounded-2xl"
                   >
-                    <span className="text-sm lg:text-base font-semibold text-zinc-900 pr-4">
+                    <span className="text-sm lg:text-base font-semibold text-bc-text pr-4">
                       {faq.q}
                     </span>
                     <div
                       className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-all duration-300 ${
-                        isOpen ? "bg-primary text-white rotate-45" : "bg-zinc-100 text-zinc-400"
+                        isOpen ? "bg-bc-brand text-bc-on-brand rotate-45" : "bg-bc-surface text-bc-text-3"
                       }`}
                       aria-hidden="true"
                     >
@@ -104,8 +93,8 @@ export default function FAQSection() {
                 >
                   {isOpen && (
                     <div className="px-5 lg:px-6 pb-5 lg:pb-6">
-                      <div className="w-8 h-0.5 bg-primary/30 rounded-full mb-4" />
-                      <p className="text-sm text-zinc-500 leading-relaxed">
+                      <div className="w-8 h-0.5 bg-bc-accent rounded-full mb-4" />
+                      <p className="text-sm text-bc-text-2 leading-relaxed">
                         {faq.a}
                       </p>
                     </div>
@@ -119,7 +108,7 @@ export default function FAQSection() {
         <div className="text-center mt-10">
           <Link
             href="/faq"
-            className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-primary-dark transition-colors focus-ring rounded"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-bc-accent-strong hover:text-bc-accent transition-colors focus-ring rounded"
           >
             Lihat semua pertanyaan
             <ArrowRight size={16} />

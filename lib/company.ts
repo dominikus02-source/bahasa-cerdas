@@ -7,6 +7,7 @@ export const COMPANY = {
   brandName: "BahasaCerdas",
   legalName: "PT Bahasa Cerdas Indonesia",
   nib: "0911260094193",
+  streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
   address:
     "CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950",
   email: "halo@bahasacerdas.com",

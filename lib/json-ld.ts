@@ -1,4 +1,5 @@
 import { BAHASA_CERDAS_IDENTITY } from "@/lib/ai/knowledge/bahasa-cerdas-identity";
+import { COMPANY } from "@/lib/company";
 
 export function publicPeopleLd() {
   const { founder, team, advisors } = BAHASA_CERDAS_IDENTITY;
@@ -13,18 +14,18 @@ export function organizationLd() {
   return {
     "@context": "https://schema.org",
     "@type": "EducationalOrganization",
-    name: "PT Bahasa Cerdas Indonesia",
-    legalName: "PT Bahasa Cerdas Indonesia",
+    name: COMPANY.legalName,
+    legalName: COMPANY.legalName,
     alternateName: "BahasaCerdas",
     url: "https://www.bahasacerdas.com",
     description:
       "Ekosistem belajar Bahasa Indonesia untuk masyarakat umum, murid, dan guru: belajar, berlatih, bermain, berkarya, dan bertumbuh dalam satu platform.",
     foundingDate: "2026-11-05",
-    identifier: "0911260094193",
-    email: "halo@bahasacerdas.com",
+    identifier: COMPANY.nib,
+    email: COMPANY.email,
     address: {
       "@type": "PostalAddress",
-      streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
+      streetAddress: COMPANY.streetAddress,
       addressLocality: "Jakarta Selatan",
       addressRegion: "DKI Jakarta",
       postalCode: "12950",
@@ -60,7 +61,7 @@ export function softwareAppLd() {
     },
     author: {
       "@type": "Organization",
-      name: "PT Bahasa Cerdas Indonesia",
+      name: COMPANY.legalName,
     },
   };
 }

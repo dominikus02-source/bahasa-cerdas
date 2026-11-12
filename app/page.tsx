@@ -1,14 +1,13 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { db } from "@/lib/db";
-import { faqPageLd, breadcrumbLd } from "@/lib/json-ld";
+import { faqPageLd } from "@/lib/json-ld";
 import { withQueryTimeout as queryWithTimeout } from "@/lib/db/with-query-timeout";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 import HeroSection from "@/components/landing/HeroSection";
 import PromoVideoSection from "@/components/landing/PromoVideoSection";
 import EcosystemSection from "@/components/landing/EcosystemSection";
-import LearningLoopSection from "@/components/landing/LearningLoopSection";
 import PilihPeranmuSection from "@/components/landing/PilihPeranmuSection";
 import AIToolsSection from "@/components/landing/AIToolsSection";
 import KaryaPopulerSection from "@/components/landing/KaryaPopulerSection";
@@ -109,11 +108,6 @@ export default async function HomePage() {
   return (
     <>
       <AuthenticatedLandingRedirect />
-      <JsonLd data={breadcrumbLd([
-        { position: 1, name: "Beranda", item: "https://www.bahasacerdas.com" },
-        { position: 2, name: "Arena", item: "https://www.bahasacerdas.com/arena" },
-        { position: 3, name: "Simulasi", item: "https://www.bahasacerdas.com/arena/simulasi" },
-      ])} />
       <JsonLd data={faqPageLd(faqs)} />
 
       <nav aria-label="Lompat ke konten" className="sr-only focus:not-sr-only">
@@ -136,9 +130,6 @@ export default async function HomePage() {
         <div id="produk" className="scroll-mt-24">
           <EcosystemSection />
         </div>
-
-        {/* 7 · LEARNING LOOP — belajar tidak berhenti ketika soal selesai */}
-        <LearningLoopSection />
 
         {/* 8 · BIGT — dari belajar hingga mengukur kemampuan */}
         <BigtSection />

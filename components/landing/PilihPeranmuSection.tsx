@@ -100,7 +100,7 @@ export default function PilihPeranmuSection() {
         </motion.div>
 
         <div
-          role="tablist"
+          role="group"
           aria-label="Pilih peran"
           className="mb-6 grid grid-cols-3 gap-2 min-w-0"
         >
@@ -111,13 +111,9 @@ export default function PilihPeranmuSection() {
               <button
                 key={path.key}
                 type="button"
-                role="tab"
-                aria-selected={selected}
-                aria-controls={`${path.id}-panel`}
-                id={`${path.id}-tab`}
+                aria-pressed={selected}
                 onClick={() => {
                   setActive(path.key);
-                  document.getElementById(path.id)?.scrollIntoView({ behavior: "smooth", block: "nearest" });
                 }}
                 className={`inline-flex min-h-11 min-w-0 w-full items-center justify-center gap-1 sm:gap-2 rounded-xl border px-2 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold transition-all focus-ring ${
                   selected
@@ -146,8 +142,7 @@ export default function PilihPeranmuSection() {
                 key={path.key}
                 id={path.id}
                 {...itemProps}
-                role="tabpanel"
-                aria-labelledby={`${path.id}-tab`}
+                aria-label={`Pilihan ${path.title}`}
                 className={`scroll-mt-24 relative min-w-0 flex flex-col overflow-hidden rounded-bc-hero border bg-bc-surface p-5 sm:p-7 shadow-bc-1 transition-all ${
                   selected ? `${path.border}` : "border-bc-line"
                 }`}

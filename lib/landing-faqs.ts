@@ -31,10 +31,10 @@ export const LANDING_FAQS: LandingFaq[] = [
   },
   {
     q: "Apa itu NARA, AI di BahasaCerdas?",
-    a: "NARA adalah AI BahasaCerdas — Narasumber Andalan, Rekan Anda. NARA membantu pekerjaan berulang seperti menyusun perangkat ajar, membuat soal, mengoreksi EYD, dan menilai karangan, sehingga guru punya lebih banyak waktu membimbing murid. NARA membantu, manusia yang memutuskan.",
+    a: "NARA adalah AI BahasaCerdas — Narasumber Andalan, Rekan Anda. NARA membantu masyarakat umum, murid, dan guru mencari ide, memahami materi, dan berlatih berbahasa. Guru juga dapat memanfaatkannya untuk menyusun perangkat ajar dan latihan. NARA membantu; keputusan dan pemeriksaan akhir tetap dilakukan manusia.",
   },
   {
     q: "Bagaimana keamanan data saya?",
-    a: "Data dikirim lewat koneksi terenkripsi (HTTPS) dan tidak dibagikan ke pihak ketiga tanpa izin. Rinciannya ada di halaman Kebijakan Privasi.",
+    a: "BahasaCerdas menggunakan HTTPS untuk melindungi data saat dikirim. Pengelolaan data dan keterlibatan penyedia layanan dijelaskan di halaman Kebijakan Privasi.",
   },
 ];

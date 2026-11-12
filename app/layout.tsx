@@ -4,6 +4,7 @@ import "./globals.css";
 import "./android-app.css";
 import { Providers } from "./providers";
 import { publicPeopleLd } from "@/lib/json-ld";
+import { COMPANY } from "@/lib/company";
 
 const SITE_URL = "https://www.bahasacerdas.com";
 const SITE_NAME = "BahasaCerdas";
@@ -71,17 +72,17 @@ const jsonLdOrganization = {
   "@context": "https://schema.org",
   "@type": "EducationalOrganization",
   "@id": `${SITE_URL}/#organization`,
-  name: "PT Bahasa Cerdas Indonesia",
-  legalName: "PT Bahasa Cerdas Indonesia",
-  alternateName: "BahasaCerdas",
+  name: COMPANY.legalName,
+  legalName: COMPANY.legalName,
+  alternateName: COMPANY.brandName,
   url: SITE_URL,
   description: "Platform edukasi Bahasa Indonesia lengkap dengan AI generator Rencana Pembelajaran, bank soal HOTS, kuis multiplayer, toko karya, dan komunitas MGMP.",
   logo: `${SITE_URL}/brand/bc2026-icon.png`,
   foundingDate: "2026-11-05",
-  identifier: "0911260094193",
+  identifier: COMPANY.nib,
   address: {
     "@type": "PostalAddress",
-    streetAddress: "CFX Tower, Jl. Gatot Subroto Kav. 35-36",
+    streetAddress: COMPANY.streetAddress,
     addressLocality: "Jakarta Selatan",
     addressRegion: "DKI Jakarta",
     postalCode: "12950",
@@ -91,7 +92,7 @@ const jsonLdOrganization = {
   member: publicPeopleLd(),
   areaServed: { "@type": "Country", name: "ID" },
   knowsLanguage: "id",
-  email: "halo@bahasacerdas.com",
+  email: COMPANY.email,
   sameAs: [
     "https://www.instagram.com/bahasacerdas",
     "https://www.youtube.com/@bahasacerdas",

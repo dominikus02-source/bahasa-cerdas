@@ -200,13 +200,13 @@ export default function HeroSection({
 
           <nav
             aria-label="Produk BahasaCerdas"
-            className="mt-6 hidden min-w-0 flex-wrap gap-x-5 gap-y-2 sm:flex"
+            className="mt-6 flex min-w-0 flex-nowrap gap-x-5 gap-y-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible"
           >
             {PRODUCTS.map((p) => (
               <Link
                 key={p.label}
                 href={p.href}
-                className="rounded text-xs font-semibold text-bc-text-2 transition-colors hover:text-bc-accent-strong focus-ring"
+                className="shrink-0 whitespace-nowrap rounded text-xs font-semibold text-bc-text-2 transition-colors hover:text-bc-accent-strong focus-ring"
               >
                 {p.label}
               </Link>
