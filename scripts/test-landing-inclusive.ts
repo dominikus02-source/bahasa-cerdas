@@ -375,6 +375,12 @@ test("Produk dapat dinavigasi dari hero mobile", () =>
   hero.includes('aria-label="Produk BahasaCerdas"') &&
   hero.includes("overflow-x-auto") &&
   !hero.includes("mt-6 hidden min-w-0"));
+test("Profil sosial: footer dan metadata memakai konfigurasi yang sama", () =>
+  company.includes("social:") &&
+  footer.includes("COMPANY.social.instagram") &&
+  footer.includes("COMPANY.social.youtube") &&
+  layoutUi.includes("COMPANY.social.instagram") &&
+  orgLd.includes("COMPANY.social.youtube"));
 test("SEO: tidak mengiklankan /search yang belum memiliki halaman", () =>
   !layoutUi.includes('"SearchAction"') &&
   !orgLd.includes('"SearchAction"'));

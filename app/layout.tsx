@@ -93,11 +93,7 @@ const jsonLdOrganization = {
   areaServed: { "@type": "Country", name: "ID" },
   knowsLanguage: "id",
   email: COMPANY.email,
-  sameAs: [
-    "https://www.instagram.com/bahasacerdas",
-    "https://www.youtube.com/@bahasacerdas",
-    "https://x.com/bahasacerdas",
-  ],
+  sameAs: [COMPANY.social.instagram, COMPANY.social.youtube],
   offers: {
     "@type": "Offer",
     category: "Education",

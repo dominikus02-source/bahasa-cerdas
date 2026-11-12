@@ -32,11 +32,7 @@ export function organizationLd() {
       addressCountry: "ID",
     },
     areaServed: { "@type": "Country", name: "ID" },
-    sameAs: [
-      "https://www.instagram.com/bahasacerdas",
-      "https://www.youtube.com/@bahasacerdas",
-      "https://x.com/bahasacerdas",
-    ],
+    sameAs: [COMPANY.social.instagram, COMPANY.social.youtube],
     brand: {
       "@type": "Brand",
       name: "BahasaCerdas",
