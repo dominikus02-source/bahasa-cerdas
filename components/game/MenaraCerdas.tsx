@@ -316,6 +316,23 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
           </div>
         </div>
 
+        {/* Peta perjalanan: milestone visual tanpa mengubah skor atau aturan permainan. */}
+        <div className="mb-4 overflow-hidden rounded-3xl border-2 border-violet-300/70 bg-gradient-to-r from-fuchsia-100 via-violet-100 to-cyan-100 p-3 shadow-[3px_4px_0_#8B5CF6] dark:border-violet-500/40 dark:from-[#33204B] dark:via-[#25204B] dark:to-[#153A48]">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-black text-violet-900 dark:text-violet-100">
+              <Sparkles className="h-4 w-4 text-fuchsia-600 dark:text-fuchsia-300" />
+              {floor >= total && total > 0 ? "Puncak tercapai!" : floor >= Math.ceil(total * 0.75) ? "Hampir sampai puncak!" : floor >= Math.ceil(total * 0.5) ? "Penjelajah hebat!" : "Petualangan dimulai!"}
+            </span>
+            <span className="text-xs font-black tabular-nums text-violet-900 dark:text-white">{floor}/{total} lantai</span>
+          </div>
+          <div role="progressbar" aria-label="Kemajuan pendakian menara" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={floor} className="h-3 overflow-hidden rounded-full bg-white/80 ring-1 ring-violet-300/60 dark:bg-white/15">
+            <div className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-violet-500 to-cyan-400 transition-[width] duration-500" style={{ width: `${total ? Math.min(100, floor / total * 100) : 0}%` }} />
+          </div>
+          <div className="mt-2 flex justify-between text-[10px] font-bold text-violet-700 dark:text-violet-200">
+            <span>🚩 Mulai</span><span>⭐ Tengah</span><span>🏆 Puncak</span>
+          </div>
+        </div>
+
         {/* tower + question */}
         <div className="flex-1 flex gap-3 min-h-0">
           <Tower floor={floor} total={total} />
@@ -324,7 +341,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <AnimatePresence mode="wait">
               <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
                 className="flex-1 flex flex-col">
-                <div className="rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] border-2 dark:border-amber-600/40 shadow-[5px_5px_0_#CA8A04] dark:shadow-[5px_5px_0_#CA8A04,0_0_20px_rgba(202,138,4,0.15)] p-5 mb-4">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-violet-50 to-cyan-50 dark:bg-gradient-to-br dark:from-[#221E32] dark:via-[#231D35] dark:to-[#142C3A] border-2 border-violet-200 dark:border-violet-500/40 shadow-[5px_5px_0_#8B5CF6] dark:shadow-[5px_5px_0_#6D28D9,0_0_20px_rgba(139,92,246,0.15)] p-5 mb-4">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider dark:text-[#D4A843]">Soal {idx + 1} / {total}</span>
                   <h2 className="text-lg font-bold mt-2 leading-snug dark:text-[#F5EDD6]">{current?.soal}</h2>
                 </div>
