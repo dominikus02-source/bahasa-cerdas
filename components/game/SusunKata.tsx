@@ -560,6 +560,23 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11 sm:w-[110px]" />
           </div>
+          <section aria-label="Perjalanan level Susun Kata" className="mb-5 rounded-3xl border-2 border-violet-300/60 bg-gradient-to-br from-fuchsia-100 via-amber-50 to-cyan-100 p-4 shadow-lg dark:border-violet-500/30 dark:from-violet-950 dark:via-slate-900 dark:to-cyan-950">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-wider text-violet-700 dark:text-violet-300">Petualangan Kata</p>
+                <h3 className="text-xl font-black">Naik Level, Jadi Jawara!</h3>
+                <p className="text-xs opacity-75">Selesaikan tantangan untuk membuka tingkat berikutnya.</p>
+              </div>
+              <div className="shrink-0 rounded-2xl bg-white/80 px-3 py-2 text-center shadow-sm dark:bg-white/10">
+                <span className="block text-2xl font-black tabular-nums">{LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length}/{LEVELS.length}</span>
+                <span className="text-[10px] font-bold uppercase">Terbuka</span>
+              </div>
+            </div>
+            <div role="progressbar" aria-label="Level terbuka" aria-valuemin={0} aria-valuemax={LEVELS.length} aria-valuenow={LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length} className="mt-4 h-3 overflow-hidden rounded-full bg-white/70 ring-1 ring-violet-200 dark:bg-white/15 dark:ring-violet-400/20">
+              <div className="h-full rounded-full bg-gradient-to-r from-pink-500 via-amber-400 to-emerald-400 transition-all duration-500" style={{ width: `${(LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length / LEVELS.length) * 100}%` }} />
+            </div>
+            <p className="mt-2 text-xs font-semibold">⭐ {LEVELS.reduce((sum, lv) => sum + (saved.stars[lv.id] || 0), 0)} dari {LEVELS.length * 3} bintang terkumpul</p>
+          </section>
           <div className="sk-screen bg-white dark:bg-gradient-to-br dark:from-[#1E1A14] dark:to-[#28241E] rounded-3xl p-5 shadow-[6px_6px_0_#D97706] border-4 border-[#161B3A] dark:border-white/25">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
