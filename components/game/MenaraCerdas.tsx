@@ -182,24 +182,24 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             </button>
           </div>
 
-          <div className="mc-screen relative isolate overflow-hidden bg-white game-env-card dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-4 sm:p-6 text-center flex-1 flex flex-col items-center justify-center">
+          <div className="mc-screen relative isolate overflow-hidden bg-white game-env-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-violet-950 dark:border-amber-600/30 rounded-3xl p-4 sm:p-6 text-center flex-1 flex flex-col items-center justify-center">
             <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-violet-200/80 via-cyan-100/60 to-transparent dark:from-violet-700/25 dark:via-cyan-900/10" />
             <div aria-hidden="true" className="pointer-events-none absolute -left-10 top-12 h-32 w-32 rounded-full bg-pink-300/40 blur-3xl" />
             <div aria-hidden="true" className="pointer-events-none absolute -right-10 top-24 h-40 w-40 rounded-full bg-cyan-300/50 blur-3xl" />
             <div className="relative mb-4 flex h-36 w-44 items-end justify-center" aria-hidden="true">
               <div className="absolute bottom-0 h-5 w-40 rounded-[50%] bg-violet-900/20 blur-md" />
-              <div className="absolute bottom-3 flex h-28 w-24 flex-col justify-end overflow-hidden rounded-t-3xl border-[5px] border-[#25204B] bg-gradient-to-b from-fuchsia-400 via-violet-500 to-indigo-700 shadow-[7px_8px_0_#25204B]">
+              <div className="absolute bottom-3 flex h-28 w-24 flex-col justify-end overflow-hidden rounded-t-3xl border-[5px] border-slate-900 bg-gradient-to-b from-fuchsia-400 via-violet-500 to-indigo-700 shadow-lg">
                 <div className="absolute inset-x-0 top-3 grid grid-cols-3 gap-2 px-3">
                   {Array.from({ length: 9 }).map((_, i) => <span key={i} className="h-3 rounded-t-full border border-amber-700/40 bg-amber-200 shadow-inner" />)}
                 </div>
-                <div className="mx-auto h-10 w-7 rounded-t-full border-[3px] border-[#25204B] border-b-0 bg-amber-300" />
+                <div className="mx-auto h-10 w-7 rounded-t-full border-[3px] border-slate-900 border-b-0 bg-amber-300" />
               </div>
-              <div className="absolute bottom-[116px] h-0 w-0 border-x-[58px] border-b-[54px] border-x-transparent border-b-[#25204B]" />
-              <div className="absolute bottom-[121px] h-0 w-0 border-x-[48px] border-b-[44px] border-x-transparent border-b-[#F472B6]" />
+              <div className="absolute bottom-[116px] h-0 w-0 border-x-[58px] border-b-[54px] border-x-transparent border-b-slate-900" />
+              <div className="absolute bottom-[121px] h-0 w-0 border-x-[48px] border-b-[44px] border-x-transparent border-b-pink-400" />
               <Star className="absolute right-0 top-2 h-9 w-9 fill-amber-300 text-amber-500 drop-shadow-lg" />
               <Sparkles className="absolute left-0 top-9 h-7 w-7 text-violet-600 dark:text-cyan-300" />
             </div>
-            <span className="relative inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
+            <span className="relative inline-block px-4 py-1.5 bg-amber-400 border-[3px] border-slate-900 dark:border-white/25 rounded-full font-extrabold text-xs shadow-md mb-4">Soal dari Pelajaranmu</span>
             <h1 className="font-extrabold text-4xl mb-2">Menara <span className="dark:text-[#D4A843]">Cerdas!</span></h1>
             <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
             <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
@@ -317,7 +317,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
         </div>
 
         {/* Peta perjalanan: milestone visual tanpa mengubah skor atau aturan permainan. */}
-        <div className="mb-4 overflow-hidden rounded-3xl border-2 border-violet-300/70 bg-gradient-to-r from-fuchsia-100 via-violet-100 to-cyan-100 p-3 shadow-[3px_4px_0_#8B5CF6] dark:border-violet-500/40 dark:from-[#33204B] dark:via-[#25204B] dark:to-[#153A48]">
+        <div className="mb-4 overflow-hidden rounded-3xl border-2 border-violet-300/70 bg-gradient-to-r from-fuchsia-100 via-violet-100 to-cyan-100 p-3 shadow-lg dark:border-violet-500/40 dark:from-violet-950 dark:via-slate-900 dark:to-cyan-950">
           <div className="mb-2 flex items-center justify-between gap-2">
             <span className="inline-flex items-center gap-1.5 text-xs font-black text-violet-900 dark:text-violet-100">
               <Sparkles className="h-4 w-4 text-fuchsia-600 dark:text-fuchsia-300" />
@@ -341,7 +341,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <AnimatePresence mode="wait">
               <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
                 className="flex-1 flex flex-col">
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-violet-50 to-cyan-50 dark:bg-gradient-to-br dark:from-[#221E32] dark:via-[#231D35] dark:to-[#142C3A] border-2 border-violet-200 dark:border-violet-500/40 shadow-[5px_5px_0_#8B5CF6] dark:shadow-[5px_5px_0_#6D28D9,0_0_20px_rgba(139,92,246,0.15)] p-5 mb-4">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-violet-50 to-cyan-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-violet-950 dark:to-cyan-950 border-2 border-violet-200 dark:border-violet-500/40 shadow-lg dark:shadow-violet-950/40 p-5 mb-4">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider dark:text-[#D4A843]">Soal {idx + 1} / {total}</span>
                   <h2 className="text-lg font-bold mt-2 leading-snug dark:text-[#F5EDD6]">{current?.soal}</h2>
                 </div>
