@@ -21,11 +21,11 @@ import {
 import GameBackButton from "@/components/game/GameBackButton";
 
 /* ---------- Bank kata ---------- */
-const BAKU = ["apotek", "izin", "zaman", "sistem", "nomor", "hafal", "imbau", "cabai", "jadwal", "foto", "teknik", "risiko", "nasihat", "ijazah", "praktik", "napas", "objek", "silakan", "atlet", "asas", "kualitas", "analisis", "hakikat", "kaidah", "kuitansi", "respons", "modern", "karier", "saraf", "cedera"];
-const NONBAKU = ["apotik", "ijin", "jaman", "sistim", "nomer", "hapal", "himbau", "cabe", "jadual", "poto", "tehnik", "resiko", "nasehat", "ijasah", "praktek", "nafas", "obyek", "silahkan", "atlit", "azas", "kwalitas", "analisa", "hakekat", "kaedah", "kwitansi", "respon", "moderen", "karir", "sarap", "cidera"];
-const BENDA = ["meja", "buku", "kursi", "sepeda", "sekolah", "pensil", "jendela", "gunung", "sungai", "pantai", "kelas", "papan", "lemari", "sepatu", "topi", "roti", "nasi", "bunga", "pohon", "burung", "rumah", "pintu", "kapal", "sawah"];
-const KERJA = ["makan", "minum", "berlari", "tidur", "menulis", "membaca", "melompat", "duduk", "berdiri", "menyapu", "memasak", "mencuci", "bermain", "belajar", "menyanyi", "berenang", "menari", "melukis", "menanam", "memetik"];
-const SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "malas", "cepat", "lambat", "panas", "dingin", "manis", "pahit", "berani", "ramah", "sopan", "bersih", "kotor", "terang", "gelap", "luas", "sempit", "kuat", "lemah"];
+const BAKU = ["apotek", "izin", "zaman", "sistem", "nomor", "hafal", "imbau", "cabai", "jadwal", "foto", "teknik", "risiko", "nasihat", "ijazah", "praktik", "napas", "objek", "silakan", "atlet", "asas", "kualitas", "analisis", "hakikat", "kaidah", "kuitansi", "respons", "modern", "karier", "saraf", "cedera", "diagnosis", "antre", "sekadar", "aktivitas", "efektif", "metode", "subjek", "objektif", "hierarki"];
+const NONBAKU = ["apotik", "ijin", "jaman", "sistim", "nomer", "hapal", "himbau", "cabe", "jadual", "poto", "tehnik", "resiko", "nasehat", "ijasah", "praktek", "nafas", "obyek", "silahkan", "atlit", "azas", "kwalitas", "analisa", "hakekat", "kaedah", "kwitansi", "respon", "moderen", "karir", "sarap", "cidera", "diagnosa", "antri", "sekedar", "aktifitas", "efektip", "metoda", "subyek", "obyektif", "hirarki"];
+const BENDA = ["meja", "buku", "kursi", "sepeda", "sekolah", "pensil", "jendela", "gunung", "sungai", "pantai", "kelas", "papan", "lemari", "sepatu", "topi", "roti", "nasi", "bunga", "pohon", "burung", "rumah", "pintu", "kapal", "sawah", "perpustakaan", "museum", "laboratorium", "komputer", "kamera", "mikrofon", "panggung", "kamus", "ensiklopedia", "majalah", "cerpen"];
+const KERJA = ["makan", "minum", "berlari", "tidur", "menulis", "membaca", "melompat", "duduk", "berdiri", "menyapu", "memasak", "mencuci", "bermain", "belajar", "menyanyi", "berenang", "menari", "melukis", "menanam", "memetik", "menggambar", "mengamati", "menyunting", "merangkum", "menganalisis", "berdiskusi", "mendengarkan", "menjelaskan", "mempresentasikan"];
+const SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "malas", "cepat", "lambat", "panas", "dingin", "manis", "pahit", "berani", "ramah", "sopan", "bersih", "kotor", "terang", "gelap", "luas", "sempit", "kuat", "lemah", "teliti", "kreatif", "jujur", "tangguh", "cermat", "sabar", "gigih", "bijaksana", "mandiri"];
 
 type RuleKey = "BAKU" | "BENDA" | "KERJA" | "SIFAT";
 const RULES: Record<RuleKey, { label: string; valid: string[]; invalid: string[] }> = {
@@ -46,6 +46,12 @@ const LEVELS: Level[] = [
   { id: 7, name: "Kerja Keras", rule: "KERJA", bpm: 71, duration: 42, density: 0.74, color: "#10B981" },
   { id: 8, name: "Sifat Super", rule: "SIFAT", bpm: 76, duration: 45, density: 0.78, color: "#38BDF8" },
   { id: 9, name: "Master Baku", rule: "BAKU", bpm: 82, duration: 50, density: 0.82, color: "#8B5CF6" },
+  { id: 10, name: "Ruang Literasi", rule: "BENDA", bpm: 85, duration: 52, density: 0.82, color: "#06B6D4" },
+  { id: 11, name: "Aksi Literasi", rule: "KERJA", bpm: 88, duration: 54, density: 0.84, color: "#F97316" },
+  { id: 12, name: "Karakter Unggul", rule: "SIFAT", bpm: 91, duration: 56, density: 0.85, color: "#A855F7" },
+  { id: 13, name: "Legenda Ejaan", rule: "BAKU", bpm: 94, duration: 58, density: 0.86, color: "#EC4899" },
+  { id: 14, name: "Benda Mahir", rule: "BENDA", bpm: 97, duration: 60, density: 0.87, color: "#14B8A6" },
+  { id: 15, name: "Maestro Irama", rule: "KERJA", bpm: 100, duration: 62, density: 0.88, color: "#6366F1" },
 ];
 
 const LANE_COLORS = ["#FF6B6B", "#FBBF24", "#4ADE80", "#38BDF8"];
