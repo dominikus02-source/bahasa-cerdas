@@ -266,6 +266,14 @@ const WORDS_DB = [
   { word: "ENSIKLOPEDIA", clues: ["Buku rujukan segala ilmu", "Disusun menurut abjad", "Wikipedia versi cetak"], category: "Bahasa" },
   { word: "PALINDROM", clues: ["Kata yang sama dibaca bolak-balik", "Contohnya 'katak'", "Permainan kata unik"], category: "Bahasa" },
   { word: "TRANSLITERASI", clues: ["Alih aksara antar sistem tulisan", "Dari huruf Arab ke Latin misalnya", "Menjaga bunyi tetap sama"], category: "Bahasa" },
+  // Kosakata lanjutan: unsur cerita, kebahasaan, dan literasi media.
+  { word: "PROTAGONIS", clues: ["Tokoh yang menjadi pusat cerita", "Biasanya mengalami konflik utama", "Perannya menonjol dalam alur"], category: "Sastra" },
+  { word: "ANTAGONIS", clues: ["Tokoh yang menentang tokoh utama", "Sering memicu konflik", "Tidak selalu digambarkan jahat"], category: "Sastra" },
+  { word: "KOHERENSI", clues: ["Kepaduan makna antarbagian teks", "Gagasan saling terhubung", "Membuat paragraf mudah diikuti"], category: "Bahasa" },
+  { word: "KOHESI", clues: ["Keterkaitan bentuk antarbagian teks", "Dibantu kata rujukan dan konjungsi", "Membuat kalimat saling terikat"], category: "Bahasa" },
+  { word: "PERSONIFIKASI", clues: ["Majas yang memberi sifat manusia", "Angin berbisik adalah contohnya", "Benda mati seolah dapat bertindak"], category: "Sastra" },
+  { word: "ONOMATOPE", clues: ["Kata yang menirukan bunyi", "Tik-tok adalah contohnya", "Sering dipakai dalam komik"], category: "Sastra" },
+  { word: "SINOPSIS", clues: ["Ringkasan isi karya", "Menggambarkan alur utama secara singkat", "Sering tercantum di sampul belakang"], category: "Sastra" },
 ];
 
 type Word = (typeof WORDS_DB)[number];
