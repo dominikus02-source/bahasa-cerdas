@@ -1,0 +1,5 @@
+# Install only in dedicated staging QA generator / metrics-agent venv.
+# Never install on the production VPS or shared application environment.
+livekit==1.2.0
+livekit-api==1.2.2
+psutil>=6.0,<8
