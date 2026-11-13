@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import PageFooter from "@/components/public/PageFooter";
 import { Download, ShieldQuestion, Smartphone, CheckCircle2, ArrowRight } from "lucide-react";
 
 // Public on purpose (see publicPaths in lib/supabase/proxy.ts): a parent installs
@@ -134,6 +135,7 @@ export default function UnduhPage() {
           </Link>
         </div>
       </div>
+      <PageFooter />
     </div>
   );
 }
