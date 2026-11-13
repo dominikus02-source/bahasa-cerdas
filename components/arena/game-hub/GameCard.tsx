@@ -40,7 +40,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
 
   // ── IMAGE AREA (dipakai LIVE & SOON) ──
   const imageArea = (
-    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-[#12101F]"\n    style={{ background: `linear-gradient(145deg, ${game.accentColor}30, ${game.accentColor}12 55%, #ffffff)` }}>
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-[#12101F]"
+    style={{ background: `linear-gradient(145deg, ${game.accentColor}30, ${game.accentColor}12 55%, #ffffff)` }}>
       {showArt ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -163,7 +164,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         {content}
         {/* CTA — span di dalam <Link>: seluruh kartu tetap dapat diklik (behavior lama) */}
-        <span className="mt-2.5 inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all group-hover:brightness-110 group-hover:gap-2 active:scale-[0.97]"\n          style={{ background: `linear-gradient(110deg, ${game.accentColor}, ${game.accentColor}cc)` }}>
+        <span className="mt-2.5 inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all group-hover:brightness-110 group-hover:gap-2 active:scale-[0.97]"
+          style={{ background: `linear-gradient(110deg, ${game.accentColor}, ${game.accentColor}cc)` }}>
           <Play size={13} fill="currentColor" /> MAIN SEKARANG
         </span>
       </div>
