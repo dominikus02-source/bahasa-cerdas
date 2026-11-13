@@ -182,8 +182,24 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             </button>
           </div>
 
-          <div className="mc-screen bg-white game-env-card dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
+          <div className="mc-screen relative isolate overflow-hidden bg-white game-env-card dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-4 sm:p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-violet-200/80 via-cyan-100/60 to-transparent dark:from-violet-700/25 dark:via-cyan-900/10" />
+            <div aria-hidden="true" className="pointer-events-none absolute -left-10 top-12 h-32 w-32 rounded-full bg-pink-300/40 blur-3xl" />
+            <div aria-hidden="true" className="pointer-events-none absolute -right-10 top-24 h-40 w-40 rounded-full bg-cyan-300/50 blur-3xl" />
+            <div className="relative mb-4 flex h-36 w-44 items-end justify-center" aria-hidden="true">
+              <div className="absolute bottom-0 h-5 w-40 rounded-[50%] bg-violet-900/20 blur-md" />
+              <div className="absolute bottom-3 flex h-28 w-24 flex-col justify-end overflow-hidden rounded-t-3xl border-[5px] border-[#25204B] bg-gradient-to-b from-fuchsia-400 via-violet-500 to-indigo-700 shadow-[7px_8px_0_#25204B]">
+                <div className="absolute inset-x-0 top-3 grid grid-cols-3 gap-2 px-3">
+                  {Array.from({ length: 9 }).map((_, i) => <span key={i} className="h-3 rounded-t-full border border-amber-700/40 bg-amber-200 shadow-inner" />)}
+                </div>
+                <div className="mx-auto h-10 w-7 rounded-t-full border-[3px] border-[#25204B] border-b-0 bg-amber-300" />
+              </div>
+              <div className="absolute bottom-[116px] h-0 w-0 border-x-[58px] border-b-[54px] border-x-transparent border-b-[#25204B]" />
+              <div className="absolute bottom-[121px] h-0 w-0 border-x-[48px] border-b-[44px] border-x-transparent border-b-[#F472B6]" />
+              <Star className="absolute right-0 top-2 h-9 w-9 fill-amber-300 text-amber-500 drop-shadow-lg" />
+              <Sparkles className="absolute left-0 top-9 h-7 w-7 text-violet-600 dark:text-cyan-300" />
+            </div>
+            <span className="relative inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
             <h1 className="font-extrabold text-4xl mb-2">Menara <span className="dark:text-[#D4A843]">Cerdas!</span></h1>
             <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
             <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
