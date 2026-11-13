@@ -22,11 +22,17 @@ interface Q {
 
 type Phase = "start" | "loading" | "playing" | "gameover";
 const MAX_HEARTS = 3;
+const TOWER_CHALLENGES = [
+  { floors: 8, title: "Menara Pelangi", detail: "8 lantai · petualangan singkat", color: "from-pink-400 to-amber-400" },
+  { floors: 12, title: "Menara Bintang", detail: "12 lantai · tantangan klasik", color: "from-violet-500 to-cyan-400" },
+  { floors: 20, title: "Menara Legenda", detail: "20 lantai · tantangan puncak", color: "from-emerald-400 to-teal-600" },
+] as const;
 
 export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: string }) {
   // Dari dasbor Guru tombol kembali menuju menu gim Guru, bukan Arena.
   const backLabel = backHref === "/arena/game" ? "Kembali ke Arena" : "Menu Gim";
   const [phase, setPhase] = useState<Phase>("start");
+  const [challengeFloors, setChallengeFloors] = useState<8 | 12 | 20>(12);
   const [questions, setQuestions] = useState<Q[]>([]);
   const [idx, setIdx] = useState(0);
   const [floor, setFloor] = useState(0);
@@ -63,7 +69,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     setIdx(0); setFloor(0); setHearts(MAX_HEARTS); setCombo(0); setBest(0); setPicked(null); setXpResult(null);
     setOpsiDicoret({}); clearError();
     try {
-      const res = await fetch("/api/game/menara?count=12", { cache: "no-store" });
+      const res = await fetch(`/api/game/menara?count=${challengeFloors}`, { cache: "no-store" });
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.questions) || data.questions.length === 0) {
         setPhase("start");
@@ -74,7 +80,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     } catch {
       setPhase("start");
     }
-  }, [clearError]);
+  }, [clearError, challengeFloors]);
 
   const finish = useCallback(async (finalFloor: number) => {
     stopBGM();
@@ -182,6 +188,19 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
             <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
 
+            <fieldset className="mb-6 w-full max-w-md text-left">
+              <legend className="mb-3 text-center text-sm font-extrabold">Pilih petualangan menaramu</legend>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {TOWER_CHALLENGES.map((challenge) => (
+                  <button key={challenge.floors} type="button" disabled={phase === "loading"} aria-pressed={challengeFloors === challenge.floors} onClick={() => setChallengeFloors(challenge.floors)}
+                    className={`min-h-20 rounded-2xl border-2 p-3 text-left transition-all focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${challengeFloors === challenge.floors ? "border-violet-700 bg-violet-50 shadow-[3px_3px_0_#7C3AED] dark:bg-violet-900/40" : "border-slate-300 bg-white/80 hover:border-violet-400 dark:border-white/20 dark:bg-white/5"}`}>
+                    <span className={`mb-2 block h-2 rounded-full bg-gradient-to-r ${challenge.color}`} />
+                    <span className="block text-xs font-black">{challenge.title}</span>
+                    <span className="mt-1 block text-[11px] opacity-75">{challenge.detail}</span>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
               <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
                 <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
