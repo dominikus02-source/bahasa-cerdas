@@ -156,7 +156,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
     <Link
       href={game.href}
       onClick={() => onPlay?.(game.id)}
-      className="game-card-anim group relative flex flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-[0.97] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 dark:border-[rgba(124,58,237,0.2)] dark:bg-[#16122A]"
+      className="game-card-anim group relative flex flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-[0.97] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 dark:border-violet-900/40 dark:bg-slate-950"
       style={{ transitionDelay: `${Math.min(index, 6) * 20}ms` }}
       aria-label={`${game.title} — main sekarang`}
     >
