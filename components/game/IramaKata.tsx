@@ -745,6 +745,23 @@ export default function IramaKata({ backHref = "/arena/game" }: { backHref?: str
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11 sm:w-[110px]" />
             </div>
+            <section aria-label="Perjalanan Irama Kata" className="mb-5 rounded-3xl border border-pink-300/70 bg-gradient-to-br from-pink-100 via-violet-100 to-cyan-100 p-4 text-[#161B3A] shadow-lg dark:border-pink-400/30 dark:from-pink-950 dark:via-violet-950 dark:to-cyan-950 dark:text-white">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-widest text-pink-700 dark:text-pink-300">Rhythm Quest</p>
+                  <h3 className="text-xl font-black">Jadilah Maestro Kata!</h3>
+                  <p className="mt-1 text-xs opacity-80">Ketuk kata yang tepat mengikuti irama. Buka 15 panggung tantangan!</p>
+                </div>
+                <div className="shrink-0 rounded-2xl bg-white/80 px-3 py-2 text-center dark:bg-white/10">
+                  <span className="block text-2xl font-black tabular-nums">{LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length}/15</span>
+                  <span className="text-[10px] font-bold uppercase">Level</span>
+                </div>
+              </div>
+              <div role="progressbar" aria-label="Level Irama Kata terbuka" aria-valuemin={0} aria-valuemax={LEVELS.length} aria-valuenow={LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length} className="mt-4 h-3 overflow-hidden rounded-full bg-white/70 dark:bg-white/15">
+                <div className="h-full rounded-full bg-gradient-to-r from-pink-500 via-violet-500 to-cyan-400 transition-all duration-500" style={{ width: `${LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length / LEVELS.length * 100}%` }} />
+              </div>
+              <p className="mt-2 text-xs font-semibold">⭐ {LEVELS.reduce((total, lv) => total + starsFor(saved.best[lv.id] || 0), 0)} / {LEVELS.length * 3} bintang · Kecepatan hingga 100 BPM</p>
+            </section>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
                 const unlocked = saved.unlocked.includes(lv.id);
