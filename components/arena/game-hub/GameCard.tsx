@@ -40,7 +40,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
 
   // ── IMAGE AREA (dipakai LIVE & SOON) ──
   const imageArea = (
-    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-[#12101F]">
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-slate-950"
+    style={{ background: `linear-gradient(145deg, ${game.accentColor}30, ${game.accentColor}12 55%, transparent)` }}>
       {showArt ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -155,7 +156,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
     <Link
       href={game.href}
       onClick={() => onPlay?.(game.id)}
-      className="game-card-anim group relative flex flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-[0.97] dark:border-[rgba(124,58,237,0.2)] dark:bg-[#16122A]"
+      className="game-card-anim group relative flex flex-col overflow-hidden rounded-[24px] border border-slate-200 bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl active:scale-[0.97] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 dark:border-violet-900/40 dark:bg-slate-950"
       style={{ transitionDelay: `${Math.min(index, 6) * 20}ms` }}
       aria-label={`${game.title} — main sekarang`}
     >
@@ -163,7 +164,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         {content}
         {/* CTA — span di dalam <Link>: seluruh kartu tetap dapat diklik (behavior lama) */}
-        <span className="mt-2.5 inline-flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-2xl bg-violet-600 px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-sm transition-all group-hover:bg-violet-700 group-hover:gap-2 active:scale-[0.97]">
+        <span className="mt-2.5 inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all group-hover:brightness-110 group-hover:gap-2 active:scale-[0.97]"
+          style={{ background: `linear-gradient(110deg, ${game.accentColor}, ${game.accentColor}cc)` }}>
           <Play size={13} fill="currentColor" /> MAIN SEKARANG
         </span>
       </div>

@@ -266,6 +266,14 @@ const WORDS_DB = [
   { word: "ENSIKLOPEDIA", clues: ["Buku rujukan segala ilmu", "Disusun menurut abjad", "Wikipedia versi cetak"], category: "Bahasa" },
   { word: "PALINDROM", clues: ["Kata yang sama dibaca bolak-balik", "Contohnya 'katak'", "Permainan kata unik"], category: "Bahasa" },
   { word: "TRANSLITERASI", clues: ["Alih aksara antar sistem tulisan", "Dari huruf Arab ke Latin misalnya", "Menjaga bunyi tetap sama"], category: "Bahasa" },
+  // Kosakata lanjutan: unsur cerita, kebahasaan, dan literasi media.
+  { word: "PROTAGONIS", clues: ["Tokoh yang menjadi pusat cerita", "Biasanya mengalami konflik utama", "Perannya menonjol dalam alur"], category: "Sastra" },
+  { word: "ANTAGONIS", clues: ["Tokoh yang menentang tokoh utama", "Sering memicu konflik", "Tidak selalu digambarkan jahat"], category: "Sastra" },
+  { word: "KOHERENSI", clues: ["Kepaduan makna antarbagian teks", "Gagasan saling terhubung", "Membuat paragraf mudah diikuti"], category: "Bahasa" },
+  { word: "KOHESI", clues: ["Keterkaitan bentuk antarbagian teks", "Dibantu kata rujukan dan konjungsi", "Membuat kalimat saling terikat"], category: "Bahasa" },
+  { word: "PERSONIFIKASI", clues: ["Majas yang memberi sifat manusia", "Angin berbisik adalah contohnya", "Benda mati seolah dapat bertindak"], category: "Sastra" },
+  { word: "ONOMATOPE", clues: ["Kata yang menirukan bunyi", "Tik-tok adalah contohnya", "Sering dipakai dalam komik"], category: "Sastra" },
+  { word: "SINOPSIS", clues: ["Ringkasan isi karya", "Menggambarkan alur utama secara singkat", "Sering tercantum di sampul belakang"], category: "Sastra" },
 ];
 
 type Word = (typeof WORDS_DB)[number];
@@ -282,6 +290,9 @@ const LEVELS: Level[] = [
   { id: 7, name: "Dewa", rounds: 12, min: 8, max: 12, color: "#F43F5E" },
   { id: 8, name: "Naga", rounds: 13, min: 8, max: 13, color: "#14B8A6" },
   { id: 9, name: "Maha Guru", rounds: 15, min: 6, max: 99, color: "#6366F1" },
+  { id: 10, name: "Detektif Makna", rounds: 16, min: 7, max: 99, color: "deepskyblue" },
+  { id: 11, name: "Pemburu Istilah", rounds: 17, min: 8, max: 99, color: "orchid" },
+  { id: 12, name: "Maestro Kosakata", rounds: 18, min: 9, max: 99, color: "coral" },
 ];
 
 type Saved = { unlocked: number[]; best: Record<number, number>; stars: Record<number, number> };
@@ -573,6 +584,23 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
             <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
             <div className="w-11 sm:w-[110px]" />
           </div>
+          <section aria-label="Perjalanan level Tebak Kata" className="mb-5 rounded-3xl border-2 border-cyan-300/60 bg-gradient-to-br from-cyan-100 via-fuchsia-50 to-amber-100 p-4 shadow-lg dark:border-cyan-500/30 dark:from-cyan-950 dark:via-slate-900 dark:to-violet-950">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-wider text-cyan-700 dark:text-cyan-300">Detektif Kosakata</p>
+                <h3 className="text-xl font-black">Pecahkan Semua Misteri!</h3>
+                <p className="text-xs opacity-75">Gunakan petunjuk untuk menaklukkan setiap tingkat.</p>
+              </div>
+              <div className="shrink-0 rounded-2xl bg-white/80 px-3 py-2 text-center shadow-sm dark:bg-white/10">
+                <span className="block text-2xl font-black tabular-nums">{LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length}/{LEVELS.length}</span>
+                <span className="text-[10px] font-bold uppercase">Terbuka</span>
+              </div>
+            </div>
+            <div role="progressbar" aria-label="Level terbuka" aria-valuemin={0} aria-valuemax={LEVELS.length} aria-valuenow={LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length} className="mt-4 h-3 overflow-hidden rounded-full bg-white/70 ring-1 ring-cyan-200 dark:bg-white/15 dark:ring-cyan-400/20">
+              <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-amber-400 transition-all duration-500" style={{ width: `${(LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length / LEVELS.length) * 100}%` }} />
+            </div>
+            <p className="mt-2 text-xs font-semibold">⭐ {LEVELS.reduce((sum, lv) => sum + (saved.stars[lv.id] || 0), 0)} dari {LEVELS.length * 3} bintang terkumpul</p>
+          </section>
           <div className="tk-screen bg-white dark:bg-gradient-to-br dark:from-[#0E2028] dark:to-[#162C34] rounded-3xl p-5 shadow-[6px_6px_0_#0D9488] border-4 border-[#161B3A] dark:border-white/25">
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
@@ -636,6 +664,15 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
             </div>
           </div>
 
+          <section aria-label="Progres misi detektif" className="mb-4 rounded-3xl border border-cyan-300/70 bg-gradient-to-r from-cyan-100 via-violet-100 to-pink-100 p-3 shadow-[3px_4px_0_#0D9488] dark:border-cyan-500/30 dark:from-cyan-950 dark:via-violet-950 dark:to-pink-950">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-xs font-black uppercase tracking-wide text-cyan-800 dark:text-cyan-200">🔎 Misi {level.name}</span>
+              <span className="text-xs font-black tabular-nums">{Math.min(round + 1, pool.length)} / {pool.length}</span>
+            </div>
+            <div role="progressbar" aria-label="Progres soal Tebak Kata" aria-valuemin={0} aria-valuemax={pool.length || 1} aria-valuenow={round} className="h-3 overflow-hidden rounded-full bg-white/80 dark:bg-white/15">
+              <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-500 transition-[width] duration-500" style={{ width: `${pool.length ? Math.min(100, round / pool.length * 100) : 0}%` }} />
+            </div>
+          </section>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold opacity-50">{round + 1} / {pool.length}</span>
             {streak > 0 && (

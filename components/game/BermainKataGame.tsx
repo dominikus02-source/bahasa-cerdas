@@ -23,6 +23,12 @@ type GameSummary = {
 }
 
 const WORDS: Word[] = [
+  ["PANAS","Suhu yang tinggi","Sifat"],["DINGIN","Suhu yang rendah","Sifat"],
+  ["MUDA","Belum berusia tua","Sifat"],["TUA","Sudah berusia lanjut","Sifat"],
+  ["BARU","Belum lama dibuat atau digunakan","Sifat"],["LAMA","Sudah berlangsung sejak dahulu","Waktu"],
+  ["INDAH","Sedap dipandang","Sifat"],["HEMAT","Tidak boros menggunakan sesuatu","Sifat"],
+  ["SOPAN","Bertingkah laku santun","Sifat"],["RAMAH","Baik dan menyenangkan kepada orang lain","Sifat"],
+  ["TAKUT","Merasa gentar terhadap sesuatu","Perasaan"],["GAGAH","Tampak kuat dan berani","Sifat"],
   ["API","Panas dan menyala","Alam"],["AIR","Untuk minum dan mandi","Alam"],["AYAM","Hewan yang bertelur","Hewan"],["BOLA","Benda untuk bermain","Benda"],["BUKU","Tempat membaca cerita","Sekolah"],["BURUNG","Hewan yang bisa terbang","Hewan"],["DAUN","Bagian tumbuhan yang hijau","Alam"],["GULA","Rasanya manis","Makanan"],["HUJAN","Air yang turun dari langit","Alam"],["IKAN","Hidup di air","Hewan"],["JAM","Menunjukkan waktu","Benda"],["KAKI","Untuk berjalan","Tubuh"],["KAPAL","Kendaraan di air","Kendaraan"],["KUCING","Hewan yang suka mengeong","Hewan"],["LAPAR","Ingin makan","Perasaan"],["LILIN","Bisa menyala saat gelap","Benda"],["MATA","Untuk melihat","Tubuh"],["MEJA","Tempat meletakkan barang","Benda"],["NASI","Makanan pokok","Makanan"],["OBAT","Dipakai saat sakit","Kesehatan"],["PAGI","Waktu setelah malam","Waktu"],["PENA","Untuk menulis","Sekolah"],["PISANG","Buah berwarna kuning","Makanan"],["ROTI","Makanan dari tepung","Makanan"],["SAPU","Untuk membersihkan lantai","Benda"],["SEPATU","Dipakai di kaki","Pakaian"],["SENANG","Perasaan gembira","Perasaan"],["SIANG","Saat matahari terang","Waktu"],["SUSU","Minuman putih","Makanan"],["TAS","Tempat membawa buku","Sekolah"],["TELUR","Bisa dimasak atau direbus","Makanan"],["TOPI","Dipakai di kepala","Pakaian"],["ULAT","Hewan kecil yang bisa jadi kupu-kupu","Hewan"],["WAKTU","Terus berjalan setiap hari","Waktu"],["BESAR","Lawan kata kecil","Sifat"],["CEPAT","Lawan kata lambat","Sifat"],["CERDAS","Pandai memahami sesuatu","Sifat"],["GELAP","Lawan kata terang","Sifat"],["HALUS","Tidak kasar","Sifat"],["KECIL","Tidak besar","Sifat"],["KOTOR","Lawan kata bersih","Sifat"],["KUAT","Tidak mudah menyerah","Sifat"],["LAMBAT","Bergerak tidak cepat","Sifat"],["MANIS","Rasa seperti gula","Sifat"],["RAJIN","Suka belajar dan bekerja","Sifat"],["RAMAI","Banyak orang atau suara","Sifat"],["SEDIH","Perasaan saat ingin menangis","Perasaan"],["TINGGI","Lawan kata rendah","Sifat"],["TERANG","Banyak cahaya","Sifat"],["TENANG","Tidak gaduh","Sifat"],["BERSIH","Tidak kotor","Sifat"],["BERANI","Tidak takut menghadapi tantangan","Sifat"],["BUNGA","Bagian tumbuhan yang indah","Alam"],["CERI","Buah kecil berwarna merah","Makanan"],["DURIAN","Buah berduri dengan aroma kuat","Makanan"],["GAJAH","Hewan besar dengan belalai","Hewan"],["HUTAN","Tempat banyak pohon","Alam"],["JERUK","Buah yang kaya vitamin C","Makanan"],["KELINCI","Hewan yang suka melompat","Hewan"],["MELATI","Bunga kecil yang harum","Alam"],["MOBIL","Kendaraan beroda empat","Kendaraan"],["MOTOR","Kendaraan roda dua","Kendaraan"],["PAYUNG","Dipakai saat hujan","Benda"],["PELANGI","Muncul dengan banyak warna setelah hujan","Alam"],["PERAHU","Kendaraan kecil di air","Kendaraan"],["SEKOLAH","Tempat belajar","Sekolah"],["SEPEDA","Kendaraan yang dikayuh","Kendaraan"],["TEMAN","Orang yang kita sukai untuk bermain","Sosial"],["TAMAN","Tempat dengan banyak tanaman","Tempat"],["BINTANG","Terlihat di langit malam","Alam"],["BULAN","Terlihat di langit pada malam hari","Alam"],["MATAHARI","Terbit pada pagi hari","Alam"],["KUPU-KUPU","Serangga bersayap indah","Hewan"],["LAPANGAN","Tempat luas untuk bermain","Tempat"],["PERPUSTAKAAN","Tempat meminjam buku","Sekolah"],["PETUALANG","Orang yang suka menjelajah","Orang"],["PELANGGAN","Orang yang membeli barang","Orang"],["PERMAINAN","Kegiatan yang dilakukan untuk bersenang-senang","Kegiatan"],
 ].map(([word,hint,category]) => ({word,hint,category}))
 
@@ -35,6 +41,16 @@ type MeaningPair = {
 }
 
 const MEANING_PAIRS: MeaningPair[] = [
+  // Tantangan tambahan: pasangan kata sehari-hari, tanpa mengganti mode permainan.
+  { source:"PANAS", answer:"DINGIN", kind:"lawan" },
+  { source:"MUDA", answer:"TUA", kind:"lawan" },
+  { source:"BARU", answer:"LAMA", kind:"lawan" },
+  { source:"HEMAT", answer:"BOROS", kind:"lawan" },
+  { source:"SOPAN", answer:"KASAR", kind:"lawan" },
+  { source:"TAKUT", answer:"BERANI", kind:"lawan" },
+  { source:"INDAH", answer:"ELOK", kind:"sinonim" },
+  { source:"RAMAH", answer:"BERSAHABAT", kind:"sinonim" },
+  { source:"GAGAH", answer:"PERKASA", kind:"sinonim" },
   { source:"BESAR", answer:"KECIL", kind:"lawan" },
   { source:"CEPAT", answer:"LAMBAT", kind:"lawan" },
   { source:"TERANG", answer:"GELAP", kind:"lawan" },

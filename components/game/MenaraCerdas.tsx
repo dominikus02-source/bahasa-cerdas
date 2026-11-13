@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { setQuiet } from "@/lib/notif-quiet"
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
+import { Heart, Flame, Trophy, RotateCcw, Mountain, Star, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
 import Burst from "@/components/game/Burst";
 import ComboFlash from "@/components/game/ComboFlash";
 import ConfettiBurst from "@/components/game/ConfettiBurst";
@@ -22,11 +22,17 @@ interface Q {
 
 type Phase = "start" | "loading" | "playing" | "gameover";
 const MAX_HEARTS = 3;
+const TOWER_CHALLENGES = [
+  { floors: 8, title: "Menara Pelangi", detail: "8 lantai · petualangan singkat", color: "from-pink-400 to-amber-400" },
+  { floors: 12, title: "Menara Bintang", detail: "12 lantai · tantangan klasik", color: "from-violet-500 to-cyan-400" },
+  { floors: 20, title: "Menara Legenda", detail: "20 lantai · tantangan puncak", color: "from-emerald-400 to-teal-600" },
+] as const;
 
 export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: string }) {
   // Dari dasbor Guru tombol kembali menuju menu gim Guru, bukan Arena.
   const backLabel = backHref === "/arena/game" ? "Kembali ke Arena" : "Menu Gim";
   const [phase, setPhase] = useState<Phase>("start");
+  const [challengeFloors, setChallengeFloors] = useState<8 | 12 | 20>(12);
   const [questions, setQuestions] = useState<Q[]>([]);
   const [idx, setIdx] = useState(0);
   const [floor, setFloor] = useState(0);
@@ -63,7 +69,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     setIdx(0); setFloor(0); setHearts(MAX_HEARTS); setCombo(0); setBest(0); setPicked(null); setXpResult(null);
     setOpsiDicoret({}); clearError();
     try {
-      const res = await fetch("/api/game/menara?count=12", { cache: "no-store" });
+      const res = await fetch(`/api/game/menara?count=${challengeFloors}`, { cache: "no-store" });
       const data = await res.json();
       if (!res.ok || !Array.isArray(data.questions) || data.questions.length === 0) {
         setPhase("start");
@@ -74,7 +80,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
     } catch {
       setPhase("start");
     }
-  }, [clearError]);
+  }, [clearError, challengeFloors]);
 
   const finish = useCallback(async (finalFloor: number) => {
     stopBGM();
@@ -176,12 +182,41 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             </button>
           </div>
 
-          <div className="mc-screen bg-white game-env-card dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] dark:border-amber-600/30 rounded-3xl p-6 text-center flex-1 flex flex-col items-center justify-center">
-            <span className="inline-block px-4 py-1.5 bg-[#FBBF24] border-[3px] border-[#161B3A] dark:border-white/25 rounded-full font-extrabold text-xs shadow-[3px_3px_0_#CA8A04] mb-4">Soal dari Pelajaranmu</span>
+          <div className="mc-screen relative isolate overflow-hidden bg-white game-env-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-950 dark:to-violet-950 dark:border-amber-600/30 rounded-3xl p-4 sm:p-6 text-center flex-1 flex flex-col items-center justify-center">
+            <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-violet-200/80 via-cyan-100/60 to-transparent dark:from-violet-700/25 dark:via-cyan-900/10" />
+            <div aria-hidden="true" className="pointer-events-none absolute -left-10 top-12 h-32 w-32 rounded-full bg-pink-300/40 blur-3xl" />
+            <div aria-hidden="true" className="pointer-events-none absolute -right-10 top-24 h-40 w-40 rounded-full bg-cyan-300/50 blur-3xl" />
+            <div className="relative mb-4 flex h-36 w-44 items-end justify-center" aria-hidden="true">
+              <div className="absolute bottom-0 h-5 w-40 rounded-[50%] bg-violet-900/20 blur-md" />
+              <div className="absolute bottom-3 flex h-28 w-24 flex-col justify-end overflow-hidden rounded-t-3xl border-[5px] border-slate-900 bg-gradient-to-b from-fuchsia-400 via-violet-500 to-indigo-700 shadow-lg">
+                <div className="absolute inset-x-0 top-3 grid grid-cols-3 gap-2 px-3">
+                  {Array.from({ length: 9 }).map((_, i) => <span key={i} className="h-3 rounded-t-full border border-amber-700/40 bg-amber-200 shadow-inner" />)}
+                </div>
+                <div className="mx-auto h-10 w-7 rounded-t-full border-[3px] border-slate-900 border-b-0 bg-amber-300" />
+              </div>
+              <div className="absolute bottom-[116px] h-0 w-0 border-x-[58px] border-b-[54px] border-x-transparent border-b-slate-900" />
+              <div className="absolute bottom-[121px] h-0 w-0 border-x-[48px] border-b-[44px] border-x-transparent border-b-pink-400" />
+              <Star className="absolute right-0 top-2 h-9 w-9 fill-amber-300 text-amber-500 drop-shadow-lg" />
+              <Sparkles className="absolute left-0 top-9 h-7 w-7 text-violet-600 dark:text-cyan-300" />
+            </div>
+            <span className="relative inline-block px-4 py-1.5 bg-amber-400 border-[3px] border-slate-900 dark:border-white/25 rounded-full font-extrabold text-xs shadow-md mb-4">Soal dari Pelajaranmu</span>
             <h1 className="font-extrabold text-4xl mb-2">Menara <span className="dark:text-[#D4A843]">Cerdas!</span></h1>
             <p className="dark:text-[#D4C8A0] text-sm max-w-sm mb-1">Panjat menara dengan menjawab soal dari pelajaranmu. Setiap jawaban benar = naik 1 lantai!</p>
             <p className="text-xs dark:text-[#8A7A40] mb-6">Jaga 3 nyawamu, bertahanlah setinggi mungkin.</p>
 
+            <fieldset className="mb-6 w-full max-w-md text-left">
+              <legend className="mb-3 text-center text-sm font-extrabold">Pilih petualangan menaramu</legend>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {TOWER_CHALLENGES.map((challenge) => (
+                  <button key={challenge.floors} type="button" disabled={phase === "loading"} aria-pressed={challengeFloors === challenge.floors} onClick={() => setChallengeFloors(challenge.floors)}
+                    className={`min-h-20 rounded-2xl border-2 p-3 text-left transition-all focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ${challengeFloors === challenge.floors ? "border-violet-700 bg-violet-50 shadow-[3px_3px_0_#7C3AED] dark:bg-violet-900/40" : "border-slate-300 bg-white/80 hover:border-violet-400 dark:border-white/20 dark:bg-white/5"}`}>
+                    <span className={`mb-2 block h-2 rounded-full bg-gradient-to-r ${challenge.color}`} />
+                    <span className="block text-xs font-black">{challenge.title}</span>
+                    <span className="mt-1 block text-[11px] opacity-75">{challenge.detail}</span>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
             <div className="grid grid-cols-3 gap-2.5 mb-6 w-full max-w-xs">
               <div className="bg-[#FF6B6B] text-white border-[3px] border-[#161B3A] dark:border-white/25 rounded-xl p-2 shadow-[3px_3px_0_#CA8A04]">
                 <div className="text-[10px] font-extrabold uppercase opacity-80">Nyawa</div>
@@ -281,6 +316,23 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
           </div>
         </div>
 
+        {/* Peta perjalanan: milestone visual tanpa mengubah skor atau aturan permainan. */}
+        <div className="mb-4 overflow-hidden rounded-3xl border-2 border-violet-300/70 bg-gradient-to-r from-fuchsia-100 via-violet-100 to-cyan-100 p-3 shadow-lg dark:border-violet-500/40 dark:from-violet-950 dark:via-slate-900 dark:to-cyan-950">
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-black text-violet-900 dark:text-violet-100">
+              <Sparkles className="h-4 w-4 text-fuchsia-600 dark:text-fuchsia-300" />
+              {floor >= total && total > 0 ? "Puncak tercapai!" : floor >= Math.ceil(total * 0.75) ? "Hampir sampai puncak!" : floor >= Math.ceil(total * 0.5) ? "Penjelajah hebat!" : "Petualangan dimulai!"}
+            </span>
+            <span className="text-xs font-black tabular-nums text-violet-900 dark:text-white">{floor}/{total} lantai</span>
+          </div>
+          <div role="progressbar" aria-label="Kemajuan pendakian menara" aria-valuemin={0} aria-valuemax={total || 1} aria-valuenow={floor} className="h-3 overflow-hidden rounded-full bg-white/80 ring-1 ring-violet-300/60 dark:bg-white/15">
+            <div className="h-full rounded-full bg-gradient-to-r from-fuchsia-500 via-violet-500 to-cyan-400 transition-[width] duration-500" style={{ width: `${total ? Math.min(100, floor / total * 100) : 0}%` }} />
+          </div>
+          <div className="mt-2 flex justify-between text-[10px] font-bold text-violet-700 dark:text-violet-200">
+            <span>🚩 Mulai</span><span>⭐ Tengah</span><span>🏆 Puncak</span>
+          </div>
+        </div>
+
         {/* tower + question */}
         <div className="flex-1 flex gap-3 min-h-0">
           <Tower floor={floor} total={total} />
@@ -289,7 +341,7 @@ export default function MenaraCerdas({ backHref = "/arena/game" }: { backHref?: 
             <AnimatePresence mode="wait">
               <motion.div key={current?.id ?? idx} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.22 }}
                 className="flex-1 flex flex-col">
-                <div className="rounded-3xl bg-white dark:bg-gradient-to-br dark:from-[#221E18] dark:via-[#1E1A12] dark:to-[#1A1610] border-2 dark:border-amber-600/40 shadow-[5px_5px_0_#CA8A04] dark:shadow-[5px_5px_0_#CA8A04,0_0_20px_rgba(202,138,4,0.15)] p-5 mb-4">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-violet-50 to-cyan-50 dark:bg-gradient-to-br dark:from-slate-900 dark:via-violet-950 dark:to-cyan-950 border-2 border-violet-200 dark:border-violet-500/40 shadow-lg dark:shadow-violet-950/40 p-5 mb-4">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider dark:text-[#D4A843]">Soal {idx + 1} / {total}</span>
                   <h2 className="text-lg font-bold mt-2 leading-snug dark:text-[#F5EDD6]">{current?.soal}</h2>
                 </div>

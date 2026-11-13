@@ -21,11 +21,11 @@ import {
 import GameBackButton from "@/components/game/GameBackButton";
 
 /* ---------- Bank kata ---------- */
-const BAKU = ["apotek", "izin", "zaman", "sistem", "nomor", "hafal", "imbau", "cabai", "jadwal", "foto", "teknik", "risiko", "nasihat", "ijazah", "praktik", "napas", "objek", "silakan", "atlet", "asas", "kualitas", "analisis", "hakikat", "kaidah", "kuitansi", "respons", "modern", "karier", "saraf", "cedera"];
-const NONBAKU = ["apotik", "ijin", "jaman", "sistim", "nomer", "hapal", "himbau", "cabe", "jadual", "poto", "tehnik", "resiko", "nasehat", "ijasah", "praktek", "nafas", "obyek", "silahkan", "atlit", "azas", "kwalitas", "analisa", "hakekat", "kaedah", "kwitansi", "respon", "moderen", "karir", "sarap", "cidera"];
-const BENDA = ["meja", "buku", "kursi", "sepeda", "sekolah", "pensil", "jendela", "gunung", "sungai", "pantai", "kelas", "papan", "lemari", "sepatu", "topi", "roti", "nasi", "bunga", "pohon", "burung", "rumah", "pintu", "kapal", "sawah"];
-const KERJA = ["makan", "minum", "berlari", "tidur", "menulis", "membaca", "melompat", "duduk", "berdiri", "menyapu", "memasak", "mencuci", "bermain", "belajar", "menyanyi", "berenang", "menari", "melukis", "menanam", "memetik"];
-const SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "malas", "cepat", "lambat", "panas", "dingin", "manis", "pahit", "berani", "ramah", "sopan", "bersih", "kotor", "terang", "gelap", "luas", "sempit", "kuat", "lemah"];
+const BAKU = ["apotek", "izin", "zaman", "sistem", "nomor", "hafal", "imbau", "cabai", "jadwal", "foto", "teknik", "risiko", "nasihat", "ijazah", "praktik", "napas", "objek", "silakan", "atlet", "asas", "kualitas", "analisis", "hakikat", "kaidah", "kuitansi", "respons", "modern", "karier", "saraf", "cedera", "diagnosis", "antre", "sekadar", "aktivitas", "efektif", "metode", "subjek", "objektif", "hierarki"];
+const NONBAKU = ["apotik", "ijin", "jaman", "sistim", "nomer", "hapal", "himbau", "cabe", "jadual", "poto", "tehnik", "resiko", "nasehat", "ijasah", "praktek", "nafas", "obyek", "silahkan", "atlit", "azas", "kwalitas", "analisa", "hakekat", "kaedah", "kwitansi", "respon", "moderen", "karir", "sarap", "cidera", "diagnosa", "antri", "sekedar", "aktifitas", "efektip", "metoda", "subyek", "obyektif", "hirarki"];
+const BENDA = ["meja", "buku", "kursi", "sepeda", "sekolah", "pensil", "jendela", "gunung", "sungai", "pantai", "kelas", "papan", "lemari", "sepatu", "topi", "roti", "nasi", "bunga", "pohon", "burung", "rumah", "pintu", "kapal", "sawah", "perpustakaan", "museum", "laboratorium", "komputer", "kamera", "mikrofon", "panggung", "kamus", "ensiklopedia", "majalah", "cerpen"];
+const KERJA = ["makan", "minum", "berlari", "tidur", "menulis", "membaca", "melompat", "duduk", "berdiri", "menyapu", "memasak", "mencuci", "bermain", "belajar", "menyanyi", "berenang", "menari", "melukis", "menanam", "memetik", "menggambar", "mengamati", "menyunting", "merangkum", "menganalisis", "berdiskusi", "mendengarkan", "menjelaskan", "mempresentasikan"];
+const SIFAT = ["besar", "kecil", "tinggi", "rendah", "cantik", "rajin", "malas", "cepat", "lambat", "panas", "dingin", "manis", "pahit", "berani", "ramah", "sopan", "bersih", "kotor", "terang", "gelap", "luas", "sempit", "kuat", "lemah", "teliti", "kreatif", "jujur", "tangguh", "cermat", "sabar", "gigih", "bijaksana", "mandiri"];
 
 type RuleKey = "BAKU" | "BENDA" | "KERJA" | "SIFAT";
 const RULES: Record<RuleKey, { label: string; valid: string[]; invalid: string[] }> = {
@@ -46,6 +46,12 @@ const LEVELS: Level[] = [
   { id: 7, name: "Kerja Keras", rule: "KERJA", bpm: 71, duration: 42, density: 0.74, color: "#10B981" },
   { id: 8, name: "Sifat Super", rule: "SIFAT", bpm: 76, duration: 45, density: 0.78, color: "#38BDF8" },
   { id: 9, name: "Master Baku", rule: "BAKU", bpm: 82, duration: 50, density: 0.82, color: "#8B5CF6" },
+  { id: 10, name: "Ruang Literasi", rule: "BENDA", bpm: 85, duration: 52, density: 0.82, color: "deepskyblue" },
+  { id: 11, name: "Aksi Literasi", rule: "KERJA", bpm: 88, duration: 54, density: 0.84, color: "coral" },
+  { id: 12, name: "Karakter Unggul", rule: "SIFAT", bpm: 91, duration: 56, density: 0.85, color: "mediumorchid" },
+  { id: 13, name: "Legenda Ejaan", rule: "BAKU", bpm: 94, duration: 58, density: 0.86, color: "deeppink" },
+  { id: 14, name: "Benda Mahir", rule: "BENDA", bpm: 97, duration: 60, density: 0.87, color: "lightseagreen" },
+  { id: 15, name: "Maestro Irama", rule: "KERJA", bpm: 100, duration: 62, density: 0.88, color: "slateblue" },
 ];
 
 const LANE_COLORS = ["#FF6B6B", "#FBBF24", "#4ADE80", "#38BDF8"];
@@ -739,6 +745,23 @@ export default function IramaKata({ backHref = "/arena/game" }: { backHref?: str
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11 sm:w-[110px]" />
             </div>
+            <section aria-label="Perjalanan Irama Kata" className="mb-5 rounded-3xl border border-pink-300/70 bg-gradient-to-br from-pink-100 via-violet-100 to-cyan-100 p-4 text-slate-900 shadow-lg dark:border-pink-400/30 dark:from-pink-950 dark:via-violet-950 dark:to-cyan-950 dark:text-white">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-widest text-pink-700 dark:text-pink-300">Rhythm Quest</p>
+                  <h3 className="text-xl font-black">Jadilah Maestro Kata!</h3>
+                  <p className="mt-1 text-xs opacity-80">Ketuk kata yang tepat mengikuti irama. Buka 15 panggung tantangan!</p>
+                </div>
+                <div className="shrink-0 rounded-2xl bg-white/80 px-3 py-2 text-center dark:bg-white/10">
+                  <span className="block text-2xl font-black tabular-nums">{LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length}/15</span>
+                  <span className="text-[10px] font-bold uppercase">Level</span>
+                </div>
+              </div>
+              <div role="progressbar" aria-label="Level Irama Kata terbuka" aria-valuemin={0} aria-valuemax={LEVELS.length} aria-valuenow={LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length} className="mt-4 h-3 overflow-hidden rounded-full bg-white/70 dark:bg-white/15">
+                <div className="h-full rounded-full bg-gradient-to-r from-pink-500 via-violet-500 to-cyan-400 transition-all duration-500" style={{ width: `${LEVELS.filter((lv) => saved.unlocked.includes(lv.id)).length / LEVELS.length * 100}%` }} />
+              </div>
+              <p className="mt-2 text-xs font-semibold">⭐ {LEVELS.reduce((total, lv) => total + starsFor(saved.best[lv.id] || 0), 0)} / {LEVELS.length * 3} bintang · Kecepatan hingga 100 BPM</p>
+            </section>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {LEVELS.map((lv) => {
                 const unlocked = saved.unlocked.includes(lv.id);
