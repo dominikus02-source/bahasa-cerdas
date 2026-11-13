@@ -451,6 +451,7 @@
     "test:jumpa-room-types": "npx tsx scripts/test-jumpa-room-types.ts",
     "test:jumpa-host-actions": "npx tsx scripts/test-jumpa-host-actions.ts",
     "test:jumpa-chat-moderation": "npx tsx scripts/test-jumpa-chat-moderation.ts",
+    "test:jumpa-recording": "node scripts/test-jumpa-recording.cjs",
     "test:jumpa-tiers": "npx tsx scripts/test-jumpa-tiers.ts",
     "test:jumpa-no-english": "npx tsx scripts/test-jumpa-no-english.ts",
     "test:jumpa-flow": "npx tsx scripts/test-jumpa-flow.ts",

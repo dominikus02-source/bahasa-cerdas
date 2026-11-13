@@ -6,6 +6,7 @@
  * (http://web:3000) — lib/supabase/proxy.ts mengecualikan path ini dari
  * redirect domain. Idempoten (JumpaEvent.dedupeKey).
  */
+import { db } from "@/lib/db";
 import { WebhookReceiver } from "livekit-server-sdk";
 import { getLivekitServerConfig } from "@/lib/jumpa/config";
 import { handleJumpaWebhook } from "@/lib/jumpa/background";
@@ -32,6 +33,18 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (evt.event === "egress_ended" && evt.egressInfo) {
+      const job = evt.egressInfo;
+      const room = await db.jumpaRoom.findUnique({ where: { livekitRoomName: job.roomName } });
+      if (room) {
+        const dedupeKey = "recording-ended:" + job.egressId;
+        await db.jumpaEvent.upsert({ where: { dedupeKey }, update: {}, create: {
+          roomId: room.id, action: job.status === 3 ? "RECORDING_COMPLETE" : "RECORDING_FAILED",
+          dedupeKey, metadata: { egressId: job.egressId, filename: job.fileResults[0]?.filename ?? null },
+        } });
+      }
+      return jumpaJson({ ok: true });
+    }
     const result = await handleJumpaWebhook({
       event: evt.event,
       id: evt.id || undefined,

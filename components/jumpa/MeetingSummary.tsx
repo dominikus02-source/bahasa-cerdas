@@ -11,6 +11,7 @@ import { ArrowLeft, CheckCircle2, Clock, History, Loader2, Users } from "lucide-
 import type { RoomSummary } from "@/lib/jumpa/scheduling";
 import { formatWib } from "@/lib/jumpa/schedule";
 import { minutesLabel } from "./entry-format";
+import RecordingDownloads from "./RecordingDownloads";
 
 function durationText(sec: number): string {
   if (sec < 60) return sec > 0 ? "< 1 mnt" : "0 mnt";
