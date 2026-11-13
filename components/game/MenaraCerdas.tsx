@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { setQuiet } from "@/lib/notif-quiet"
 import { motion, AnimatePresence, useAnimationControls } from "framer-motion";
-import { Heart, Flame, Trophy, RotateCcw, Mountain, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
+import { Heart, Flame, Trophy, RotateCcw, Mountain, Star, Check, X, Loader2, Sparkles, Zap, Volume2, VolumeX, Play, Lightbulb } from "lucide-react";
 import Burst from "@/components/game/Burst";
 import ComboFlash from "@/components/game/ComboFlash";
 import ConfettiBurst from "@/components/game/ConfettiBurst";
