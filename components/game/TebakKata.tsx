@@ -290,9 +290,9 @@ const LEVELS: Level[] = [
   { id: 7, name: "Dewa", rounds: 12, min: 8, max: 12, color: "#F43F5E" },
   { id: 8, name: "Naga", rounds: 13, min: 8, max: 13, color: "#14B8A6" },
   { id: 9, name: "Maha Guru", rounds: 15, min: 6, max: 99, color: "#6366F1" },
-  { id: 10, name: "Detektif Makna", rounds: 16, min: 7, max: 99, color: "#06B6D4" },
-  { id: 11, name: "Pemburu Istilah", rounds: 17, min: 8, max: 99, color: "#D946EF" },
-  { id: 12, name: "Maestro Kosakata", rounds: 18, min: 9, max: 99, color: "#F97316" },
+  { id: 10, name: "Detektif Makna", rounds: 16, min: 7, max: 99, color: "deepskyblue" },
+  { id: 11, name: "Pemburu Istilah", rounds: 17, min: 8, max: 99, color: "orchid" },
+  { id: 12, name: "Maestro Kosakata", rounds: 18, min: 9, max: 99, color: "coral" },
 ];
 
 type Saved = { unlocked: number[]; best: Record<number, number>; stars: Record<number, number> };
