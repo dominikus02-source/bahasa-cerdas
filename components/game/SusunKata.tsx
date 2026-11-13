@@ -648,6 +648,15 @@ export default function SusunKataGame({ hideBackButton, backHref = "/arena/game"
             </div>
           </div>
 
+          <section aria-label="Perjalanan perangkai kata" className="mb-4 rounded-3xl border border-amber-300/70 bg-gradient-to-r from-amber-100 via-pink-100 to-violet-100 p-3 shadow-[3px_4px_0_#D97706] dark:border-amber-500/30 dark:from-amber-950 dark:via-rose-950 dark:to-violet-950">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-xs font-black uppercase tracking-wide text-amber-900 dark:text-amber-200">🧩 {level.name}</span>
+              <span className="text-xs font-black tabular-nums">{Math.min(round + 1, pool.length)} / {pool.length} kata</span>
+            </div>
+            <div role="progressbar" aria-label="Progres soal Susun Kata" aria-valuemin={0} aria-valuemax={pool.length || 1} aria-valuenow={round} className="h-3 overflow-hidden rounded-full bg-white/80 dark:bg-white/15">
+              <div className="h-full rounded-full bg-gradient-to-r from-amber-400 via-pink-500 to-violet-500 transition-[width] duration-500" style={{ width: `${pool.length ? Math.min(100, round / pool.length * 100) : 0}%` }} />
+            </div>
+          </section>
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs font-bold opacity-50">{round + 1} / {pool.length}</span>
             <div className="flex items-center gap-1.5">
