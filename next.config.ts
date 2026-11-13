@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
+    // Next 16.2.6 leaves build caching disabled by default. Opt in only
+    // for isolated staging/CI builds; preserve production configuration.
+    turbopackFileSystemCacheForBuild:
+      process.env.BC_BUILD_ENV === "staging" || process.env.BC_BUILD_ENV === "ci",
     serverActions: {
       allowedOrigins: ["localhost:3000", "bahasacerdas.com", "www.bahasacerdas.com", "vps.bahasacerdas.com"],
       // Server Actions carry small payloads only (forms/metadata). Large file
