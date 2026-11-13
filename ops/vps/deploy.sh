@@ -25,6 +25,11 @@ cd "$REPO_DIR"
 git fetch --prune origin
 git checkout "$DEPLOY_BRANCH"
 git pull --ff-only origin "$DEPLOY_BRANCH"
+# Optional immutable release pin. Abort before building if main moved after approval.
+if [[ -n "${BC_DEPLOY_PINNED_SHA:-}" ]]; then
+  [[ "$BC_DEPLOY_PINNED_SHA" =~ ^[a-f0-9]{40}$ ]] || { echo "Invalid pinned SHA" >&2; exit 1; }
+  [[ "$(git rev-parse HEAD)" == "$BC_DEPLOY_PINNED_SHA" ]] || { echo "Release pin mismatch: origin/main moved" >&2; exit 1; }
+fi
 
 chmod +x ops/vps/prepare-runtime-envs.sh
 ./ops/vps/prepare-runtime-envs.sh

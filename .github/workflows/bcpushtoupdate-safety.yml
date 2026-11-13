@@ -1,0 +1,21 @@
+name: bcpushtoupdate safety
+on:
+  pull_request:
+    paths:
+      - 'ops/vps/bcpushtoupdate.sh'
+      - 'scripts/test-bcpushtoupdate.sh'
+      - '.github/workflows/bcpushtoupdate-safety.yml'
+  push:
+    paths:
+      - 'ops/vps/bcpushtoupdate.sh'
+      - 'scripts/test-bcpushtoupdate.sh'
+      - '.github/workflows/bcpushtoupdate-safety.yml'
+jobs:
+  offline-safety:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Bash syntax and safety invariants
+        run: bash scripts/test-bcpushtoupdate.sh
