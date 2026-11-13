@@ -46,12 +46,12 @@ const LEVELS: Level[] = [
   { id: 7, name: "Kerja Keras", rule: "KERJA", bpm: 71, duration: 42, density: 0.74, color: "#10B981" },
   { id: 8, name: "Sifat Super", rule: "SIFAT", bpm: 76, duration: 45, density: 0.78, color: "#38BDF8" },
   { id: 9, name: "Master Baku", rule: "BAKU", bpm: 82, duration: 50, density: 0.82, color: "#8B5CF6" },
-  { id: 10, name: "Ruang Literasi", rule: "BENDA", bpm: 85, duration: 52, density: 0.82, color: "#06B6D4" },
-  { id: 11, name: "Aksi Literasi", rule: "KERJA", bpm: 88, duration: 54, density: 0.84, color: "#F97316" },
-  { id: 12, name: "Karakter Unggul", rule: "SIFAT", bpm: 91, duration: 56, density: 0.85, color: "#A855F7" },
-  { id: 13, name: "Legenda Ejaan", rule: "BAKU", bpm: 94, duration: 58, density: 0.86, color: "#EC4899" },
-  { id: 14, name: "Benda Mahir", rule: "BENDA", bpm: 97, duration: 60, density: 0.87, color: "#14B8A6" },
-  { id: 15, name: "Maestro Irama", rule: "KERJA", bpm: 100, duration: 62, density: 0.88, color: "#6366F1" },
+  { id: 10, name: "Ruang Literasi", rule: "BENDA", bpm: 85, duration: 52, density: 0.82, color: "deepskyblue" },
+  { id: 11, name: "Aksi Literasi", rule: "KERJA", bpm: 88, duration: 54, density: 0.84, color: "coral" },
+  { id: 12, name: "Karakter Unggul", rule: "SIFAT", bpm: 91, duration: 56, density: 0.85, color: "mediumorchid" },
+  { id: 13, name: "Legenda Ejaan", rule: "BAKU", bpm: 94, duration: 58, density: 0.86, color: "deeppink" },
+  { id: 14, name: "Benda Mahir", rule: "BENDA", bpm: 97, duration: 60, density: 0.87, color: "lightseagreen" },
+  { id: 15, name: "Maestro Irama", rule: "KERJA", bpm: 100, duration: 62, density: 0.88, color: "slateblue" },
 ];
 
 const LANE_COLORS = ["#FF6B6B", "#FBBF24", "#4ADE80", "#38BDF8"];
