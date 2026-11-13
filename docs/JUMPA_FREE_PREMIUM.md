@@ -9,7 +9,7 @@ Keputusan implementasi 3 November 2026. Menggantikan kebijakan kapasitas sama pa
 | Kamera dan mikrofon | Kendali peserta | Kendali peserta |
 | Berbagi layar pada rapat baru | Tersedia | Tersedia |
 | Kualitas kamera maksimum | 720p | 720p |
-| Rekaman | Belum tersedia | Belum tersedia |
+| Rekaman | Tidak tersedia | Khusus Premium, menunggu implementasi dan validasi Egress |
 
 Paket ditentukan otomatis dari langganan BC pembuat ruang (termasuk langganan Premium murid/umum dan uji coba yang masih aktif). Peserta Free dapat bergabung ke ruang Premium. Tidak ada pilihan paket di formulir mulai, paket peserta tidak mencabut izin perangkat. Aturan akses kelas privat, Junior, kunci ruang dan keluarkan peserta tetap berlaku. Tidak ada perubahan harga, pembayaran, atau skema database.
 
@@ -21,7 +21,7 @@ Video diterima hanya untuk tile terlihat (laptop 9, HP 4). Kamera pemilik tidak 
 
 Tes kebijakan mencakup empat jenis ruang, dua paket, kualitas setara, batas server default, konfigurasi 150, dan Free tetap 30. Tes jadwal memeriksa durasi maksimum sesuai paket. Seluruh 11 suite JUMPA lulus, termasuk perangkat, izin, token, tindakan pemandu, jadwal dan paket. TypeScript, ESLint pada file produksi yang berubah, serta guard warna lulus. Build produksi dijalankan ulang pada sumber akhir. QA browser baru belum berjalan karena executable Chromium tidak tersedia di lingkungan ini; bukti QA browser sebelumnya tetap terbatas pada commit sebelumnya.
 
-Staging `/api/health` melalui PC merespons `status=ok`, `db=up` pada pemeriksaan 3 November 2026. Ini bukan uji kamera/mikrofon atau bukti staging terisolasi. SSH berhasil memakai kunci khusus BahasaCerdas pada PC. Kontainer staging web, LiveKit, Auth, dan Storage aktif; ini belum memverifikasi alur media dan pemisahan endpoint runtime. Checkout staging masih pada `a2977825`, belum memuat patch PR #216. `NEXT_PUBLIC_SUPABASE_URL` tidak terlihat sebagai variabel runtime kontainer; konfigurasi hasil build belum diverifikasi. Produksi belum diubah. Uji media nyata 20 → 50 → 100 → 150 pengguna, isolasi Auth/Storage (#206/#208), dan kapasitas VPS masih harus diverifikasi sebelum rilis. Rekaman memerlukan implementasi Egress/penyimpanan privat; tidak dijanjikan pada kartu paket.
+Staging `/api/health` melalui PC merespons `status=ok`, `db=up` pada pemeriksaan 3 November 2026. Ini bukan uji kamera/mikrofon atau bukti staging terisolasi. SSH berhasil memakai kunci khusus BahasaCerdas pada PC. Kontainer staging web, LiveKit, Auth, dan Storage aktif; ini belum memverifikasi alur media dan pemisahan endpoint runtime. Checkout staging masih pada `a2977825`, belum memuat patch PR #216. `NEXT_PUBLIC_SUPABASE_URL` tidak terlihat sebagai variabel runtime kontainer; konfigurasi hasil build belum diverifikasi. Produksi belum diubah. Uji media nyata 20 → 50 → 100 → 150 pengguna, isolasi Auth/Storage (#206/#208), dan kapasitas VPS masih harus diverifikasi sebelum rilis. Rekaman memerlukan implementasi Egress/penyimpanan privat; tidak dijanjikan pada kartu paket. Lihat `docs/JUMPA_RECORDING_DEPLOY.md` untuk persyaratan keamanan, integrasi dan gerbang QA.
 
 Rollback: kembalikan commit paket; jangan mengubah batas ruang yang sedang berlangsung. Tidak ada migrasi database yang perlu dibatalkan.
 

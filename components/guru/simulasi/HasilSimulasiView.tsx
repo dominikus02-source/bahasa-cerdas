@@ -23,6 +23,7 @@ interface Stats {
 }
 
 interface Row {
+  progresId: string;
   userId: string; userName: string; groupId: string; groupName: string
   paketId: string; paketTitle: string; paketType: string; attemptNumber: number
   status: string; score: number; percentage: number; predikat: string | null
@@ -359,6 +360,7 @@ export function HasilSimulasiView({ guruName, hub = false }: { guruName: string;
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-1">
+                        {r.status === "SELESAI" && <Link href={`/guru/hasil-simulasi/${encodeURIComponent(r.progresId)}`} className="text-xs px-2 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 font-semibold whitespace-nowrap">Detail Soal</Link>}
                         {r.pendingReview > 0 && (
                           <Link href={tinjauHref} className="text-xs px-2 py-1 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 font-semibold whitespace-nowrap">Tinjau</Link>
                         )}
