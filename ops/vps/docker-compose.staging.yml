@@ -1,0 +1,85 @@
+name: bahasacerdas-staging
+
+services:
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    cpus: 0.5
+    mem_limit: 512m
+    pids_limit: 128
+    command:
+      - sh
+      - -c
+      - exec redis-server --appendonly yes --appendfsync everysec --requirepass "$$REDIS_PASSWORD"
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  web:
+    build:
+      context: ../..
+      dockerfile: Dockerfile.web
+      args:
+        WEB_BUILD_FINGERPRINT: ${WEB_BUILD_FINGERPRINT:-staging}
+      secrets:
+        - web_env
+    image: bahasacerdas/staging-web:${IMAGE_TAG:-local}
+    restart: unless-stopped
+    cpus: 3.0
+    mem_limit: 3g
+    pids_limit: 768
+    stop_grace_period: 20s
+    env_file:
+      - ${BC_STAGING_CONFIG_DIR:-/opt/bahasacerdas/config/staging}/web.env
+    environment:
+      NODE_ENV: production
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      NEXT_PUBLIC_MULTIPLAYER_ENABLED: "false"
+    ports:
+      - "127.0.0.1:3020:3000"
+    networks:
+      - internal
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "20m"
+        max-file: "3"
+
+secrets:
+  web_env:
+    file: ${BC_STAGING_CONFIG_DIR:-/opt/bahasacerdas/config/staging}/web.env
+
+networks:
+  internal:
+    driver: bridge
+
+volumes:
+  redis_data:
