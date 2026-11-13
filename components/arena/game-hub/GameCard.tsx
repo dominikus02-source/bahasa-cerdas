@@ -40,8 +40,8 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
 
   // ── IMAGE AREA (dipakai LIVE & SOON) ──
   const imageArea = (
-    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-[#12101F]"
-    style={{ background: `linear-gradient(145deg, ${game.accentColor}30, ${game.accentColor}12 55%, #ffffff)` }}>
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-100 dark:bg-slate-950"
+    style={{ background: `linear-gradient(145deg, ${game.accentColor}30, ${game.accentColor}12 55%, transparent)` }}>
       {showArt ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
