@@ -745,7 +745,7 @@ export default function IramaKata({ backHref = "/arena/game" }: { backHref?: str
               <h2 className="font-extrabold text-2xl">Pilih Tingkat</h2>
               <div className="w-11 sm:w-[110px]" />
             </div>
-            <section aria-label="Perjalanan Irama Kata" className="mb-5 rounded-3xl border border-pink-300/70 bg-gradient-to-br from-pink-100 via-violet-100 to-cyan-100 p-4 text-[#161B3A] shadow-lg dark:border-pink-400/30 dark:from-pink-950 dark:via-violet-950 dark:to-cyan-950 dark:text-white">
+            <section aria-label="Perjalanan Irama Kata" className="mb-5 rounded-3xl border border-pink-300/70 bg-gradient-to-br from-pink-100 via-violet-100 to-cyan-100 p-4 text-slate-900 shadow-lg dark:border-pink-400/30 dark:from-pink-950 dark:via-violet-950 dark:to-cyan-950 dark:text-white">
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-widest text-pink-700 dark:text-pink-300">Rhythm Quest</p>
