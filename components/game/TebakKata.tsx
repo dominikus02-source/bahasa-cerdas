@@ -664,6 +664,15 @@ export default function TebakKataGame({ hideBackButton, backHref = "/arena/game"
             </div>
           </div>
 
+          <section aria-label="Progres misi detektif" className="mb-4 rounded-3xl border border-cyan-300/70 bg-gradient-to-r from-cyan-100 via-violet-100 to-pink-100 p-3 shadow-[3px_4px_0_#0D9488] dark:border-cyan-500/30 dark:from-cyan-950 dark:via-violet-950 dark:to-pink-950">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="text-xs font-black uppercase tracking-wide text-cyan-800 dark:text-cyan-200">🔎 Misi {level.name}</span>
+              <span className="text-xs font-black tabular-nums">{Math.min(round + 1, pool.length)} / {pool.length}</span>
+            </div>
+            <div role="progressbar" aria-label="Progres soal Tebak Kata" aria-valuemin={0} aria-valuemax={pool.length || 1} aria-valuenow={round} className="h-3 overflow-hidden rounded-full bg-white/80 dark:bg-white/15">
+              <div className="h-full rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-pink-500 transition-[width] duration-500" style={{ width: `${pool.length ? Math.min(100, round / pool.length * 100) : 0}%` }} />
+            </div>
+          </section>
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs font-bold opacity-50">{round + 1} / {pool.length}</span>
             {streak > 0 && (
