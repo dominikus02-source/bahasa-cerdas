@@ -200,6 +200,9 @@ const LEVELS: Level[] = [
   { id: 7, name: "Dewa", rounds: 12, min: 7, max: 11, time: 24, color: "#F43F5E" },
   { id: 8, name: "Naga", rounds: 13, min: 8, max: 12, time: 24, color: "#14B8A6" },
   { id: 9, name: "Maha Guru", rounds: 15, min: 8, max: 99, time: 22, color: "#6366F1" },
+  { id: 10, name: "Perangkai Ulung", rounds: 16, min: 8, max: 99, time: 21, color: "#06B6D4" },
+  { id: 11, name: "Arsitek Kata", rounds: 17, min: 9, max: 99, time: 20, color: "#D946EF" },
+  { id: 12, name: "Maestro Huruf", rounds: 18, min: 10, max: 99, time: 19, color: "#F97316" },
 ];
 
 type Saved = { unlocked: number[]; best: Record<number, number>; stars: Record<number, number> };
