@@ -1,39 +1,57 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { consumeRecoveryLimit, recoveryRedirect, RECOVERY_FAILURE, RECOVERY_SUCCESS } from "@/lib/auth/password-recovery";
-import { getForwardedIp } from "@/lib/security";
+import { rateLimitRoute } from "@/lib/rate-limit";
+
+const GENERIC_MESSAGE = "Jika email terdaftar, tautan pemulihan akan dikirim. Periksa kotak masuk dan spam.";
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(req: NextRequest) {
   try {
-    let body: unknown;
-    try { body = await req.json(); } catch {
-      return NextResponse.json({ error: "Permintaan tidak valid." }, { status: 400 });
-    }
-    const raw = body && typeof body === "object" && "email" in body ? body.email : null;
-    const email = typeof raw === "string" ? raw.trim().toLowerCase() : "";
-    if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const rl = await rateLimitRoute(req, { maxRequests: 3, windowSeconds: 1800, identifier: "forgot-password" });
+    if (rl) return rl;
+
+    const body: unknown = await req.json();
+    const email = typeof body === "object" && body !== null && "email" in body && typeof body.email === "string"
+      ? body.email.trim().toLowerCase()
+      : "";
+    if (!email || email.length > 254 || !emailPattern.test(email)) {
       return NextResponse.json({ error: "Masukkan alamat email yang valid." }, { status: 400 });
     }
-    const retryAfter = await consumeRecoveryLimit(email, getForwardedIp(req.headers) || "unknown");
-    if (retryAfter) return NextResponse.json({ error: "Terlalu banyak permintaan. Silakan coba lagi nanti.", retryAfter }, {
-      status: 429, headers: { "Retry-After": String(retryAfter) },
-    });
-    // Auth is the source of truth, not the application profile table. Supabase
-    // deliberately returns success for unknown emails; preserve that behavior.
-    const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)!,
-      { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
-    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: recoveryRedirect() });
-    if (error) {
-      console.error("[password-recovery] Provider failure", { code: error.code, status: error.status });
-      if (error.status === 429) return NextResponse.json({ error: "Terlalu banyak permintaan. Tunggu beberapa menit lalu coba lagi.", retryAfter: 60 }, {
-        status: 429, headers: { "Retry-After": "60" },
-      });
-      return NextResponse.json({ error: RECOVERY_FAILURE }, { status: 503 });
+
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!url || !serviceKey) {
+      console.error("[forgot-password] Supabase Auth configuration missing");
+      return NextResponse.json({ error: "Layanan pemulihan sementara tidak tersedia." }, { status: 503 });
     }
-    return NextResponse.json({ message: RECOVERY_SUCCESS }, { headers: { "Cache-Control": "no-store" } });
-  } catch (error) {
-    console.error("[password-recovery] Configuration or service failure", error instanceof Error ? error.name : "UnknownError");
-    return NextResponse.json({ error: RECOVERY_FAILURE }, { status: 503 });
+
+    // Supabase Site URL and Redirect URLs must allow this callback.
+    const supabaseOrigin = process.env.SUPABASE_SITE_URL || "https://bahasacerdas.com";
+    const redirectTo = `${supabaseOrigin}/api/auth/callback?next=/reset-password`;
+    const supabase = createClient(url, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+
+    if (error) {
+      // Do not expose provider diagnostics or whether an account exists to callers.
+      // Inspect Supabase Auth logs for SMTP/rate-limit diagnostics.
+      console.error("[forgot-password] Supabase recovery delivery failed", {
+        status: error.status ?? null,
+        code: "code" in error ? error.code : undefined,
+      });
+      if (error.status === 429 || /rate limit|too many requests/i.test(error.message)) {
+        return NextResponse.json({
+          error: "Terlalu banyak permintaan. Tunggu beberapa menit lalu coba lagi.",
+          retryAfter: true,
+        }, { status: 429 });
+      }
+      return NextResponse.json({ error: "Email pemulihan belum dapat dikirim. Coba lagi nanti." }, { status: 503 });
+    }
+
+    return NextResponse.json({ message: GENERIC_MESSAGE });
+  } catch {
+    console.error("[forgot-password] Unexpected recovery request failure");
+    return NextResponse.json({ error: "Layanan pemulihan sementara tidak tersedia." }, { status: 503 });
   }
 }
