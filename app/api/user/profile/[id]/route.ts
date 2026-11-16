@@ -1,17 +1,17 @@
-import { identitySelect, resolveIdentity, type IdentitySource } from "@/lib/account/identity";
-import { NextRequest, NextResponse } from "next/server";
+import { identitySelect, resolveIdentity } from "@/lib/account/identity";
+import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import cache from "@/lib/redis";
 import { getDisplayName } from "@/lib/nickname";
 
 export async function GET(
-  req: NextRequest,
+  _request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
 
-    const cacheKey = `profile:public:v2:${id}`;
+    const cacheKey = `profile:public:v3:${id}`;
     const cached = await cache.get<Record<string, unknown>>(cacheKey);
     if (cached) return NextResponse.json(cached, { headers: { "X-Cache": "HIT" } });
 
@@ -23,8 +23,6 @@ export async function GET(
         nickname: true,
         avatar: true,
         ...identitySelect,
-        premiumPlan: true,
-        trialEndsAt: true,
         xp: true,
         level: true,
         streak: true,
@@ -37,8 +35,6 @@ export async function GET(
         profile: {
           select: {
             bio: true,
-            nip: true,
-            nuptk: true,
             school: true,
             subject: true,
           },
@@ -62,13 +58,32 @@ export async function GET(
       }),
     ]);
 
+    const isStudent = user.role === "MURID";
+    const displayName = isStudent ? (user.nickname?.trim() || "Murid BahasaCerdas") : getDisplayName(user, "peer");
+    const profile = isStudent ? null : user.profile;
+
     const response = {
       user: {
-        ...user,
+        id: user.id,
+        role: user.role,
+        isFounder: user.isFounder,
+        fullName: isStudent ? displayName : user.fullName,
+        nickname: user.nickname,
+        avatar: isStudent ? null : user.avatar,
+        displayName,
+        trialEndsAt: user.role === "GURU" ? user.trialEndsAt : null,
+        xp: user.xp,
+        level: user.level,
+        streak: user.streak,
+        league: user.league,
+        createdAt: user.createdAt,
+        equippedFrame: user.equippedFrame,
+        equippedNameColor: user.equippedNameColor,
+        equippedBadge: user.equippedBadge,
+        profile,
+        bio: profile?.bio ?? null,
+        school: profile?.school ?? null,
         ...resolveIdentity(user),
-        displayName: getDisplayName(user, "peer"),
-        bio: user.profile?.bio || null,
-        school: user.profile?.school || null,
       },
       works,
       stats: {
