@@ -288,3 +288,25 @@ export async function updateSession(request: NextRequest, nonce?: string) {
         method: request.method,
         error: authErrorMessage,
       });
+      return supabaseResponse;
+    }
+
+    const response = NextResponse.redirect(new URL(loginPath, request.url));
+    request.cookies.getAll()
+      .filter((c) => c.name.startsWith("sb-") || c.name.startsWith("supabase-"))
+      .forEach((c) => response.cookies.set(c.name, "", { maxAge: 0, path: "/" }));
+    return response;
+  }
+
+  // Email confirmation is handled by the login/auth flows and page-level
+  // guards. The JWT claims establish identity here; they do not carry the
+  // complete Supabase Auth user record, so Proxy must not manufacture an
+  // email-confirmation check from incomplete claims.
+
+
+
+  supabaseResponse.headers.set("X-RateLimit-Remaining", String(limit.remaining));
+  // Never let a response that may carry refreshed auth cookies be cached.
+  supabaseResponse.headers.set("Cache-Control", "private, no-store");
+  return supabaseResponse;
+}
