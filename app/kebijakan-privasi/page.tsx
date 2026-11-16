@@ -1,128 +1,92 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import PageNavbar from "@/components/public/PageNavbar";
 import PageFooter from "@/components/public/PageFooter";
 
 export const metadata: Metadata = {
   title: "Kebijakan Privasi — BahasaCerdas",
-  description: "Kebijakan privasi BahasaCerdas. Pelajari bagaimana kami melindungi data pribadi Anda saat menggunakan platform edukasi Bahasa Indonesia (Web & Android).",
-  alternates: {
-    canonical: "https://www.bahasacerdas.com/kebijakan-privasi",
-  },
+  description: "Cara BahasaCerdas menggunakan data pribadi, melindungi data anak, dan menangani permintaan pengguna.",
+  alternates: { canonical: "https://www.bahasacerdas.com/kebijakan-privasi" },
 };
+
+const sections = [
+  [
+    "Siapa yang mengelola data Anda",
+    "PT Bahasa Cerdas Indonesia mengelola situs bahasacerdas.com dan aplikasi BahasaCerdas. Kantor kami berada di CFX Tower, Jl. Gatot Subroto Kav. 35–36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950. Untuk urusan privasi, hubungi halo@bahasacerdas.com."
+  ],
+  [
+    "Data yang digunakan",
+    "Saat Anda membuat akun, kami menggunakan nama, alamat surel, peran akun, dan informasi sekolah yang Anda berikan. Jika Anda masuk dengan Google, kami dapat menerima nama, alamat surel, dan foto profil yang ditampilkan oleh Google.",
+    "Saat Anda menggunakan kelas, latihan, gim, atau fitur berkarya, layanan menggunakan data seperti jawaban, hasil belajar, karya, dan aktivitas yang diperlukan untuk fitur tersebut. Jika Anda meminta bantuan, kami menggunakan informasi yang Anda sampaikan untuk menanganinya.",
+    "Situs menggunakan kuki sesi untuk menjaga akses akun. Layanan juga dapat menggunakan informasi perangkat dan catatan diagnostik untuk menjaga keamanan atau memperbaiki gangguan. Notifikasi Android dapat menggunakan token Firebase. Pembayaran melalui penyedia pembayaran dapat melibatkan informasi pesanan dan status transaksi."
+  ],
+  [
+    "Tujuan dan dasar pemrosesan",
+    "Kami memproses data untuk menyediakan fungsi yang Anda minta, menjalankan transaksi, memberi dukungan, dan memenuhi kewajiban hukum yang berlaku. Untuk menjaga keamanan dan mencegah penyalahgunaan, kami mempertimbangkan kebutuhan layanan dan dampaknya terhadap hak pengguna.",
+    "Jika pemrosesan memerlukan persetujuan, persetujuan diminta secara khusus untuk tujuan yang dijelaskan. Persetujuan dapat ditarik melalui kontak privasi. Untuk data pribadi anak, berlaku ketentuan khusus pada bagian berikut."
+  ],
+  [
+    "Data anak dan peran orang tua atau wali",
+    "Penggunaan fitur oleh anak mengikuti ketentuan usia dan tingkat risiko fitur. Untuk pemrosesan data pribadi anak, persetujuan orang tua atau wali diperlukan sesuai peraturan. Informasi bagi anak disampaikan dengan bahasa yang mudah dipahami. Jika Anda orang tua atau wali dan menduga data anak digunakan tanpa persetujuan yang diperlukan, hubungi kami agar dapat ditangani.",
+    "Guru atau sekolah yang menggunakan kelas hanya boleh memberikan data murid sesuai kewenangan dan ketentuan yang berlaku. Jika Anda ragu siapa yang dapat melihat data atau karya anak, hubungi kanal bantuan sebelum membagikannya."
+  ],
+  [
+    "JUMPA, karya, dan fitur AI",
+    "Pada pertemuan JUMPA, audio, video, atau layar diproses ketika fitur terkait digunakan. Jika sesi direkam, periksa pemberitahuan dan pengaturan sesi untuk mengetahui siapa yang merekam dan siapa yang dapat mengakses hasilnya. Jangan membagikan data atau rekaman orang lain tanpa kewenangan.",
+    "Karya dan informasi kelas dapat terlihat oleh pengguna lain sesuai fitur, peran, atau pengaturan berbagi. Jika menggunakan fitur AI, masukkan hanya informasi yang diperlukan. Materi yang Anda masukkan dapat diproses oleh penyedia AI untuk menghasilkan jawaban."
+  ],
+  [
+    "Penerima dan lokasi pengolahan",
+    "Kami tidak menjual data pribadi Anda. Data dapat diakses oleh pihak yang berwenang sesuai peran, termasuk pihak sekolah untuk fungsi kelas. Kami menggunakan penyedia untuk fungsi seperti infrastruktur, autentikasi Google apabila Anda memilihnya, notifikasi atau diagnostik Android, pembayaran, dan AI sesuai fitur yang digunakan. Kami dapat memberikan data kepada pihak berwenang apabila diwajibkan oleh hukum.",
+    "Jika penyedia atau fungsi tertentu memproses data di luar Indonesia, kami wajib memenuhi ketentuan pemindahan data pribadi lintas negara. Hubungi kami untuk mendapatkan informasi lebih lanjut tentang pemrosesan pada fitur yang Anda gunakan."
+  ],
+  [
+    "Penyimpanan, keamanan, dan penghapusan",
+    "Data akun disimpan selama diperlukan untuk menyediakan layanan. Permintaan penghapusan diproses sesuai ketentuan yang berlaku. Kebijakan layanan menetapkan penghapusan data akun terkait dalam waktu 30 hari, dengan pengecualian untuk data yang wajib disimpan berdasarkan hukum. Petunjuknya tersedia pada halaman Hapus Akun.",
+    "Kami menggunakan pengamanan seperti enkripsi saat pengiriman data dan pembatasan akses. Jika terjadi kegagalan pelindungan data pribadi, pemberitahuan dilakukan sesuai kewajiban hukum."
+  ],
+  [
+    "Hak Anda dan cara mengajukan permintaan",
+    "Sesuai peraturan, Anda dapat meminta informasi, akses atau salinan, koreksi, penghentian atau pembatasan pemrosesan, penghapusan, atau penarikan persetujuan. Hak lain dapat mencakup keberatan atas keputusan otomatis, pemindahan data, dan ganti rugi. Hubungi halo@bahasacerdas.com. Kami dapat memeriksa identitas dan kewenangan pemohon secara proporsional."
+  ],
+  [
+    "Perubahan kebijakan",
+    "Kami memperbarui pemberitahuan ketika praktik atau ketentuan berubah. Perubahan material akan diberitahukan melalui kanal yang sesuai. Persetujuan baru diminta jika diwajibkan untuk tujuan pemrosesan yang berubah."
+  ]
+];
+const relatedLinks = [
+  [
+    "/hapus-akun",
+    "Petunjuk Hapus Akun"
+  ],
+  [
+    "/syarat-ketentuan",
+    "Syarat dan Ketentuan"
+  ]
+];
 
 export default function KebijakanPrivasiPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-bc-bg text-bc-text">
       <PageNavbar />
-      <div className="section-container py-12 lg:py-16 max-w-3xl mx-auto px-4 sm:px-6">
-        <h1 className="text-3xl sm:text-4xl font-bold text-zinc-900 mb-4 text-center">Kebijakan Privasi</h1>
-        <p className="text-center text-zinc-500 text-sm mb-8">Aplikasi & Platform BahasaCerdas • Terakhir diperbarui: 6 November 2026</p>
-
-        <div className="prose prose-zinc prose-lg max-w-none space-y-8 text-zinc-800 leading-relaxed">
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">1. Pendahuluan</h2>
-            <p>Kebijakan Privasi ini menjelaskan bagaimana aplikasi dan platform BahasaCerdas ("Aplikasi", "kami", "kita"), yang dikelola oleh <strong>PT Bahasa Cerdas Indonesia</strong>, mengumpulkan, menggunakan, menyimpan, dan melindungi informasi pribadi pengguna ("Anda", "Pengguna").</p>
-            <p>Kebijakan ini berlaku untuk <strong>website</strong> (bahasacerdas.com) dan <strong>aplikasi Android</strong> BahasaCerdas. Dengan mengunduh, menginstal, atau menggunakan Aplikasi/Platform, Anda menyetujui pengumpulan dan penggunaan informasi sesuai dengan Kebijakan Privasi ini.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">2. Informasi yang Kami Kumpulkan</h2>
-            <h3 className="text-xl font-medium text-zinc-800 mt-4">2.1 Informasi Akun dan Identitas (Web & Android)</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Nama lengkap</li>
-              <li>Alamat email</li>
-              <li>Informasi dari login Google (Google Sign-In), termasuk nama, email, dan foto profil</li>
-            </ul>
-            <h3 className="text-xl font-medium text-zinc-800 mt-4">2.2 Informasi Sekolah (Web & Android)</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Nama sekolah</li>
-              <li>Alamat sekolah</li>
-            </ul>
-            <h3 className="text-xl font-medium text-zinc-800 mt-4">2.3 Data Khusus Android</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Token Firebase Cloud Messaging (FCM) untuk mengirim notifikasi push</li>
-              <li>Log crash dan diagnostik melalui Firebase Crashlytics (untuk memperbaiki bug)</li>
-              <li>Informasi perangkat (model, sistem operasi, versi aplikasi)</li>
-            </ul>
-            <h3 className="text-xl font-medium text-zinc-800 mt-4">2.4 Data Khusus Web</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Cookie dan data sesi untuk menjaga login</li>
-              <li>Data penggunaan halaman (halaman yang dikunjungi, durasi)</li>
-            </ul>
-            <h3 className="text-xl font-medium text-zinc-800 mt-4">2.5 Data Analytics (Web & Android)</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Data penggunaan fitur dan aktivitas di platform</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">3. Cara Kami Menggunakan Informasi</h2>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Membuat dan mengelola akun pengguna</li>
-              <li>Menyediakan fitur pembelajaran dan personalisasi konten</li>
-              <li>Memverifikasi identitas melalui Google Login</li>
-              <li>Mengirim notifikasi penting (via FCM di Android)</li>
-              <li>Menganalisis penggunaan dan memperbaiki bug (via Crashlytics)</li>
-              <li>Memenuhi kewajiban hukum dan mencegah penyalahgunaan</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">4. Pembagian Data dengan Pihak Ketiga</h2>
-            <p>Kami <strong>tidak menjual</strong> data pribadi Anda. Data dapat dibagikan kepada:</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Google (untuk Google Sign-In, Firebase Cloud Messaging, dan Firebase Crashlytics)</li>
-              <li>Penyedia infrastruktur cloud dan hosting</li>
-              <li>Pihak berwenang jika diwajibkan oleh hukum</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">5. Keamanan Data</h2>
-            <p>Kami menerapkan enkripsi data saat transit (HTTPS/TLS) dan kontrol akses internal. Tidak ada metode transmisi atau penyimpanan yang 100% aman.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">6. Penyimpanan dan Retensi Data</h2>
-            <p>Data akun disimpan selama akun aktif. Setelah permintaan penghapusan, data akan dihapus dalam waktu <strong>30 hari</strong>, kecuali data yang wajib disimpan berdasarkan hukum.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">7. Hak Pengguna</h2>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Mengakses data pribadi Anda</li>
-              <li>Memperbaiki data yang tidak akurat</li>
-              <li>Meminta penghapusan akun dan data terkait</li>
-              <li>Menarik persetujuan</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">8. Penghapusan Akun dan Data</h2>
-            <p>Anda dapat menghapus akun melalui pengaturan di dalam Aplikasi atau melalui halaman khusus:</p>
-            <p><a href="https://www.bahasacerdas.com/hapus-akun" className="text-primary hover:underline font-medium">https://www.bahasacerdas.com/hapus-akun</a></p>
-            <p>Setelah permintaan diterima, data akan dihapus dalam waktu 30 hari.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">9. Anak-anak</h2>
-            <p>Aplikasi ini ditujukan untuk pengguna berusia 13 tahun ke atas atau dengan izin orang tua/wali. Kami tidak dengan sengaja mengumpulkan data dari anak di bawah 13 tahun tanpa persetujuan yang sesuai.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">10. Perubahan Kebijakan</h2>
-            <p>Kami dapat memperbarui Kebijakan Privasi ini dari waktu ke waktu. Perubahan signifikan akan diberitahukan melalui Aplikasi atau email.</p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-zinc-900">11. Kontak</h2>
-            <p>Untuk pertanyaan terkait privasi atau permintaan data, hubungi:</p>
-            <p><strong>Pengelola:</strong> PT Bahasa Cerdas Indonesia<br />
-            <strong>Email:</strong> <a href="mailto:halo@bahasacerdas.com" className="text-primary hover:underline">halo@bahasacerdas.com</a><br />
-            <strong>Website:</strong> <a href="https://www.bahasacerdas.com" className="text-primary hover:underline">https://www.bahasacerdas.com</a></p>
-          </section>
+      <article className="section-container mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+        <h1 className="mb-4 text-center text-3xl font-bold sm:text-4xl">Kebijakan Privasi</h1>
+        <p className="mb-8 text-center text-sm text-bc-text-2">Pembaruan 17 November 2026</p>
+        <div className="space-y-8 leading-relaxed">
+          {sections.map(([heading, ...paragraphs]) => (
+            <section key={heading} className="space-y-3">
+              <h2 className="text-xl font-semibold sm:text-2xl">{heading}</h2>
+              {paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
+            </section>
+          ))}
+          <nav aria-label="Dokumen terkait" className="flex flex-wrap gap-4 border-t border-bc-line pt-4">
+            {relatedLinks.map(([href, label]) => (
+              <Link key={href} href={href} className="text-bc-accent-strong underline focus-ring">{label}</Link>
+            ))}
+            <a href="mailto:halo@bahasacerdas.com" className="text-bc-accent-strong underline focus-ring">Hubungi kami</a>
+          </nav>
         </div>
-      </div>
+      </article>
       <PageFooter />
     </main>
   );
