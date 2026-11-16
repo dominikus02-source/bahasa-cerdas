@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const sections = [
   [
     "Pengelola dan ruang lingkup",
-    "Layanan BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia, CFX Tower, Jl. Gatot Subroto Kav. 35–36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950. Ketentuan ini berlaku untuk situs bahasacerdas.com dan aplikasi BahasaCerdas. Bacalah ketentuan sebelum membuat akun atau menggunakan fitur yang meminta persetujuan."
+    "Layanan BahasaCerdas dikelola oleh PT Bahasa Cerdas Indonesia yang beralamat di CFX Tower, Jl. Gatot Subroto Kav. 35-36, Kuningan Timur, Setiabudi, Jakarta Selatan 12950. Ketentuan ini berlaku untuk situs bahasacerdas.com dan aplikasi BahasaCerdas. Bacalah ketentuan sebelum membuat akun atau menggunakan fitur yang meminta persetujuan."
   ],
   [
     "Akun dan penggunaan oleh anak",
