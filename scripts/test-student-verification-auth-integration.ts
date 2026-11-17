@@ -7,7 +7,14 @@ import { isStudentProvisioningAllowed } from "../lib/auth/student-provisioning";
 const databaseUrl = "postgresql://postgres:local_fixture@127.0.0.1:55432/postgres?schema=public";
 const authUrl = "http://127.0.0.1:54999";
 const signingKey = "ci-only-local-gotrue-fixture-signing-key-student-verification";
-const account = { email: "bc-student-qa-auth@example.test", password: "ci-fixture-student-2026" };
+const student = {
+  email: process.env.BC_TEST_STUDENT_EMAIL?.trim().toLowerCase() || "bc-student-qa-auth@example.test",
+  password: "ci-fixture-student-2026",
+};
+const guardian = {
+  email: process.env.BC_TEST_GUARDIAN_EMAIL?.trim().toLowerCase() || "bc-guardian-qa-auth@example.test",
+  password: "ci-fixture-guardian-2026",
+};
 const options = {
   auth: { autoRefreshToken: false, persistSession: false },
   global: { fetch: (input: RequestInfo | URL, init?: RequestInit) =>
@@ -27,18 +34,29 @@ async function main() {
   if (process.env.DATABASE_URL !== databaseUrl || process.env.DIRECT_URL !== databaseUrl || process.env.DATABASE_URL_POOLED) {
     throw new Error("Jalankan pengujian dengan basis data Docker lokal yang terisolasi.");
   }
+  assert.ok(student.email !== guardian.email, "Gunakan alamat berbeda untuk murid dan wali.");
   process.env.BC_REQUIRE_STUDENT_VERIFICATION = "1";
   const admin = createClient(authUrl, token("service_role"), options);
   const browser = createClient(authUrl, token("anon"), options);
-  const created = await admin.auth.admin.createUser({ ...account, email_confirm: true });
+  const guardianClient = createClient(authUrl, token("anon"), options);
+  const created = await admin.auth.admin.createUser({ ...student, email_confirm: true });
   assert.ifError(created.error);
   assert.ok(created.data.user);
   const authId = created.data.user.id;
 
   const { db } = await import("../lib/db");
 
+  let guardianId: string | undefined;
   try {
-    const login = await browser.auth.signInWithPassword(account);
+    const guardianCreated = await admin.auth.admin.createUser({ ...guardian, email_confirm: true });
+    assert.ifError(guardianCreated.error);
+    assert.ok(guardianCreated.data.user);
+    guardianId = guardianCreated.data.user.id;
+    const guardianLogin = await guardianClient.auth.signInWithPassword(guardian);
+    assert.ifError(guardianLogin.error);
+    assert.ok(guardianLogin.data.user?.id === guardianId && guardianId !== authId);
+
+    const login = await browser.auth.signInWithPassword(student);
     assert.ifError(login.error);
     assert.ok(login.data.session);
     const accessToken = login.data.session.access_token;
@@ -79,6 +97,10 @@ async function main() {
       assert.equal(await findUser(), null);
     }
 
+    const unauthorized = await guardianClient.auth.admin.updateUserById(authId, {
+      app_metadata: { bc_student_verification: proof },
+    });
+    assert.ok(unauthorized.error && [401, 403].includes(unauthorized.error.status ?? 0));
     await expectAdmission(false);
     await expectBlocked();
     assert.ifError((await browser.auth.updateUser({ data: { bc_student_verification: proof } })).error);
@@ -102,11 +124,13 @@ async function main() {
     assert.equal((await submitRole()).status, 200);
     assert.equal(await db.user.count({ where: { supabaseId: authId } }), 1);
     console.log("PASS: API menolak bukti palsu dan dicabut, lalu membuat satu akun dengan bukti server yang sah.");
+    console.log("PASS: sesi wali tidak memiliki akses admin untuk mengubah bukti murid secara langsung.");
     console.log("PASS: GoTrue menolak bukti dari pengguna dan membaca pencabutan dengan token sesi yang sama.");
   } finally {
     try {
-      const cleanup = await admin.auth.admin.deleteUser(authId);
-      assert.ifError(cleanup.error);
+      const ids = guardianId ? [guardianId, authId] : [authId];
+      const cleanup = await Promise.all(ids.map((id) => admin.auth.admin.deleteUser(id)));
+      cleanup.forEach((result) => assert.ifError(result.error));
     } finally {
       await db.$disconnect();
     }
