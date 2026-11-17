@@ -476,6 +476,11 @@ async function main(): Promise<void> {
     check('6. join PIN valid ok', j1.ok);
     check('7. guest player dibuat (userId undefined)', j1.ok && j1.value.credential.includes('.'));
     check('7b. displayName di-trim', j1.ok && j1.value.displayName === 'Budi');
+    if (j1.ok) {
+      const blocked = await reconnectPlayer(deps, { credential: j1.value.credential, expectedUserId: 'student-other' });
+      check('Sesi akun tidak dapat memakai kredensial tamu', !blocked.ok && blocked.code === 'CREDENTIAL_INVALID');
+    }
+
 
     // 10. displayName validation.
     const emptyName = await joinSession(deps, { pin: pinA, displayName: '   ' });
@@ -548,6 +553,15 @@ async function main(): Promise<void> {
 
     const cred1 = fakeCredentials.issue(p1.id, sessionAId);
     const subId = 'sub-0001-aaaa';
+
+    const wrongAccount = await submitAnswer(deps, {
+      credential: cred1,
+      expectedUserId: 'student-other',
+      roundId: round.id,
+      submissionId: subId as never,
+      selectedOptionId: 'a',
+    });
+    check('Kredensial tamu tidak dapat mengirim jawaban atas nama akun', !wrongAccount.ok && wrongAccount.code === 'CREDENTIAL_INVALID');
 
     // 30. valid answer accepted.
     const a1 = await submitAnswer(deps, {
