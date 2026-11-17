@@ -4607,3 +4607,24 @@ model TrialClaim {
   @@index([kind, ipPrefixHash, createdAt])
   @@index([userId])
 }
+
+/// Provisioned by an authorized reviewer after verifying age and relationship.
+model StudentGuardianConsent {
+  studentAuthId String   @id @db.Uuid
+  guardianAuthId String  @db.Uuid
+  studentLabel String
+  reviewReference String
+  verifiedUntil DateTime
+  status StudentGuardianConsentStatus @default(PENDING)
+  noticeVersion String?
+  decidedAt DateTime?
+
+  @@index([guardianAuthId])
+}
+
+enum StudentGuardianConsentStatus {
+  PENDING
+  GRANTED
+  DECLINED
+  REVOKED
+}
