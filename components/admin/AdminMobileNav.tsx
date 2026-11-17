@@ -65,6 +65,7 @@ const ALL_ITEMS: FlatItem[] = [
   { label: "Pusat Data", href: "/admin/data-center", icon: Database, group: "System & Operations" },
   { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings, group: "System & Operations" },
   { label: "Founder & Audit", href: "/admin/founder", icon: ScrollText, group: "System & Operations" },
+  { label: "Persetujuan Wali", href: "/admin/guardian-consent", icon: ScrollText, group: "System & Operations" },
 ];
 
 const GROUPS = ["Keuangan", "Content", "Learning & Analytics", "AI & Platform", "System & Operations"];
