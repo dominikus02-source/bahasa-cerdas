@@ -5,6 +5,7 @@ CREATE TABLE "StudentGuardianConsent" (
     "guardianAuthId" UUID NOT NULL,
     "studentLabel" TEXT NOT NULL,
     "reviewReference" TEXT NOT NULL,
+    "reviewedBy" TEXT NOT NULL,
     "verifiedUntil" TIMESTAMP(3) NOT NULL,
     "status" "StudentGuardianConsentStatus" NOT NULL DEFAULT 'PENDING',
     "noticeVersion" TEXT,
