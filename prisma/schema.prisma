@@ -4614,6 +4614,7 @@ model StudentGuardianConsent {
   guardianAuthId String  @db.Uuid
   studentLabel String
   reviewReference String
+  reviewedBy String
   verifiedUntil DateTime
   status StudentGuardianConsentStatus @default(PENDING)
   noticeVersion String?
