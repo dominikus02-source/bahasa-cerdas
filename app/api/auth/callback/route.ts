@@ -84,7 +84,8 @@ export async function GET(request: Request) {
           });
 
           if (decision.action === "create") {
-            await provisionGoogleUser({
+            const provisioned = await provisionGoogleUser({
+              studentVerification: user.app_metadata?.bc_student_verification,
               supabaseId: user.id,
               email: user.email,
               fullName:
@@ -94,8 +95,9 @@ export async function GET(request: Request) {
               role: decision.role,
               kategoriUmum: decision.kategoriUmum ?? null,
             });
+            if (!provisioned) return clearOn(NextResponse.redirect(roleSelectionUrl));
             return clearOn(
-              NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(decision.role)}`)
+              NextResponse.redirect(`${requestUrl.origin}${dashboardForRole(provisioned.user.role)}`)
             );
           }
 

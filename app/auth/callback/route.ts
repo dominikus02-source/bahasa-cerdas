@@ -98,7 +98,8 @@ export async function GET(request: Request) {
       }
 
       if (decision.action === "create") {
-        await provisionGoogleUser({
+        const provisioned = await provisionGoogleUser({
+          studentVerification: data.user.app_metadata?.bc_student_verification,
           supabaseId: data.user.id,
           email: data.user.email,
           fullName:
@@ -108,8 +109,9 @@ export async function GET(request: Request) {
           role: decision.role,
           kategoriUmum: decision.kategoriUmum ?? null,
         });
+        if (!provisioned) return withClearedIntent(NextResponse.redirect(roleSelectionUrl));
         return withClearedIntent(
-          NextResponse.redirect(`${origin}${resolvePostAuthDestination(decision.role, next)}`)
+          NextResponse.redirect(`${origin}${resolvePostAuthDestination(provisioned.user.role, next)}`)
         );
       }
 

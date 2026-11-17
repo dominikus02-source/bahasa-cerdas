@@ -33,6 +33,8 @@ jobs:
         run: |
           nohup npx next dev -p 3100 -H 127.0.0.1 > fixture.log 2>&1 &
           for i in $(seq 1 90); do curl -sf -o /dev/null --max-time 120 "http://127.0.0.1:3100/qa-fixture/frame?view=guru" && break; sleep 2; done
+      - name: Guardian consent Android portrait and landscape
+        run: QA_OUT=qa-output/android-visual/guardian-consent node scripts/qa-android-guardian-consent.mjs
       - name: Rendered checks (320–768, landscape, light/dark)
         run: QA_OUT=qa-output/android-visual node scripts/qa-android-visual.mjs
       - name: Behavioral checks (Guru return, drawer, font 130%, keyboard)
@@ -137,6 +139,11 @@ jobs:
 
       - name: Auth routing regression
         run: npx tsx scripts/test-auth-routing.ts
+
+      - name: Student account verification regression
+        run: |
+          npx tsx scripts/test-student-provisioning-verification.ts
+          npm run test:auth-provisioning-security
 
       - name: Baseline diagnostic V2 gate
         run: npm run test:diagnostic-baseline-v2

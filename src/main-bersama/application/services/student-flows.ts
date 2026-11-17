@@ -233,7 +233,7 @@ export interface ReconnectOutcome {
  */
 export async function reconnectPlayer(
   deps: SessionOrchestratorDeps,
-  input: { credential: unknown },
+  input: { credential: unknown; expectedUserId?: string },
 ): Promise<StudentResult<ReconnectOutcome>> {
   const resolved = await deps.credentials.resolve(input.credential);
   if (!resolved.ok) return { ok: false, code: 'CREDENTIAL_INVALID' };
@@ -243,6 +243,11 @@ export async function reconnectPlayer(
   deps.resolver.discard?.(resolved.sessionId);
   const loaded = await deps.resolver.resolve(resolved.sessionId);
   if (!loaded.ok) return { ok: false, code: 'SESSION_NOT_FOUND' };
+  const initialPlayer = loaded.engine.state.players.get(resolved.playerId);
+  if (!initialPlayer) return { ok: false, code: 'PLAYER_NOT_FOUND' };
+  if (input.expectedUserId !== undefined && initialPlayer.userId !== input.expectedUserId) {
+    return { ok: false, code: 'CREDENTIAL_INVALID' };
+  }
   let engine = loaded.engine;
   let expiredGameState: GameEngineState | null | undefined;
   const s = engine.state.session;
@@ -287,6 +292,7 @@ export async function reconnectPlayer(
 // ─── Submit Answer (§15/§16) ────────────────────────────────
 
 export interface SubmitAnswerCommand {
+  expectedUserId?: string;
   credential: unknown;
   roundId: RoundId;
   submissionId: SubmissionId;
@@ -319,6 +325,9 @@ export async function submitAnswer(
   const engine = loaded.engine;
   const player = engine.state.players.get(resolved.playerId);
   if (!player) return { ok: false, code: 'PLAYER_NOT_FOUND' };
+  if (input.expectedUserId !== undefined && player.userId !== input.expectedUserId) {
+    return { ok: false, code: 'CREDENTIAL_INVALID' };
+  }
 
   // Waktu permainan habis: tolak jawaban dan tutup sesi (server clock).
   const sessionNow = engine.state.session;

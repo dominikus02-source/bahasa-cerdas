@@ -99,7 +99,7 @@ import {
   loadEngineWithGameState,
 } from '../src/main-bersama/application/services/session-commands';
 import {
-  joinSession,
+  joinSession as joinWithAvatar,
   reconnectPlayer,
   submitAnswer,
 } from '../src/main-bersama/application/services/student-flows';
@@ -381,6 +381,10 @@ async function cleanDb(): Promise<void> {
 
 // ─── main ───────────────────────────────────────────────────
 
+function joinSession(deps: Parameters<typeof joinWithAvatar>[0], input: Parameters<typeof joinWithAvatar>[1]) {
+  return joinWithAvatar(deps, { avatarId: "2", ...input });
+}
+
 async function main(): Promise<void> {
   console.log('\n=== MAIN BERSAMA — API + REALTIME (Tahap 6) ===\n');
   await cleanDb();
@@ -476,6 +480,11 @@ async function main(): Promise<void> {
     check('6. join PIN valid ok', j1.ok);
     check('7. guest player dibuat (userId undefined)', j1.ok && j1.value.credential.includes('.'));
     check('7b. displayName di-trim', j1.ok && j1.value.displayName === 'Budi');
+    if (j1.ok) {
+      const blocked = await reconnectPlayer(deps, { credential: j1.value.credential, expectedUserId: 'student-other' });
+      check('Sesi akun tidak dapat memakai kredensial tamu', !blocked.ok && blocked.code === 'CREDENTIAL_INVALID');
+    }
+
 
     // 10. displayName validation.
     const emptyName = await joinSession(deps, { pin: pinA, displayName: '   ' });
@@ -533,10 +542,10 @@ async function main(): Promise<void> {
     const sessionAId = (globalThis as Record<string, unknown>).__mbSessionA as string;
     const loaded = await loadEngineWithGameState(deps, sessionAId as never);
     check('fixture: engine dimuat', !!loaded);
-    if (!loaded) return;
+    if (!loaded) throw new Error("Persiapan uji Main Bersama gagal.");
     const round = loaded.engine.activeRound();
     check('fixture: round aktif ada', !!round);
-    if (!round) return;
+    if (!round) throw new Error("Persiapan uji Main Bersama gagal.");
 
     const players = [...loaded.engine.state.players.values()].filter(
       (p) => p.eligibleFromRoundIndex === 0,
@@ -548,6 +557,15 @@ async function main(): Promise<void> {
 
     const cred1 = fakeCredentials.issue(p1.id, sessionAId);
     const subId = 'sub-0001-aaaa';
+
+    const wrongAccount = await submitAnswer(deps, {
+      credential: cred1,
+      expectedUserId: 'student-other',
+      roundId: round.id,
+      submissionId: subId as never,
+      selectedOptionId: 'a',
+    });
+    check('Kredensial tamu tidak dapat mengirim jawaban atas nama akun', !wrongAccount.ok && wrongAccount.code === 'CREDENTIAL_INVALID');
 
     // 30. valid answer accepted.
     const a1 = await submitAnswer(deps, {
@@ -652,7 +670,7 @@ async function main(): Promise<void> {
 
     // 46. discussion student reveal available; 47. question view tanpa key.
     const loaded = await loadEngineWithGameState(deps, sessionAId as never);
-    if (!loaded) return;
+    if (!loaded) throw new Error("Persiapan uji Main Bersama gagal.");
     const players = [...loaded.engine.state.players.values()];
     const studentView = buildStudentView(
       loaded.engine,
@@ -699,7 +717,7 @@ async function main(): Promise<void> {
       { gameMode: 'jelajah-kata', packageRef: { kind: 'SOAL_SET', soalSetId: 'pkg-4' } },
     );
     check('fixture: sesi pause dibuat', created.ok);
-    if (!created.ok) return;
+    if (!created.ok) throw new Error("Persiapan uji Main Bersama gagal.");
     const sessionId = created.session.id;
     (globalThis as Record<string, unknown>).__mbPauseSession = sessionId;
     const row = await db.mainSession.findUnique({ where: { id: sessionId } });
@@ -712,7 +730,7 @@ async function main(): Promise<void> {
     const paused = await pauseSession(deps, teacherA, sessionId as never);
     check('51. pause ok', paused.ok);
     const loaded = await loadEngineWithGameState(deps, sessionId as never);
-    if (!loaded) return;
+    if (!loaded) throw new Error("Persiapan uji Main Bersama gagal.");
     const round = loaded.engine.activeRound();
     const player = [...loaded.engine.state.players.values()][0];
     const a1 = await submitAnswer(deps, {
@@ -728,7 +746,7 @@ async function main(): Promise<void> {
     const resumed = await resumeSession(deps, teacherA, sessionId as never);
     check('52. resume ok', resumed.ok);
     const loaded2 = await loadEngineWithGameState(deps, sessionId as never);
-    if (!loaded2) return;
+    if (!loaded2) throw new Error("Persiapan uji Main Bersama gagal.");
     const round2 = loaded2.engine.activeRound();
     const remainingMs = (round2?.closesAt?.getTime() ?? 0) - deps.clock.now().getTime();
     // Sisa waktu saat pause (60s) dipertahankan penuh — 5s yang berjalan
@@ -832,7 +850,7 @@ async function main(): Promise<void> {
     const pauseSessionId = (globalThis as Record<string, unknown>).__mbPauseSession as string;
     const sessionAId = (globalThis as Record<string, unknown>).__mbSessionA as string;
     const loaded = await loadEngineWithGameState(deps, sessionAId as never);
-    if (!loaded) return;
+    if (!loaded) throw new Error("Persiapan uji Main Bersama gagal.");
     const players = [...loaded.engine.state.players.values()];
     const forbiddenStudent = ['correctOptionId', 'correctAnswer', 'isCorrect', 'explanation', 'answerKey', 'teacherId', 'reconnectToken', 'userId'];
     const forbiddenProjector = ['correctOptionId', 'correctAnswer', 'isCorrect', 'explanation', 'answerKey', 'userId', 'reconnectToken', 'selectedOptionId'];

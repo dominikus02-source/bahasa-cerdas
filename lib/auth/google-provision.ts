@@ -1,3 +1,4 @@
+import { isStudentProvisioningAllowed, requiresStudentVerification } from "@/lib/auth/student-provisioning";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 import type { ProvisionRole } from "@/lib/auth/role-intent";
@@ -18,6 +19,7 @@ export async function provisionGoogleUser(opts: {
   email: string;
   fullName: string;
   role: ProvisionRole;
+  studentVerification?: unknown;
   /** Hanya dipakai bila role UMUM (sudah divalidasi pemanggil). Kosong → UMUM. */
   kategoriUmum?: KategoriUmumPilihan | null;
 }) {
@@ -34,6 +36,14 @@ export async function provisionGoogleUser(opts: {
       await db.user.update({ where: { id: user.id }, data: { supabaseId } });
     }
     return { user, created: false as const };
+  }
+
+  if (requiresStudentVerification(role)) {
+    const consent = await db.studentGuardianConsent.findUnique({ where: { studentAuthId: supabaseId } });
+    const allowed = consent
+      ? consent.status === "GRANTED" && consent.verifiedUntil.getTime() > Date.now()
+      : isStudentProvisioningAllowed(role, opts.studentVerification);
+    if (!allowed) return null;
   }
 
   const created = await db.user.create({
