@@ -1,3 +1,4 @@
+import { hasStudentConsentAccess, STUDENT_CONSENT_REQUIRED } from "@/lib/auth/student-consent-access";
 import { NextRequest, NextResponse } from "next/server";
 import { createLoginClient } from "@/lib/supabase/server-login";
 import cache from "@/lib/redis";
@@ -195,6 +196,14 @@ export async function POST(req: NextRequest) {
       }
     } catch {
       // DB error — still return session, let /api/user/me handle DB sync
+    }
+
+    if (dbUser && !(await hasStudentConsentAccess(dbUser.role, data.user.id))) {
+      await supabase.auth.signOut({ scope: "local" });
+      return NextResponse.json(STUDENT_CONSENT_REQUIRED, {
+        status: 403,
+        headers: { "Cache-Control": "private, no-store" },
+      });
     }
 
     // ── Reset failed-attempt counters on SUCCESSFUL login ──
