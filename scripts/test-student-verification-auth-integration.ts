@@ -60,6 +60,7 @@ async function main() {
     let post: typeof import("../app/api/auth/complete-role/route").POST;
     let decide: typeof import("../app/api/auth/guardian-consent/route").POST;
     let activeClient = browser;
+    let tasks: typeof import("../app/api/murid/tugas/route").GET;
     let sync: typeof import("../app/api/user/me/route").POST;
     let login: typeof import("../app/api/auth/login/route").POST;
     let loginClient = guardianClient;
@@ -71,6 +72,7 @@ async function main() {
       };
       ({ POST: post } = require("../app/api/auth/complete-role/route"));
       ({ POST: decide } = require("../app/api/auth/guardian-consent/route"));
+      ({ GET: tasks } = require("../app/api/murid/tugas/route"));
       ({ POST: sync } = require("../app/api/user/me/route"));
       ({ POST: login } = require("../app/api/auth/login/route"));
     } finally {
@@ -184,12 +186,15 @@ async function main() {
       method: "POST", headers: { "Content-Type": "application/json" }, body: "{}",
     }));
     assert.equal((await syncStudent()).status, 200);
+    const readTasks = () => tasks(new NextRequest("http://localhost/api/murid/tugas"));
+    assert.equal((await readTasks()).status, 200);
     activeClient = guardianClient;
     assert.equal((await decideConsent("revoke")).status, 200);
     activeClient = browser;
     const blockedSession = await syncStudent();
     assert.equal(blockedSession.status, 403);
     assert.equal((await blockedSession.json()).code, "STUDENT_CONSENT_REQUIRED");
+    assert.equal((await readTasks()).status, 403);
     const blockedLogin = await signIn(student);
     assert.equal(blockedLogin.status, 403);
     assert.equal((await blockedLogin.json()).code, "STUDENT_CONSENT_REQUIRED");
