@@ -5,6 +5,7 @@
 // PIN bukan authorization secret — tidak ada data guru di respons.
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requiresStudentVerification } from '@/lib/auth/student-provisioning';
 import { getAuthenticatedUser } from '@/src/main-bersama/adapters/auth/teacher-actor';
 import { getOrchestratorDeps } from '@/src/main-bersama/infrastructure/orchestrator-composition';
 import { joinSession } from '@/src/main-bersama/application/services/student-flows';
@@ -42,6 +43,9 @@ export async function POST(req: NextRequest) {
 
   // Authenticated student opsional — guest didukung penuh (§6).
   const user = await getAuthenticatedUser();
+  if (requiresStudentVerification('MURID') && !user) {
+    return NextResponse.json({ ok: false, code: 'SESSION_REQUIRED', message: 'Silakan masuk untuk bergabung.' }, { status: 401 });
+  }
 
 
   const deps = getOrchestratorDeps();
@@ -49,7 +53,7 @@ export async function POST(req: NextRequest) {
     ? (() => {
         const nickname = user.nickname?.trim() ?? '';
         const fullName = user.fullName?.trim() ?? '';
-        const preferred = nickname.length >= 2 ? nickname : fullName;
+        const preferred = nickname.length >= 2 ? nickname : user.role === 'MURID' ? 'Murid' : fullName;
         return preferred.slice(0, 24).trim();
       })()
     : undefined;
