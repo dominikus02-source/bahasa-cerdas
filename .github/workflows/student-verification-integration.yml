@@ -1,0 +1,60 @@
+name: Student verification integration
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/student-verification-integration.yml"
+      - "scripts/test-student-verification-auth-integration.ts"
+      - "lib/auth/student-provisioning.ts"
+      - "package-lock.json"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: student-verification-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  isolated-auth:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - name: Start disposable PostgreSQL and GoTrue
+        run: |
+          docker network create student-auth-qa
+          docker run -d --name student-qa-db --network student-auth-qa \
+            -e POSTGRES_PASSWORD=local_fixture postgres:16
+          timeout 45s bash -c 'until docker exec student-qa-db pg_isready -h 127.0.0.1 -U postgres; do sleep 2; done'
+          docker exec student-qa-db psql -v ON_ERROR_STOP=1 -U postgres -c 'CREATE SCHEMA auth;'
+          docker run -d --name student-qa-auth --network student-auth-qa -p 127.0.0.1:54999:9999 \
+            -e API_EXTERNAL_URL=http://127.0.0.1:54999 \
+            -e GOTRUE_SITE_URL=http://127.0.0.1:54999 \
+            -e GOTRUE_API_HOST=0.0.0.0 -e GOTRUE_API_PORT=9999 \
+            -e GOTRUE_DB_DRIVER=postgres \
+            -e GOTRUE_DB_DATABASE_URL='postgres://postgres:local_fixture@student-qa-db:5432/postgres?sslmode=disable&search_path=auth' \
+            -e GOTRUE_DB_NAMESPACE=auth \
+            -e GOTRUE_JWT_ADMIN_ROLES=service_role \
+            -e GOTRUE_JWT_SECRET=ci-only-local-gotrue-fixture-signing-key-student-verification \
+            -e GOTRUE_EXTERNAL_EMAIL_ENABLED=true \
+            supabase/gotrue:v2.197.0
+          timeout 60s bash -c 'until curl -fsS --max-time 2 http://127.0.0.1:54999/health; do sleep 2; done'
+      - name: Verify server-only evidence and revocation
+        run: node --import tsx scripts/test-student-verification-auth-integration.ts
+      - name: Inspect disposable containers on failure
+        if: failure()
+        run: |
+          docker logs student-qa-db || true
+          docker logs student-qa-auth || true
+      - name: Remove disposable containers
+        if: always()
+        run: |
+          docker rm -f student-qa-auth student-qa-db || true
+          docker network rm student-auth-qa || true
