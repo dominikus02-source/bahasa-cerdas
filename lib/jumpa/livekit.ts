@@ -145,7 +145,9 @@ export async function removeLivekitParticipant(roomName: string, identity: strin
     );
   } catch (error) {
     // Peserta sudah tidak tersambung = hasil yang sama.
-    if (!String(error instanceof Error ? error.message : error).toLowerCase().includes("not found")) throw error;
+    const message = String(error instanceof Error ? error.message : error).toLowerCase();
+    if (!message.includes("not found") && !message.includes("participant does not exist")
+      && !message.includes("room does not exist")) throw error;
   }
 }
 
