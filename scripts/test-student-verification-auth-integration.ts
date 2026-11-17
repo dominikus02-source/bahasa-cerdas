@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import Module from "node:module";
+import { NextRequest } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isStudentProvisioningAllowed } from "../lib/auth/student-provisioning";
 
@@ -52,14 +53,44 @@ async function main() {
     assert.ifError(guardianCreated.error);
     assert.ok(guardianCreated.data.user);
     guardianId = guardianCreated.data.user.id;
-    const guardianLogin = await guardianClient.auth.signInWithPassword(guardian);
-    assert.ifError(guardianLogin.error);
-    assert.ok(guardianLogin.data.user?.id === guardianId && guardianId !== authId);
+    // Supply the real signed-in SDK client at the Next.js cookie boundary.
+    // Everything from the route handler through Prisma uses the actual code.
+    const loader = Module as typeof Module & { _load: (...args: unknown[]) => unknown };
+    const originalLoad = loader._load;
+    let post: typeof import("../app/api/auth/complete-role/route").POST;
+    let login: typeof import("../app/api/auth/login/route").POST;
+    let loginClient = guardianClient;
+    try {
+      loader._load = function (name, ...args) {
+        if (name === "@/lib/supabase/server") return { createClient: async () => browser };
+        if (name === "@/lib/supabase/server-login") return { createLoginClient: async () => loginClient };
+        return originalLoad.call(this, name, ...args);
+      };
+      ({ POST: post } = require("../app/api/auth/complete-role/route"));
+      ({ POST: login } = require("../app/api/auth/login/route"));
+    } finally {
+      loader._load = originalLoad;
+    }
+    const signIn = (account: typeof student) => login(new NextRequest("http://localhost/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(account),
+    }));
+    const guardianLogin = await signIn(guardian);
+    assert.equal(guardianLogin.status, 200);
+    assert.equal((await guardianLogin.json()).needsRole, true);
+    const guardianSession = await guardianClient.auth.getUser();
+    assert.ifError(guardianSession.error);
+    assert.ok(guardianSession.data.user?.id === guardianId && guardianId !== authId);
 
-    const login = await browser.auth.signInWithPassword(student);
-    assert.ifError(login.error);
-    assert.ok(login.data.session);
-    const accessToken = login.data.session.access_token;
+    loginClient = browser;
+    const studentLogin = await signIn(student);
+    assert.equal(studentLogin.status, 200);
+    assert.equal((await studentLogin.json()).needsRole, true);
+    const session = await browser.auth.getSession();
+    assert.ifError(session.error);
+    assert.ok(session.data.session);
+    const accessToken = session.data.session.access_token;
     const proof = { version: 1, ageVerified: true, guardianConsent: "granted", validUntil: Date.now() + 60_000 };
 
     async function expectAdmission(allowed: boolean) {
@@ -70,20 +101,6 @@ async function main() {
       assert.equal(isStudentProvisioningAllowed("MURID", current.data.user.app_metadata.bc_student_verification), allowed);
     }
 
-    // Supply the real signed-in SDK client at the Next.js cookie boundary.
-    // Everything from the route handler through Prisma uses the actual code.
-    const loader = Module as typeof Module & { _load: (...args: unknown[]) => unknown };
-    const originalLoad = loader._load;
-    let post: typeof import("../app/api/auth/complete-role/route").POST;
-    try {
-      loader._load = function (name, ...args) {
-        if (name === "@/lib/supabase/server") return { createClient: async () => browser };
-        return originalLoad.call(this, name, ...args);
-      };
-      ({ POST: post } = require("../app/api/auth/complete-role/route"));
-    } finally {
-      loader._load = originalLoad;
-    }
     const submitRole = () => post(new Request("http://localhost/api/auth/complete-role", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -123,6 +140,10 @@ async function main() {
     assert.equal(provisioned?.role, "MURID");
     assert.equal((await submitRole()).status, 200);
     assert.equal(await db.user.count({ where: { supabaseId: authId } }), 1);
+    const returning = await signIn(student);
+    assert.equal(returning.status, 200);
+    assert.equal((await returning.json()).user?.role, "MURID");
+    console.log("PASS: dua akun dummy masuk lewat API login dan akun murid yang aktif dapat masuk kembali.");
     console.log("PASS: API menolak bukti palsu dan dicabut, lalu membuat satu akun dengan bukti server yang sah.");
     console.log("PASS: sesi wali tidak memiliki akses admin untuk mengubah bukti murid secara langsung.");
     console.log("PASS: GoTrue menolak bukti dari pengguna dan membaca pencabutan dengan token sesi yang sama.");
