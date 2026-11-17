@@ -60,6 +60,7 @@ async function main() {
     let post: typeof import("../app/api/auth/complete-role/route").POST;
     let decide: typeof import("../app/api/auth/guardian-consent/route").POST;
     let activeClient = browser;
+    let sync: typeof import("../app/api/user/me/route").POST;
     let login: typeof import("../app/api/auth/login/route").POST;
     let loginClient = guardianClient;
     try {
@@ -70,6 +71,7 @@ async function main() {
       };
       ({ POST: post } = require("../app/api/auth/complete-role/route"));
       ({ POST: decide } = require("../app/api/auth/guardian-consent/route"));
+      ({ POST: sync } = require("../app/api/user/me/route"));
       ({ POST: login } = require("../app/api/auth/login/route"));
     } finally {
       loader._load = originalLoad;
@@ -178,6 +180,21 @@ async function main() {
     const returning = await signIn(student);
     assert.equal(returning.status, 200);
     assert.equal((await returning.json()).user?.role, "MURID");
+    const syncStudent = () => sync(new NextRequest("http://localhost/api/user/me", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: "{}",
+    }));
+    assert.equal((await syncStudent()).status, 200);
+    activeClient = guardianClient;
+    assert.equal((await decideConsent("revoke")).status, 200);
+    activeClient = browser;
+    const blockedSession = await syncStudent();
+    assert.equal(blockedSession.status, 403);
+    assert.equal((await blockedSession.json()).code, "STUDENT_CONSENT_REQUIRED");
+    const blockedLogin = await signIn(student);
+    assert.equal(blockedLogin.status, 403);
+    assert.equal((await blockedLogin.json()).code, "STUDENT_CONSENT_REQUIRED");
+    console.log("PASS: pencabutan memblokir sinkronisasi sesi yang aktif dan login baru.");
+
     console.log("PASS: dua akun dummy masuk lewat API login dan akun murid yang aktif dapat masuk kembali.");
     console.log("PASS: API menolak bukti palsu dan dicabut, lalu membuat satu akun dengan bukti server yang sah.");
     console.log("PASS: sesi wali tidak memiliki akses admin untuk mengubah bukti murid secara langsung.");
