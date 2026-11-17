@@ -105,6 +105,7 @@ const orig = (Module as any)._load;
   if (name === "@/lib/rate-limit") return { rateLimitRoute: async () => null };
   return orig(name, parent, isMain);
 };
+process.env.NEXT_PUBLIC_SITE_URL = "https://app.test";
 process.env.NEXT_PUBLIC_SUPABASE_URL = "https://mock.supabase.test";
 process.env.SUPABASE_SERVICE_ROLE_KEY = "mock";
 
