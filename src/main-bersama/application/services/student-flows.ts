@@ -10,7 +10,7 @@
 // Reconnect (§7): credential opaque stateless-signed — display name
 // TIDAK PERNAH jadi proof identity.
 
-import { randomUUID } from 'crypto';
+import { createHash, randomUUID } from 'crypto';
 import type {
   PlayerId,
   RoundId,
@@ -80,10 +80,12 @@ export interface JoinSessionInput {
   /** User BC id bila siswa login; undefined = guest (§6). */
   userId?: string;
   /**
-   * Nama profil kanonik dari server auth boundary (nickname → fullName).
+   * Nama profil yang dipilih oleh server berdasarkan peran akun.
    * Hanya dipakai untuk user login; tidak pernah dipercaya dari body client.
    */
   authenticatedDisplayName?: string;
+  /** Cadangan nama samaran khusus sesi apabila nama panggilan murid tidak valid. */
+  useStudentAlias?: boolean;
 }
 
 /**
@@ -128,8 +130,17 @@ export async function joinSession(
     guestName = check.value;
   } else {
     const check = validateDisplayName(input.authenticatedDisplayName);
-    if (!check.ok) return { ok: false, code: check.code };
-    authenticatedName = check.value;
+    if (check.ok) {
+      authenticatedName = check.value;
+    } else if (input.useStudentAlias) {
+      const suffix = createHash('sha256')
+        .update(JSON.stringify([session.id, input.userId]))
+        .digest('hex')
+        .slice(0, 10);
+      authenticatedName = `Murid ${suffix}`;
+    } else {
+      return { ok: false, code: check.code };
+    }
   }
 
   // Re-join: authenticated by userId; guest by nama tersimpan.
