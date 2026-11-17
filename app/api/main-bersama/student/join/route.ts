@@ -8,6 +8,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getAuthenticatedUser } from '@/src/main-bersama/adapters/auth/teacher-actor';
 import { getOrchestratorDeps } from '@/src/main-bersama/infrastructure/orchestrator-composition';
 import { joinSession } from '@/src/main-bersama/application/services/student-flows';
+import { DISPLAY_NAME_MAX } from '@/src/main-bersama/application/services/display-name';
 import { buildStudentView } from '@/src/main-bersama/presentation/view-mappers';
 import { mapHttpError } from '@/src/main-bersama/presentation/http-errors';
 import type { StudentErrorCode } from '@/src/main-bersama/application/services/student-flows';
@@ -42,17 +43,15 @@ export async function POST(req: NextRequest) {
 
   // Authenticated student opsional — guest didukung penuh (§6).
   const user = await getAuthenticatedUser();
-
+  const useStudentAlias = user?.role === 'MURID';
+  const nickname = user?.nickname?.trim() ?? '';
+  const fullName = user?.fullName?.trim() ?? '';
+  const preferredName = useStudentAlias
+    ? (nickname.toLowerCase() === fullName.toLowerCase() ? '' : nickname)
+    : (nickname.length >= 2 ? nickname : fullName);
+  const authenticatedDisplayName = preferredName.slice(0, DISPLAY_NAME_MAX).trim();
 
   const deps = getOrchestratorDeps();
-  const authenticatedDisplayName = user
-    ? (() => {
-        const nickname = user.nickname?.trim() ?? '';
-        const fullName = user.fullName?.trim() ?? '';
-        const preferred = nickname.length >= 2 ? nickname : fullName;
-        return preferred.slice(0, 24).trim();
-      })()
-    : undefined;
   const result = await joinSession(deps, {
     pin,
     avatarId,
@@ -61,6 +60,7 @@ export async function POST(req: NextRequest) {
       ? {
           userId: user.id,
           authenticatedDisplayName,
+          useStudentAlias,
         }
       : {}),
   });
