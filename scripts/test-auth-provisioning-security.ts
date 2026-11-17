@@ -22,7 +22,8 @@ let dbUsers: U[] = [];
 let authUsers: A[] = [];
 let profiles: Record<string, Record<string, unknown>> = {};
 let failDbCreate = false;
-let sessionUser: { id: string; email: string; app_metadata?: Record<string, unknown> } | null = null;
+let signupAutoConfirms = false;
+let sessionUser: { id: string; email: string; email_confirmed_at?: string; app_metadata?: Record<string, unknown> } | null = null;
 const events: string[] = [];
 
 const db = {
@@ -85,6 +86,11 @@ const admin = {
   },
 };
 const serverClient = { auth: {
+  signUp: async ({ options }: { options: { emailRedirectTo: string; data: Record<string, unknown> } }) => {
+    events.push(`signup:${options.emailRedirectTo}:${Object.keys(options.data).join(",")}`);
+    return { data: { session: signupAutoConfirms ? {} : null }, error: null };
+  },
+  signOut: async () => { events.push("session-signout"); return { error: null }; },
   getUser: async () => ({ data: { user: sessionUser }, error: null }),
   exchangeCodeForSession: async () => ({ data: { user: sessionUser }, error: null }),
   getClaims: async () => ({ data: { claims: { sub: sessionUser?.id, email: sessionUser?.email } }, error: null }),
@@ -112,7 +118,7 @@ const apiCallback = require("../app/api/auth/callback/route");
 const { ROLE_INTENT_COOKIE, signRoleIntent } = require("../lib/auth/role-intent");
 const post = (url: string, body: object) =>
   new NextRequest(`https://app.test${url}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-const reset = () => { dbUsers = []; authUsers = []; profiles = {}; failDbCreate = false; sessionUser = null; events.length = 0; };
+const reset = () => { dbUsers = []; authUsers = []; profiles = {}; failDbCreate = false; signupAutoConfirms = false; sessionUser = null; events.length = 0; };
 const form = (o: Record<string, string>) => { const f = new FormData(); for (const [k, v] of Object.entries(o)) f.set(k, v); return f; };
 
 let failed = 0;
@@ -223,10 +229,16 @@ async function main() {
   });
 
   process.env.BC_REQUIRE_STUDENT_VERIFICATION = "1";
-  await check("staging: direct email registration stops before creating Auth or database rows", async () => {
+  await check("staging: email registration requests confirmation without creating an application user", async () => {
     reset();
     const r = await createUser.POST(post("/api/auth/create-user", { email: "murid@x.test", password: "pw-12345678", fullName: "Murid Uji", role: "MURID" }));
-    expect(r.status === 403 && events.length === 0, `status ${r.status}, events ${events}`);
+    expect(r.status === 202 && dbUsers.length === 0 && events.join() === "signup:https://app.test/auth/callback:full_name", `status ${r.status}, events ${events}`);
+  });
+  await check("staging: accidental Auth auto-confirm gives no app user and clears the session", async () => {
+    reset();
+    signupAutoConfirms = true;
+    const r = await createUser.POST(post("/api/auth/create-user", { email: "murid@x.test", password: "pw-12345678", fullName: "Murid Uji", role: "MURID" }));
+    expect(r.status === 503 && dbUsers.length === 0 && events.includes("session-signout"), `status ${r.status}, events ${events}`);
   });
   await check("staging: direct POST user/me cannot provision a missing student profile", async () => {
     reset();
@@ -254,6 +266,9 @@ async function main() {
     const rejected = await completeRole.POST(post("/api/auth/complete-role", payload));
     expect(rejected.status === 403 && dbUsers.length === 0, `status ${rejected.status}`);
     sessionUser.app_metadata = { bc_student_verification: evidence };
+    const unconfirmed = await completeRole.POST(post("/api/auth/complete-role", payload));
+    expect(unconfirmed.status === 403 && dbUsers.length === 0, `status ${unconfirmed.status}`);
+    sessionUser.email_confirmed_at = new Date().toISOString();
     const accepted = await completeRole.POST(post("/api/auth/complete-role", payload));
     expect(accepted.status === 200 && dbUsers[0]?.role === "MURID", `status ${accepted.status}`);
     sessionUser.app_metadata = {};

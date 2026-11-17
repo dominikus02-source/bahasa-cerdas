@@ -177,6 +177,7 @@ export default function RegisterPage() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState("");
   const [registered, setRegistered] = useState(false);
+  const [confirmationRequired, setConfirmationRequired] = useState(false);
 
   const config = role ? ROLE_CONFIG[role] : null;
 
@@ -228,6 +229,10 @@ export default function RegisterPage() {
       });
 
       const createData = await createRes.json();
+      if (createRes.status === 202 && createData.code === "EMAIL_CONFIRMATION_REQUIRED") {
+        setConfirmationRequired(true);
+        return;
+      }
       if (!createRes.ok) {
         setError(createData.error || "Gagal mendaftar. Silakan coba lagi.");
         setLoading(false);
@@ -396,7 +401,15 @@ export default function RegisterPage() {
 
         <div className="order-1 lg:order-2">
           <div className="mx-auto w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-6 shadow-xl shadow-slate-900/5 dark:border-slate-800 dark:bg-slate-900 md:p-8">
-            {registered ? (
+            {confirmationRequired ? (
+              <div role="status" className="space-y-4 text-center">
+                <h2 className="text-xl font-semibold">Periksa email</h2>
+                <p>Buka tautan konfirmasi, lalu masuk untuk menyelesaikan pendaftaran setelah persetujuan wali tersedia.</p>
+                <Link href={`/login${isMobileApp ? backToLoginQuery : nextQuery}`} className="font-medium underline">
+                  Buka halaman masuk
+                </Link>
+              </div>
+            ) : registered ? (
               <div className="space-y-4 text-center">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-500/20">
                   <Check className="h-8 w-8 text-emerald-600 dark:text-emerald-300" />

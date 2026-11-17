@@ -1,4 +1,4 @@
-import { STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
+import { requiresStudentVerification, STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -15,7 +15,7 @@ import { findApplicationUser, provisionGoogleUser } from "@/lib/auth/google-prov
  * (UMUM hanya bila ENABLE_ROLE_UMUM aktif; kategori opsional → bawaan UMUM,
  * bila dikirim wajib MAHASISWA/DOSEN/UMUM.)
  *
- * Completes application provisioning for a Google-authenticated session that
+ * Completes application provisioning for an authenticated email or Google session that
  * has no application User yet (the role-selection step). The role comes from
  * an explicit in-session choice and is validated against the allowlist.
  *
@@ -59,6 +59,12 @@ export async function POST(req: Request) {
   res.headers.append("Set-Cookie", intentClearCookie());
 
   if (existing) return res;
+  if (requiresStudentVerification(selection.role) && !authUser.email_confirmed_at) {
+    return NextResponse.json({
+      code: "EMAIL_CONFIRMATION_REQUIRED",
+      error: "Konfirmasi alamat email sebelum melanjutkan pendaftaran.",
+    }, { status: 403 });
+  }
 
   const provisioned = await provisionGoogleUser({
     studentVerification: authUser.app_metadata?.bc_student_verification,

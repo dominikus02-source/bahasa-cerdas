@@ -1,10 +1,12 @@
-import { requiresStudentVerification, STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
+import { requiresStudentVerification } from "@/lib/auth/student-provisioning";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
 import { z } from "zod";
 import { sanitize } from "@/lib/validations";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { createClient as createSessionClient } from "@/lib/supabase/server";
+import { resolvePublicAuthOrigin } from "@/lib/auth/public-origin";
 import { parseRoleSelection } from "@/lib/auth/role-intent";
 
 const createUserSchema = z.object({
@@ -74,9 +76,41 @@ export async function POST(req: Request) {
       );
     }
 
-    // This pre-auth path cannot prove ownership of an approved Auth identity.
     if (requiresStudentVerification(role)) {
-      return NextResponse.json(STUDENT_VERIFICATION_REQUIRED, { status: 403 });
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+      if (process.env.NODE_ENV === "production" && !siteUrl) {
+        return NextResponse.json({ error: "Pendaftaran email belum tersedia." }, { status: 503 });
+      }
+      const origin = resolvePublicAuthOrigin({
+        requestUrl: new URL(req.url),
+        siteUrl,
+        isProduction: process.env.NODE_ENV === "production",
+      });
+      if (process.env.NODE_ENV === "production" && new URL(siteUrl!).origin !== origin) {
+        return NextResponse.json({ error: "Pendaftaran email belum tersedia." }, { status: 503 });
+      }
+
+      // GoTrue confirms email ownership. No application User or consent
+      // decision is created here. Only complete-role can finish provisioning.
+      const auth = await createSessionClient();
+      const { data, error } = await auth.auth.signUp({
+        email: normalizedEmail,
+        password,
+        options: { data: { full_name: sanitizedName }, emailRedirectTo: new URL("/auth/callback", origin).href },
+      });
+      if (error) {
+        const status = error.status === 429 ? 429 : error.status && error.status < 500 ? 400 : 503;
+        return NextResponse.json({
+          error: status === 429
+            ? "Terlalu banyak percobaan. Silakan tunggu dan coba lagi."
+            : "Pendaftaran email belum berhasil. Silakan masuk jika sudah memiliki akun atau coba lagi.",
+        }, { status });
+      }
+      if (data.session) {
+        await auth.auth.signOut({ scope: "local" });
+        return NextResponse.json({ error: "Konfirmasi email belum tersedia." }, { status: 503 });
+      }
+      return NextResponse.json({ code: "EMAIL_CONFIRMATION_REQUIRED" }, { status: 202 });
     }
 
     const supabase = createClient(
