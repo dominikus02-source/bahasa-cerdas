@@ -101,9 +101,9 @@ export default function ClassGuardianConsentPage() {
         <Field label="Cari kelas aktif">
           {(props) => <Input {...props} variant="bc" value={query} maxLength={100} disabled={busy} onChange={(event) => setQuery(event.target.value)} />}
         </Field>
-        <label className="block space-y-1">
-          <span>Pilih kelas</span>
-          <select className="block w-full rounded-bc-ctl border border-bc-line bg-bc-field p-3" value={groupId} disabled={busy} onChange={(event) => {
+        <div className="space-y-1">
+          <label className="block" htmlFor="guardian-review-class">Pilih kelas</label>
+          <select id="guardian-review-class" className="block w-full rounded-bc-ctl border border-bc-line bg-bc-field p-3" value={groupId} disabled={busy} onChange={(event) => {
             setGroupId(event.target.value);
             setRoster(null);
             setStudentId("");
@@ -113,7 +113,7 @@ export default function ClassGuardianConsentPage() {
             <option value="">Pilih kelas aktif</option>
             {classes.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.teacher.fullName}</option>)}
           </select>
-        </label>
+        </div>
       </Card>
       {error && <p className="text-bc-danger" role="alert">{error}</p>}
       {message && <p role="status">{message} <a className="underline" href={guardianPage}>Buka halaman wali</a></p>}
