@@ -3,6 +3,7 @@ import { requiresStudentVerification, STUDENT_VERIFICATION_REQUIRED } from "@/li
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
+import { createClient } from "@/lib/supabase/server";
 
 import cache from "@/lib/redis";
 import { err } from "@/lib/api/response";
@@ -110,7 +111,6 @@ async function findOrCreateUser(opts: {
 export async function GET(request: NextRequest) {
   try {
     const fresh = new URL(request.url).searchParams.get("fresh") === "1";
-    const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
 
     // The authenticated Supabase ID is the stable account identity.
@@ -237,7 +237,6 @@ export async function POST(request: NextRequest) {
     // reachable from /api/* without a middleware auth gate, so accepting those
     // fields from the client could let an attacker impersonate/link another
     // application account. The Supabase JWT is the source of identity.
-    const { createClient } = await import("@/lib/supabase/server");
     const supabase = await createClient();
     let claimsResult: any;
     try {
