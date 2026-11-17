@@ -88,7 +88,61 @@ async function linkClass(
 }
 
 export const GET = withAdmin(async (request: Request) => {
-  const rawId = new URL(request.url).searchParams.get("studentAuthId");
+  const params = new URL(request.url).searchParams;
+  const groupId = params.get("groupId");
+  const classSearch = params.get("classSearch");
+  const headers = { "Cache-Control": "private, no-store" };
+
+  if (groupId !== null) {
+    if (!z.string().trim().min(1).max(100).safeParse(groupId).success) {
+      return NextResponse.json({ error: "ID kelas tidak valid." }, { status: 400 });
+    }
+    const group = await db.group.findUnique({
+      where: { id: groupId, isActive: true },
+      select: {
+        id: true,
+        name: true,
+        teacher: { select: { fullName: true, role: true, supabaseId: true, email: true } },
+        members: {
+          where: { user: { role: "MURID", supabaseId: { not: "" }, NOT: { email: { endsWith: "@account.invalid" } } } },
+          select: { user: { select: { id: true, fullName: true, supabaseId: true } } },
+          orderBy: [{ user: { fullName: "asc" } }, { id: "asc" }],
+        },
+      },
+    });
+    if (!group) return NextResponse.json({ error: "Kelas aktif tidak ditemukan." }, { status: 404 });
+    const authIds = group.members.flatMap(({ user }) => user.supabaseId ? [user.supabaseId] : []);
+    const records = await db.studentGuardianConsent.findMany({
+      where: { studentAuthId: { in: authIds } },
+      select: { studentAuthId: true, status: true },
+    });
+    const statuses = new Map(records.map((item) => [item.studentAuthId, item.status]));
+    const students = group.members.map(({ user }) => ({
+      id: user.id,
+      name: user.fullName,
+      status: user.supabaseId ? statuses.get(user.supabaseId) ?? null : null,
+    }));
+    const guardianReady = group.teacher.role === "GURU" && Boolean(group.teacher.supabaseId)
+      && !group.teacher.email.endsWith("@account.invalid");
+    return NextResponse.json({ id: group.id, name: group.name, teacher: group.teacher.fullName, guardianReady, students }, { headers });
+  }
+
+  if (classSearch !== null) {
+    const search = z.string().trim().max(100).safeParse(classSearch);
+    if (!search.success) return NextResponse.json({ error: "Pencarian kelas tidak valid." }, { status: 400 });
+    const classes = await db.group.findMany({
+      where: {
+        isActive: true,
+        ...(search.data ? { name: { contains: search.data, mode: "insensitive" } } : {}),
+      },
+      select: { id: true, name: true, teacher: { select: { fullName: true } } },
+      orderBy: [{ name: "asc" }, { id: "asc" }],
+      take: 40,
+    });
+    return NextResponse.json({ classes }, { headers });
+  }
+
+  const rawId = params.get("studentAuthId");
   const parsedId = z.string().uuid().safeParse(rawId);
   if (!parsedId.success) {
     return NextResponse.json({ error: "Masukkan ID akun murid yang valid." }, { status: 400 });
