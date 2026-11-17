@@ -1,8 +1,10 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
+import Module from "node:module";
 import { createClient } from "@supabase/supabase-js";
 import { isStudentProvisioningAllowed } from "../lib/auth/student-provisioning";
 
+const databaseUrl = "postgresql://postgres:local_fixture@127.0.0.1:55432/postgres?schema=public";
 const authUrl = "http://127.0.0.1:54999";
 const signingKey = "ci-only-local-gotrue-fixture-signing-key-student-verification";
 const account = { email: "bc-student-qa-auth@example.test", password: "ci-fixture-student-2026" };
@@ -22,6 +24,9 @@ function token(role: "anon" | "service_role") {
 }
 
 async function main() {
+  if (process.env.DATABASE_URL !== databaseUrl || process.env.DIRECT_URL !== databaseUrl || process.env.DATABASE_URL_POOLED) {
+    throw new Error("Jalankan pengujian dengan basis data Docker lokal yang terisolasi.");
+  }
   process.env.BC_REQUIRE_STUDENT_VERIFICATION = "1";
   const admin = createClient(authUrl, token("service_role"), options);
   const browser = createClient(authUrl, token("anon"), options);
@@ -29,6 +34,8 @@ async function main() {
   assert.ifError(created.error);
   assert.ok(created.data.user);
   const authId = created.data.user.id;
+
+  const { db } = await import("../lib/db");
 
   try {
     const login = await browser.auth.signInWithPassword(account);
@@ -45,9 +52,38 @@ async function main() {
       assert.equal(isStudentProvisioningAllowed("MURID", current.data.user.app_metadata.bc_student_verification), allowed);
     }
 
+    // Supply the real signed-in SDK client at the Next.js cookie boundary.
+    // Everything from the route handler through Prisma uses the actual code.
+    const loader = Module as typeof Module & { _load: (...args: unknown[]) => unknown };
+    const originalLoad = loader._load;
+    let post: typeof import("../app/api/auth/complete-role/route").POST;
+    try {
+      loader._load = function (name, ...args) {
+        if (name === "@/lib/supabase/server") return { createClient: async () => browser };
+        return originalLoad.call(this, name, ...args);
+      };
+      ({ POST: post } = require("../app/api/auth/complete-role/route"));
+    } finally {
+      loader._load = originalLoad;
+    }
+    const submitRole = () => post(new Request("http://localhost/api/auth/complete-role", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: "MURID", bc_student_verification: proof }),
+    }));
+    const findUser = () => db.user.findUnique({ where: { supabaseId: authId } });
+    async function expectBlocked() {
+      const response = await submitRole();
+      assert.equal(response.status, 403);
+      assert.equal((await response.json()).code, "STUDENT_VERIFICATION_REQUIRED");
+      assert.equal(await findUser(), null);
+    }
+
     await expectAdmission(false);
+    await expectBlocked();
     assert.ifError((await browser.auth.updateUser({ data: { bc_student_verification: proof } })).error);
     await expectAdmission(false);
+    await expectBlocked();
     assert.ifError((await admin.auth.admin.updateUserById(authId, {
       app_metadata: { bc_student_verification: proof },
     })).error);
@@ -56,10 +92,24 @@ async function main() {
       app_metadata: { bc_student_verification: { ...proof, guardianConsent: "revoked" } },
     })).error);
     await expectAdmission(false);
+    await expectBlocked();
+    assert.ifError((await admin.auth.admin.updateUserById(authId, {
+      app_metadata: { bc_student_verification: proof },
+    })).error);
+    assert.equal((await submitRole()).status, 200);
+    const provisioned = await findUser();
+    assert.equal(provisioned?.role, "MURID");
+    assert.equal((await submitRole()).status, 200);
+    assert.equal(await db.user.count({ where: { supabaseId: authId } }), 1);
+    console.log("PASS: API menolak bukti palsu dan dicabut, lalu membuat satu akun dengan bukti server yang sah.");
     console.log("PASS: GoTrue menolak bukti dari pengguna dan membaca pencabutan dengan token sesi yang sama.");
   } finally {
-    const cleanup = await admin.auth.admin.deleteUser(authId);
-    assert.ifError(cleanup.error);
+    try {
+      const cleanup = await admin.auth.admin.deleteUser(authId);
+      assert.ifError(cleanup.error);
+    } finally {
+      await db.$disconnect();
+    }
   }
 }
 
