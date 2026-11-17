@@ -26,6 +26,7 @@ let sessionUser: { id: string; email: string; app_metadata?: Record<string, unkn
 const events: string[] = [];
 
 const db = {
+  studentGuardianConsent: { findUnique: async () => null },
   user: {
     findFirst: async ({ where }: any) => dbUsers.find((u) => u.email === where.email) ?? null,
     findUnique: async ({ where }: any) =>
