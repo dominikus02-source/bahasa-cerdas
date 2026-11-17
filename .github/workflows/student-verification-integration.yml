@@ -7,6 +7,10 @@ on:
       - "scripts/test-student-verification-auth-integration.ts"
       - "lib/auth/student-provisioning.ts"
       - "package-lock.json"
+      - "app/api/auth/guardian-consent/route.ts"
+      - "lib/jumpa/student-consent.ts"
+      - "lib/jumpa/background.ts"
+      - "scripts/test-jumpa-student-consent.ts"
       - "app/api/admin/guardian-consent/route.ts"
       - "scripts/test-guardian-class-link.ts"
       - "app/api/main-bersama/student/**"
@@ -67,13 +71,24 @@ jobs:
           docker exec student-qa-db createdb -U postgres mbtest
           DATABASE_URL="$TEST_DATABASE_URL" DIRECT_URL="$TEST_DATABASE_URL" npx prisma db push --skip-generate
           node --import tsx scripts/test-main-bersama-api-realtime.ts
+      - name: Verify active JUMPA disconnection in LiveKit
+        env:
+          LIVEKIT_URL: http://127.0.0.1:7880
+          LIVEKIT_API_KEY: devkey
+          LIVEKIT_API_SECRET: secret
+          CHROME_PATH: /usr/bin/google-chrome
+        run: |
+          docker run -d --name student-qa-livekit --network host livekit/livekit-server:v1.13.10 --dev --bind 127.0.0.1
+          timeout 45s bash -c 'until curl -fsS --max-time 2 http://127.0.0.1:7880/; do sleep 2; done'
+          node --import tsx scripts/test-jumpa-student-consent.ts
       - name: Inspect disposable containers on failure
         if: failure()
         run: |
           docker logs student-qa-db || true
           docker logs student-qa-auth || true
+          docker logs student-qa-livekit || true
       - name: Remove disposable containers
         if: always()
         run: |
-          docker rm -f student-qa-auth student-qa-db || true
+          docker rm -f student-qa-auth student-qa-db student-qa-livekit || true
           docker network rm student-auth-qa || true
