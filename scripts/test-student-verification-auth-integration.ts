@@ -144,6 +144,7 @@ async function main() {
         guardianAuthId: guardianId,
         studentLabel: "Murid Uji",
         reviewReference: "qa-only",
+        reviewedBy: "qa-reviewer",
         verifiedUntil: new Date(Date.now() + 60_000),
       },
     });
