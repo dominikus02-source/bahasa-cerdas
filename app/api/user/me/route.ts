@@ -1,3 +1,4 @@
+import { hasStudentConsentAccess, STUDENT_CONSENT_REQUIRED } from "@/lib/auth/student-consent-access";
 import { identitySelect, resolveIdentity, normalizedIdentity, type IdentitySource } from "@/lib/account/identity";
 import { requiresStudentVerification, STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
 import { NextRequest, NextResponse } from "next/server";
@@ -147,7 +148,8 @@ export async function GET(request: NextRequest) {
     const supabaseId = String(data.claims.sub);
     const email = String(data.claims.email || "").toLowerCase();
     const cacheKey = `user:me:v2:id:${supabaseId}`;
-    if (!fresh) {
+    const bypassCache = fresh || requiresStudentVerification("MURID");
+    if (!bypassCache) {
       const cached = await cache.get<Record<string, unknown>>(cacheKey);
       if (cached) {
         const cachedUser = { ...cached, ...resolveIdentity(cached as IdentitySource) };
@@ -176,6 +178,10 @@ export async function GET(request: NextRequest) {
 
     // GET never provisions a new application User and never changes role.
     if (!found || found.email.endsWith("@account.invalid")) return err(ERR.NOT_FOUND.error, ERR.NOT_FOUND.code, ERR.NOT_FOUND.status);
+
+    if (!(await hasStudentConsentAccess(found.role, supabaseId))) {
+      return err(STUDENT_CONSENT_REQUIRED.error, STUDENT_CONSENT_REQUIRED.code, 403);
+    }
 
     const updates: Record<string, unknown> = {};
     if (found.supabaseId !== supabaseId) updates.supabaseId = supabaseId;
@@ -216,11 +222,11 @@ export async function GET(request: NextRequest) {
 
     // Cache by immutable Supabase ID, not email. Email changes therefore do
     // not strand the session behind a stale cache key.
-    cache.set(cacheKey, result, 30);
+    if (!bypassCache) cache.set(cacheKey, result, 30);
 
     return NextResponse.json(
       { success: true, user: result, data: { user: result } },
-      { headers: { "X-Cache": fresh ? "BYPASS" : "MISS", "Cache-Control": "private, no-store" } }
+      { headers: { "X-Cache": bypassCache ? "BYPASS" : "MISS", "Cache-Control": "private, no-store" } }
     );
   } catch (e: any) {
     console.error("GET /api/user/me error:", e?.message || e);
@@ -280,6 +286,10 @@ export async function POST(request: NextRequest) {
         return err(STUDENT_VERIFICATION_REQUIRED.error, STUDENT_VERIFICATION_REQUIRED.code, 403);
       }
       return err("Peran belum dipilih", "ROLE_REQUIRED", 400);
+    }
+
+    if (!(await hasStudentConsentAccess(user.role, supabaseId))) {
+      return err(STUDENT_CONSENT_REQUIRED.error, STUDENT_CONSENT_REQUIRED.code, 403);
     }
 
     const resolvedUser = { ...user, ...resolveIdentity(user) };
