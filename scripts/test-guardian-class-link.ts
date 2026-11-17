@@ -8,12 +8,16 @@ let writes = 0;
 const auth = { getUserById: async () => ({ data: { user: { email_confirmed_at: "2026-11-17" } } }) };
 const db = {
   group: {
+    findMany: async () => [{ id: "test-class", name: "Kelas Uji", teacher: { fullName: "Guru Uji" } }],
     findUnique: async () => ({
-      teacher: { role: "GURU", supabaseId: teacherAuthId, email: "teacher@example.test" },
+      id: "test-class",
+      name: "Kelas Uji",
+      teacher: { fullName: "Guru Uji", role: "GURU", supabaseId: teacherAuthId, email: "teacher@example.test" },
       members: [{ user: { id: "student", role: "MURID", supabaseId: studentAuthId, fullName: "Murid Uji", email: "student@example.test" } }],
     }),
   },
   studentGuardianConsent: {
+    findMany: async () => writes ? [{ studentAuthId, status: "PENDING" }] : [],
     createMany: async ({ data }: { data: Array<Record<string, unknown>> }) => {
       writes++;
       assert.deepEqual(data.map(({ guardianAuthId, status, reviewedBy }) => [guardianAuthId, status, reviewedBy]),
@@ -25,6 +29,7 @@ const db = {
 async function main() {
   const loader = Module as typeof Module & { _load: (...args: unknown[]) => unknown };
   const original = loader._load;
+  let get: typeof import("../app/api/admin/guardian-consent/route").GET;
   let post: typeof import("../app/api/admin/guardian-consent/route").POST;
   try {
     loader._load = function (name, ...args) {
@@ -34,7 +39,7 @@ async function main() {
       if (name === "@supabase/supabase-js") return { createClient: () => ({ auth: { admin: auth } }) };
       return original.call(this, name, ...args);
     };
-    ({ POST: post } = require("../app/api/admin/guardian-consent/route"));
+    ({ GET: get, POST: post } = require("../app/api/admin/guardian-consent/route"));
   } finally {
     loader._load = original;
   }
@@ -59,6 +64,18 @@ async function main() {
   assert.equal(linked.status, 201);
   assert.deepEqual(await linked.json(), { status: "PENDING", linked: 1 });
   assert.equal(writes, 1);
+  const classes = await get(new Request("http://localhost/api/admin/guardian-consent?classSearch=Kelas"));
+  assert.equal(classes.status, 200);
+  assert.deepEqual(await classes.json(), { classes: [{ id: "test-class", name: "Kelas Uji", teacher: { fullName: "Guru Uji" } }] });
+
+  const roster = await get(new Request("http://localhost/api/admin/guardian-consent?groupId=test-class"));
+  assert.equal(roster.status, 200);
+  assert.equal(roster.headers.get("cache-control"), "private, no-store");
+  assert.deepEqual(await roster.json(), {
+    id: "test-class", name: "Kelas Uji", teacher: "Guru Uji", guardianReady: true,
+    students: [{ id: "student", name: "Murid Uji", status: "PENDING" }],
+  });
+
   console.log("PASS: hanya anggota kelas yang ditinjau ditautkan, persetujuan tetap menunggu wali.");
 }
 
