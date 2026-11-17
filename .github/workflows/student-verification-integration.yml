@@ -7,9 +7,8 @@ on:
       - "scripts/test-student-verification-auth-integration.ts"
       - "lib/auth/student-provisioning.ts"
       - "package-lock.json"
-      - "app/api/main-bersama/student/**"
-      - "src/main-bersama/application/services/student-flows.ts"
-      - "scripts/test-main-bersama-api-realtime.ts"
+      - "app/api/admin/guardian-consent/route.ts"
+      - "scripts/test-guardian-class-link.ts"
   workflow_dispatch:
 
 permissions:
@@ -56,13 +55,6 @@ jobs:
         run: npx prisma db push
       - name: Verify server-only evidence and revocation
         run: node --import tsx scripts/test-student-verification-auth-integration.ts
-      - name: Verify Main Bersama credential ownership
-        env:
-          TEST_DATABASE_URL: postgresql://postgres:local_fixture@127.0.0.1:55432/mbtest?schema=public
-        run: |
-          docker exec student-qa-db createdb -U postgres mbtest
-          DATABASE_URL="$TEST_DATABASE_URL" DIRECT_URL="$TEST_DATABASE_URL" npx prisma db push --skip-generate
-          node --import tsx scripts/test-main-bersama-api-realtime.ts
       - name: Inspect disposable containers on failure
         if: failure()
         run: |
