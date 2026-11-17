@@ -22,8 +22,8 @@ async function assertFits(page) {
 try {
   for (const viewport of [{ width: 360, height: 780 }, { width: 780, height: 360 }]) {
     const context = await browser.newContext({ ...devices["Pixel 7"], viewport });
+    const page = await context.newPage();
     try {
-      const page = await context.newPage();
       let status = null;
       let postCount = 0;
       let signedIn = false;
@@ -77,7 +77,8 @@ try {
       });
 
       await page.goto(pageUrl("/admin/guardian-consent"), { timeout: 120_000 });
-      await page.getByLabel("Pilih kelas", { exact: true }).selectOption(group.id, { timeout: 60_000 });
+      await page.getByRole("heading", { name: "Persetujuan wali per kelas" }).waitFor({ timeout: 60_000 });
+      await page.locator("#guardian-review-class").selectOption(group.id, { timeout: 60_000 });
       await page.getByRole("button", { name: "Tinjau" }).click();
       await page.getByLabel("Nomor referensi peninjauan").fill("QA_CLASS_001");
       await page.getByLabel("Verifikasi berlaku hingga").fill("2099-12-31T12:00");
@@ -104,6 +105,11 @@ try {
       assert.deepEqual(decisions, ["grant", "revoke"]);
       await page.screenshot({ path: `${out}/wali-${viewport.width}.png`, fullPage: true });
       console.log(`PASS: alur admin dan wali pada viewport Android ${viewport.width}×${viewport.height}.`);
+    } catch (error) {
+      console.error(`Fixture Android tersedia di ${page.url()}`);
+      console.error((await page.locator("body").innerText().catch(() => "")).slice(0, 1200));
+      await page.screenshot({ path: `${out}/gagal-${viewport.width}.png`, fullPage: true }).catch(() => {});
+      throw error;
     } finally {
       await context.close();
     }
