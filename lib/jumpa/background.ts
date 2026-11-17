@@ -11,6 +11,7 @@ import { listLivekitIdentities, removeLivekitParticipant, sendServerSignal } fro
 import { isScreenIdentity, screenIdentityOrNull, screenOwnerOf, shouldEvictScreen } from "./screen-identity";
 import { closeAttendance, endRoomForAll } from "./room-actions";
 import { JUMPA_TOPICS } from "./signals";
+import { rejectRevokedJumpaJoin } from "./student-consent";
 
 export interface SweepResult {
   checked: number;
@@ -69,6 +70,10 @@ export async function handleJumpaWebhook(evt: JumpaWebhookEvent, now = new Date(
   if (!relevant.includes(evt.event) || !evt.roomName) return "ignored";
   const room = await db.jumpaRoom.findUnique({ where: { livekitRoomName: evt.roomName }, select: { id: true, status: true, livekitRoomName: true } });
   if (!room) return "ignored";
+
+  // Before dedupe so an eviction failure can be retried by the webhook.
+  if (evt.event === "participant_joined" && evt.identity
+    && await rejectRevokedJumpaJoin(room.livekitRoomName, evt.identity)) return "ok";
 
   const at = evt.createdAt ? new Date(evt.createdAt * 1000) : now;
   const dedupeKey = webhookDedupeKey(evt.id, evt.event, evt.roomName, evt.identity ?? "", evt.createdAt ?? Math.floor(now.getTime() / 1000));
