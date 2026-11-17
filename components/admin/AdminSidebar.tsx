@@ -126,6 +126,7 @@ const NAV: NavEntry[] = [
       { label: "Pusat Data", href: "/admin/data-center", icon: Database },
       { label: "Pengaturan", href: "/admin/pengaturan", icon: Settings },
       { label: "Founder & Audit", href: "/admin/founder", icon: ScrollText },
+      { label: "Persetujuan Wali", href: "/admin/guardian-consent", icon: ScrollText },
     ],
   },
 
