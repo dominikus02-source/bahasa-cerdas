@@ -1,4 +1,5 @@
 import { identitySelect, resolveIdentity, normalizedIdentity, type IdentitySource } from "@/lib/account/identity";
+import { requiresStudentVerification, STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
@@ -89,6 +90,8 @@ async function findOrCreateUser(opts: {
   // allowlisted role may create a row — anything else returns null so the
   // caller routes to role selection instead of a default MURID account.
   if (role !== "GURU" && role !== "MURID") return null;
+
+  if (requiresStudentVerification(role)) return null;
 
   const newUser = await db.user.create({
     data: {
@@ -274,6 +277,9 @@ export async function POST(request: NextRequest) {
     });
     if (user?.email.endsWith("@account.invalid")) return err("Akun telah dihapus", "ACCOUNT_DELETED", 403);
     if (!user) {
+      if (requiresStudentVerification(body.role ?? "")) {
+        return err(STUDENT_VERIFICATION_REQUIRED.error, STUDENT_VERIFICATION_REQUIRED.code, 403);
+      }
       return err("Peran belum dipilih", "ROLE_REQUIRED", 400);
     }
 

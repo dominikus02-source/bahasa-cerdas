@@ -1,3 +1,4 @@
+import { requiresStudentVerification, STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { db } from "@/lib/db";
@@ -71,6 +72,11 @@ export async function POST(req: Request) {
         },
         { status: 409 }
       );
+    }
+
+    // This pre-auth path cannot prove ownership of an approved Auth identity.
+    if (requiresStudentVerification(role)) {
+      return NextResponse.json(STUDENT_VERIFICATION_REQUIRED, { status: 403 });
     }
 
     const supabase = createClient(

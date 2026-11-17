@@ -1,3 +1,4 @@
+import { STUDENT_VERIFICATION_REQUIRED } from "@/lib/auth/student-provisioning";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
@@ -59,7 +60,8 @@ export async function POST(req: Request) {
 
   if (existing) return res;
 
-  await provisionGoogleUser({
+  const provisioned = await provisionGoogleUser({
+    studentVerification: authUser.app_metadata?.bc_student_verification,
     supabaseId: authUser.id,
     email: authUser.email,
     fullName:
@@ -69,6 +71,7 @@ export async function POST(req: Request) {
     role: selection.role,
     kategoriUmum: selection.kategoriUmum,
   });
+  if (!provisioned) return NextResponse.json(STUDENT_VERIFICATION_REQUIRED, { status: 403 });
   return res;
 }
 

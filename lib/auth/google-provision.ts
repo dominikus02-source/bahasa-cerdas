@@ -1,3 +1,4 @@
+import { isStudentProvisioningAllowed } from "@/lib/auth/student-provisioning";
 import { db } from "@/lib/db";
 import { getGravatarUrl } from "@/lib/avatar";
 import type { ProvisionRole } from "@/lib/auth/role-intent";
@@ -18,6 +19,7 @@ export async function provisionGoogleUser(opts: {
   email: string;
   fullName: string;
   role: ProvisionRole;
+  studentVerification?: unknown;
   /** Hanya dipakai bila role UMUM (sudah divalidasi pemanggil). Kosong → UMUM. */
   kategoriUmum?: KategoriUmumPilihan | null;
 }) {
@@ -35,6 +37,8 @@ export async function provisionGoogleUser(opts: {
     }
     return { user, created: false as const };
   }
+
+  if (!isStudentProvisioningAllowed(role, opts.studentVerification)) return null;
 
   const created = await db.user.create({
     data: {

@@ -22,7 +22,7 @@ let dbUsers: U[] = [];
 let authUsers: A[] = [];
 let profiles: Record<string, Record<string, unknown>> = {};
 let failDbCreate = false;
-let sessionUser: { id: string; email: string } | null = null;
+let sessionUser: { id: string; email: string; app_metadata?: Record<string, unknown> } | null = null;
 const events: string[] = [];
 
 const db = {
@@ -83,13 +83,17 @@ const admin = {
     },
   },
 };
-const serverClient = { auth: { getUser: async () => ({ data: { user: sessionUser }, error: null }) } };
+const serverClient = { auth: {
+  getUser: async () => ({ data: { user: sessionUser }, error: null }),
+  exchangeCodeForSession: async () => ({ data: { user: sessionUser }, error: null }),
+  getClaims: async () => ({ data: { claims: { sub: sessionUser?.id, email: sessionUser?.email } }, error: null }),
+} };
 
 const orig = (Module as any)._load;
 (Module as any)._load = function (name: string, parent: unknown, isMain: boolean) {
   if (name === "@/lib/db") return { db };
   if (name === "@supabase/supabase-js") return { createClient: () => admin };
-  if (name === "@/lib/supabase/server") return { createClient: async () => serverClient, getUser: async () => null };
+  if (name === "@/lib/supabase/server" || name.endsWith("/lib/supabase/server.ts")) return { createClient: async () => serverClient, getUser: async () => null };
   if (name === "@/lib/redis") return { default: null, __esModule: true };
   if (name === "@/lib/rate-limit") return { rateLimitRoute: async () => null };
   return orig(name, parent, isMain);
@@ -100,6 +104,11 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = "mock";
 const root = resolve(__dirname, "..");
 const createUser = require("../app/api/auth/create-user/route");
 const { registerUser } = require("../app/actions/register");
+const completeRole = require("../app/api/auth/complete-role/route");
+const userMe = require("../app/api/user/me/route");
+const webCallback = require("../app/auth/callback/route");
+const apiCallback = require("../app/api/auth/callback/route");
+const { ROLE_INTENT_COOKIE, signRoleIntent } = require("../lib/auth/role-intent");
 const post = (url: string, body: object) =>
   new NextRequest(`https://app.test${url}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
 const reset = () => { dbUsers = []; authUsers = []; profiles = {}; failDbCreate = false; sessionUser = null; events.length = 0; };
@@ -210,6 +219,45 @@ async function main() {
     dbUsers.push({ id: "app-a", supabaseId: "auth-attacker", email: "attacker@x.test", role: "MURID", fullName: "A" });
     const res = await registerUser(form({ role: "ADMIN" }));
     expect(res?.error && !res.ok, `result ${JSON.stringify(res)}`);
+  });
+
+  process.env.BC_REQUIRE_STUDENT_VERIFICATION = "1";
+  await check("staging: direct email registration stops before creating Auth or database rows", async () => {
+    reset();
+    const r = await createUser.POST(post("/api/auth/create-user", { email: "murid@x.test", password: "pw-12345678", fullName: "Murid Uji", role: "MURID" }));
+    expect(r.status === 403 && events.length === 0, `status ${r.status}, events ${events}`);
+  });
+  await check("staging: direct POST user/me cannot provision a missing student profile", async () => {
+    reset();
+    sessionUser = { id: "student", email: "murid@x.test" };
+    const r = await userMe.POST(post("/api/user/me", { role: "MURID" }));
+    expect(r.status === 403 && dbUsers.length === 0, `status ${r.status}`);
+  });
+  for (const [route, callback] of [
+    ["/auth/callback", webCallback],
+    ["/api/auth/callback", apiCallback],
+  ] as const) {
+    await check(`staging: ${route} sends unverified users to role selection`, async () => {
+      reset();
+      sessionUser = { id: "student", email: "murid@x.test" };
+      const cookie = `${ROLE_INTENT_COOKIE}=${signRoleIntent("MURID")}`;
+      const res = await callback.GET(new NextRequest(`https://app.test${route}?code=synthetic`, { headers: { cookie } }));
+      expect(res.headers.get("location")?.includes("/auth/pilih-peran") && dbUsers.length === 0, `status ${res.status}`);
+    });
+  }
+  await check("staging: complete-role ignores client evidence and accepts fresh server evidence", async () => {
+    reset();
+    const evidence = { version: 1, ageVerified: true, guardianConsent: "granted", validUntil: Date.now() + 60_000 };
+    sessionUser = { id: "student", email: "murid@x.test" };
+    const payload = { role: "MURID", bc_student_verification: evidence };
+    const rejected = await completeRole.POST(post("/api/auth/complete-role", payload));
+    expect(rejected.status === 403 && dbUsers.length === 0, `status ${rejected.status}`);
+    sessionUser.app_metadata = { bc_student_verification: evidence };
+    const accepted = await completeRole.POST(post("/api/auth/complete-role", payload));
+    expect(accepted.status === 200 && dbUsers[0]?.role === "MURID", `status ${accepted.status}`);
+    sessionUser.app_metadata = {};
+    const existing = await userMe.POST(post("/api/user/me", { role: "MURID" }));
+    expect(existing.status === 200 && dbUsers.length === 1, `status ${existing.status}`);
   });
 
   console.log(failed ? `\n${failed} CHECK(S) FAILED` : "\nALL AUTH PROVISIONING SECURITY CHECKS PASSED");
