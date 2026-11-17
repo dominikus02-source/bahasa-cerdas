@@ -58,15 +58,18 @@ async function main() {
     const loader = Module as typeof Module & { _load: (...args: unknown[]) => unknown };
     const originalLoad = loader._load;
     let post: typeof import("../app/api/auth/complete-role/route").POST;
+    let decide: typeof import("../app/api/auth/guardian-consent/route").POST;
+    let activeClient = browser;
     let login: typeof import("../app/api/auth/login/route").POST;
     let loginClient = guardianClient;
     try {
       loader._load = function (name, ...args) {
-        if (name === "@/lib/supabase/server") return { createClient: async () => browser };
+        if (name === "@/lib/supabase/server") return { createClient: async () => activeClient };
         if (name === "@/lib/supabase/server-login") return { createLoginClient: async () => loginClient };
         return originalLoad.call(this, name, ...args);
       };
       ({ POST: post } = require("../app/api/auth/complete-role/route"));
+      ({ POST: decide } = require("../app/api/auth/guardian-consent/route"));
       ({ POST: login } = require("../app/api/auth/login/route"));
     } finally {
       loader._load = originalLoad;
@@ -135,6 +138,37 @@ async function main() {
     assert.ifError((await admin.auth.admin.updateUserById(authId, {
       app_metadata: { bc_student_verification: proof },
     })).error);
+    await db.studentGuardianConsent.create({
+      data: {
+        studentAuthId: authId,
+        guardianAuthId: guardianId,
+        studentLabel: "Murid Uji",
+        reviewReference: "qa-only",
+        verifiedUntil: new Date(Date.now() + 60_000),
+      },
+    });
+    const decideConsent = (decision: string) => decide(new Request("http://localhost/api/auth/guardian-consent", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ studentAuthId: authId, decision, noticeVersion: "2026-11-17-v1" }),
+    }));
+    // A pending database record supersedes previously granted metadata.
+    await expectBlocked();
+    assert.equal((await decideConsent("grant")).status, 404);
+    activeClient = guardianClient;
+    assert.equal((await decideConsent("grant")).status, 200);
+    assert.equal((await decideConsent("revoke")).status, 200);
+    assert.equal((await decideConsent("grant")).status, 409);
+    activeClient = browser;
+    await expectBlocked();
+    console.log("PASS: hanya wali terverifikasi bisa menyetujui atau mencabut dan metadata lama tidak dapat melewati pencabutan.");
+    await db.studentGuardianConsent.update({
+      where: { studentAuthId: authId },
+      data: { status: "PENDING", decidedAt: null, noticeVersion: null },
+    });
+    activeClient = guardianClient;
+    assert.equal((await decideConsent("grant")).status, 200);
+    activeClient = browser;
     assert.equal((await submitRole()).status, 200);
     const provisioned = await findUser();
     assert.equal(provisioned?.role, "MURID");
