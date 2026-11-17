@@ -1,3 +1,4 @@
+import { hasStudentConsentAccess, STUDENT_CONSENT_REQUIRED } from "@/lib/auth/student-consent-access";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { db } from "@/lib/db";
@@ -18,6 +19,9 @@ export async function GET(
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!(await hasStudentConsentAccess(dbUser.role, user.id))) {
+      return NextResponse.json(STUDENT_CONSENT_REQUIRED, { status: 403 });
+    }
 
     const assignment = await db.quizAssignment.findUnique({
       where: { id },
@@ -158,6 +162,9 @@ export async function POST(
 
     const dbUser = await db.user.findUnique({ where: { supabaseId: user.id } });
     if (!dbUser) return NextResponse.json({ error: "User not found" }, { status: 404 });
+    if (!(await hasStudentConsentAccess(dbUser.role, user.id))) {
+      return NextResponse.json(STUDENT_CONSENT_REQUIRED, { status: 403 });
+    }
 
     const body = await req.json();
     const { action } = body;
