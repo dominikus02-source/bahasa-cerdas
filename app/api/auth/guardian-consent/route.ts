@@ -3,6 +3,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { createClient } from "@/lib/supabase/server";
 import { rateLimitRoute } from "@/lib/rate-limit";
+import { removeRevokedStudentFromJumpa } from "@/lib/jumpa/student-consent";
 
 const NOTICE_VERSION = "2026-11-17-v1";
 const NOTICE = "Persetujuan ini mengizinkan BahasaCerdas membuat akun murid yang terhubung dengan Anda untuk kegiatan belajar. Anda dapat menolak atau mencabut persetujuan melalui layanan ini. Baca Pemberitahuan Privasi untuk mengetahui cara data digunakan dan cara mengajukan permintaan terkait data pribadi.";
@@ -67,6 +68,18 @@ export async function POST(req: Request) {
     if (!current) return NextResponse.json({ error: "Hubungan wali belum diverifikasi." }, { status: 404 });
     if (current.status !== to) {
       return NextResponse.json({ error: "Keputusan tidak dapat diterapkan pada status saat ini." }, { status: 409 });
+    }
+  }
+  if (decision === "revoke") {
+    try {
+      await removeRevokedStudentFromJumpa(studentAuthId);
+    } catch (error) {
+      console.error("JUMPA_CONSENT_DISCONNECT_FAILED", error);
+      // The database decision remains revoked and still blocks new tokens.
+      return NextResponse.json({
+        status: to,
+        error: "Persetujuan sudah dicabut. Pemutusan ruang JUMPA belum terkonfirmasi. Coba lagi.",
+      }, { status: 503, headers: { "Cache-Control": "private, no-store" } });
     }
   }
   return NextResponse.json({ status: to }, { headers: { "Cache-Control": "private, no-store" } });
