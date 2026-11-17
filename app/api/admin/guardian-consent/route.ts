@@ -16,6 +16,23 @@ const review = z.object({
   guardianRelationshipChecked: z.literal(true),
 });
 
+export const GET = withAdmin(async (request: Request) => {
+  const rawId = new URL(request.url).searchParams.get("studentAuthId");
+  const parsedId = z.string().uuid().safeParse(rawId);
+  if (!parsedId.success) {
+    return NextResponse.json({ error: "Masukkan ID akun murid yang valid." }, { status: 400 });
+  }
+  const consent = await db.studentGuardianConsent.findUnique({
+    where: { studentAuthId: parsedId.data },
+    select: {
+      studentAuthId: true, guardianAuthId: true, studentLabel: true, status: true,
+      verifiedUntil: true, noticeVersion: true, decidedAt: true,
+    },
+  });
+  if (!consent) return NextResponse.json({ error: "Catatan persetujuan belum tersedia." }, { status: 404 });
+  return NextResponse.json(consent, { headers: { "Cache-Control": "private, no-store" } });
+});
+
 export const POST = withAdmin(async (request: Request) => {
   // Record the authenticated reviewer independently of the browser input.
   const reviewer = await getUser();
