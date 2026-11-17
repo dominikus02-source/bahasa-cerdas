@@ -4,6 +4,8 @@
 // ACK TIDAK memuat isCorrect/answer key/explanation (AnswerSubmitResult).
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requiresStudentVerification } from '@/lib/auth/student-provisioning';
+import { getAuthenticatedUser } from '@/src/main-bersama/adapters/auth/teacher-actor';
 import { getOrchestratorDeps } from '@/src/main-bersama/infrastructure/orchestrator-composition';
 import { submitAnswer } from '@/src/main-bersama/application/services/student-flows';
 import { readCredentialFromRequest } from '@/src/main-bersama/infrastructure/repositories/player-credential';
@@ -53,9 +55,15 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const requiresSession = requiresStudentVerification('MURID');
+  const user = requiresSession ? await getAuthenticatedUser() : null;
+  if (requiresSession && !user) {
+    return NextResponse.json({ ok: false, code: 'SESSION_REQUIRED', message: 'Silakan masuk kembali.' }, { status: 401 });
+  }
   const deps = getOrchestratorDeps();
   const result = await submitAnswer(deps, {
     credential,
+    expectedUserId: user?.id,
     roundId: roundId as never,
     submissionId: submissionId as never,
     selectedOptionId,
