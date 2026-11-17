@@ -1,3 +1,4 @@
+import { hasStudentConsentAccess } from "@/lib/auth/student-consent-access";
 import { identitySelect, normalizedIdentity } from "@/lib/account/identity";
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies, headers } from "next/headers";
@@ -110,6 +111,7 @@ export const getUser = cache(async () => {
   try {
     const user = await db.user.findUnique({ where: { supabaseId }, include: { subscriptions: identitySelect.subscriptions } });
     if (!user || user.email.endsWith("@account.invalid")) return null;
+    if (!(await hasStudentConsentAccess(user.role, supabaseId))) return null;
     return normalizedIdentity(user);
   } catch (error: any) {
     console.error("AUTH_DB_USER_LOOKUP_FAILED", {
