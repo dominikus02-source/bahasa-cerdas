@@ -41,7 +41,7 @@ local lim=Instance.new("UISizeConstraint",panel)
 lim.MaxSize=Vector2.new(700,690);lim.MinSize=Vector2.new(260,240)
 local stroke=Instance.new("UIStroke",panel)
 stroke.Color=C.gold;stroke.Thickness=2
-label(panel,"BAHASACERDAS  â˜…  BENAR ATAU SALAH",UDim2.new(1,-22,0,40),UDim2.fromOffset(11,2),17,C.gold)
+label(panel,"BAHASACERDAS  ★  BENAR ATAU SALAH",UDim2.new(1,-22,0,40),UDim2.fromOffset(11,2),17,C.gold)
 local toast=label(panel,"",UDim2.new(1,-22,0,30),UDim2.new(0,11,1,-33),14,C.muted)
 local pages={}
 for _,key in ipairs({"intro","levels","play","result"})do
@@ -55,7 +55,7 @@ local intro=pages.intro
 label(intro,"ARENA DUA PILIHAN",UDim2.new(1,0,0,55),UDim2.new(0,0,.06,0),32,C.gold)
 label(intro,"Baca pertanyaan dan jawaban yang ditampilkan. Pilih BENAR atau SALAH.",
  UDim2.new(1,-20,0,110),UDim2.new(0,10,.26,0),21)
-label(intro,"9 tingkat  â€¢  3 nyawa  â€¢  waktu terbatas\nAKSI: Semangat, Sobat Aksara!",
+label(intro,"9 tingkat  •  3 nyawa  •  waktu terbatas\nAKSI: Semangat, Sobat Aksara!",
  UDim2.new(1,-20,0,100),UDim2.new(0,10,.54,0),17,C.muted)
 local choose=button(intro,"PILIH TINGKAT",UDim2.new(.74,0,0,58),UDim2.new(.13,0,1,-68),C.purple)
 choose.MouseButton1Click:Connect(function()request:FireServer("menu")end)
@@ -72,8 +72,8 @@ local currentLevel=1
 local function levelsMenu(items)
  for _,v in ipairs(sc:GetChildren())do if v:IsA("TextButton")then v:Destroy()end end
  for i,lv in ipairs(items)do
-  local title=(lv.unlocked and "â˜… " or "TERKUNCI  ")..i..". "..lv.name
-   .."  â€¢  "..lv.count.." soal  â€¢  "..lv.time.." dtk"
+  local title=(lv.unlocked and "★ " or "TERKUNCI  ")..i..". "..lv.name
+   .."  •  "..lv.count.." soal  •  "..lv.time.." dtk"
   local b=button(sc,title,UDim2.new(1,-12,0,55),UDim2.new(),lv.unlocked and C.purple or Color3.fromRGB(65,74,95))
   b.LayoutOrder=i;b.Active=lv.unlocked;b.TextScaled=false;b.TextSize=17
   if lv.unlocked then b.MouseButton1Click:Connect(function()
@@ -86,14 +86,14 @@ end
 local play=pages.play
 local timer=label(play,"60 dtk",UDim2.new(.32,0,0,35),UDim2.new(0,0,0,0),21,C.gold)
 local status=label(play,"SOAL 1/8",UDim2.new(.64,0,0,35),UDim2.new(.36,0,0,0),19)
-local hearts=label(play,"â™¥ â™¥ â™¥",UDim2.new(.4,0,0,30),UDim2.new(0,0,0,39),23,C.red)
-local score=label(play,"SKOR 0 â€¢ COMBO 0",UDim2.new(.60,0,0,30),UDim2.new(.4,0,0,39),16,C.gold)
+local hearts=label(play,"♥ ♥ ♥",UDim2.new(.4,0,0,30),UDim2.new(0,0,0,39),23,C.red)
+local score=label(play,"SKOR 0 • COMBO 0",UDim2.new(.60,0,0,30),UDim2.new(.4,0,0,39),16,C.gold)
 local question=label(play,"",UDim2.new(1,-18,0,105),UDim2.new(0,9,.20,0),22)
 label(play,"JAWABAN YANG MUNCUL",UDim2.new(1,-18,0,25),UDim2.new(0,9,.49,0),15,C.muted)
 local candidate=label(play,"",UDim2.new(1,-20,0,67),UDim2.new(0,10,.56,0),26,C.gold)
 local feedback=label(play,"Pilih BENAR jika jawaban ini tepat.",UDim2.new(1,-16,0,63),UDim2.new(0,8,1,-146),15,C.muted)
-local yes=button(play,"âœ“ BENAR",UDim2.new(.47,0,0,63),UDim2.new(.01,0,1,-72),C.green)
-local no=button(play,"âœ• SALAH",UDim2.new(.47,0,0,63),UDim2.new(.52,0,1,-72),C.pink)
+local yes=button(play,"✓ BENAR",UDim2.new(.47,0,0,63),UDim2.new(.01,0,1,-72),C.green)
+local no=button(play,"✕ SALAH",UDim2.new(.47,0,0,63),UDim2.new(.52,0,1,-72),C.pink)
 local locked=true;local nonce=nil;local deadline=0
 local function answer(value)
  if locked or not nonce then return end
@@ -110,14 +110,14 @@ end)
 -- Result
 local result=pages.result
 local headline=label(result,"MISI SELESAI!",UDim2.new(1,0,0,58),UDim2.new(0,0,.05,0),29,C.gold)
-local starLabel=label(result,"â˜…â˜…â˜…",UDim2.new(1,0,0,62),UDim2.new(0,0,.24,0),43,C.gold)
+local starLabel=label(result,"★★★",UDim2.new(1,0,0,62),UDim2.new(0,0,.24,0),43,C.gold)
 local resultText=label(result,"",UDim2.new(1,-24,0,145),UDim2.new(0,12,.42,0),18)
 local again=button(result,"MAIN LAGI",UDim2.new(.47,0,0,60),UDim2.new(.01,0,1,-72),C.purple)
 local levelsBtn=button(result,"TINGKAT",UDim2.new(.47,0,0,60),UDim2.new(.52,0,1,-72),C.blue)
 again.MouseButton1Click:Connect(function()request:FireServer("start",currentLevel)end)
 levelsBtn.MouseButton1Click:Connect(function()request:FireServer("menu")end)
 -- Return to lobby stays accessible even if game interrupted
-local back=button(gui,"âŒ‚ KEMBALI KE LOBBY",UDim2.fromOffset(184,48),UDim2.new(1,-196,0,11),C.blue)
+local back=button(gui,"⌂ KEMBALI KE LOBBY",UDim2.fromOffset(184,48),UDim2.new(1,-196,0,11),C.blue)
 back.MouseButton1Click:Connect(function()request:FireServer("returnLobby")end)
 local serial=0
 local function message(text)
@@ -128,9 +128,9 @@ event.OnClientEvent:Connect(function(kind,data)
  if kind=="menu" then levelsMenu(data.levels)
  elseif kind=="question" then
   nonce=data.nonce;locked=false;yes.Active=true;no.Active=true
-  question.Text=data.soal;candidate.Text="â€œ"..data.candidate.."â€"
-  hearts.Text=string.rep("â™¥ ",data.lives)
-  score.Text="SKOR "..data.score.." â€¢ COMBO "..data.combo
+  question.Text=data.soal;candidate.Text="“"..data.candidate.."”"
+  hearts.Text=string.rep("♥ ",data.lives)
+  score.Text="SKOR "..data.score.." • COMBO "..data.combo
   status.Text="SOAL "..data.index.."/"..data.total
   feedback.Text="Nilai apakah jawaban ini tepat.";feedback.TextColor3=C.muted
   deadline=os.clock()+data.timeLeft;show("play")
@@ -138,8 +138,8 @@ event.OnClientEvent:Connect(function(kind,data)
   locked=true
   feedback.Text=(data.correct and "KERJA BAGUS! " or "COBA LAGI! ")..data.explanation
   feedback.TextColor3=data.correct and C.green or C.red
-  score.Text="SKOR "..data.score.." â€¢ COMBO "..data.combo
-  hearts.Text=string.rep("â™¥ ",data.lives)
+  score.Text="SKOR "..data.score.." • COMBO "..data.combo
+  hearts.Text=string.rep("♥ ",data.lives)
   if data.correct then
    Tween:Create(candidate,TweenInfo.new(.13),{TextSize=30}):Play()
    task.delay(.15,function()Tween:Create(candidate,TweenInfo.new(.18),{TextSize=26}):Play()end)
@@ -147,10 +147,10 @@ event.OnClientEvent:Connect(function(kind,data)
  elseif kind=="result" then
   locked=true;nonce=nil;currentLevel=data.level
   headline.Text=data.gameOver and "SEMANGAT, SOBAT AKSARA!" or "MISI SELESAI!"
-  starLabel.Text=string.rep("â˜…",data.stars)..string.rep("â˜†",3-data.stars)
-  resultText.Text="SKOR "..data.score.." â€¢ AKURASI "..data.accuracy.."%\n"
-   .."BENAR "..data.correct.." â€¢ SALAH "..data.wrong.."\n"
-   .."COMBO "..data.maxCombo.." â€¢ XP "..data.xpEarned.."\n"..data.reason
+  starLabel.Text=string.rep("★",data.stars)..string.rep("☆",3-data.stars)
+  resultText.Text="SKOR "..data.score.." • AKURASI "..data.accuracy.."%\n"
+   .."BENAR "..data.correct.." • SALAH "..data.wrong.."\n"
+   .."COMBO "..data.maxCombo.." • XP "..data.xpEarned.."\n"..data.reason
   show("result")
  elseif kind=="message" then message(data) end
 end)
