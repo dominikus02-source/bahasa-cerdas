@@ -14,7 +14,6 @@ remote.Parent = ReplicatedStorage
 local root = workspace:FindFirstChild("NusantaraWorld")
 if root then root:Destroy() end
 root = Instance.new("Folder", workspace); root.Name = "NusantaraWorld"
-workspace.FallenPartsDestroyHeight = -150
 Lighting.ClockTime = 14.5; Lighting.Brightness = 3
 Lighting.Ambient = Color3.fromRGB(135,130,176)
 Lighting.OutdoorAmbient = Color3.fromRGB(170,190,220)
