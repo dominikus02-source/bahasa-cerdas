@@ -107,7 +107,7 @@ for _,p in ipairs(decor:GetDescendants()) do
 end
 -- 2. Garden clusters between radial travel paths; clear of all portal routes.
 -- Each cluster has 1 small broad-canopy tree, boulders, a flower patch, and a bench.
-local clusterCount=10
+local clusterCount=13
 for i=1,clusterCount do
  local angle=2*math.pi*(i-.5)/clusterCount - math.pi/2
  local radius=51
