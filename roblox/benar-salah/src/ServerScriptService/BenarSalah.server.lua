@@ -221,8 +221,15 @@ local function answer(player,data)
  end)
 end
 local teleportBusy={}
+local lastReturnAttempt={}
 local function back(player)
  if teleportBusy[player] then return end
+ if os.clock()-(lastReturnAttempt[player] or -100)<2 then return end
+ lastReturnAttempt[player]=os.clock()
+ if RunService:IsStudio() then
+  remote:FireClient(player,"message","Kembali ke lobby perlu diuji setelah kedua place diterbitkan di Roblox.")
+  return
+ end
  teleportBusy[player]=true
  remote:FireClient(player,"message","Kembali ke Kota Aksara...")
  local ok,err=pcall(function()
@@ -254,7 +261,7 @@ end)
 for _,player in Players:GetPlayers() do task.spawn(function()load(player) end) end
 Players.PlayerRemoving:Connect(function(player)
  save(player)
- sessions[player]=nil;profiles[player]=nil;lastAction[player]=nil;teleportBusy[player]=nil
+ sessions[player]=nil;profiles[player]=nil;lastAction[player]=nil;teleportBusy[player]=nil;lastReturnAttempt[player]=nil
 end)
 task.spawn(function()
  while task.wait(.25) do
