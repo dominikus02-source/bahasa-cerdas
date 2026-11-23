@@ -73,6 +73,62 @@ remote.OnClientEvent:Connect(function(kind,data)
   if data.correct then task.delay(2,function()panel.Visible=false;active=nil end) end
  end
 end)
+-- Explore HUD v0.3: nearby-area guide and verified server quest progress.
+local tracker=Instance.new("Frame",gui)
+tracker.Name="PanduanMisi";tracker.Size=UDim2.new(0,280,0,62)
+tracker.Position=UDim2.new(0,12,0,88)
+tracker.BackgroundColor3=Color3.fromRGB(25,18,57);tracker.BackgroundTransparency=.16
+corner(tracker,12)
+local questText=text(tracker,UDim2.new(1,-18,0,26),UDim2.new(0,9,0,5),"Misi Bahasa 0/8",14,Color3.fromRGB(255,215,117))
+local whereText=text(tracker,UDim2.new(1,-18,0,29),UDim2.new(0,9,0,29),"Cari Guru Senja di Plaza",13)
+local areaList={
+ {name="Plaza Nusantara",x=0,z=12},
+ {name="Hutan Kata",x=-6,z=-18},
+ {name="Jembatan Aksara",x=0,z=-34},
+ {name="Perpustakaan Kuno",x=22,z=-46},
+ {name="Taman Majas",x=42,z=-12},
+ {name="Dermaga Bahari",x=-44,z=10},
+ {name="Kuil Peribahasa",x=34,z=30},
+ {name="Arena Penjaga Makna",x=-20,z=-52}
+}
+remote.OnClientEvent:Connect(function(kind,data)
+ if kind=="questProgress" and type(data)=="table" then
+  questText.Text="Misi Bahasa  "..tostring(data.completed).."/"..tostring(data.total)
+ end
+end)
+task.spawn(function()
+ while task.wait(2.5) do
+  local char=player.Character
+  local root=char and char:FindFirstChild("HumanoidRootPart")
+  if root then
+   local pos=root.Position
+   local best=nil;local dist=math.huge
+   for _,area in ipairs(areaList) do
+    local d=(Vector2.new(pos.X,pos.Z)-Vector2.new(area.x,area.z)).Magnitude
+    if d<dist then best=area;dist=d end
+   end
+   if best then whereText.Text=best.name.."  •  "..math.floor(dist).." stud" end
+  end
+ end
+end)
+local camera=workspace.CurrentCamera
+local function fitTracker()
+ if camera then
+  local width=camera.ViewportSize.X
+  if width<650 then
+   tracker.Position=UDim2.new(0,12,0,85)
+   tracker.Size=UDim2.new(0,210,0,56)
+   questText.TextSize=12;whereText.TextSize=11
+  else
+   tracker.Position=UDim2.new(0,12,0,88)
+   tracker.Size=UDim2.new(0,280,0,62)
+   questText.TextSize=14;whereText.TextSize=13
+  end
+ end
+end
+fitTracker()
+if camera then camera:GetPropertyChangedSignal("ViewportSize"):Connect(fitTracker) end
+
 toast("Jelajahi 8 wilayah, bicara dengan NPC (E), jawab kuis, dan temukan 3 rahasia!")
 
 -- v0.2: native Roblox class selection, combat dock, keyboard/mobile controls.
