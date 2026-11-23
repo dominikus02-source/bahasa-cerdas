@@ -200,7 +200,7 @@ Players.PlayerAdded:Connect(function(player)
   if hrp then hrp.CFrame=CFrame.lookAt(Vector3.new(0,8,33),Vector3.new(0,8,6)) end
  end)
 end)
-Players.PlayerRemoving:Connect(function(player) save(player);state[player]=nil;pendingQuiz[player]=nil end
+Players.PlayerRemoving:Connect(function(player) save(player);state[player]=nil;pendingQuiz[player]=nil end)
 game:BindToClose(function()
  for _,p in ipairs(Players:GetPlayers()) do save(p) end
 end)
