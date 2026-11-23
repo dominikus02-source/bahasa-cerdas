@@ -23,5 +23,14 @@ for mode in ("susun", "rumpang", "pasangan", "makna"):
 assert "s.roundToken" in server and "value.token~=s.roundToken" in server
 assert "token=currentToken" in client, "Client round validation missing"
 assert "Teleport:TeleportAsync(83975639468986" in server, "Return-to-lobby route missing"
-print("PASS: 13 unique catalog IDs, individual visual identities, 4 server-validated modes")
+forest = (ROOT / "petualangan-kata/src/ServerScriptService/Preview.server.lua").read_text(encoding="utf-8")
+forest_client = (ROOT / "petualangan-kata/src/StarterPlayer/StarterPlayerScripts/Preview.client.lua").read_text(encoding="utf-8")
+forest_bank = (ROOT / "petualangan-kata/src/ServerScriptService/ContentBank.lua").read_text(encoding="utf-8")
+for group in ("KATA_BENDA", "KATA_KERJA", "KATA_SIFAT"):
+    assert group in forest and group in forest_bank, f"Missing forest group: {group}"
+assert "ProximityPrompt" in forest and "pad.prompt.Triggered" in forest
+assert "s.awaiting=false;s.resolved=true" in forest
+assert 'bridge:FireServer("next")' in forest_client
+assert "s.awaiting or not s.resolved" in server, "Unanswered word play question could be skipped"
+print("PASS: 13 unique catalog IDs, 4 word-play modes, 3 physical forest zones")
 print("LIMITATION: This does not parse Luau or prove Roblox Studio playability.")
