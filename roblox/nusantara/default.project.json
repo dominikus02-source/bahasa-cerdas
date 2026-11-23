@@ -3,18 +3,12 @@
   "tree": {
     "$className": "DataModel",
     "ServerScriptService": {
-      "$className": "ServerScriptService",
-      "Nusantara": {
-        "$path": "src/ServerScriptService/Nusantara.server.lua"
-      }
+      "$path": "src/ServerScriptService"
     },
     "StarterPlayer": {
       "$className": "StarterPlayer",
       "StarterPlayerScripts": {
-        "$className": "StarterPlayerScripts",
-        "NusantaraHUD": {
-          "$path": "src/StarterPlayerScripts/Nusantara.client.lua"
-        }
+        "$path": "src/StarterPlayerScripts"
       }
     }
   }
