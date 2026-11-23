@@ -27,7 +27,7 @@ local function part(name,size,pos,color,material,shape,parent)
 end
 local function label(parent,txt,height)
  local bg=Instance.new("BillboardGui",parent)
- bg.Name="Nameplate";bg.Size=UDim2.new(0,165,0,35);bg.StudsOffsetWorldSpace=Vector3.new(0,height,0);bg.MaxDistance=parent.Name=="Tubuh" and 28 or 58;bg.AlwaysOnTop=true
+ bg.Name="Nameplate";bg.Size=UDim2.new(0,165,0,35);bg.StudsOffsetWorldSpace=Vector3.new(0,height,0);bg.MaxDistance=parent.Name=="Tubuh" and 19 or 32;bg.AlwaysOnTop=false
  local t=Instance.new("TextLabel",bg);t.Size=UDim2.fromScale(1,1);t.BackgroundTransparency=.22;t.BackgroundColor3=Color3.fromRGB(23,19,54)
  t.Text=txt;t.TextColor3=Color3.fromRGB(255,241,188);t.TextScaled=true;t.Font=Enum.Font.GothamBold
  Instance.new("UICorner",t).CornerRadius=UDim.new(0,10)
@@ -107,6 +107,7 @@ local secrets={
  {id="telaga",name="Telaga Bening",x=-46,z=-30}
 }
 local state={}
+local pendingQuiz={}
 local function save(player)
  local d=state[player]
  if not d or not Store then return end
@@ -131,8 +132,9 @@ for _,n in ipairs(npcs) do
  local model=Instance.new("Model",root);model.Name=n.name
  local body=part("Tubuh",Vector3.new(3,5,2),Vector3.new(n.x,5,n.z),Color3.fromRGB(119,77,204),Enum.Material.SmoothPlastic,nil,model)
  part("Kepala",Vector3.new(2.3,2.3,2.3),Vector3.new(n.x,8.7,n.z),Color3.fromRGB(255,210,160),Enum.Material.SmoothPlastic,Enum.PartType.Ball,model)
- label(body,n.name.." | "..n.role,5)
+ label(body,n.name,5)
  prompt(body,"Bicara / Kuis",n.name).Triggered:Connect(function(player)
+  pendingQuiz[player]={id=n.q,expires=os.clock()+60}
   remote:FireClient(player,"quiz",{id=n.q,npc=n.name,q=quiz[n.q].q,options=quiz[n.q].options})
  end)
 end
@@ -150,6 +152,7 @@ end
 local boss=part("Penjaga Makna",Vector3.new(8,12,8),Vector3.new(-34,9,-52),Color3.fromRGB(237,76,124),Enum.Material.Neon,Enum.PartType.Ball)
 label(boss,"PRASASTI PENJAGA | Ujian Bahasa",9)
 prompt(boss,"Ujian Bahasa", "Prasasti Penjaga").Triggered:Connect(function(player)
+ pendingQuiz[player]={id="boss",expires=os.clock()+60}
  remote:FireClient(player,"quiz",{id="boss",npc="Penjaga Makna",q=quiz.boss.q,options=quiz.boss.options})
 end)
 remote.OnServerEvent:Connect(function(player,kind,payload)
@@ -157,9 +160,14 @@ remote.OnServerEvent:Connect(function(player,kind,payload)
  local id=payload.id;local index=payload.index
  if type(id)~="string" or type(index)~="number" then return end
  local q=quiz[id];if not q or index~=math.floor(index) or index<1 or index>4 then return end
+ local challenge=pendingQuiz[player]
+ if not challenge or challenge.id~=id or os.clock()>challenge.expires then return end
  local s=profile(player)
  if index==q.answer then
+  pendingQuiz[player]=nil
   if not s.quests[id] then s.quests[id]=true;xp(player,id=="boss" and 150 or 60) end
+  local completed=0;for _ in pairs(s.quests) do completed+=1 end
+  remote:FireClient(player,"questProgress",{completed=completed,total=8})
   remote:FireClient(player,"result",{correct=true,text="Benar! "..q.explain})
  else remote:FireClient(player,"result",{correct=false,text="Coba lagi. "..q.explain}) end
 end)
@@ -179,6 +187,8 @@ Players.PlayerAdded:Connect(function(player)
   end
  end
  remote:FireClient(player,"stats",{xp=d.xp,level=d.level})
+ local completed=0;for _ in pairs(d.quests) do completed+=1 end
+ remote:FireClient(player,"questProgress",{completed=completed,total=8})
  task.delay(2,function()
   if player.Parent then
    local sync=game:GetService("ServerScriptService"):FindFirstChild("NusantaraLevelSync")
@@ -187,10 +197,10 @@ Players.PlayerAdded:Connect(function(player)
  end)
  player.CharacterAdded:Connect(function(char)
   local hrp=char:WaitForChild("HumanoidRootPart",10)
-  if hrp then hrp.CFrame=CFrame.new(0,9,24) end
+  if hrp then hrp.CFrame=CFrame.lookAt(Vector3.new(0,8,33),Vector3.new(0,8,6)) end
  end)
 end)
-Players.PlayerRemoving:Connect(function(player) save(player);state[player]=nil end)
+Players.PlayerRemoving:Connect(function(player) save(player);state[player]=nil;pendingQuiz[player]=nil end
 game:BindToClose(function()
  for _,p in ipairs(Players:GetPlayers()) do save(p) end
 end)
