@@ -37,8 +37,8 @@ local function prompt(parent,action,object)
  p.ActionText=action;p.ObjectText=object;p.MaxActivationDistance=11;p.HoldDuration=.15
  return p
 end
-local sea=part("Laut Nusantara",Vector3.new(350,2,350),Vector3.new(0,-4,0),Color3.fromRGB(35,140,203),Enum.Material.Glass)
-sea.Transparency=.25
+local sea=part("Laut Nusantara",Vector3.new(350,2,350),Vector3.new(0,-4,0),Color3.fromRGB(35,140,203),Enum.Material.SmoothPlastic)
+sea.Transparency=.05;sea.Reflectance=0
 local island=part("Pulau Kata",Vector3.new(5,151,151),Vector3.new(0,-1,0),Color3.fromRGB(91,179,109),Enum.Material.Grass,Enum.PartType.Cylinder)
 island.CFrame=CFrame.new(0,-1,0)*CFrame.Angles(0,0,math.pi/2)
 -- Cylinder is oriented horizontally after rotation; top surface is playable.
