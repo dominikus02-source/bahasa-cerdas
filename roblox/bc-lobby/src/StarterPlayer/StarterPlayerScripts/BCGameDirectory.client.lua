@@ -93,21 +93,34 @@ for i,entry in ipairs(catalog) do
   dismiss()
   local world=workspace:FindFirstChild("BC_Lobby")
   local gate=world and world:FindFirstChild("Gerbang_"..entry.id)
-  local sign=gate and gate:FindFirstChild("Papan Nama")
-  if sign and sign:IsA("BasePart") then
-   -- Simple world-space orientation, no scripted camera transitions or auto teleport.
-   local char=player.Character
-   local hrp=char and char:FindFirstChild("HumanoidRootPart")
-   if hrp then
-    local direction=Vector3.new(sign.Position.X-hrp.Position.X,0,sign.Position.Z-hrp.Position.Z)
-    if direction.Magnitude>2 then
-     local camera=workspace.CurrentCamera
-     if camera then
-      camera.CameraType=Enum.CameraType.Custom
-      -- Do not seize the player's camera; visual signboards and minimap lead the way.
-     end
-    end
-   end
+  if gate then
+   -- A temporary understated wayfinding highlight, no camera lock or teleport.
+   local previous=world:FindFirstChild("BCPilihanGerbang")
+   if previous then previous:Destroy() end
+   local outline=Instance.new("Highlight")
+   outline.Name="BCPilihanGerbang"
+   outline.Adornee=gate
+   outline.FillTransparency=1
+   outline.OutlineTransparency=.05
+   outline.OutlineColor=C.Sand
+   outline.DepthMode=Enum.HighlightDepthMode.Occluded
+   outline.Parent=world
+   local toast=Instance.new("TextLabel")
+   toast.Name="PetunjukGerbang"
+   toast.AnchorPoint=Vector2.new(.5,1)
+   toast.Position=UDim2.new(.5,0,1,-72)
+   toast.Size=UDim2.new(.76,0,0,48)
+   toast.BackgroundColor3=C.Ink;toast.BackgroundTransparency=.06
+   toast.TextColor3=C.Ivory;toast.TextSize=14;toast.Font=Enum.Font.GothamMedium
+   toast.TextWrapped=true
+   toast.Text=entry.name.." • Ikuti gerbang yang disorot"
+   toast.Parent=gui;corner(toast,12)
+   local maxToast=Instance.new("UISizeConstraint",toast)
+   maxToast.MaxSize=Vector2.new(350,48)
+   task.delay(7,function()
+    if outline.Parent then outline:Destroy() end
+    if toast.Parent then toast:Destroy() end
+   end)
   end
  end)
 end
