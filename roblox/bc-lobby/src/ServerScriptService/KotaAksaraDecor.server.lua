@@ -86,8 +86,8 @@ local function slimTower(x,z,h,c,name)
  return stem
 end
 -- Pen-tower skyline behind the big welcome board.
-slimTower(0,-43,33,P.blue,"Pena")
-part("Ujung Pena",Vector3.new(3,9,3),CFrame.new(0,40,-43),P.gold,Enum.Material.Metal)
+slimTower(0,-43,27,P.blue,"Pena")
+part("Ujung Pena",Vector3.new(3,9,3),CFrame.new(0,34,-43),P.gold,Enum.Material.Metal)
 slimTower(-31,-54,20,P.pink,"Aksara")
 slimTower(34,-54,24,P.violet,"Buku")
 -- Magical library landmark on the east side, close to outer circular walking edge.
