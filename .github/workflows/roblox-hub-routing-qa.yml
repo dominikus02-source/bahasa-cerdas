@@ -1,0 +1,30 @@
+name: Roblox 13-Game Hub Routing QA
+
+on:
+  push:
+    branches:
+      - feat/roblox-13-distinct-game-hub-20261123
+    paths:
+      - 'roblox/**'
+      - '.github/workflows/roblox-hub-routing-qa.yml'
+  pull_request:
+    paths:
+      - 'roblox/**'
+      - '.github/workflows/roblox-hub-routing-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-lobby-and-games:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Audit 13 worlds, server gate routing and return-to-lobby links
+        run: python3 roblox/game-factory/qa_13_worlds.py
+      - name: Verify unique scenes and isolated game worlds
+        run: python3 roblox/game-factory/qa_unique_worlds.py
+      - name: Verify natural lobby source and configuration
+        run: python3 roblox/bc-lobby/qa/check_natural_world.py
