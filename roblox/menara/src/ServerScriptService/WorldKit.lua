@@ -2,6 +2,7 @@
 -- Scenic visuals only, no gameplay score or client authority.
 local Lighting=game:GetService("Lighting")
 local WorldKit={}
+local UniqueWorlds=require(script.Parent:WaitForChild("UniqueWorlds"))
 local PALETTE={
  Ink=Color3.fromRGB(29,45,55),Paper=Color3.fromRGB(250,246,232),
  Sand=Color3.fromRGB(226,206,170),Stone=Color3.fromRGB(183,175,159),
@@ -63,6 +64,7 @@ end
 function WorldKit.Build(gameId)
  local cfg=assert(THEMES[gameId],"Unknown BC game: "..tostring(gameId))
  local accent=PALETTE[cfg.accent]
+ local mood=UniqueWorlds.Get(gameId)
  local existing=workspace:FindFirstChild("BC_GameWorld")
  if existing then existing:Destroy() end
  local model=Instance.new("Model")
@@ -112,7 +114,8 @@ function WorldKit.Build(gameId)
  spawn.Transparency=.66;spawn.Duration=0
  spawn.Material=Enum.Material.SmoothPlastic
  spawn.Color=accent
- textBoard(model,"Papan Nama Gim",Vector3.new(-12,13,-28),{cfg.title,cfg.tagline})
+ textBoard(model,"Papan Nama Gim",Vector3.new(-21,12,17),{cfg.title,cfg.tagline})
+ UniqueWorlds.Build(gameId,model)
  local tag=Instance.new("StringValue",model)
  tag.Name="GameId";tag.Value=gameId
  Lighting.ClockTime=14.2
