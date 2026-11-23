@@ -47,7 +47,7 @@ local function text3d(parent,message,offset,width,height,background)
  label.TextWrapped=true;label.TextColor3=P.cream;label.Font=Enum.Font.GothamBold
 end
 -- Converting the flat square into an elevated circular sky island keeps every gate accessible.
-local ground=root:FindFirstChild("Taman Kota")
+local ground=root:WaitForChild("Taman Kota",30)
 if ground and ground:IsA("Part") then
  ground.Shape=Enum.PartType.Cylinder
  ground.Size=Vector3.new(8,225,225)
