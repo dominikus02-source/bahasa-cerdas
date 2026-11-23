@@ -16,7 +16,7 @@ expected = {
     "src/ServerScriptService/BCLobby.server.lua": ["BCLobbyReady", "LobbySpawn"],
     "src/ServerScriptService/KotaAksaraDecor.server.lua": ["KotaDecorReady", "Buku Terbang"],
     "src/ServerScriptService/NaturalWorld.server.lua": [
-        'WaitForChild("BCLobbyReady"', 'WaitForChild("KotaDecorReady"',
+        'WaitForChild("Gerbang_rpg"', 'WaitForChild("KotaAksaraBloom"',
         "Theme.Category", "ColorCorrectionEffect", "Atmosphere"],
     "src/ServerScriptService/AKSI.server.lua": ['WaitForChild("NaturalTheme"', "SapaAKSI"],
     "src/ServerScriptService/NusantaraPortal.server.lua": [
