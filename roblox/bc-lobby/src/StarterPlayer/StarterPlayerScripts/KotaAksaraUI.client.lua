@@ -74,3 +74,36 @@ if remote then
 end
 -- No fabricated XP, medals or coins until backing server systems exist.
 print("[KotaAksaraUI] Premium UI polish loaded")
+
+-- Aerial welcome: showcase whole sky island before handing control to the player.
+-- Restores Roblox's normal character camera on Start or if the welcome closes elsewhere.
+local welcome=gui:FindFirstChild("SelamatDatang")
+if welcome then
+ local camera=workspace.CurrentCamera
+ local character=player.Character or player.CharacterAdded:Wait()
+ local hum=character:WaitForChild("Humanoid",12)
+ local begin=welcome:FindFirstChildWhichIsA("TextButton",true)
+ if camera and hum then
+  camera.CameraType=Enum.CameraType.Scriptable
+  camera.FieldOfView=68
+  local c1=CFrame.lookAt(Vector3.new(65,76,104),Vector3.new(0,4,-13))
+  local c2=CFrame.lookAt(Vector3.new(40,69,92),Vector3.new(0,4,-13))
+  camera.CFrame=c1
+  local move=TweenService:Create(camera,TweenInfo.new(7,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),{CFrame=c2})
+  move:Play()
+  local restored=false
+  local function restore()
+   if restored then return end
+   restored=true
+   move:Cancel()
+   camera.CameraSubject=hum
+   camera.CameraType=Enum.CameraType.Custom
+   camera.FieldOfView=70
+  end
+  if begin then begin.MouseButton1Click:Connect(restore) end
+  welcome:GetPropertyChangedSignal("Visible"):Connect(function()
+   if not welcome.Visible then restore() end
+  end)
+  player.CharacterAdded:Connect(restore)
+ end
+end
