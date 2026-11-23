@@ -143,6 +143,13 @@ for i=1,clusterCount do
   block("Kaki Bangku",Vector3.new(.5,1.8,.5),
    CFrame.new(pos+offset+Vector3.new(dx,.95,0)),C.WoodDark,Enum.Material.Wood,model,true)
  end
+ local sit=Instance.new("Seat")
+ sit.Name="Duduk dan Beristirahat"
+ sit.Size=Vector3.new(2,.5,1.8)
+ sit.CFrame=CFrame.new(pos+offset+Vector3.new(0,2.55,0))
+ sit.Transparency=1;sit.Anchored=true
+ sit.CanCollide=false
+ sit.Parent=model
 end
 -- 3. Gentle horizon islands provide depth and a sense of a living world.
 for i=1,7 do
