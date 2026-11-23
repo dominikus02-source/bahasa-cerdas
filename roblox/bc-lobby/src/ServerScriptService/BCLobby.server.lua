@@ -6,6 +6,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local SoundService = game:GetService("SoundService")
 local catalog = require(ReplicatedStorage:WaitForChild("LobbyCatalog"))
+local destinations = require(ReplicatedStorage:WaitForChild("LobbyDestinations"))
 local root = Workspace:FindFirstChild("BC_Lobby")
 if root then root:Destroy() end
 root=Instance.new("Folder")
@@ -141,7 +142,8 @@ for i,gameDef in ipairs(catalog) do
   part("Tiang",Vector3.new(2.3,12,2.3),CFrame.new(pos.X,6.6,pos.Z),color,Enum.Material.SmoothPlastic,gate)
  end
  local arch=part("Papan Nama",Vector3.new(13,3,3),CFrame.new(x,13,z),color,Enum.Material.SmoothPlastic,gate)
- sign(arch,gameDef.name,gameDef.unpublished and "BELUM DITERBITKAN" or "SEGERA HADIR",5.2)
+ local published = type(destinations.Games[gameDef.id])=="number" and not gameDef.unpublished
+ sign(arch,gameDef.name,published and "MASUK ARENA" or (gameDef.unpublished and "BELUM DITERBITKAN" or "SEGERA HADIR"),5.2)
  local tile=part("Segel Gerbang",Vector3.new(8,7,1.2),CFrame.new(x,5,z)*CFrame.Angles(0,theta,0),C.ink,Enum.Material.SmoothPlastic,gate)
  tile.Transparency=.28;tile.CanCollide=false
  local prompt=Instance.new("ProximityPrompt",arch)
