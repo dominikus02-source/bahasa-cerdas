@@ -8,11 +8,12 @@ dialog.Name="AKSIDialogue";dialog.Parent=ReplicatedStorage
 local old=root:FindFirstChild("AKSI_Maskot")
 if old then old:Destroy() end
 local mascot=Instance.new("Model");mascot.Name="AKSI_Maskot";mascot.Parent=root
-local violet=Color3.fromRGB(124,58,237)
-local pink=Color3.fromRGB(236,72,153)
-local white=Color3.fromRGB(249,247,255)
-local navy=Color3.fromRGB(17,28,58)
-local gold=Color3.fromRGB(251,191,36)
+local palette=require(ReplicatedStorage:WaitForChild("NaturalTheme")).Color
+local violet=palette.BrandSoft
+local pink=palette.Rose
+local white=palette.Ivory
+local navy=palette.Ink
+local gold=palette.Reward
 local function shape(name,size,cf,color,kind)
  local p=Instance.new("Part");p.Name=name;p.Size=size;p.CFrame=cf
  p.Color=color;p.Material=Enum.Material.SmoothPlastic;p.Anchored=true
