@@ -74,3 +74,86 @@ remote.OnClientEvent:Connect(function(kind,data)
  end
 end)
 toast("Jelajahi 8 wilayah, bicara dengan NPC (E), jawab kuis, dan temukan 3 rahasia!")
+
+-- v0.2: native Roblox class selection, combat dock, keyboard/mobile controls.
+local CAS=game:GetService("ContextActionService")
+local UIS=game:GetService("UserInputService")
+local action=ReplicatedStorage:WaitForChild("NusantaraAction",30)
+if action then
+ local combatDock=Instance.new("Frame",gui)
+ combatDock.Name="SkillDock";combatDock.AnchorPoint=Vector2.new(.5,1)
+ combatDock.Position=UDim2.new(.5,0,1,-14);combatDock.Size=UDim2.new(0,360,0,67)
+ combatDock.BackgroundColor3=Color3.fromRGB(24,19,58)
+ combatDock.BackgroundTransparency=.12;corner(combatDock,14)
+ local buttons2={}
+ local keys={{"kata","KATA","1"},{"perisai","PERISAI","2"},{"rantai","RANTAI","3"},{"ejaan","EJAAN","4"},{"majas","MAJAS","5"},{"dash","DASH","⇧"}}
+ local available=1
+ for i,item in ipairs(keys) do
+  local b=Instance.new("TextButton",combatDock)
+  b.Name=item[1];b.Size=UDim2.new(0,54,0,54);b.Position=UDim2.new(0,7+(i-1)*58,0,6)
+  b.BackgroundColor3=Color3.fromRGB(71,49,142)
+  b.TextColor3=Color3.fromRGB(255,241,192);b.TextWrapped=true
+  b.Text=item[3].."\n"..item[2];b.TextSize=11;b.Font=Enum.Font.GothamBold
+  corner(b,10);buttons2[item[1]]=b
+  b.MouseButton1Click:Connect(function() action:FireServer("skill",item[1]) end)
+ end
+ local cooldown={}
+ remote.OnClientEvent:Connect(function(kind,data)
+  if kind=="skills" and type(data)=="table" then
+   available=data.level or 1
+   for id,b in pairs(buttons2) do
+    local required=({kata=1,perisai=1,rantai=2,ejaan=3,majas=4,dash=1})[id]
+    b.BackgroundTransparency=available<required and .7 or 0
+   end
+  elseif kind=="cooldown" and type(data)=="table" then
+   local b=buttons2[data.id]
+   if b then
+    local old=b.Text
+    local serial=tostring(os.clock())
+    cooldown[data.id]=serial
+    b.BackgroundColor3=Color3.fromRGB(64,64,86)
+    task.delay(data.duration,function()
+     if cooldown[data.id]==serial then
+      b.BackgroundColor3=Color3.fromRGB(71,49,142)
+     end
+    end)
+   end
+  elseif kind=="class" and type(data)=="table" then toast("Kelas aktif: "..data.name) end
+ end)
+ local bindings={
+  {"kata",Enum.KeyCode.One},{"perisai",Enum.KeyCode.Two},
+  {"rantai",Enum.KeyCode.Three},{"ejaan",Enum.KeyCode.Four},
+  {"majas",Enum.KeyCode.Five},{"dash",Enum.KeyCode.LeftShift}
+ }
+ for _,entry in ipairs(bindings) do
+  local skill=entry[1]
+  CAS:BindAction("Nusantara_"..skill,function(_,inputState)
+   if inputState==Enum.UserInputState.Begin and not panel.Visible then
+    action:FireServer("skill",skill)
+   end
+   return Enum.ContextActionResult.Sink
+  end,false,entry[2])
+ end
+ local choose=Instance.new("Frame",gui)
+ choose.Name="ClassSelect";choose.Position=UDim2.new(0,12,0,100)
+ choose.Size=UDim2.new(0,205,0,92);choose.BackgroundColor3=Color3.fromRGB(24,19,58)
+ choose.BackgroundTransparency=.16;corner(choose,12)
+ text(choose,UDim2.new(1,0,0,24),UDim2.new(0,0,0,0),"PILIH KELAS DI PLAZA",13)
+ local options={{"pujangga","PUJANGGA"},{"pendekar","PENDEKAR"},{"cendekia","CENDEKIA"}}
+ for i,info in ipairs(options) do
+  local b=Instance.new("TextButton",choose)
+  b.Text=info[2];b.TextSize=10;b.TextColor3=Color3.new(1,1,1)
+  b.Font=Enum.Font.GothamBold;b.BackgroundColor3=Color3.fromRGB(83,56,156)
+  b.Position=UDim2.new(0,5+(i-1)*67,0,32);b.Size=UDim2.new(0,63,0,42);corner(b,7)
+  b.MouseButton1Click:Connect(function() action:FireServer("class",info[1]) end)
+ end
+ local scale=Instance.new("UIScale",panel)
+ local function resize()
+  local camera=workspace.CurrentCamera
+  if camera then
+   scale.Scale=math.min(1,math.max(.52,(camera.ViewportSize.Y-44)/440))
+  end
+ end
+ resize()
+ if workspace.CurrentCamera then workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(resize) end
+end
