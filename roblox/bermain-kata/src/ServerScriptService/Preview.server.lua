@@ -85,6 +85,8 @@ local function newRound(player,s)
   payload.options,s.answer=optionsFor(index,"word")
  end
  s.awaiting=true
+ s.roundToken=(s.roundToken or 0)+1
+ payload.token=s.roundToken
  response:FireClient(player,"round",payload)
 end
 local function cleanAnswer(value)
@@ -105,9 +107,10 @@ request.OnServerEvent:Connect(function(player,action,value)
   sessions[player]=s
   newRound(player,s)
  elseif action=="answer" then
+  if type(value)~="table" then return end
   local s=sessions[player]
-  if not s or not s.awaiting then return end
-  local candidate=cleanAnswer(value)
+  if not s or not s.awaiting or value.token~=s.roundToken then return end
+  local candidate=cleanAnswer(value.answer)
   if not candidate then return end
   s.awaiting=false
   local correct=candidate==cleanAnswer(s.answer)
