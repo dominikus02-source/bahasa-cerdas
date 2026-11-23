@@ -144,23 +144,42 @@ local function scene(root,id)
   pillar(root,"Pilar Kuil Kiri",-29,10,-42,19,c.stone)
   pillar(root,"Pilar Kuil Kanan",29,10,-42,19,c.stone)
   sign(root,"KUIL KISI AKSARA",0,24,-42,c.gold)
- elseif id=="lari-kata" or id=="adu-cepat" then
-  for lane=1,4 do
-   local x=(lane-2.5)*15
-   block(root,(id=="lari-kata" and "Trek Kata " or "Rel Kilat ")..lane,
-    x,4.2,-20,12,.6,59,lane%2==0 and c.blue or c.rose,true)
-   for mark=1,7 do
-    block(root,"Marka "..lane.." "..mark,x,4.6,-46+mark*7,
-     1,.2,3,c.ivory)
+ elseif id=="lari-kata" then
+  -- SOLO obstacle sprint: a single winding trail, checkpoint arches and finish.
+  -- Contrasts intentionally with the enclosed multiplayer station of Adu Cepat.
+  for segment=1,9 do
+   local z=10-segment*7
+   local x=math.sin(segment*.8)*11
+   block(root,"Lintasan Berliku "..segment,x,4.2,z,16,.7,9,
+    segment%2==0 and c.sand or c.green,true,Enum.Material.Slate)
+   if segment%3==0 then
+    for _,side in ipairs({-1,1}) do
+     pillar(root,"Pintu Pos "..segment, x+side*7,9,z,11,c.wood)
+    end
+    block(root,"Ambang Pos "..segment,x,15,z,17,1.3,2,c.gold)
    end
   end
-  block(root,"Garis Finis",0,5,-47,60,.8,3,c.gold)
-  if id=="adu-cepat" then
-   pillar(root,"Menara Waktu",0,19,-42,30,c.ink)
-   orb(root,"Jam Kilat",0,37,-42,12,c.gold)
+  for i=1,5 do
+   orb(root,"Bola Kata Sprint "..i,math.sin(i)*19,10,-i*12,3,
+    i%2==0 and c.rose or c.teal)
   end
-  sign(root,id=="lari-kata" and "LINTASAN BAHASA" or "STASIUN KILAT",
-   0,id=="lari-kata" and 22 or 49,-44,c.ivory)
+  sign(root,"LINTASAN BAHASA",0,27,-53,c.ivory)
+ elseif id=="adu-cepat" then
+  -- Multiplayer buzzer competition: distinct radial podiums facing a clock,
+  -- not a running course or four parallel tracks.
+  block(root,"Panggung Stasiun Kilat",0,4.2,-23,65,1,49,c.ink,true)
+  for station=1,8 do
+   local a=(station-1)*math.pi/4
+   local x=math.sin(a)*24
+   local z=-23+math.cos(a)*16
+   block(root,"Podium Peserta "..station,x,6,z,8,3.5,7,
+    station%2==0 and c.teal or c.gold,true)
+   orb(root,"Tombol Kilat "..station,x,8.6,z,2,
+    station%2==0 and c.ivory or c.rose)
+  end
+  pillar(root,"Menara Jam Kilat",0,20,-45,33,c.stone)
+  orb(root,"Jam Kompetisi",0,40,-45,13,c.gold)
+  sign(root,"STASIUN KILAT",0,49,-47,c.ivory)
  elseif id=="kuis-tempur" then
   block(root,"Arena Dua Pihak",0,5,-25,63,1,39,c.violet,true)
   for _,side in ipairs({-1,1}) do
