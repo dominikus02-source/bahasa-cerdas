@@ -153,16 +153,5 @@ cc.TintColor=Color3.fromRGB(255,247,242);cc.Parent=Lighting
 local bloom=Lighting:FindFirstChild("KotaAksaraBloom") or Instance.new("BloomEffect")
 bloom.Name="KotaAksaraBloom";bloom.Intensity=.15;bloom.Size=15;bloom.Threshold=1.6;bloom.Parent=Lighting
 -- Avoid permanent loops of costly TweenServices; low-frequency PivotTo updates.
-task.spawn(function()
- local t=0
- while root.Parent do
-  task.wait(.13);t+=.13
-  for _,item in ipairs(floatItems) do
-   if item.model.Parent then
-    local sway=math.sin(t*1.05+item.phase)*.72
-    item.model:PivotTo(item.base*CFrame.new(0,sway,0)*CFrame.Angles(0,math.sin(t*.25+item.phase)*.065,0))
-   end
-  end
- end
-end)
+-- Motion is handled locally by KotaAksaraUI.client.lua (no replicated per-frame decorative updates).
 print("[KotaAksara] Floating island decor ready, books=13, letters=7")
