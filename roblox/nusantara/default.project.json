@@ -1,0 +1,21 @@
+{
+  "name": "NUSANTARA Kebangkitan Bahasa",
+  "tree": {
+    "$className": "DataModel",
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "Nusantara": {
+        "$path": "src/ServerScriptService/Nusantara.server.lua"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "NusantaraHUD": {
+          "$path": "src/StarterPlayerScripts/Nusantara.client.lua"
+        }
+      }
+    }
+  }
+}
