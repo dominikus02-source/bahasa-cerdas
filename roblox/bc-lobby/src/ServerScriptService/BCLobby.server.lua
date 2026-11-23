@@ -48,7 +48,7 @@ local function sign(adornee,title,subtitle,y)
  local gui=Instance.new("BillboardGui")
  gui.Name="Penanda";gui.Adornee=adornee;gui.Size=UDim2.fromOffset(230,75)
  gui.StudsOffsetWorldSpace=Vector3.new(0,y or 6,0)
- gui.AlwaysOnTop=false;gui.MaxDistance=65;gui.Parent=adornee
+ gui.AlwaysOnTop=false;gui.MaxDistance=40;gui.Parent=adornee
  local bg=Instance.new("Frame",gui)
  bg.Size=UDim2.fromScale(1,1);bg.BackgroundColor3=C.ink;bg.BackgroundTransparency=.08
  Instance.new("UICorner",bg).CornerRadius=UDim.new(0,13)
