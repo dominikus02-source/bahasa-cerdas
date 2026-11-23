@@ -22,8 +22,8 @@ local function make(name,pos,boss)
  core.Size=boss and Vector3.new(7,8,7) or Vector3.new(4,4,4)
  core.Position=pos;core.Color=boss and Color3.fromRGB(230,70,113) or Color3.fromRGB(139,86,226)
  core.Material=Enum.Material.Neon;core.Parent=model
- local gui=Instance.new("BillboardGui",core);gui.Size=UDim2.fromOffset(220,54)
- gui.StudsOffset=Vector3.new(0,boss and 7 or 4,0);gui.AlwaysOnTop=true
+ local gui=Instance.new("BillboardGui",core);gui.Size=UDim2.fromOffset(150,34)
+ gui.StudsOffset=Vector3.new(0,boss and 7 or 4,0);gui.AlwaysOnTop=false;gui.MaxDistance=boss and 35 or 23
  local label=Instance.new("TextLabel",gui);label.Size=UDim2.fromScale(1,1)
  label.BackgroundTransparency=.25;label.BackgroundColor3=Color3.fromRGB(36,20,65)
  label.Text=name;label.Font=Enum.Font.GothamBold;label.TextScaled=true
