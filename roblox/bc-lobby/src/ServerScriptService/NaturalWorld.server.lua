@@ -8,8 +8,9 @@ local world=workspace:WaitForChild("BC_Lobby",30)
 if not world then warn("[NaturalWorld] BC_Lobby missing");return end
 local decor=world:WaitForChild("KotaAksaraDecor",30)
 if not decor then warn("[NaturalWorld] Sky decor missing");return end
-if not world:WaitForChild("BCLobbyReady",30) or not world:WaitForChild("KotaDecorReady",30) then
- warn("[NaturalWorld] World construction did not finish");return
+-- Published baseline may predate v2 marker BoolValues. Wait for stable objects instead.
+if not world:WaitForChild("Gerbang_rpg",30) or not Lighting:WaitForChild("KotaAksaraBloom",30) then
+ warn("[NaturalWorld] Base lobby construction did not finish");return
 end
 local previous=world:FindFirstChild("NaturalWorld")
 if previous then previous:Destroy() end
@@ -105,6 +106,39 @@ for _,p in ipairs(decor:GetDescendants()) do
   end
  end
 end
+-- Match the original AKSI and NUSANTARA assets to the natural palette, without
+-- changing their scripts, gameplay controls, or the destination PlaceId.
+task.spawn(function()
+ local aks=world:WaitForChild("AKSI_Maskot",15)
+ if aks then
+  local body=aks:FindFirstChild("Tubuh Tinta")
+  if body then body:WaitForChild("SapaAKSI",10) end
+  for _,p in ipairs(aks:GetChildren()) do
+   if p:IsA("BasePart") then
+    if p.Name=="Tubuh Tinta" or p.Name=="Tangan Kiri" then paint(p,C.BrandSoft)
+    elseif p.Name=="Puncak Tinta" or p.Name=="Tangan Kanan" then paint(p,C.Rose)
+    elseif p.Name=="Senyum" or p.Name=="Bintang Dada" then paint(p,C.Reward)
+    elseif p.Name=="Mata Kiri" or p.Name=="Mata Kanan" then paint(p,C.Ivory) end
+   end
+  end
+ end
+ local gate=world:WaitForChild("Gerbang_NUSANTARA",15)
+ if gate then
+  gate:WaitForChild("Lengkung Aksara",10)
+  for _,p in ipairs(gate:GetChildren()) do
+   if p:IsA("BasePart") then
+    if p.Name=="Pijakan" or p.Name=="Pilar Kiri" or p.Name=="Pilar Kanan" then
+     paint(p,C.StoneLight,Enum.Material.Slate)
+    elseif p.Name=="Lengkung Aksara" then paint(p,C.Wood,Enum.Material.WoodPlanks)
+    elseif p.Name=="Cahaya Gerbang" then
+     paint(p,C.Water,Enum.Material.Glass);p.Transparency=.67
+    elseif p.Name=="Kilau Portal" then
+     paint(p,C.Copper,Enum.Material.SmoothPlastic);p.Transparency=.08
+    end
+   end
+  end
+ end
+end)
 -- 2. Garden clusters between radial travel paths; clear of all portal routes.
 -- Each cluster has 1 small broad-canopy tree, boulders, a flower patch, and a bench.
 local clusterCount=13
