@@ -18,54 +18,8 @@ local LEVELS={
  {name="Naga",count=20,time=40}, -- web API caps original 22 requested to 20
  {name="Maha Guru",count=20,time=40}, -- web API caps original 25 requested to 20
 }
-local palette={purple=Color3.fromRGB(124,58,237),blue=Color3.fromRGB(37,99,235),
- pink=Color3.fromRGB(236,72,153),navy=Color3.fromRGB(17,28,58),
- gold=Color3.fromRGB(251,191,36),white=Color3.fromRGB(245,249,255),
- green=Color3.fromRGB(16,185,129)}
-local function part(name,size,cf,color,material,parent)
- local p=Instance.new("Part")
- p.Name=name;p.Size=size;p.CFrame=cf;p.Color=color;p.Anchored=true
- p.Material=material or Enum.Material.SmoothPlastic;p.CastShadow=size.Magnitude>8
- p.TopSurface=Enum.SurfaceType.Smooth;p.BottomSurface=Enum.SurfaceType.Smooth
- p.Parent=parent or workspace
- return p
-end
-local world=Instance.new("Folder",workspace);world.Name="BC_BenarSalah"
-part("Dasar Arena",Vector3.new(115,3,110),CFrame.new(0,-1.5,0),palette.navy)
-part("Plaza Arena",Vector3.new(91,1,73),CFrame.new(0,.5,-3),Color3.fromRGB(231,231,255))
-part("Panggung Soal",Vector3.new(49,3,15),CFrame.new(0,3,-27),palette.purple)
-part("Papan Bab",Vector3.new(54,16,2),CFrame.new(0,13,-36),palette.navy)
-for _,x in ipairs({-18,18}) do
- part("Pilar Cahaya",Vector3.new(3,20,3),CFrame.new(x,10,-35),palette.blue,Enum.Material.Neon)
-end
-for _,x in ipairs({-21,21}) do
- local platform=part(x<0 and "Pilihan Benar" or "Pilihan Salah",
- Vector3.new(28,1.7,25),CFrame.new(x,1.9,15),x<0 and palette.green or palette.pink)
- platform.Material=Enum.Material.SmoothPlastic
- part("Sorot Pilihan",Vector3.new(26,.3,23),CFrame.new(x,2.95,15),
- x<0 and palette.gold or palette.blue,Enum.Material.Neon)
-end
-local spawn=Instance.new("SpawnLocation",world)
-spawn.Name="BenarSalahSpawn";spawn.Size=Vector3.new(12,1,12)
-spawn.CFrame=CFrame.new(0,1.5,18);spawn.Transparency=.65
-spawn.Neutral=true;spawn.Duration=0;spawn.Anchored=true
-spawn.Color=palette.gold
-local function sign(text,pos,w)
- local anchor=part("Papan "..text,Vector3.new(1,1,1),CFrame.new(pos),palette.navy)
- anchor.Transparency=1;anchor.CanCollide=false
- local gui=Instance.new("BillboardGui",anchor)
- gui.Size=UDim2.fromOffset(w,70);gui.StudsOffsetWorldSpace=Vector3.new(0,2,0)
- gui.MaxDistance=80;gui.AlwaysOnTop=false
- local frame=Instance.new("Frame",gui)
- frame.Size=UDim2.fromScale(1,1);frame.BackgroundColor3=palette.navy
- Instance.new("UICorner",frame).CornerRadius=UDim.new(0,13)
- local lbl=Instance.new("TextLabel",frame)
- lbl.Size=UDim2.fromScale(1,1);lbl.Text=text;lbl.Font=Enum.Font.GothamBold
- lbl.TextScaled=true;lbl.TextColor3=palette.white;lbl.BackgroundTransparency=1
-end
-sign("ARENA BENAR ATAU SALAH",Vector3.new(0,21,-35),290)
-sign("BENAR",Vector3.new(-21,7,15),180)
-sign("SALAH",Vector3.new(21,7,15),180)
+local WorldKit=require(script.Parent:WaitForChild("WorldKit"))
+WorldKit.Build("benar-salah")
 
 local folder=Instance.new("Folder",RS);folder.Name="BCBenarSalah"
 local remote=Instance.new("RemoteEvent",folder);remote.Name="GameEvent"

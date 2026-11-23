@@ -13,27 +13,8 @@ local Levels={
  {"Perangkai Ulung",16,8,99,21},{"Arsitek Kata",17,9,99,20},
  {"Maestro Huruf",18,10,99,19},
 }
-local C={navy=Color3.fromRGB(17,28,58),purple=Color3.fromRGB(124,58,237),
- pink=Color3.fromRGB(236,72,153),blue=Color3.fromRGB(37,99,235),
- gold=Color3.fromRGB(251,191,36),cream=Color3.fromRGB(249,246,237)}
-local world=Instance.new("Folder",workspace);world.Name="BC_SusunKata"
-local function block(name,size,pos,color,material)
- local p=Instance.new("Part");p.Name=name;p.Anchored=true;p.Size=size
- p.Position=pos;p.Color=color;p.Material=material or Enum.Material.SmoothPlastic
- p.Parent=world;return p
-end
-block("Pulau Kata",Vector3.new(112,3,112),Vector3.new(0,-1.5,0),C.cream)
-block("Plaza Kata",Vector3.new(87,1,85),Vector3.new(0,.4,0),C.purple)
-block("Panggung Huruf",Vector3.new(50,4,18),Vector3.new(0,2,-28),C.blue)
-for i=1,12 do
- local a=i*math.pi/6
- local p=block("Menara Huruf "..i,Vector3.new(3,11+i%4*2,3),
-  Vector3.new(math.sin(a)*39,7,math.cos(a)*39),i%2==0 and C.pink or C.gold)
- p.CanCollide=false
-end
-local spawn=Instance.new("SpawnLocation",world);spawn.Name="SpawnSusunKata"
-spawn.Size=Vector3.new(12,1,12);spawn.Position=Vector3.new(0,1.6,15)
-spawn.Anchored=true;spawn.Neutral=true;spawn.Duration=0;spawn.Transparency=.6
+local World=require(script.Parent:WaitForChild("WorldKit"))
+World.Build("susun-kata")
 local network=Instance.new("Folder",RS);network.Name="BCSusunKata"
 local event=Instance.new("RemoteEvent",network);event.Name="Event"
 local request=Instance.new("RemoteEvent",network);request.Name="Request"
