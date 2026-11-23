@@ -6,7 +6,8 @@ local TeleportService=game:GetService("TeleportService")
 local world=workspace:WaitForChild("BC_Lobby",30)
 if not world then return end
 
-local TARGET_PLACE_ID=135622689114243 -- Verified public NUSANTARA place, owned by BahasaCerdas.
+local destinations=require(RS:WaitForChild("LobbyDestinations"))
+local TARGET_PLACE_ID=destinations.Nusantara.placeId -- Verified published place owned by BahasaCerdas.
 local root=Instance.new("Model")
 root.Name="Gerbang_NUSANTARA"
 root.Parent=world
