@@ -5,7 +5,9 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lighting = game:GetService("Lighting")
 local TweenService = game:GetService("TweenService")
 local DataStoreService=game:GetService("DataStoreService")
-local Store=DataStoreService:GetDataStore("NusantaraV02")
+local Store=nil
+local storeReady,storeResult=pcall(function() return DataStoreService:GetDataStore("NusantaraV02") end)
+if storeReady then Store=storeResult else warn("Nusantara: DataStore unavailable in unpublished Studio place; using session-only progress") end
 local remote = ReplicatedStorage:FindFirstChild("NusantaraEvent") or Instance.new("RemoteEvent")
 remote.Name = "NusantaraEvent"
 remote.Parent = ReplicatedStorage
@@ -108,7 +110,7 @@ local secrets={
 local state={}
 local function save(player)
  local d=state[player]
- if not d then return end
+ if not d or not Store then return end
  local data={xp=d.xp,level=d.level,quests=d.quests,secrets=d.secrets,zones=d.zones}
  local ok,err=pcall(function()
   Store:UpdateAsync("player_"..player.UserId,function()return data end)
@@ -164,7 +166,8 @@ remote.OnServerEvent:Connect(function(player,kind,payload)
 end)
 Players.PlayerAdded:Connect(function(player)
  local d=profile(player)
- local ok,data=pcall(function()return Store:GetAsync("player_"..player.UserId) end)
+ local ok,data=false,nil
+ if Store then ok,data=pcall(function()return Store:GetAsync("player_"..player.UserId) end) end
  if ok and type(data)=="table" then
   d.xp=math.clamp(tonumber(data.xp) or 0,0,100000)
   d.level=math.clamp(tonumber(data.level) or 1,1,100)
