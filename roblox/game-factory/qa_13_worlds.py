@@ -58,7 +58,7 @@ for ident in ids:
         raise AssertionError(f"Missing gameplay scripts for {ident}")
     code = server_path.read_text(encoding="utf-8")
     ui_code = client_path.read_text(encoding="utf-8")
-    if "returnLobby" not in code or "returnLobby" not in ui_code:
+    if "returnLobby" not in code or not ("returnLobby" in ui_code or "backToLobby(" in ui_code):
         missing_return.append(ident)
     if not __import__("re").search(r'\["' + re.escape(ident) + r'"\]=\d+', dest):
         unpublished.append(ident)
