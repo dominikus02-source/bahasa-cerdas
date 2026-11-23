@@ -43,15 +43,17 @@ local function textbox(parent)
  return input
 end
 local submitted=false
+local currentToken=nil
 local function submit(value)
  if submitted then return end
  if type(value)~="string" or #value==0 then ui:say("Isi jawaban terlebih dahulu.");return end
  submitted=true
- request:FireServer("answer",value)
+ request:FireServer("answer",{answer=value,token=currentToken})
 end
 local function showRound(data)
  if type(data)~="table" then return end
  submitted=false
+ currentToken=data.token
  ui:clear()
  ui:setStats(string.format("%s  •  %d / %d  •  %d POIN",string.upper(tostring(data.mode)),data.round,data.maxRounds,data.score))
  ui:label(tostring(data.prompt or ""),18)
