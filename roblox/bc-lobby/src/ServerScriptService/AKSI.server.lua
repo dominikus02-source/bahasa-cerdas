@@ -20,7 +20,7 @@ local function shape(name,size,cf,color,kind)
  if kind then p.Shape=kind end;p.Parent=mascot;return p
 end
 -- Design: chunky friendly ink droplet with a signature white BC-inspired swirl.
-local x,y,z=-13,8,10
+local x,y,z=-27,8,-6
 local core=shape("Tubuh Tinta",Vector3.new(6,7,5.8),CFrame.new(x,y,z),violet,Enum.PartType.Ball)
 shape("Puncak Tinta",Vector3.new(3.2,4.1,3.2),CFrame.new(x,y+3,z),pink,Enum.PartType.Ball)
 shape("Mata Kiri",Vector3.new(.9,1.25,.38),CFrame.new(x-1,y+.8,z-2.77),white,Enum.PartType.Ball)
