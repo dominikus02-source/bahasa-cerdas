@@ -60,14 +60,5 @@ local original=mascot:GetPivot()
 local rightBase=rightArm.CFrame
 local leftBase=leftArm.CFrame
 -- Idle float and arm-wave; rhythm is slow to avoid excessive network updates.
-task.spawn(function()
- local t=0
- while mascot.Parent do
-  task.wait(.11);t+=.11
-  mascot:PivotTo(original*CFrame.new(0,math.sin(t*1.8)*.5,0))
-  local wave=math.sin(t*3)*math.rad(26)
-  rightArm.CFrame=(original*CFrame.new(0,math.sin(t*1.8)*.5,0)*original:Inverse())*rightBase*CFrame.Angles(0,0,wave)
-  leftArm.CFrame=(original*CFrame.new(0,math.sin(t*1.8)*.5,0)*original:Inverse())*leftBase*CFrame.Angles(0,0,math.sin(t*1.4)*math.rad(8))
- end
-end)
+-- Motion is handled locally by KotaAksaraUI.client.lua (no replicated per-frame decorative updates).
 print("[KotaAksara] AKSI mascot ready")
