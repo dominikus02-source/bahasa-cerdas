@@ -8,6 +8,9 @@ local world=workspace:WaitForChild("BC_Lobby",30)
 if not world then warn("[NaturalWorld] BC_Lobby missing");return end
 local decor=world:WaitForChild("KotaAksaraDecor",30)
 if not decor then warn("[NaturalWorld] Sky decor missing");return end
+if not world:WaitForChild("BCLobbyReady",30) or not world:WaitForChild("KotaDecorReady",30) then
+ warn("[NaturalWorld] World construction did not finish");return
+end
 local previous=world:FindFirstChild("NaturalWorld")
 if previous then previous:Destroy() end
 local natural=Instance.new("Folder")
