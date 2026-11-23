@@ -107,3 +107,42 @@ if welcome then
   player.CharacterAdded:Connect(restore)
  end
 end
+
+-- Per-player local idle animations: no high-frequency server replication to 50 players.
+task.spawn(function()
+ local world=workspace:WaitForChild("BC_Lobby",30)
+ if not world then return end
+ local decor=world:WaitForChild("KotaAksaraDecor",30)
+ local aksi=world:WaitForChild("AKSI_Maskot",30)
+ if not decor or not aksi then return end
+ task.wait(.5)
+ local items={}
+ for _,model in ipairs(decor:GetChildren()) do
+  if model:IsA("Model") and (model.Name=="Buku Terbang" or model.Name=="Huruf Melayang") then
+   table.insert(items,{model=model,base=model:GetPivot(),phase=#items*.53})
+  end
+ end
+ local origin=aksi:GetPivot()
+ local left=aksi:FindFirstChild("Tangan Kiri")
+ local right=aksi:FindFirstChild("Tangan Kanan")
+ local leftBase=left and left.CFrame
+ local rightBase=right and right.CFrame
+ local t=0
+ while gui.Parent and world.Parent do
+  task.wait(.23)
+  t+=.23
+  for _,item in ipairs(items) do
+   if item.model.Parent then
+    local sway=math.sin(t*1.05+item.phase)*.72
+    item.model:PivotTo(item.base*CFrame.new(0,sway,0)*CFrame.Angles(0,math.sin(t*.25+item.phase)*.065,0))
+   end
+  end
+  if aksi.Parent then
+   local shift=CFrame.new(0,math.sin(t*1.8)*.48,0)
+   aksi:PivotTo(origin*shift)
+   local moved=(origin*shift)*origin:Inverse()
+   if right and right.Parent then right.CFrame=moved*rightBase*CFrame.Angles(0,0,math.sin(t*3)*math.rad(25)) end
+   if left and left.Parent then left.CFrame=moved*leftBase*CFrame.Angles(0,0,math.sin(t*1.4)*math.rad(7)) end
+  end
+ end
+end)
