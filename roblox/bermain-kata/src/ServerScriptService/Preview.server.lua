@@ -85,6 +85,7 @@ local function newRound(player,s)
   payload.options,s.answer=optionsFor(index,"word")
  end
  s.awaiting=true
+ s.resolved=false
  s.roundToken=(s.roundToken or 0)+1
  payload.token=s.roundToken
  response:FireClient(player,"round",payload)
@@ -113,6 +114,7 @@ request.OnServerEvent:Connect(function(player,action,value)
   local candidate=cleanAnswer(value.answer)
   if not candidate then return end
   s.awaiting=false
+  s.resolved=true
   local correct=candidate==cleanAnswer(s.answer)
   if correct then s.score+=10 end
   response:FireClient(player,"feedback",{
@@ -121,7 +123,8 @@ request.OnServerEvent:Connect(function(player,action,value)
   })
  elseif action=="next" then
   local s=sessions[player]
-  if not s or s.awaiting then return end
+  if not s or s.awaiting or not s.resolved then return end
+  s.resolved=false
   if s.round>=10 then
    response:FireClient(player,"finished",{score=s.score,total=100,mode=s.mode})
    sessions[player]=nil
