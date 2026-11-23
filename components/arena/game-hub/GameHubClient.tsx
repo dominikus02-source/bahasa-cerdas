@@ -13,6 +13,7 @@ import UserAvatar from "@/components/arena/UserAvatar";
 import { RankChip } from "@/components/gamification/RankChip";
 import BannerSlideshow, { type BannerSlide } from "@/components/public/BannerSlideshow";
 import GameCard, { type GameView } from "@/components/arena/game-hub/GameCard";
+import RobloxLaunchCard from "@/components/arena/game-hub/RobloxLaunchCard";
 import { trackProductEvent } from "@/lib/analytics/product-track";
 import { isUmumGameId } from "@/lib/auth/roles";
 
@@ -162,6 +163,8 @@ export default function GameHubClient({ user, level, rank, multiplayerEnabled, u
           <UserAvatar name={user.fullName} avatar={user.avatar} size={38} />
         </MaybeLink>
       </header>
+
+      <RobloxLaunchCard />
 
       {/* ── HERO — GAME UNGGULAN ── */}
       <section
