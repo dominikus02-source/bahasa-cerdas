@@ -62,8 +62,8 @@ for _,instance in ipairs(world:GetChildren()) do
     elseif p.Name=="Jendela" then paint(p,C.Water,Enum.Material.Glass) end
    end
   end
- elseif instance.Name:sub(1,7)=="Gerbang_" and instance:IsA("Model") then
-  local key=instance.Name:sub(8)
+ elseif instance.Name:sub(1,8)=="Gerbang_" and instance:IsA("Model") then
+  local key=instance.Name:sub(9)
   local catalog=require(ReplicatedStorage:WaitForChild("LobbyCatalog"))
   for _,entry in ipairs(catalog) do
    if entry.id==key then
