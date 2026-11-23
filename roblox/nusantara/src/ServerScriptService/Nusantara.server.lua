@@ -36,10 +36,10 @@ local function prompt(parent,action,object)
 end
 local sea=part("Laut Nusantara",Vector3.new(350,2,350),Vector3.new(0,-4,0),Color3.fromRGB(35,140,203),Enum.Material.Glass)
 sea.Transparency=.25
-local island=part("Pulau Kata",Vector3.new(151,5,151),Vector3.new(0,-1,0),Color3.fromRGB(91,179,109),Enum.Material.Grass,Enum.PartType.Cylinder)
+local island=part("Pulau Kata",Vector3.new(5,151,151),Vector3.new(0,-1,0),Color3.fromRGB(91,179,109),Enum.Material.Grass,Enum.PartType.Cylinder)
 island.CFrame=CFrame.new(0,-1,0)*CFrame.Angles(0,0,math.pi/2)
 -- Cylinder is oriented horizontally after rotation; top surface is playable.
-part("Plaza",Vector3.new(30,1,30),Vector3.new(0,2,12),Color3.fromRGB(232,197,136),Enum.Material.Sand,Enum.PartType.Cylinder).CFrame=CFrame.new(0,2,12)*CFrame.Angles(0,0,math.pi/2)
+part("Plaza",Vector3.new(1,30,30),Vector3.new(0,2,12),Color3.fromRGB(232,197,136),Enum.Material.Sand,Enum.PartType.Cylinder).CFrame=CFrame.new(0,2,12)*CFrame.Angles(0,0,math.pi/2)
 local zones={
  {id="plaza",name="Plaza Nusantara",x=0,z=12,r=16,color=Color3.fromRGB(255,216,117)},
  {id="hutan",name="Hutan Kata",x=-6,z=-18,r=18,color=Color3.fromRGB(94,230,255)},
@@ -51,7 +51,7 @@ local zones={
  {id="arena",name="Arena Penjaga Makna",x=-20,z=-52,r=18,color=Color3.fromRGB(255,90,122)}
 }
 local function pillar(z)
- local base=part(z.name.." Landasan",Vector3.new(z.r*1.45,.45,z.r*1.45),Vector3.new(z.x,2.4,z.z),z.color,Enum.Material.SmoothPlastic,Enum.PartType.Cylinder)
+ local base=part(z.name.." Landasan",Vector3.new(.45,z.r*1.45,z.r*1.45),Vector3.new(z.x,2.4,z.z),z.color,Enum.Material.SmoothPlastic,Enum.PartType.Cylinder)
  base.CFrame=CFrame.new(z.x,2.4,z.z)*CFrame.Angles(0,0,math.pi/2);base.Transparency=.45
  local stone=part(z.name.." Penanda",Vector3.new(3,7,3),Vector3.new(z.x,6,z.z),z.color,Enum.Material.Neon)
  stone.CanCollide=false;label(stone,z.name,6)
