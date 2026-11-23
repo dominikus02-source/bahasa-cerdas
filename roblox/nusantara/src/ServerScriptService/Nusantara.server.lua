@@ -146,9 +146,9 @@ for _,sec in ipairs(secrets) do
  end)
 end
 -- Boss is an educational trial at the arena, rather than a combat replacement.
-local boss=part("Penjaga Makna",Vector3.new(8,12,8),Vector3.new(-20,9,-52),Color3.fromRGB(237,76,124),Enum.Material.Neon,Enum.PartType.Ball)
-label(boss,"PENJAGA MAKNA | Ujian Akhir",9)
-prompt(boss,"Hadapi Ujian", "Penjaga Makna").Triggered:Connect(function(player)
+local boss=part("Penjaga Makna",Vector3.new(8,12,8),Vector3.new(-34,9,-52),Color3.fromRGB(237,76,124),Enum.Material.Neon,Enum.PartType.Ball)
+label(boss,"PRASASTI PENJAGA | Ujian Bahasa",9)
+prompt(boss,"Ujian Bahasa", "Prasasti Penjaga").Triggered:Connect(function(player)
  remote:FireClient(player,"quiz",{id="boss",npc="Penjaga Makna",q=quiz.boss.q,options=quiz.boss.options})
 end)
 remote.OnServerEvent:Connect(function(player,kind,payload)
