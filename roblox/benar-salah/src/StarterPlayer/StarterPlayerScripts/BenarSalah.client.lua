@@ -104,8 +104,8 @@ yes.MouseButton1Click:Connect(function()answer(true)end)
 no.MouseButton1Click:Connect(function()answer(false)end)
 UIS.InputBegan:Connect(function(input,processed)
  if processed or not pages.play.Visible then return end
- if input.KeyCode==Enum.KeyCode.Left or input.KeyCode==Enum.KeyCode.A then answer(true)
- elseif input.KeyCode==Enum.KeyCode.Right or input.KeyCode==Enum.KeyCode.D then answer(false)end
+ if input.KeyCode==Enum.KeyCode.Left or input.KeyCode==Enum.KeyCode.B then answer(true)
+ elseif input.KeyCode==Enum.KeyCode.Right or input.KeyCode==Enum.KeyCode.S then answer(false)end
 end)
 -- Result
 local result=pages.result
