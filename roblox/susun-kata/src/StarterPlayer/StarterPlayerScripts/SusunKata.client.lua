@@ -51,6 +51,7 @@ bottom.TextSize=15;bottom.TextColor3=colors.gold
 local back=make("TextButton",gui,"Kembali",UDim2.fromOffset(205,45),UDim2.new(1,-216,0,11),colors.blue,"⌂ KEMBALI KE LOBBY")
 back.MouseButton1Click:Connect(function()request:FireServer("returnLobby")end)
 local letters,chosen,nonce,currentLevel,locked,remaining={}, {},nil,1,true,30
+local start
 local function clearObjects(frame)
  for _,x in ipairs(frame:GetChildren()) do if x:IsA("TextButton") then x:Destroy() end end
 end
@@ -121,11 +122,11 @@ event.OnClientEvent:Connect(function(kind,data)
   menu.Visible=false;play.Visible=false
   info.Text=(data.over and "TETAP SEMANGAT!" or "KERJA BAGUS!")..
    " • SKOR "..data.score.." • BINTANG "..data.stars.." • XP "..data.xp
-  bottom.Text=data.reason.." • Pilih tingkat untuk bermain lagi."
-  request:FireServer("menu")
+  bottom.Text=data.reason.." • Tekan PILIH TINGKAT untuk main lagi."
+  start.Visible=true
  elseif kind=="message" then bottom.Text=tostring(data) end
 end)
-local start=make("TextButton",panel,"PilihTingkat",UDim2.new(.60,0,0,50),
+start=make("TextButton",panel,"PilihTingkat",UDim2.new(.60,0,0,50),
  UDim2.new(.20,0,1,-100),colors.violet,"PILIH TINGKAT")
 start.MouseButton1Click:Connect(function()
  start.Visible=false;request:FireServer("menu")
