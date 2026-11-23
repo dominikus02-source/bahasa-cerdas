@@ -47,27 +47,12 @@ soundBox.Position=UDim2.new(1,-14,0,14)
 soundBox.Size=UDim2.fromOffset(172,49)
 soundBox.BackgroundTransparency=1
 local toggle=button(soundBox,"Musik: Mati",UDim2.fromScale(1,1),UDim2.fromScale(0,0))
-local sound=Instance.new("Sound")
-sound.Name="MusikLobby";sound.Looped=true;sound.Volume=.20
-sound.Parent=SoundService
--- Pasang hanya audio Roblox yang berlisensi/diizinkan untuk experience ini.
--- BGM_ASSET_ID sengaja tidak ditebak; tanpa aset, toggle tetap menunjukkan status yang jujur.
-local BGM_ASSET_ID=""
-local musicOn=false
-local function updateAudio()
- if BGM_ASSET_ID=="" then
-  toggle.Text="Musik belum tersedia";toggle.BackgroundColor3=Color3.fromRGB(74,81,113)
-  sound:Stop();return
- end
- sound.SoundId="rbxassetid://"..BGM_ASSET_ID
- toggle.Text=musicOn and "Musik: Hidup" or "Musik: Mati"
- if musicOn then sound:Play() else sound:Stop() end
-end
-toggle.MouseButton1Click:Connect(function()
- if BGM_ASSET_ID=="" then return end
- musicOn=not musicOn;updateAudio()
-end)
-updateAudio()
+-- Status jujur untuk soft launch: musik belum aktif karena aset audio berlisensi belum dipilih.
+-- Tidak menyisipkan ID palsu, audio dari sumber tak dikenal, atau kontrol yang berpura-pura aktif.
+toggle.Text="Musik belum tersedia"
+toggle.Active=false
+toggle.AutoButtonColor=false
+toggle.BackgroundColor3=Color3.fromRGB(74,81,113)
 local bottom=Instance.new("Frame",gui)
 bottom.Name="AksiKembali";bottom.AnchorPoint=Vector2.new(0,1)
 bottom.Position=UDim2.new(0,14,1,-18);bottom.Size=UDim2.fromOffset(210,54)
