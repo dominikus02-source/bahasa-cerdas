@@ -4,6 +4,8 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Lighting = game:GetService("Lighting")
 local TweenService = game:GetService("TweenService")
+local DataStoreService=game:GetService("DataStoreService")
+local Store=DataStoreService:GetDataStore("NusantaraV02")
 local remote = ReplicatedStorage:FindFirstChild("NusantaraEvent") or Instance.new("RemoteEvent")
 remote.Name = "NusantaraEvent"
 remote.Parent = ReplicatedStorage
@@ -104,6 +106,15 @@ local secrets={
  {id="telaga",name="Telaga Bening",x=-46,z=-30}
 }
 local state={}
+local function save(player)
+ local d=state[player]
+ if not d then return end
+ local data={xp=d.xp,level=d.level,quests=d.quests,secrets=d.secrets,zones=d.zones}
+ local ok,err=pcall(function()
+  Store:UpdateAsync("player_"..player.UserId,function()return data end)
+ end)
+ if not ok then warn("Nusantara DataStore save failed",player.UserId,err) end
+end
 local function profile(player)
  if not state[player] then state[player]={xp=0,level=1,quests={},secrets={},zones={}} end
  return state[player]
@@ -112,6 +123,8 @@ local function xp(player,n)
  local s=profile(player);s.xp+=n
  while s.xp>=75*s.level do s.xp-=75*s.level;s.level+=1 end
  remote:FireClient(player,"stats",{xp=s.xp,level=s.level})
+ local sync=game:GetService("ServerScriptService"):FindFirstChild("NusantaraLevelSync")
+ if sync then sync:Fire(player,s.level) end
 end
 for _,n in ipairs(npcs) do
  local model=Instance.new("Model",root);model.Name=n.name
@@ -150,13 +163,48 @@ remote.OnServerEvent:Connect(function(player,kind,payload)
  else remote:FireClient(player,"result",{correct=false,text="Coba lagi. "..q.explain}) end
 end)
 Players.PlayerAdded:Connect(function(player)
- profile(player)
+ local d=profile(player)
+ local ok,data=pcall(function()return Store:GetAsync("player_"..player.UserId) end)
+ if ok and type(data)=="table" then
+  d.xp=math.clamp(tonumber(data.xp) or 0,0,100000)
+  d.level=math.clamp(tonumber(data.level) or 1,1,100)
+  for _,key in ipairs({"quests","secrets","zones"}) do
+   if type(data[key])=="table" then
+    for id,done in pairs(data[key]) do
+     if type(id)=="string" and type(done)=="boolean" then d[key][id]=done end
+    end
+   end
+  end
+ end
+ remote:FireClient(player,"stats",{xp=d.xp,level=d.level})
+ task.delay(2,function()
+  if player.Parent then
+   local sync=game:GetService("ServerScriptService"):FindFirstChild("NusantaraLevelSync")
+   if sync then sync:Fire(player,d.level) end
+  end
+ end)
  player.CharacterAdded:Connect(function(char)
   local hrp=char:WaitForChild("HumanoidRootPart",10)
   if hrp then hrp.CFrame=CFrame.new(0,9,24) end
  end)
 end)
-Players.PlayerRemoving:Connect(function(player) state[player]=nil end)
+Players.PlayerRemoving:Connect(function(player) save(player);state[player]=nil end)
+game:BindToClose(function()
+ for _,p in ipairs(Players:GetPlayers()) do save(p) end
+end)
+task.spawn(function()
+ while task.wait(60) do
+  for _,p in ipairs(Players:GetPlayers()) do save(p) end
+ end
+end)
+task.spawn(function()
+ local rewards=game:GetService("ServerScriptService"):WaitForChild("NusantaraReward",30)
+ if rewards then
+  rewards.Event:Connect(function(p,amount)
+   if p and p.Parent and type(amount)=="number" and amount>0 and amount<=200 then xp(p,amount) end
+  end)
+ end
+end)
 -- Zone discovery earns XP, checked server-side.
 task.spawn(function()
  while task.wait(2) do
