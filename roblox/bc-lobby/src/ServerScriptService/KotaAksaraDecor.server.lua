@@ -154,4 +154,6 @@ local bloom=Lighting:FindFirstChild("KotaAksaraBloom") or Instance.new("BloomEff
 bloom.Name="KotaAksaraBloom";bloom.Intensity=.15;bloom.Size=15;bloom.Threshold=1.6;bloom.Parent=Lighting
 -- Avoid permanent loops of costly TweenServices; low-frequency PivotTo updates.
 -- Motion is handled locally by KotaAksaraUI.client.lua (no replicated per-frame decorative updates).
+local ready=Instance.new("BoolValue")
+ready.Name="KotaDecorReady";ready.Value=true;ready.Parent=root
 print("[KotaAksara] Floating island decor ready, books=13, letters=7")
