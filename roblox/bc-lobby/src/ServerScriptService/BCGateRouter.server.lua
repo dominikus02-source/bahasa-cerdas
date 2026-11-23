@@ -39,6 +39,8 @@ for _,entry in ipairs(catalog) do
  local canEnter=not entry.unpublished and type(placeId)=="number" and placeId>0
  local old=arch:FindFirstChild("InfoGame")
  if old then old.Enabled=false end
+ local existingPrompt=arch:FindFirstChild("GerbangPilihan")
+ if existingPrompt then existingPrompt:Destroy() end
  local prompt=Instance.new("ProximityPrompt")
  prompt.Name="GerbangPilihan"
  prompt.ActionText=canEnter and "Lihat & Masuk" or "Lihat Informasi"
@@ -76,13 +78,16 @@ router.OnServerEvent:Connect(function(player,action,id)
   message(player,"error","Dekati gerbang yang dipilih sebelum masuk.")
   return
  end
- local now=os.clock()
- if now-(cooldown[player] or -100)<8 then return end
- cooldown[player]=now
  if RunService:IsStudio() then
   message(player,"error","Teleport lintas place perlu diuji dari aplikasi Roblox setelah publish.")
   return
  end
+ local now=os.clock()
+ if now-(cooldown[player] or -100)<8 then
+  message(player,"error","Tunggu sebentar sebelum mencoba lagi.")
+  return
+ end
+ cooldown[player]=now
  message(player,"loading","Menghubungkan ke "..entry.name.."...")
  local ok,err=pcall(function()
   TeleportService:TeleportAsync(placeId,{player})
