@@ -2,6 +2,8 @@
 export type IdentityBadge = "founder" | "teacher" | "trial" | "student" | "umum";
 /** trialPlan uji coba Premium Umum (POST /api/umum/trial). Tidak memberi kredit AI. */
 export const UMUM_TRIAL_PLAN = "UMUM_PREMIUM_TRIAL";
+/** Nama resmi lencana founder (keputusan CEO Okt 2026) — satu sumber untuk semua UI. */
+export const FOUNDER_PREMIUM_LABEL = "Premium Founder";
 export interface IdentitySource {
   role?: string | null;
   isFounder?: boolean;
@@ -37,11 +39,17 @@ export function resolveIdentity(user: IdentitySource, now = new Date()) {
   const badgeKind: IdentityBadge | null = founder ? "founder" : paid ? role === "GURU" ? "teacher" : "student" : umumPaid ? "umum" : trial ? "trial" : null;
   const plan = staff ? "FOUNDER" : paid ? role === "MURID" ? "MURID_PREMIUM" : "PRO" : umumPaid || umumTrial ? "UMUM_PREMIUM" : trial ? "PRO" : "FREE";
   const subscriptionStatus = staff ? "FOUNDER" : paid || umumPaid ? "ACTIVE" : trial || umumTrial ? "TRIALING" : null;
-  return { badgeKind, isPremium: paid || umumPaid, plan, subscriptionStatus } as const;
+  // Keputusan CEO (Okt 2026): founder = Premium seumur hidup di SEMUA peran
+  // (isPremium true, tanpa tanggal habis). `isPaying` tetap HANYA pembayaran
+  // nyata — pakai isPaying (bukan isPremium) untuk pendapatan/MRR/analitik.
+  const isPaying = paid || umumPaid;
+  const lifetime = founder ? ({ premiumUntil: null } as const) : {};
+  return { badgeKind, isPremium: isPaying || founder, isPaying, isLifetimePremium: founder, plan, subscriptionStatus, ...lifetime } as const;
 }
 
 export function normalizedIdentity<T extends IdentitySource>(user: T) {
   const resolved = resolveIdentity(user);
   const active = user.subscriptions?.filter(s => s.status === "ACTIVE" && new Date(s.currentPeriodEnd) > new Date() && (!s.currentPeriodStart || new Date(s.currentPeriodStart) <= new Date())).sort((a,b) => new Date(b.currentPeriodEnd).getTime() - new Date(a.currentPeriodEnd).getTime())[0];
-  return { ...user, ...resolved, premiumPlan: (resolved.isPremium ? "PRO" : "FREE") as "PRO" | "FREE", premiumUntil: active ? new Date(active.currentPeriodEnd) : user.premiumUntil ? new Date(user.premiumUntil) : null };
+  const premiumUntil = resolved.isLifetimePremium ? null : active ? new Date(active.currentPeriodEnd) : user.premiumUntil ? new Date(user.premiumUntil) : null;
+  return { ...user, ...resolved, premiumPlan: (resolved.isPremium ? "PRO" : "FREE") as "PRO" | "FREE", premiumUntil };
 }

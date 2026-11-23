@@ -11,6 +11,8 @@
  *   5. Komisi: founder GURU tetap layak; ADMIN/MURID/UMUM tidak.
  *   6. Founder tidak bisa memproses penarikan/pencairan milik sendiri.
  *
+ * PR2: 7. Founder = Premium seumur hidup di semua peran; isPaying terpisah.
+ *
  * Usage: npx tsx scripts/test-founder-access.ts
  */
 import { readFileSync, readdirSync, statSync } from "fs";
@@ -251,6 +253,28 @@ async function main() {
   ]) {
     assert(readFileSync(resolve(ROOT, f), "utf8").includes("rejectSelfMoneyAction("), `${f} memblokir aksi atas milik sendiri`);
   }
+
+
+  // ═══ 7. Founder = Premium seumur hidup (PR2) ═══
+  console.log("\n7. Founder premium di semua peran");
+  const { resolveIdentity, normalizedIdentity } = R("lib/account/identity.ts");
+  const past = new Date(Date.now() - 86400000);
+  const future = new Date(Date.now() + 30 * 86400000);
+  for (const role of ["GURU", "MURID", "UMUM"]) {
+    const r = resolveIdentity({ role, isFounder: true, isPremium: false, premiumPlan: "FREE", premiumUntil: past });
+    assert(r.isPremium === true && r.isPaying === false && r.isLifetimePremium === true, `founder ${role}: premium, bukan pembayar`);
+    assert(r.plan === "FOUNDER" && r.badgeKind === "founder" && r.premiumUntil === null, `founder ${role}: plan FOUNDER, lencana founder, tanpa tanggal habis`);
+  }
+  const paidFounder = resolveIdentity({ role: "GURU", isFounder: true, isPremium: true, premiumPlan: "PRO", premiumUntil: future });
+  assert(paidFounder.isPaying === true && paidFounder.isPremium === true, "founder yang membayar tetap tercatat isPaying (pendapatan nyata)");
+  const guru = resolveIdentity({ role: "GURU", isFounder: false, isPremium: true, premiumPlan: "PRO", premiumUntil: future });
+  assert(guru.isPremium && guru.isPaying && !guru.isLifetimePremium && !("premiumUntil" in guru), "guru berbayar: premium & pembayar, premiumUntil tidak ditimpa");
+  const exFounder = resolveIdentity({ role: "GURU", isFounder: false, isPremium: false, premiumPlan: "FREE" });
+  assert(!exFounder.isPremium && exFounder.plan === "FREE" && exFounder.badgeKind === null, "bukan founder (mis. Washadi) → gratis, tanpa lencana");
+  const admin = resolveIdentity({ role: "ADMIN", isFounder: false });
+  assert(admin.isPremium === false && admin.isPaying === false, "ADMIN non-founder tidak otomatis premium");
+  const n = normalizedIdentity({ role: "GURU", isFounder: true, isPremium: true, premiumPlan: "PRO", premiumUntil: past, subscriptions: [] });
+  assert(n.isPremium && n.premiumPlan === "PRO" && n.premiumUntil === null, "normalizedIdentity founder: PRO tanpa tanggal habis");
 
   console.log(`\n${passed} lulus, ${failed} gagal`);
   if (failed > 0) process.exit(1);

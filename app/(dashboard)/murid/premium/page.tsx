@@ -1,5 +1,6 @@
 "use client";
 
+import { FOUNDER_PREMIUM_LABEL } from "@/lib/account/identity";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, BarChart3, Brain, Check, ChevronDown, Gem, Info, Loader2, Minus, Target } from "lucide-react";
@@ -29,7 +30,7 @@ const COMPARE: Array<[string, string, string]> = [
   ["Bingkai & gelar profil", "", "Ya"],
 ];
 
-interface UserInfo { isPremium: boolean; premiumUntil: string | null }
+interface UserInfo { isPremium: boolean; premiumUntil: string | null; isFounder: boolean }
 
 export default function MuridPremiumPage() {
   const [loading, setLoading] = useState(false);
@@ -47,7 +48,7 @@ export default function MuridPremiumPage() {
       const res = await fetch("/api/user/me?fresh=1", { cache: "no-store", headers: { "Cache-Control": "no-cache" } });
       const d = await res.json();
       const u = d.user || d;
-      const next: UserInfo = { isPremium: Boolean(u.isPremium), premiumUntil: u.premiumUntil || null };
+      const next: UserInfo = { isPremium: Boolean(u.isPremium), premiumUntil: u.premiumUntil || null, isFounder: Boolean(u.isFounder) };
       setUser(next);
       return next;
     } catch {
@@ -125,7 +126,9 @@ export default function MuridPremiumPage() {
 
   const until = user?.premiumUntil ?? null;
   const daysLeft = sisaHari(until);
-  const active = Boolean(user?.isPremium) && (!until || daysLeft > 0);
+  // Founder: Premium seumur hidup (premiumUntil null dari resolveIdentity).
+  const founder = Boolean(user?.isFounder);
+  const active = founder || (Boolean(user?.isPremium) && (!until || daysLeft > 0));
   const current = PLANS[plan];
 
   return (
@@ -146,8 +149,8 @@ export default function MuridPremiumPage() {
         <div className="bp-badges" style={{ marginTop: 14 }}>
           {active ? (
             <>
-              <ProBadge label="Premium" />
-              <span className="bp-badge bp-badge--ok">{until ? `Sampai ${formatTanggal(until, { short: true })}` : "Aktif"}</span>
+              <ProBadge label={founder ? FOUNDER_PREMIUM_LABEL : "Premium"} />
+              <span className="bp-badge bp-badge--ok">{founder ? "Seumur hidup" : until ? `Sampai ${formatTanggal(until, { short: true })}` : "Aktif"}</span>
             </>
           ) : (
             <span className="bp-badge bp-badge--mute">Paket Gratis</span>
@@ -155,7 +158,7 @@ export default function MuridPremiumPage() {
         </div>
         {active && (
           <>
-            {until && daysLeft <= 7 && (
+            {until && !founder && daysLeft <= 7 && (
               <p className="bp-alert bp-alert--info" style={{ marginTop: 12 }}>
                 <Info size={18} aria-hidden="true" />Tinggal {daysLeft} hari. Perpanjang agar belajarmu tidak terputus.
               </p>
