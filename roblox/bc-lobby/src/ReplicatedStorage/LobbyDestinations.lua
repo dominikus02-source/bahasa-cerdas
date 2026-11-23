@@ -4,7 +4,7 @@ local Destinations={
   Lobby={placeId=83975639468986,universeId=10778631695,name="BahasaCerdas"},
   Nusantara={placeId=135622689114243,universeId=10778596245,name="NUSANTARA: Kebangkitan Bahasa"},
   Games={
-    ["benar-salah"]=nil,
+    ["benar-salah"]=100707509457007,
     ["susun-kata"]=nil,
     ["tebak-kata"]=nil,
     ["lari-kata"]=nil,
