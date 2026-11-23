@@ -27,7 +27,7 @@ local function part(name,size,pos,color,material,shape,parent)
 end
 local function label(parent,txt,height)
  local bg=Instance.new("BillboardGui",parent)
- bg.Name="Nameplate";bg.Size=UDim2.new(0,220,0,45);bg.StudsOffsetWorldSpace=Vector3.new(0,height,0);bg.AlwaysOnTop=true
+ bg.Name="Nameplate";bg.Size=UDim2.new(0,165,0,35);bg.StudsOffsetWorldSpace=Vector3.new(0,height,0);bg.MaxDistance=parent.Name=="Tubuh" and 28 or 58;bg.AlwaysOnTop=true
  local t=Instance.new("TextLabel",bg);t.Size=UDim2.fromScale(1,1);t.BackgroundTransparency=.22;t.BackgroundColor3=Color3.fromRGB(23,19,54)
  t.Text=txt;t.TextColor3=Color3.fromRGB(255,241,188);t.TextScaled=true;t.Font=Enum.Font.GothamBold
  Instance.new("UICorner",t).CornerRadius=UDim.new(0,10)
