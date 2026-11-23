@@ -89,6 +89,8 @@ if welcome then
   local c1=CFrame.lookAt(Vector3.new(65,76,104),Vector3.new(0,4,-13))
   local c2=CFrame.lookAt(Vector3.new(40,69,92),Vector3.new(0,4,-13))
   camera.CFrame=c1
+  -- Scriptable cameras must also move Focus or the live cloud renderer may show an empty white scene.
+  camera.Focus=CFrame.new(0,4,-13)
   local move=TweenService:Create(camera,TweenInfo.new(7,Enum.EasingStyle.Sine,Enum.EasingDirection.InOut),{CFrame=c2})
   move:Play()
   local restored=false
@@ -130,6 +132,11 @@ task.spawn(function()
  local t=0
  while gui.Parent and world.Parent do
   task.wait(.23)
+  if gui:GetAttribute("HematGerak") then
+   -- Reduce decorative local CFrame updates on low-power devices.
+   task.wait(.77)
+   continue
+  end
   t+=.23
   for _,item in ipairs(items) do
    if item.model.Parent then

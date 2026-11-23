@@ -166,4 +166,6 @@ remote.OnServerEvent:Connect(function(player,action)
  end
 end)
 Players.PlayerRemoving:Connect(function(p) returnCooldown[p]=nil end)
+local ready=Instance.new("BoolValue")
+ready.Name="BCLobbyReady";ready.Value=true;ready.Parent=root
 print("[BC Lobby] Step 1 ready, gates="..#catalog..", teleport=disabled")

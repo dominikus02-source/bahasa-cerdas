@@ -15,6 +15,9 @@
       },
       "LobbyDestinations": {
         "$path": "src/ReplicatedStorage/LobbyDestinations.lua"
+      },
+      "NaturalTheme": {
+        "$path": "src/ReplicatedStorage/NaturalTheme.lua"
       }
     },
     "ServerScriptService": {

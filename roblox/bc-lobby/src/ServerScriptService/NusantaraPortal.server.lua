@@ -14,11 +14,12 @@ root.Parent=world
 local remote=Instance.new("RemoteEvent")
 remote.Name="NusantaraPortalEvent"
 remote.Parent=RS
-local navy=Color3.fromRGB(17,28,58)
-local violet=Color3.fromRGB(124,58,237)
-local pink=Color3.fromRGB(236,72,153)
-local gold=Color3.fromRGB(251,191,36)
-local blue=Color3.fromRGB(37,99,235)
+local C=require(RS:WaitForChild("NaturalTheme")).Color
+local navy=C.Ink
+local violet=C.BrandSoft
+local pink=C.Copper
+local gold=C.Sand
+local blue=C.Stone
 local function block(name,size,cf,color,material)
  local p=Instance.new("Part",root)
  p.Name=name;p.Anchored=true;p.CanCollide=false;p.CastShadow=false
@@ -26,15 +27,15 @@ local function block(name,size,cf,color,material)
  return p
 end
 local x,z=27,28
-local deck=block("Pijakan",Vector3.new(18,.5,15),CFrame.new(x,1.8,z),navy)
+local deck=block("Pijakan",Vector3.new(18,.5,15),CFrame.new(x,1.8,z),C.StoneLight,Enum.Material.Slate)
 deck.CanCollide=true
-local left=block("Pilar Kiri",Vector3.new(3,15,3),CFrame.new(x-6.8,9,z),violet)
-local right=block("Pilar Kanan",Vector3.new(3,15,3),CFrame.new(x+6.8,9,z),blue)
-local arch=block("Lengkung Aksara",Vector3.new(16,3,3),CFrame.new(x,16,z),pink)
-local portal=block("Cahaya Gerbang",Vector3.new(10,12,.8),CFrame.new(x,8.3,z),violet,Enum.Material.Neon)
-portal.Transparency=.47;portal.CanCollide=false
-local outline=block("Kilau Portal",Vector3.new(12,.6,1.2),CFrame.new(x,3.4,z),gold,Enum.Material.Neon)
-outline.Transparency=.2
+local left=block("Pilar Kiri",Vector3.new(3,15,3),CFrame.new(x-6.8,9,z),C.StoneLight,Enum.Material.Slate)
+local right=block("Pilar Kanan",Vector3.new(3,15,3),CFrame.new(x+6.8,9,z),C.StoneLight,Enum.Material.Slate)
+local arch=block("Lengkung Aksara",Vector3.new(16,3,3),CFrame.new(x,16,z),C.Wood,Enum.Material.WoodPlanks)
+local portal=block("Cahaya Gerbang",Vector3.new(10,12,.8),CFrame.new(x,8.3,z),C.Water,Enum.Material.Glass)
+portal.Transparency=.67;portal.CanCollide=false
+local outline=block("Kilau Portal",Vector3.new(12,.6,1.2),CFrame.new(x,3.4,z),C.Copper,Enum.Material.SmoothPlastic)
+outline.Transparency=.08
 local sign=Instance.new("BillboardGui",arch)
 sign.Name="NusantaraTitle";sign.Size=UDim2.fromOffset(270,75)
 sign.StudsOffsetWorldSpace=Vector3.new(0,5,0)
