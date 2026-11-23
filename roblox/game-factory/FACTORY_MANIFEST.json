@@ -1,0 +1,80 @@
+[
+  {
+    "id": "tebak-kata",
+    "title": "Tebak Kata",
+    "status": "playable-source",
+    "contentSource": "tebak-kata"
+  },
+  {
+    "id": "susun-kata",
+    "title": "Susun Kata",
+    "status": "playable-source",
+    "contentSource": "susun-kata"
+  },
+  {
+    "id": "menara",
+    "title": "Menara Cerdas",
+    "status": "playable-curated",
+    "contentSource": "question-bank"
+  },
+  {
+    "id": "irama-kata",
+    "title": "Irama Kata",
+    "status": "playable-source",
+    "contentSource": "irama-kata"
+  },
+  {
+    "id": "petualangan-kata",
+    "title": "Petualangan Kata",
+    "status": "preview-await-mechanics",
+    "contentSource": "petualangan-kata"
+  },
+  {
+    "id": "bermain-kata",
+    "title": "Bermain Kata",
+    "status": "preview-await-mechanics",
+    "contentSource": "bermain-kata"
+  },
+  {
+    "id": "teka-teki-silang",
+    "title": "Teka-Teki Silang",
+    "status": "preview-await-puzzle-generator",
+    "contentSource": "teka-teki-silang"
+  },
+  {
+    "id": "lari-kata",
+    "title": "Lari Kata",
+    "status": "preview-await-api",
+    "contentSource": ""
+  },
+  {
+    "id": "kuis-tempur",
+    "title": "Kuis Tempur",
+    "status": "preview-await-battle",
+    "contentSource": "question-bank"
+  },
+  {
+    "id": "tantang",
+    "title": "Tantang Teman",
+    "status": "preview-await-matchmaking",
+    "contentSource": ""
+  },
+  {
+    "id": "adu-cepat",
+    "title": "Adu Cepat",
+    "status": "preview-await-matchmaking",
+    "contentSource": ""
+  },
+  {
+    "id": "rpg",
+    "title": "Pendekar Suryakerta",
+    "status": "preview-premium-unpublished",
+    "contentSource": ""
+  },
+  {
+    "id": "benar-salah",
+    "title": "Benar atau Salah",
+    "status": "existing-place-candidate",
+    "contentSource": "existing server bank"
+  }
+]

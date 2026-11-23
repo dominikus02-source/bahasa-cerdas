@@ -1,0 +1,50 @@
+{
+  "tebak-kata": {
+    "source": "components/game/TebakKata.tsx",
+    "sha256": "cdcb2789fe85c5cddd696125849d3bf312354d6058928dbc0a377f83d0f78548",
+    "entries": 254,
+    "kind": "word-clues"
+  },
+  "susun-kata": {
+    "source": "components/game/SusunKata.tsx",
+    "sha256": "b4d25f6f3971cf561578cbcde04f58a189917848561cada125dc2fa8f1f07ac1",
+    "entries": 173,
+    "kind": "word-meaning"
+  },
+  "bermain-kata": {
+    "source": "components/game/BermainKataGame.tsx",
+    "sha256": "0267e8674b0ae6df1cac96d42d3e6698d16278d60422f17b9a99f3f2dfb1cad4",
+    "entries": 78,
+    "kind": "word-hint"
+  },
+  "bermain-kata-pairs": {
+    "source": "components/game/BermainKataGame.tsx",
+    "sha256": "0267e8674b0ae6df1cac96d42d3e6698d16278d60422f17b9a99f3f2dfb1cad4",
+    "entries": 15,
+    "kind": "meaning-pairs"
+  },
+  "irama-kata": {
+    "source": "components/game/IramaKata.tsx",
+    "sha256": "0f293161486f692b3b5cb1d1996df7635106fd27b8d6ea9ff4c1a35ec6fbe52f",
+    "entries": 5,
+    "kind": "categorized-words"
+  },
+  "petualangan-kata": {
+    "source": "components/game/ZelbyDash.tsx",
+    "sha256": "0eab171b68fd8359f97231dbc9114e28f331a896b64839eb8fd247fc1034160f",
+    "entries": 3,
+    "kind": "categorized-words"
+  },
+  "teka-teki-silang": {
+    "source": "lib/game/tts/word-bank.ts",
+    "sha256": "70640b1be7fcd57a4991037b8063f61f79096a0285488aa7fc538b2330dc6a33",
+    "entries": 11,
+    "kind": "theme-clue"
+  },
+  "question-bank": {
+    "source": "lib/game/question-bank.ts",
+    "sha256": "37be89a472192a6ad353c99d8810f8d97981663601d7b2af2467eb189e703f13",
+    "entries": 142,
+    "kind": "curated-mcq"
+  }
+}

@@ -1,0 +1,3 @@
+-- SOURCE: components/game/ZelbyDash.tsx
+-- SHA256: 0eab171b68fd8359f97231dbc9114e28f331a896b64839eb8fd247fc1034160f
+return {{["group"]="KATA_BENDA",["words"]={"meja","buku","kursi","sepeda","pensil","pohon","burung","rumah","topi","roti","sepatu","jemari","kunci","lampu","piring","gelas","pintu"}},{["group"]="KATA_KERJA",["words"]={"makan","minum","lari","tidur","tulis","baca","lompat","duduk","masak","cuci","main","tanam","gambar","nyanyi","renang","lukis"}},{["group"]="KATA_SIFAT",["words"]={"besar","kecil","tinggi","rendah","cantik","rajin","cepat","panas","dingin","manis","bersih","kuat","cerah","lembut","ringan","berani"}}}

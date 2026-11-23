@@ -1,0 +1,77 @@
+[
+  {
+    "source": "BESAR",
+    "answer": "KECIL",
+    "kind": "lawan"
+  },
+  {
+    "source": "CEPAT",
+    "answer": "LAMBAT",
+    "kind": "lawan"
+  },
+  {
+    "source": "TERANG",
+    "answer": "GELAP",
+    "kind": "lawan"
+  },
+  {
+    "source": "BERSIH",
+    "answer": "KOTOR",
+    "kind": "lawan"
+  },
+  {
+    "source": "TINGGI",
+    "answer": "RENDAH",
+    "kind": "lawan"
+  },
+  {
+    "source": "SENANG",
+    "answer": "GEMBIRA",
+    "kind": "sinonim"
+  },
+  {
+    "source": "CERDAS",
+    "answer": "PINTAR",
+    "kind": "sinonim"
+  },
+  {
+    "source": "RAJIN",
+    "answer": "TEKUN",
+    "kind": "sinonim"
+  },
+  {
+    "source": "TENANG",
+    "answer": "DAMAI",
+    "kind": "sinonim"
+  },
+  {
+    "source": "SEDIH",
+    "answer": "GEMBIRA",
+    "kind": "lawan"
+  },
+  {
+    "source": "KUAT",
+    "answer": "LEMAH",
+    "kind": "lawan"
+  },
+  {
+    "source": "RAMAI",
+    "answer": "SEPI",
+    "kind": "lawan"
+  },
+  {
+    "source": "MANIS",
+    "answer": "PAHIT",
+    "kind": "lawan"
+  },
+  {
+    "source": "HALUS",
+    "answer": "KASAR",
+    "kind": "lawan"
+  },
+  {
+    "source": "BERANI",
+    "answer": "PENAKUT",
+    "kind": "lawan"
+  }
+]
