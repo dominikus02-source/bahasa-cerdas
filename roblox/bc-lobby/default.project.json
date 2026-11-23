@@ -1,5 +1,5 @@
 {
-  "name": "BahasaCerdas - Kota Belajar (Stage 1)",
+  "name": "BahasaCerdas - Kota Aksara Langit",
   "tree": {
     "$className": "DataModel",
     "Workspace": {
@@ -12,6 +12,9 @@
       "$className": "ReplicatedStorage",
       "LobbyCatalog": {
         "$path": "src/ReplicatedStorage/LobbyCatalog.lua"
+      },
+      "LobbyDestinations": {
+        "$path": "src/ReplicatedStorage/LobbyDestinations.lua"
       }
     },
     "ServerScriptService": {
