@@ -130,6 +130,11 @@ task.spawn(function()
  local t=0
  while gui.Parent and world.Parent do
   task.wait(.23)
+  if gui:GetAttribute("HematGerak") then
+   -- Reduce decorative local CFrame updates on low-power devices.
+   task.wait(.77)
+   continue
+  end
   t+=.23
   for _,item in ipairs(items) do
    if item.model.Parent then
