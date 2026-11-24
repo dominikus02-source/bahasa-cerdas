@@ -51,3 +51,9 @@
 5. Record any Roblox error messages and the game name, device model and time for debugging.
 
 This is an early **public 16+ QA release**, not a production-ready all-age classroom game. Production public NUSANTARA remains unchanged.
+
+## Product decision — 24 November 2026
+- **Pendekar Suryakerta is excluded from the live QA lobby** at the user's direction because its gameplay is not ready. Its existing QA place was not deleted, but the lobby's 3D gate, catalog card, and route are removed; `rpg` destination is set to nil in the isolated QA release source.
+- Lobby now advertises **12 games** and the updated QA `.rbxl` was successfully published to existing start Place ID `83804286143888` (Studio PublishSuccessful at 2026-11-24T03:29:42Z).
+- This exclusion applies to QA lobby. The source branch catalog still needs sync before merge; the stored rpg place may remain individually accessible to authorized users via its original URL.
+- New QA playable prototypes were built for TTS, Lari Kata, Tantang Teman, Adu Cepat, Kuis Tempur and RPG, but RPG will not be included until approved. TTS, Lari Kata, Tantang Teman and Adu Cepat confirmed republished; Kuis Tempur is not yet confirmed updated. Runtime gameplay QA still incomplete.
