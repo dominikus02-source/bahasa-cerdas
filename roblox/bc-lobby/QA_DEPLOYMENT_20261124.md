@@ -1,6 +1,6 @@
 # Roblox QA deployment — 24 November 2026
 
-**Status:** all 13 game place uploads and updated lobby mapping published successfully in the isolated **private** QA experience. **Not a production release, gameplay parity or real teleport QA.**
+**Status updated 24 November 2026:** All 13 game places and QA lobby are published. Roblox Creator Dashboard confirmed **public access for ages 16+** after release. **Players under 16 are not yet eligible; 1,000 Robux fee option or other Roblox requirements remain**, and no fee was paid. Several games are still preview-only; live cross-place teleport QA remains outstanding.
 
 - QA experience **BahasaCerdas Kota Aksara QA**
 - Universe ID: `10778759021`
@@ -8,6 +8,9 @@
 - Entry: https://www.roblox.com/games/83804286143888/
 - The public NUSANTARA experience and legacy BahasaCerdas lobby were not modified.
 - Device support selected at creation: PC, tablet, phone; VR disabled; data-sharing setting off.
+- Roblox Player on PC **successfully joined** lobby Place ID `83804286143888` in Universe `10778759021` (GameJoinLoadTime log dated 24 Nov 2026).
+- QA-only lobby was republished again after a UX improvement: selecting a game card now requests **server-validated direct teleport**, instead of only highlighting the distant gateway. Studio logged PublishSuccessful to the same start Place ID; latest QA lobby Rojo build and Luau parse both PASS. The cross-place transfer itself is not yet verified through Roblox Player.
+- Public NUSANTARA and older legacy lobby remain untouched.
 
 | Game id | QA Place ID |
 |---|---:|
@@ -35,16 +38,16 @@
 - Original repo source branch does **not** contain the private-QA-specific numeric IDs or routing override. Do **not** merge QA routing into production without a deliberate release plan.
 
 ## Still unverified
-- Direct Roblox Player teleport Lobby → all 13 places → Lobby.
+- Direct Roblox Player teleport Lobby → all 13 places → Lobby (the real lobby join itself has been confirmed).
 - Multiplayer gameplay / mobile screens / frame rate on devices.
 - Several worlds are **preview-only** and do not offer a complete port of the original web game: `lari-kata`, `teka-teki-silang`, `tantang`, `adu-cepat`, `kuis-tempur`, `rpg`. The `rpg` portal is explicitly QA-only marked as preview.
-- Private QA experience may require signing in as its creator or granting collaborator/tester access; do not open it publicly without approval.
+- Audience is **public ages 16+**; accounts under 16 cannot play until Roblox's additional requirements are met. The account owner requested public release and it was performed in Creator Dashboard. No Robux purchase made.
 
 ## Test guide
-1. Sign into the Roblox account owning or authorized for **BahasaCerdas Kota Aksara QA**.
+1. Sign in with a Roblox account **age 16+** while Roblox's younger-audience requirements are incomplete.
 2. Open https://www.roblox.com/games/83804286143888/ and launch.
-3. Visit each of 13 portals; verify each destination loads and the Return to Kota/Lobby button works.
+3. Press **Mulai Petualangan**, then **Pilih Gim** and select a card to enter the chosen arena directly, or walk to its portal. Verify each destination loads and the Return to Kota/Lobby button works.
 4. For preview-only projects, evaluate visual worlds and navigation—not complete gameplay.
 5. Record any Roblox error messages and the game name, device model and time for debugging.
 
-This was a deliberate private QA deployment; production public NUSANTARA remains unchanged.
+This is an early **public 16+ QA release**, not a production-ready all-age classroom game. Production public NUSANTARA remains unchanged.
