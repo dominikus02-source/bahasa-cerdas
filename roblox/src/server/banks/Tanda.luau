@@ -34,9 +34,9 @@ return {
 		1,
 		{ "a02" },
 		P,
-		"Hati-hati di jalan!",
-		{ "Hati hati di jalan!", "Hati-hati di jalan.", "hati-hati di jalan!" },
-		"Kata ulang utuh memakai tanda hubung. Seruan kuat boleh diakhiri tanda seru.",
+		"Hati-hati di jalan.",
+		{ "Hati hati di jalan.", "Hati-hati dijalan.", "hati-hati di jalan." },
+		"Kata ulang utuh memakai tanda hubung tanpa spasi. Kata depan di tetap terpisah. Kalimat berita diakhiri titik.",
 		{
 			Id = "w_hubung",
 			Word = "hati-hati",

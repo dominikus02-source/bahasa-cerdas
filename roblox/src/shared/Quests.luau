@@ -2,9 +2,9 @@ local Quests = {
 	Daily = {
 		{
 			Id = "q_ejaan10",
-			Goal = 10,
+			Goal = 5,
 			Reward = 50,
-			Text = "Jawab 10 soal ejaan dengan benar.",
+			Text = "Jawab 5 soal ejaan dengan benar.",
 		},
 		{
 			Id = "q_tantangan",

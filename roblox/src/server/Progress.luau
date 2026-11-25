@@ -338,18 +338,19 @@ function Progress.applyLook(player: Player, profile)
 	local titleItem = Cosmetics.ById[titleId]
 	if head and titleItem and titleItem.Title then
 		local billboard = Instance.new("BillboardGui")
-		billboard.Size = UDim2.fromOffset(180, 36)
-		billboard.StudsOffsetWorldSpace = Vector3.new(0, 2.4, 0)
+		billboard.Size = UDim2.fromOffset(140, 22)
+		billboard.StudsOffsetWorldSpace = Vector3.new(0, 1.8, 0)
 		billboard.AlwaysOnTop = false
-		billboard.MaxDistance = 80
+		billboard.MaxDistance = 45
 		billboard.Parent = head
 		local label = Instance.new("TextLabel")
 		label.BackgroundColor3 = Palette.Navy
-		label.BackgroundTransparency = 0.25
+		label.BackgroundTransparency = 0.2
 		label.Size = UDim2.fromScale(1, 1)
-		label.Font = Enum.Font.FredokaOne
+		label.Font = Enum.Font.GothamBold
 		label.TextColor3 = Palette.Kunyit
-		label.TextScaled = true
+		label.TextSize = 13
+		label.TextScaled = false
 		label.Text = titleItem.Title
 		label.AutoLocalize = false
 		label.Parent = billboard
@@ -374,6 +375,27 @@ local function questRows(definitions, bucket)
 		})
 	end
 	return rows
+end
+
+function Progress.nextGoal(profile): string
+	Progress.ensure(profile)
+	if not profile.flags.tutorial then
+		return "Lewati tiga gerbang di depanmu."
+	end
+	if not profile.flags.world then
+		return "Ikuti cahaya ke portal Pasar Ejaan."
+	end
+	local daily = profile.quests.daily.q_ejaan10
+	if type(daily) == "table" and not daily.done then
+		return "Misi hari ini: " .. tostring(daily.p or 0) .. "/5 soal benar."
+	end
+	if (profile.stars.a01 or 0) < 1 then
+		return "Raih 1 bintang di Lapak Kapital."
+	end
+	if (profile.stars.a02 or 0) < 1 then
+		return "Raih 1 bintang di Gang Tanda Baca."
+	end
+	return "Tantang Raksasa Typo di ujung pasar."
 end
 
 function Progress.snapshot(profile)

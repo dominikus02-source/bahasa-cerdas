@@ -17,6 +17,8 @@ local function fontNamed(name: string, fallback: Enum.Font): Enum.Font
 end
 
 local FONT_BODY = fontNamed("BuilderSans", Enum.Font.GothamMedium)
+local FONT_BOLD = fontNamed("BuilderSansBold", Enum.Font.GothamBold)
+local FONT_DISPLAY = fontNamed("FredokaOne", Enum.Font.GothamBold)
 
 local function part(parent, name, size, cf, color, material, collide)
 	local piece = Instance.new("Part")
@@ -36,36 +38,54 @@ local function part(parent, name, size, cf, color, material, collide)
 	return piece
 end
 
-local function faceLabel(host: BasePart, text: string, font: Enum.Font)
+-- Papan krem, teks tinta. "jawaban" cukup besar untuk dibaca sambil berlari, tanpa TextScaled.
+local function faceLabel(host: BasePart, text: string, kind: string)
+	host.Color = Palette.Plate
+	host.Material = Enum.Material.SmoothPlastic
 	local gui = Instance.new("SurfaceGui")
 	gui.Name = "Tulisan"
 	gui.Face = Enum.NormalId.Front
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = 26
-	gui.LightInfluence = 0.15
+	gui.PixelsPerStud = if kind == "jawaban" then 32 else 24
+	gui.LightInfluence = 0
+	gui.MaxDistance = 90
 	gui.Parent = host
 	local label = Instance.new("TextLabel")
 	label.Name = "Teks"
-	label.BackgroundColor3 = Palette.Navy
-	label.BackgroundTransparency = 0.12
+	label.BackgroundColor3 = Palette.Plate
+	label.BackgroundTransparency = 0.04
 	label.Size = UDim2.fromScale(1, 1)
-	label.Font = font
-	label.TextColor3 = Palette.Krem
-	label.TextScaled = true
+	label.TextColor3 = Palette.Ink
+	label.TextScaled = false
 	label.TextWrapped = true
+	label.TextXAlignment = Enum.TextXAlignment.Center
+	label.TextYAlignment = Enum.TextYAlignment.Center
 	label.Text = text
 	label.AutoLocalize = false
 	label.Parent = gui
+	if kind == "judul" then
+		label.Font = FONT_DISPLAY
+		label.TextSize = 28
+	elseif kind == "jawaban" then
+		label.Font = FONT_BOLD
+		label.TextSize = 32
+	else
+		label.Font = FONT_BODY
+		label.TextSize = 22
+	end
+	local plateCorner = Instance.new("UICorner")
+	plateCorner.CornerRadius = UDim.new(0, 10)
+	plateCorner.Parent = label
+	local plateEdge = Instance.new("UIStroke")
+	plateEdge.Color = Palette.WoodDark
+	plateEdge.Thickness = 2
+	plateEdge.Parent = label
 	local pad = Instance.new("UIPadding")
-	pad.PaddingTop = UDim.new(0.08, 0)
-	pad.PaddingBottom = UDim.new(0.08, 0)
-	pad.PaddingLeft = UDim.new(0.06, 0)
-	pad.PaddingRight = UDim.new(0.06, 0)
+	pad.PaddingTop = UDim.new(0, 6)
+	pad.PaddingBottom = UDim.new(0, 6)
+	pad.PaddingLeft = UDim.new(0, 8)
+	pad.PaddingRight = UDim.new(0, 8)
 	pad.Parent = label
-	local limit = Instance.new("UITextSizeConstraint")
-	limit.MinTextSize = 14
-	limit.MaxTextSize = 42
-	limit.Parent = label
 	return label
 end
 
@@ -122,13 +142,13 @@ local function arch(model, cf: CFrame, color: Color3)
 	local sign = part(
 		model,
 		"PapanGerbang",
-		Vector3.new(7.2, 2.3, 0.4),
-		lookBack(cf, Vector3.new(0, 10.4, 0)),
-		Palette.Navy,
+		Vector3.new(7.4, 2.6, 0.28),
+		lookBack(cf, Vector3.new(0, 9.2, 0)),
+		Palette.Plate,
 		Enum.Material.SmoothPlastic,
 		false
 	)
-	local label = faceLabel(sign, "", Enum.Font.FredokaOne)
+	local label = faceLabel(sign, "", "jawaban")
 	return gate, label
 end
 
@@ -159,19 +179,20 @@ local function joglo(parent, cf: CFrame, width: number, depth: number, wall: Col
 		)
 	end
 	local rise = 3.2
-	local roofY = 6.4
+	local roofY = 6.2
 	local left = Instance.new("WedgePart")
 	left.Name = "AtapKiri"
-	left.Size = Vector3.new(depth + 1.4, rise, width / 2 + 0.6)
+	left.Size = Vector3.new(width + 1.6, rise, depth / 2 + 0.6)
 	left.Anchored = true
 	left.CanCollide = false
+	left.CastShadow = false
 	left.Color = Palette.Awning
 	left.Material = Enum.Material.SmoothPlastic
-	left.CFrame = cf * CFrame.new(0, roofY, width / 4) * CFrame.Angles(0, math.rad(180), 0)
+	left.CFrame = cf * CFrame.new(0, roofY, depth / 4) * CFrame.Angles(0, math.rad(180), 0)
 	left.Parent = model
 	local right = left:Clone()
 	right.Name = "AtapKanan"
-	right.CFrame = cf * CFrame.new(0, roofY, -width / 4)
+	right.CFrame = cf * CFrame.new(0, roofY, -depth / 4)
 	right.Parent = model
 	part(
 		model,
@@ -244,24 +265,24 @@ local function buildLane(parent, arenaId: string, slot: number, origin: CFrame, 
 	local floor = part(
 		model,
 		"Lantai",
-		Vector3.new(42, 1, 50),
-		origin * CFrame.new(0, 0.5, -6),
+		Vector3.new(36, 0.4, 52),
+		origin * CFrame.new(0, 0.55, -8),
 		Palette.Stone,
 		Enum.Material.Cobblestone,
 		true
 	)
 	model.PrimaryPart = floor
-	local boardPosition = (origin * CFrame.new(0, 7.2, -16)).Position
+	local boardPosition = (origin * CFrame.new(0, 4.2, -16)).Position
 	local board = part(
 		model,
 		"PapanSoal",
-		Vector3.new(18, 7.5, 0.6),
+		Vector3.new(14, 3.2, 0.5),
 		CFrame.lookAt(boardPosition, boardPosition - origin.LookVector),
 		Palette.Navy,
 		Enum.Material.SmoothPlastic,
 		false
 	)
-	local boardLabel = faceLabel(board, "", Enum.Font.FredokaOne)
+	local boardLabel = faceLabel(board, "", "judul")
 	local gates = {}
 	local labels = {}
 	for index, x in { -13.5, -4.5, 4.5, 13.5 } do
@@ -316,10 +337,15 @@ local function applyLighting()
 	atmosphere.Parent = Lighting
 	local bloom = Lighting:FindFirstChild("BCBloom") or Instance.new("BloomEffect")
 	bloom.Name = "BCBloom"
-	bloom.Intensity = 0.35
-	bloom.Size = 18
-	bloom.Threshold = 1.7
+	bloom.Intensity = 0.4
+	bloom.Size = 20
+	bloom.Threshold = 1.6
 	bloom.Parent = Lighting
+	local sun = Lighting:FindFirstChild("BCSun") or Instance.new("SunRaysEffect")
+	sun.Name = "BCSun"
+	sun.Intensity = 0.08
+	sun.Spread = 0.4
+	sun.Parent = Lighting
 	local color = Lighting:FindFirstChild("BCColor") or Instance.new("ColorCorrectionEffect")
 	color.Name = "BCColor"
 	color.Saturation = 0.08
@@ -410,19 +436,19 @@ function World.build(role: string, onPrompt)
 		local trunk = part(
 			lobby,
 			"Batang",
-			Vector3.new(4, 16, 4),
-			CFrame.new(0, 8, 0),
+			Vector3.new(14, 3.4, 3.4),
+			CFrame.new(0, 7, 0),
 			Palette.WoodDark,
 			Enum.Material.Wood,
 			true
 		)
 		trunk.Shape = Enum.PartType.Cylinder
-		trunk.CFrame = CFrame.new(0, 8, 0) * CFrame.Angles(0, 0, math.rad(90))
+		trunk.CFrame = CFrame.new(0, 7, 0) * CFrame.Angles(0, 0, math.rad(90))
 		local leaves = part(
 			lobby,
 			"Daun",
-			Vector3.new(16, 10, 16),
-			CFrame.new(0, 18, 0),
+			Vector3.new(18, 12, 18),
+			CFrame.new(0, 15, 0),
 			Palette.Leaf,
 			Enum.Material.Grass,
 			false
@@ -434,7 +460,7 @@ function World.build(role: string, onPrompt)
 				lobby,
 				"Buah" .. index,
 				Vector3.new(1.5, 1.5, 1.5),
-				CFrame.new(math.cos(angle) * 6.5, 16 + math.sin(index) * 0.8, math.sin(angle) * 6.5),
+				CFrame.new(math.cos(angle) * 7.2, 14.5 + (index % 3) * 0.6, math.sin(angle) * 7.2),
 				Palette.Ungu,
 				Enum.Material.Neon,
 				false
@@ -452,12 +478,12 @@ function World.build(role: string, onPrompt)
 			Enum.Material.SmoothPlastic,
 			false
 		)
-		faceLabel(treeSign, "Pohon Aksara", Enum.Font.FredokaOne)
+		faceLabel(treeSign, "Pohon Aksara", "judul")
 
 		local nara = Instance.new("Model")
 		nara.Name = "MbakNara"
 		nara.Parent = lobby
-		local naraCf = CFrame.new(12, 0, 48)
+		local naraCf = CFrame.new(-16, 0.8, 102)
 		part(
 			nara,
 			"Kaki",
@@ -487,28 +513,32 @@ function World.build(role: string, onPrompt)
 		)
 		head.Shape = Enum.PartType.Ball
 		local name = Instance.new("BillboardGui")
-		name.Size = UDim2.fromOffset(160, 36)
-		name.StudsOffsetWorldSpace = Vector3.new(0, 2, 0)
+		name.Size = UDim2.fromOffset(120, 22)
+		name.StudsOffsetWorldSpace = Vector3.new(0, 1.6, 0)
+		name.MaxDistance = 50
+		name.AlwaysOnTop = false
 		name.Parent = head
 		local nameLabel = Instance.new("TextLabel")
 		nameLabel.Size = UDim2.fromScale(1, 1)
-		nameLabel.BackgroundTransparency = 1
-		nameLabel.Font = Enum.Font.FredokaOne
-		nameLabel.TextColor3 = Palette.Navy
-		nameLabel.TextScaled = true
+		nameLabel.BackgroundColor3 = Palette.Navy
+		nameLabel.BackgroundTransparency = 0.25
+		nameLabel.Font = Enum.Font.GothamBold
+		nameLabel.TextColor3 = Palette.Krem
+		nameLabel.TextSize = 14
+		nameLabel.TextScaled = false
 		nameLabel.Text = "Mbak Nara"
 		nameLabel.AutoLocalize = false
 		nameLabel.Parent = name
 		local speech = part(
 			nara,
 			"Ucapan",
-			Vector3.new(12, 3.2, 0.4),
-			CFrame.lookAt(Vector3.new(12, 8.6, 46.5), Vector3.new(12, 8.6, 60)),
+			Vector3.new(8, 2.2, 0.3),
+			CFrame.lookAt(Vector3.new(-16, 9.4, 100.2), Vector3.new(-16, 9.4, 112)),
 			Palette.Navy,
 			Enum.Material.SmoothPlastic,
 			false
 		)
-		faceLabel(speech, "Pulihkan 13 Batu Aksara sebelum kota lupa cara bicara.", FONT_BODY)
+		faceLabel(speech, "Lari ke gerbang. Pilih kalimat yang tepat.", "isi")
 		local talk = Instance.new("ProximityPrompt")
 		talk.ActionText = "Sapa"
 		talk.ObjectText = "Mbak Nara"
@@ -542,7 +572,7 @@ function World.build(role: string, onPrompt)
 				Enum.Material.SmoothPlastic,
 				false
 			)
-			faceLabel(sign, info.Text, Enum.Font.FredokaOne)
+			faceLabel(sign, info.Text, "judul")
 			local button = Instance.new("ProximityPrompt")
 			button.ActionText = "Buka"
 			button.ObjectText = info.Text
@@ -556,7 +586,7 @@ function World.build(role: string, onPrompt)
 
 		for index, district in Districts do
 			local angle = math.rad(-90 + (index - 1) * 60)
-			local position = Vector3.new(math.cos(angle) * 74, 0, math.sin(angle) * 74)
+			local position = Vector3.new(math.cos(angle) * 86, 0.35, math.sin(angle) * 86)
 			local cf = CFrame.lookAt(position, Vector3.new(0, 0, 8))
 			local color = Palette[district.Color] or Palette.Stone
 			if not district.Open then
@@ -568,7 +598,7 @@ function World.build(role: string, onPrompt)
 			local sign = part(
 				lobby,
 				district.Id,
-				Vector3.new(10, 3, 0.4),
+				Vector3.new(8.4, 2.6, 0.3),
 				faceToward(cf, Vector3.new(0, 12.2, 0)),
 				Palette.Navy,
 				Enum.Material.SmoothPlastic,
@@ -578,7 +608,7 @@ function World.build(role: string, onPrompt)
 			if not district.Open then
 				caption = district.Name .. "\nSegera hadir"
 			end
-			faceLabel(sign, caption, Enum.Font.FredokaOne)
+			faceLabel(sign, caption, "judul")
 			local button = Instance.new("ProximityPrompt")
 			button.ActionText = if district.Open then "Masuk" else "Lihat"
 			button.ObjectText = district.Name
@@ -614,7 +644,7 @@ function World.build(role: string, onPrompt)
 				Enum.Material.SmoothPlastic,
 				false
 			)
-			faceLabel(sign, info.Title, Enum.Font.FredokaOne)
+			faceLabel(sign, info.Title, "judul")
 			local button = Instance.new("ProximityPrompt")
 			button.ActionText = "Masuk"
 			button.ObjectText = info.Title
@@ -630,7 +660,7 @@ function World.build(role: string, onPrompt)
 			lobby,
 			"tutorial",
 			2,
-			CFrame.lookAt(Vector3.new(35, 0, 70), Vector3.new(35, 0, 0)),
+			CFrame.lookAt(Vector3.new(35, 0, 108), Vector3.new(35, 0, 40)),
 			70,
 			gates
 		)
@@ -644,7 +674,32 @@ function World.build(role: string, onPrompt)
 		)
 		local vista = registry.lanes.tutorial[1].spawn
 		registry.lobbySpawn = vista
-		spawnPad(lobby, vista * CFrame.new(0, -3, 0), "Muncul")
+		local padCf = CFrame.lookAt(
+			Vector3.new(vista.Position.X, 1.15, vista.Position.Z),
+			Vector3.new(vista.Position.X, 1.15, vista.Position.Z - 10)
+		)
+		spawnPad(lobby, padCf, "Muncul")
+		local function guideMark(targetName: string, cf: CFrame)
+			local mark = part(
+				lobby,
+				"Panduan" .. targetName,
+				Vector3.new(1, 1, 1),
+				cf,
+				Palette.Kunyit,
+				Enum.Material.Neon,
+				false
+			)
+			mark.Transparency = 1
+			mark.CanQuery = false
+			local attachment = Instance.new("Attachment")
+			attachment.Name = "Tujuan"
+			attachment.Parent = mark
+			mark:SetAttribute("Guide", targetName)
+			CollectionService:AddTag(mark, "BCGuide")
+		end
+		local firstGate = registry.lanes.tutorial[1].gates[2]
+		guideMark("gerbang", firstGate.CFrame * CFrame.new(0, 6, 0))
+		guideMark("pasar", CFrame.new(0, 8, -86))
 	end
 
 	local marketOrigin = if role == "pasar-ejaan" then Vector3.new(0, 0, 40) else Vector3.new(0, 0, -430)
@@ -679,13 +734,13 @@ function World.build(role: string, onPrompt)
 	local banner = part(
 		market,
 		"Spanduk",
-		Vector3.new(22, 5, 0.6),
+		Vector3.new(12, 2.2, 0.4),
 		CFrame.lookAt(bannerPos, bannerPos + Vector3.new(0, 0, 1)),
 		Palette.Navy,
 		Enum.Material.SmoothPlastic,
 		false
 	)
-	faceLabel(banner, "Pasar Ejaan", Enum.Font.FredokaOne)
+	faceLabel(banner, "Pasar Ejaan", "judul")
 
 	local function entrance(
 		name: string,
@@ -707,7 +762,7 @@ function World.build(role: string, onPrompt)
 			Enum.Material.SmoothPlastic,
 			false
 		)
-		faceLabel(sign, labelText, Enum.Font.FredokaOne)
+		faceLabel(sign, labelText, "judul")
 		local button = Instance.new("ProximityPrompt")
 		button.ActionText = action
 		button.ObjectText = labelText

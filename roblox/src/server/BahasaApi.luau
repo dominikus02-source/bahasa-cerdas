@@ -34,11 +34,23 @@ function BahasaApi.post(path: string, body)
 	if not token or not HttpService.HttpEnabled then
 		return nil, "offline"
 	end
-	local payload = HttpService:JSONEncode(body)
-	for attempt = 1, 3 do
+	local payloadOk, payload = pcall(function()
+		return HttpService:JSONEncode(body)
+	end)
+	if not payloadOk or type(payload) ~= "string" then
+		return nil, "offline"
+	end
+	local headerOk, authorization = pcall(function()
+		return token:AddPrefix("Bearer ")
+	end)
+	if not headerOk or authorization == nil then
+		secretMissing = true
+		return nil, "offline"
+	end
+	for attempt = 1, 2 do
 		local headers = {
 			["Content-Type"] = "application/json",
-			["Authorization"] = token:AddPrefix("Bearer "),
+			["Authorization"] = authorization,
 			["x-roblox-timestamp"] = tostring(DateTime.now().UnixTimestampMillis),
 			["x-request-id"] = HttpService:GenerateGUID(false),
 			["x-roblox-job-id"] = game.JobId,

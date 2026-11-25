@@ -8,6 +8,7 @@ local Calendar = require(ReplicatedStorage.Shared.Calendar)
 local Challenge = require(script.Parent.Challenge)
 local PlayerData = require(script.Parent.PlayerData)
 local Progress = require(script.Parent.Progress)
+local QuestionBank = require(script.Parent.QuestionBank)
 local Remotes = require(script.Parent.Remotes)
 local World = require(script.Parent.World)
 
@@ -46,9 +47,9 @@ local function toast(player: Player, text: string, tone: string?)
 end
 
 local NARA = {
-	"Penjaga Aksara baru! Pulihkan 13 Batu Aksara sebelum kota lupa cara bicara.",
-	"Lari ke gerbang yang tulisannya benar. Gerbang yang salah menumpahkan tinta.",
-	"Pasar Ejaan sudah buka. Distrik lain masih segera hadir.",
+	"Lari ke gerbang kuning. Pilih kalimat yang tepat.",
+	"Gerbang yang salah menumpahkan tinta. Coba lagi dari awal jalur.",
+	"Selesai? Ikuti cahaya ke portal Pasar Ejaan.",
 }
 
 local world
@@ -114,7 +115,21 @@ Remotes.init()
 PlayerData.start()
 world = World.build(role, onPrompt)
 Challenge.bind(world)
-print("[Kota Aksara] Alun-Alun dan Pasar Ejaan siap. Peran place: " .. role)
+local soal, masalah = QuestionBank.audit()
+local httpLabel = if BahasaApi.online() then "hidup" else "mati"
+local catatan = if masalah == 0 then "tidak-ada" else tostring(masalah)
+print(
+	"[Kota Aksara] Siap | peran="
+		.. role
+		.. " | soal="
+		.. tostring(soal)
+		.. " | gerbang="
+		.. tostring(#world.gates)
+		.. " | http="
+		.. httpLabel
+		.. " | masalah="
+		.. catatan
+)
 
 local function onPlayer(player: Player)
 	local profile = PlayerData.load(player)
@@ -132,7 +147,12 @@ local function onPlayer(player: Player)
 		Challenge.onSpawn(player)
 	end
 	Analytics.funnel(player, "spawn")
-	Remotes.fire(player, "speech", { Speaker = "Mbak Nara", Text = NARA[1] })
+	if not profile.flags.tutorial and role ~= "pasar-ejaan" then
+		Remotes.fire(player, "speech", { Speaker = "Mbak Nara", Text = NARA[1] })
+		Remotes.fire(player, "guide", { Target = "gerbang" })
+	elseif not profile.flags.world and role ~= "pasar-ejaan" then
+		Remotes.fire(player, "guide", { Target = "pasar" })
+	end
 	if profile._memory then
 		toast(player, "Progres kota belum tersimpan. Kami akan mencoba lagi.", "warn")
 	elseif profile._lost then

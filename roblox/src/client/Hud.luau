@@ -9,11 +9,13 @@ local Palette = require(ReplicatedStorage.Shared.Palette)
 
 local Hud = {}
 
-local FONT_TITLE = Enum.Font.FredokaOne
+local FONT_TITLE = Enum.Font.GothamBold
 local FONT_BODY = Enum.Font.GothamMedium
 for _, item in Enum.Font:GetEnumItems() do
 	if item.Name == "BuilderSans" then
 		FONT_BODY = item
+	elseif item.Name == "BuilderSansBold" then
+		FONT_TITLE = item
 	end
 end
 
@@ -23,47 +25,62 @@ local function corner(parent: Instance, radius: number)
 	ui.Parent = parent
 end
 
-local function stroke(parent: Instance, color: Color3)
+local function stroke(parent: Instance, color: Color3, thickness: number?)
 	local ui = Instance.new("UIStroke")
 	ui.Color = color
-	ui.Thickness = 2
+	ui.Thickness = thickness or 1
+	ui.Transparency = 0.35
 	ui.Parent = parent
 end
 
-local function label(parent: Instance, text: string, font: Enum.Font, color: Color3)
+local function warmPlate(frame: GuiObject)
+	frame.BackgroundColor3 = Palette.Plate
+	frame.BackgroundTransparency = 0.06
+	frame.BorderSizePixel = 0
+	corner(frame, 12)
+	stroke(frame, Palette.WoodDark, 1)
+	local wash = Instance.new("UIGradient")
+	wash.Color = ColorSequence.new(Palette.White, Palette.Krem)
+	wash.Rotation = 90
+	wash.Parent = frame
+end
+
+local function label(parent: Instance, text: string, font: Enum.Font, color: Color3, textSize: number?)
 	local ui = Instance.new("TextLabel")
 	ui.BackgroundTransparency = 1
 	ui.Font = font
 	ui.Text = text
 	ui.TextColor3 = color
-	ui.TextScaled = true
+	ui.TextSize = textSize or 15
+	ui.TextScaled = false
 	ui.TextWrapped = true
+	ui.TextTruncate = Enum.TextTruncate.AtEnd
+	ui.TextXAlignment = Enum.TextXAlignment.Left
+	ui.TextYAlignment = Enum.TextYAlignment.Center
 	ui.AutoLocalize = false
 	ui.Parent = parent
-	local limit = Instance.new("UITextSizeConstraint")
-	limit.MinTextSize = 14
-	limit.MaxTextSize = 28
-	limit.Parent = ui
 	return ui
 end
 
 local function button(parent: Instance, text: string, color: Color3)
 	local ui = Instance.new("TextButton")
 	ui.AutoButtonColor = true
+	if color == Palette.White then
+		color = Palette.Plate
+	end
 	ui.BackgroundColor3 = color
+	ui.BackgroundTransparency = 0.02
 	ui.Font = FONT_TITLE
 	ui.Text = text
-	ui.TextColor3 = Palette.Navy
-	ui.TextScaled = true
+	ui.TextColor3 = Palette.Ink
+	ui.TextSize = 15
+	ui.TextScaled = false
 	ui.TextWrapped = true
+	ui.TextTruncate = Enum.TextTruncate.AtEnd
 	ui.AutoLocalize = false
 	ui.Parent = parent
-	corner(ui, 14)
-	stroke(ui, Palette.Ink)
-	local limit = Instance.new("UITextSizeConstraint")
-	limit.MinTextSize = 14
-	limit.MaxTextSize = 22
-	limit.Parent = ui
+	corner(ui, 10)
+	stroke(ui, Palette.WoodDark, 1)
 	return ui
 end
 
@@ -86,73 +103,77 @@ function Hud.mount(fire)
 	flash.Parent = gui
 	Juice.bindFlash(flash)
 
+	-- Persistent chrome is one 36px bar. On a 667x375 phone that is under 10% of the screen.
 	local top = Instance.new("Frame")
-	top.AnchorPoint = Vector2.new(0, 0)
-	top.Position = UDim2.fromOffset(12, 12)
-	top.Size = UDim2.fromOffset(230, 78)
-	top.BackgroundColor3 = Palette.Krem
+	top.Position = UDim2.fromOffset(8, 8)
+	top.Size = UDim2.new(1, -16, 0, 36)
 	top.Parent = gui
-	corner(top, 16)
-	stroke(top, Palette.Navy)
-	local coins = label(top, "Koin 0", FONT_TITLE, Palette.Ink)
-	coins.Position = UDim2.fromOffset(10, 6)
-	coins.Size = UDim2.new(1, -20, 0, 30)
-	local stars = label(top, "Bintang 0", FONT_BODY, Palette.Ink)
-	stars.Position = UDim2.fromOffset(10, 36)
-	stars.Size = UDim2.new(1, -20, 0, 24)
+	warmPlate(top)
+	local topCap = Instance.new("UISizeConstraint")
+	topCap.MaxSize = Vector2.new(1920, 36)
+	topCap.Parent = top
+	local coins = label(top, "Koin 0", FONT_TITLE, Palette.Ink, 15)
+	coins.Position = UDim2.fromOffset(10, 0)
+	coins.Size = UDim2.fromOffset(110, 36)
+	local stars = label(top, "Bintang 0", FONT_BODY, Palette.Kunyit, 14)
+	stars.Position = UDim2.fromOffset(120, 0)
+	stars.Size = UDim2.new(1, -210, 0, 36)
 
-	local linkChip = label(gui, "", FONT_BODY, Palette.Navy)
-	linkChip.AnchorPoint = Vector2.new(0.5, 0)
-	linkChip.Position = UDim2.new(0.5, 0, 0, 10)
-	linkChip.Size = UDim2.fromOffset(220, 28)
-	linkChip.BackgroundColor3 = Palette.Krem
-	linkChip.BackgroundTransparency = 0.1
-	corner(linkChip, 12)
-
-	local menuButton = button(gui, "Menu", Palette.Teal)
-	menuButton.AnchorPoint = Vector2.new(1, 0)
-	menuButton.Position = UDim2.new(1, -12, 0, 12)
-	menuButton.Size = UDim2.fromOffset(96, 44)
+	local menuButton = button(top, "Menu", Palette.Teal)
+	menuButton.AnchorPoint = Vector2.new(1, 0.5)
+	menuButton.Position = UDim2.new(1, -4, 0.5, 0)
+	menuButton.Size = UDim2.fromOffset(72, 28)
 
 	local promptCard = Instance.new("Frame")
 	promptCard.AnchorPoint = Vector2.new(0.5, 0)
-	promptCard.Position = UDim2.new(0.5, 0, 0, 52)
-	promptCard.Size = UDim2.new(0.7, 0, 0, 86)
-	promptCard.BackgroundColor3 = Palette.Navy
+	promptCard.Position = UDim2.new(0.5, 0, 0, 48)
+	promptCard.Size = UDim2.new(1, -16, 0, 48)
 	promptCard.Visible = false
 	promptCard.Parent = gui
-	corner(promptCard, 16)
-	local promptText = label(promptCard, "", FONT_TITLE, Palette.Krem)
-	promptText.Size = UDim2.new(1, -16, 1, -16)
-	promptText.Position = UDim2.fromOffset(8, 8)
+	warmPlate(promptCard)
 	local promptLimit = Instance.new("UISizeConstraint")
-	promptLimit.MaxSize = Vector2.new(560, 100)
+	promptLimit.MaxSize = Vector2.new(720, 48)
 	promptLimit.Parent = promptCard
+	local promptText = label(promptCard, "", FONT_BODY, Palette.Ink, 16)
+	promptText.Size = UDim2.new(1, -78, 1, 0)
+	promptText.Position = UDim2.fromOffset(8, 0)
+	promptText.TextXAlignment = Enum.TextXAlignment.Center
+	local timer = label(promptCard, "", FONT_TITLE, Palette.Koral, 15)
+	timer.AnchorPoint = Vector2.new(1, 0)
+	timer.Position = UDim2.new(1, -8, 0, 0)
+	timer.Size = UDim2.fromOffset(36, 48)
+	timer.TextXAlignment = Enum.TextXAlignment.Right
+	timer.Visible = false
 
-	local combo = label(gui, "", FONT_TITLE, Palette.Kunyit)
-	combo.AnchorPoint = Vector2.new(0.5, 0.5)
-	combo.Position = UDim2.fromScale(0.5, 0.42)
-	combo.Size = UDim2.fromOffset(220, 48)
-	combo.TextStrokeTransparency = 0.4
+	local combo = label(gui, "", FONT_TITLE, Palette.Navy, 16)
+	combo.AnchorPoint = Vector2.new(0.5, 0)
+	combo.Position = UDim2.new(0.5, 0, 0, 100)
+	combo.Size = UDim2.fromOffset(140, 22)
+	combo.BackgroundColor3 = Palette.Kunyit
+	combo.BackgroundTransparency = 1
+	combo.TextXAlignment = Enum.TextXAlignment.Center
+	corner(combo, 8)
 
 	local answers = Instance.new("Frame")
 	answers.AnchorPoint = Vector2.new(1, 1)
-	answers.Position = UDim2.new(1, -10, 1, -12)
-	answers.Size = UDim2.fromScale(0.46, 0.34)
+	answers.Position = UDim2.new(1, -8, 1, -72)
+	answers.Size = UDim2.fromOffset(210, 152)
 	answers.BackgroundTransparency = 1
 	answers.Visible = false
 	answers.Parent = gui
 	local answerLimit = Instance.new("UISizeConstraint")
-	answerLimit.MaxSize = Vector2.new(340, 280)
-	answerLimit.MinSize = Vector2.new(180, 180)
+	answerLimit.MaxSize = Vector2.new(210, 152)
 	answerLimit.Parent = answers
-	local grid = Instance.new("UIGridLayout")
-	grid.CellPadding = UDim2.fromOffset(8, 8)
-	grid.CellSize = UDim2.new(1, 0, 0.25, -6)
+	local grid = Instance.new("UIListLayout")
+	grid.Padding = UDim.new(0, 4)
+	grid.SortOrder = Enum.SortOrder.LayoutOrder
 	grid.Parent = answers
 	local answerButtons = {}
 	for index = 1, 4 do
-		local choice = button(answers, "", Palette.White)
+		local choice = button(answers, "", Palette.Plate)
+		choice.Size = UDim2.new(1, 0, 0, 34)
+		choice.TextSize = 13
+		choice.TextXAlignment = Enum.TextXAlignment.Center
 		choice.LayoutOrder = index
 		choice.MouseButton1Click:Connect(function()
 			Juice.click()
@@ -161,37 +182,31 @@ function Hud.mount(fire)
 		answerButtons[index] = choice
 	end
 
-	local timer = label(gui, "", FONT_TITLE, Palette.Koral)
-	timer.AnchorPoint = Vector2.new(1, 1)
-	timer.Position = UDim2.new(1, -16, 1, -230)
-	timer.Size = UDim2.fromOffset(90, 36)
-
 	local speech = Instance.new("Frame")
-	speech.AnchorPoint = Vector2.new(0.5, 1)
-	speech.Position = UDim2.new(0.5, 0, 1, -16)
-	speech.Size = UDim2.new(0.86, 0, 0, 78)
-	speech.BackgroundColor3 = Palette.Krem
+	speech.AnchorPoint = Vector2.new(0.5, 0)
+	speech.Position = UDim2.new(0.5, 0, 0, 48)
+	speech.Size = UDim2.new(1, -24, 0, 36)
 	speech.Visible = false
 	speech.Parent = gui
-	corner(speech, 16)
-	stroke(speech, Palette.Navy)
+	warmPlate(speech)
 	local speechLimit = Instance.new("UISizeConstraint")
-	speechLimit.MaxSize = Vector2.new(520, 90)
+	speechLimit.MaxSize = Vector2.new(520, 36)
 	speechLimit.Parent = speech
-	local speechText = label(speech, "", FONT_BODY, Palette.Ink)
-	speechText.Size = UDim2.new(1, -16, 1, -12)
-	speechText.Position = UDim2.fromOffset(8, 6)
+	local speechText = label(speech, "", FONT_BODY, Palette.Ink, 14)
+	speechText.Size = UDim2.new(1, -12, 1, 0)
+	speechText.Position = UDim2.fromOffset(6, 0)
 
-	local toastFrame = label(gui, "", FONT_BODY, Palette.Ink)
-	toastFrame.AnchorPoint = Vector2.new(0.5, 0)
-	toastFrame.Position = UDim2.new(0.5, 0, 0, 150)
-	toastFrame.Size = UDim2.new(0.8, 0, 0, 48)
+	local toastFrame = label(gui, "", FONT_BODY, Palette.Ink, 14)
+	toastFrame.AnchorPoint = Vector2.new(0, 1)
+	toastFrame.Position = UDim2.new(0, 8, 1, -8)
+	toastFrame.Size = UDim2.fromOffset(220, 24)
 	toastFrame.BackgroundColor3 = Palette.Krem
 	toastFrame.BackgroundTransparency = 1
 	toastFrame.TextTransparency = 1
-	corner(toastFrame, 12)
+	toastFrame.TextXAlignment = Enum.TextXAlignment.Center
+	corner(toastFrame, 8)
 	local toastLimit = Instance.new("UISizeConstraint")
-	toastLimit.MaxSize = Vector2.new(460, 64)
+	toastLimit.MaxSize = Vector2.new(480, 28)
 	toastLimit.Parent = toastFrame
 
 	local shade = Instance.new("TextButton")
@@ -207,15 +222,13 @@ function Hud.mount(fire)
 	local modal = Instance.new("Frame")
 	modal.AnchorPoint = Vector2.new(0.5, 0.5)
 	modal.Position = UDim2.fromScale(0.5, 0.5)
-	modal.Size = UDim2.fromScale(0.92, 0.78)
-	modal.BackgroundColor3 = Palette.Krem
+	modal.Size = UDim2.new(1, -24, 0, 360)
 	modal.Visible = false
 	modal.ZIndex = 6
 	modal.Parent = gui
-	corner(modal, 18)
-	stroke(modal, Palette.Navy)
+	warmPlate(modal)
 	local modalLimit = Instance.new("UISizeConstraint")
-	modalLimit.MaxSize = Vector2.new(520, 640)
+	modalLimit.MaxSize = Vector2.new(440, 420)
 	modalLimit.Parent = modal
 	local modalTitle = label(modal, "", FONT_TITLE, Palette.Navy)
 	modalTitle.Position = UDim2.fromOffset(16, 12)
@@ -243,13 +256,11 @@ function Hud.mount(fire)
 	local menu = Instance.new("Frame")
 	menu.AnchorPoint = Vector2.new(1, 0)
 	menu.Position = UDim2.new(1, -12, 0, 64)
-	menu.Size = UDim2.fromOffset(168, 280)
-	menu.BackgroundColor3 = Palette.Krem
+	menu.Size = UDim2.fromOffset(148, 248)
 	menu.Visible = false
 	menu.ZIndex = 6
 	menu.Parent = gui
-	corner(menu, 16)
-	stroke(menu, Palette.Navy)
+	warmPlate(menu)
 	local menuList = Instance.new("UIListLayout")
 	menuList.Padding = UDim.new(0, 6)
 	menuList.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -260,10 +271,10 @@ function Hud.mount(fire)
 
 	local state = nil
 	local deadline = 0
-	local skip = button(gui, "Lewati", Palette.White)
-	skip.AnchorPoint = Vector2.new(0.5, 0)
-	skip.Position = UDim2.new(0.5, 120, 0, 148)
-	skip.Size = UDim2.fromOffset(96, 40)
+	local skip = button(promptCard, "Lewati", Palette.White)
+	skip.AnchorPoint = Vector2.new(1, 0.5)
+	skip.Position = UDim2.new(1, -40, 0.5, 0)
+	skip.Size = UDim2.fromOffset(64, 26)
 	skip.Visible = false
 	skip.MouseButton1Click:Connect(function()
 		Juice.click()
@@ -301,7 +312,7 @@ function Hud.mount(fire)
 
 	local function rowButton(text: string, color: Color3, callback)
 		local ui = button(scroller, text, color)
-		ui.Size = UDim2.new(1, -8, 0, 52)
+		ui.Size = UDim2.new(1, -8, 0, 36)
 		ui.ZIndex = 7
 		ui.MouseButton1Click:Connect(function()
 			Juice.click()
@@ -417,7 +428,8 @@ function Hud.mount(fire)
 		box.Font = FONT_BODY
 		box.PlaceholderText = "Kode tautan"
 		box.Text = ""
-		box.TextScaled = true
+		box.TextSize = 16
+		box.TextScaled = false
 		box.ClearTextOnFocus = false
 		box.AutoLocalize = false
 		box.ZIndex = 7
@@ -489,7 +501,7 @@ function Hud.mount(fire)
 			{ "Tautan", "tautan" },
 		}
 	do
-		local ui = button(menu, spec[1], Palette.White)
+		local ui = button(menu, spec[1], Palette.Plate)
 		ui.Size = UDim2.new(1, -16, 0, 36)
 		ui.ZIndex = 7
 		ui.MouseButton1Click:Connect(function()
@@ -524,16 +536,16 @@ function Hud.mount(fire)
 	function api.state(payload)
 		state = payload
 		coins.Text = "Koin " .. tostring(payload.Coins or 0)
+		local linked = payload.Link
+		local linkNote = ""
+		if linked and linked.Linked then
+			linkNote = " · " .. tostring(linked.Xp) .. " XP"
+		end
 		stars.Text = "Bintang "
 			.. tostring(payload.StarTotal or 0)
 			.. " · hari "
 			.. tostring(payload.Streak or 0)
-		local linked = payload.Link
-		if linked and linked.Linked then
-			linkChip.Text = linked.Name .. " · XP " .. tostring(linked.Xp)
-		else
-			linkChip.Text = "Belum tertaut"
-		end
+			.. linkNote
 		Juice.paintFruits(payload)
 	end
 
@@ -555,6 +567,10 @@ function Hud.mount(fire)
 		end
 		if (payload.Combo or 0) >= 2 then
 			combo.Text = "Rentetan " .. tostring(payload.Combo)
+			combo.BackgroundTransparency = 0.1
+		else
+			combo.Text = ""
+			combo.BackgroundTransparency = 1
 		end
 	end
 
@@ -565,10 +581,12 @@ function Hud.mount(fire)
 			Juice.confetti()
 			Juice.pulse(Palette.Teal)
 			combo.Text = if (payload.Combo or 0) >= 2 then "Rentetan " .. tostring(payload.Combo) else ""
+			combo.BackgroundTransparency = if (payload.Combo or 0) >= 2 then 0.1 else 1
 		else
 			Juice.play(require(ReplicatedStorage.Shared.Config).Sounds.Wrong, 1)
 			Juice.pulse(Palette.Koral)
 			combo.Text = ""
+			combo.BackgroundTransparency = 1
 		end
 		api.toast({ Text = payload.Explanation or "", Tone = if payload.Correct then "good" else "warn" })
 	end
@@ -578,6 +596,7 @@ function Hud.mount(fire)
 		promptCard.Visible = false
 		deadline = 0
 		combo.Text = ""
+		combo.BackgroundTransparency = 1
 		skip.Visible = false
 		showModal("Hasil latihan")
 		local total = math.max(payload.Total or 0, 1)
@@ -588,7 +607,14 @@ function Hud.mount(fire)
 		)
 		rowButton("+" .. tostring(payload.Coins or 0) .. " koin", Palette.Kunyit, function() end)
 		if (payload.Stars or 0) > 0 then
-			rowButton(tostring(payload.Stars) .. " bintang", Palette.Teal, function() end)
+			local marks = { "☆", "☆", "☆" }
+			for star = 1, math.min(payload.Stars, 3) do
+				marks[star] = "★"
+			end
+			rowButton(table.concat(marks, " ") .. "  bintang", Palette.Teal, function() end)
+		end
+		if type(payload.Next) == "string" and payload.Next ~= "" then
+			rowButton(payload.Next, Palette.White, function() end)
 		end
 		if (payload.Xp or 0) > 0 then
 			rowButton("+" .. tostring(payload.Xp) .. " XP akun", Palette.Teal, function() end)
@@ -631,11 +657,12 @@ function Hud.mount(fire)
 	end
 
 	function api.speech(payload)
+		if promptCard.Visible then
+			return
+		end
 		speech.Visible = true
-		speech.Position = UDim2.new(0.5, 0, 0, 158)
-		speech.AnchorPoint = Vector2.new(0.5, 0)
 		speechText.Text = (payload.Speaker or "Mbak Nara") .. ": " .. (payload.Text or "")
-		task.delay(6, function()
+		task.delay(4, function()
 			if speechText.Text == (payload.Speaker or "Mbak Nara") .. ": " .. (payload.Text or "") then
 				speech.Visible = false
 			end

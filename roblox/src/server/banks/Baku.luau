@@ -60,7 +60,7 @@ return {
 	),
 	Q("ey_b_05", 1, { "a01", "boss" }, P, "Praktik membaca dilakukan setiap pagi.", {
 		"Praktek membaca dilakukan setiap pagi.",
-		"PraktIk membaca dilakukan setiap pagi.",
+		"Prakteek membaca dilakukan setiap pagi.",
 		"praktik membaca dilakukan setiap pagi.",
 	}, "Bentuk baku adalah praktik, bukan praktek.", nil),
 	Q(
@@ -105,7 +105,7 @@ return {
 	),
 	Q("ey_b_10", 2, { "a01", "boss" }, P, "Murid itu berpikir sebelum menjawab.", {
 		"Murid itu berfikir sebelum menjawab.",
-		"Murid itu berpikiir sebelum menjawab.",
+		"Murid itu memikir sebelum menjawab.",
 		"murid itu berpikir sebelum menjawab.",
 	}, "Bentuk baku adalah berpikir, dengan huruf p.", nil),
 	Q(

@@ -14,6 +14,7 @@ local Palette = {
 	Grass = Color3.fromRGB(96, 158, 86),
 	Awning = Color3.fromRGB(214, 84, 72),
 	White = Color3.fromRGB(255, 250, 242),
+	Plate = Color3.fromRGB(255, 247, 232),
 	Water = Color3.fromRGB(86, 168, 184),
 	Lamp = Color3.fromRGB(255, 196, 110),
 }

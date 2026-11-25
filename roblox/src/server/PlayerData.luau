@@ -1,7 +1,6 @@
 local DataStoreService = game:GetService("DataStoreService")
 local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Config = require(ReplicatedStorage.Shared.Config)
@@ -9,8 +8,43 @@ local Config = require(ReplicatedStorage.Shared.Config)
 local PlayerData = {}
 
 local SESSION = HttpService:GenerateGUID(false)
-local store = DataStoreService:GetDataStore(Config.DataStore)
+local store = nil
 local cache = {}
+
+local function dataStore()
+	if store then
+		return store
+	end
+	local ok, result = pcall(function()
+		return DataStoreService:GetDataStore(Config.DataStore)
+	end)
+	if ok then
+		store = result
+	end
+	return store
+end
+
+local function callStore(seconds: number, callback)
+	local ds = dataStore()
+	if not ds then
+		return false, nil
+	end
+	local finished = false
+	local ok = false
+	local result = nil
+	task.spawn(function()
+		ok, result = pcall(callback, ds)
+		finished = true
+	end)
+	local started = os.clock()
+	while not finished and os.clock() - started < seconds do
+		task.wait(0.05)
+	end
+	if not finished then
+		return false, nil
+	end
+	return ok, result
+end
 
 local function blank()
 	return {
@@ -99,8 +133,8 @@ end
 
 local function claim(userId: number)
 	local key = keyFor(userId)
-	local ok, result = pcall(function()
-		return store:UpdateAsync(key, function(old)
+	local ok, result = callStore(3, function(ds)
+		return ds:UpdateAsync(key, function(old)
 			local data = ensure(old)
 			local lock = data._lock
 			if type(lock) == "table" and lock.session ~= SESSION and type(lock.at) == "number" then
@@ -129,8 +163,8 @@ local function write(profile, releaseLock: boolean): boolean
 		snapshot._lock = { session = SESSION, at = os.time() }
 	end
 	local key = keyFor(profile._userId)
-	local ok, result = pcall(function()
-		return store:UpdateAsync(key, function(old)
+	local ok, result = callStore(3, function(ds)
+		return ds:UpdateAsync(key, function(old)
 			if type(old) == "table" and type(old._lock) == "table" and old._lock.session ~= SESSION then
 				if type(old._lock.at) == "number" and os.time() - old._lock.at < Config.LockSeconds then
 					return nil
@@ -139,7 +173,10 @@ local function write(profile, releaseLock: boolean): boolean
 			return snapshot
 		end)
 	end)
-	if not ok or result == nil then
+	if not ok then
+		return false
+	end
+	if result == nil then
 		profile._lost = true
 		return false
 	end
@@ -160,17 +197,7 @@ function PlayerData.get(player: Player)
 end
 
 function PlayerData.load(player: Player)
-	local loaded
-	local tries = if RunService:IsStudio() then 1 else 6
-	for _ = 1, tries do
-		loaded = claim(player.UserId)
-		if loaded then
-			break
-		end
-		if not RunService:IsStudio() then
-			task.wait(2)
-		end
-	end
+	local loaded = claim(player.UserId)
 	if not loaded then
 		loaded = blank()
 		loaded._memory = true
@@ -203,8 +230,21 @@ function PlayerData.start()
 	end)
 
 	game:BindToClose(function()
-		for player, _profile in cache do
-			PlayerData.release(player)
+		local pending = 0
+		for player, profile in cache do
+			if profile._memory then
+				cache[player] = nil
+			else
+				pending += 1
+				task.spawn(function()
+					PlayerData.release(player)
+					pending -= 1
+				end)
+			end
+		end
+		local started = os.clock()
+		while pending > 0 and os.clock() - started < 4 do
+			task.wait(0.1)
 		end
 	end)
 

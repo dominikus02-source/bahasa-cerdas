@@ -251,7 +251,11 @@ local function finish(player: Player, round, skipped: boolean?)
 		Best = best,
 		Skipped = skipped == true,
 		Xp = round.xp or 0,
+		Next = Progress.nextGoal(profile),
 	})
+	if round.arenaId == "tutorial" and not skipped then
+		Remotes.fire(player, "guide", { Target = "pasar" })
+	end
 	soundAt(player, Config.Sounds.Reward, 1)
 end
 
@@ -628,6 +632,7 @@ function Challenge.travel(player: Player, destination: string)
 				PlayerData.mark(player)
 			end
 			toast(player, "Selamat datang di Pasar Ejaan.", "good")
+			Remotes.fire(player, "guide", { Target = "" })
 		end
 	elseif destination == "lobby" then
 		if game.PlaceId ~= Config.LobbyPlaceId and not RunService:IsStudio() then

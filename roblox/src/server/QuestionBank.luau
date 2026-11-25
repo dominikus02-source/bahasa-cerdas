@@ -33,6 +33,35 @@ function QuestionBank.count(): number
 	return #all
 end
 
+function QuestionBank.audit(): (number, number)
+	local seen = {}
+	local problems = 0
+	for _, item in all do
+		if seen[item.Id] then
+			problems += 1
+		end
+		seen[item.Id] = true
+		if
+			type(item.Answer) ~= "string"
+			or item.Answer == ""
+			or not table.find(item.Options, item.Answer)
+		then
+			problems += 1
+		end
+		if #item.Options ~= 4 then
+			problems += 1
+		end
+		local unique = {}
+		for _, option in item.Options do
+			if unique[option] then
+				problems += 1
+			end
+			unique[option] = true
+		end
+	end
+	return #all, problems
+end
+
 function QuestionBank.get(id: string)
 	return byId[id]
 end
