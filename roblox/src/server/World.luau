@@ -46,7 +46,7 @@ local function faceLabel(host: BasePart, text: string, kind: string)
 	gui.Name = "Tulisan"
 	gui.Face = Enum.NormalId.Front
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = if kind == "jawaban" then 32 else 24
+	gui.PixelsPerStud = if kind == "jawaban" then 22 else 18
 	gui.LightInfluence = 0
 	gui.MaxDistance = 90
 	gui.Parent = host
@@ -65,13 +65,13 @@ local function faceLabel(host: BasePart, text: string, kind: string)
 	label.Parent = gui
 	if kind == "judul" then
 		label.Font = FONT_DISPLAY
-		label.TextSize = 28
+		label.TextSize = 18
 	elseif kind == "jawaban" then
 		label.Font = FONT_BOLD
-		label.TextSize = 32
+		label.TextSize = 20
 	else
 		label.Font = FONT_BODY
-		label.TextSize = 22
+		label.TextSize = 16
 	end
 	local plateCorner = Instance.new("UICorner")
 	plateCorner.CornerRadius = UDim.new(0, 10)
@@ -142,7 +142,7 @@ local function arch(model, cf: CFrame, color: Color3)
 	local sign = part(
 		model,
 		"PapanGerbang",
-		Vector3.new(7.4, 2.6, 0.28),
+		Vector3.new(6.2, 1.7, 0.22),
 		lookBack(cf, Vector3.new(0, 9.2, 0)),
 		Palette.Plate,
 		Enum.Material.SmoothPlastic,
@@ -513,7 +513,7 @@ function World.build(role: string, onPrompt)
 		)
 		head.Shape = Enum.PartType.Ball
 		local name = Instance.new("BillboardGui")
-		name.Size = UDim2.fromOffset(120, 22)
+		name.Size = UDim2.fromOffset(96, 18)
 		name.StudsOffsetWorldSpace = Vector3.new(0, 1.6, 0)
 		name.MaxDistance = 50
 		name.AlwaysOnTop = false
@@ -524,7 +524,7 @@ function World.build(role: string, onPrompt)
 		nameLabel.BackgroundTransparency = 0.25
 		nameLabel.Font = Enum.Font.GothamBold
 		nameLabel.TextColor3 = Palette.Krem
-		nameLabel.TextSize = 14
+		nameLabel.TextSize = 12
 		nameLabel.TextScaled = false
 		nameLabel.Text = "Mbak Nara"
 		nameLabel.AutoLocalize = false
