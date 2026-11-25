@@ -36,15 +36,18 @@ jobs:
         working-directory: roblox
         run: |
           export PATH="$HOME/.rokit/bin:$PATH"
-          selene src
-          stylua --check src
+          selene src places
+          stylua --check src places
 
       - name: Validate question bank
-        run: python3 roblox/tools/validate_bank.py
+        run: |
+          python3 roblox/tools/validate_bank.py
+          python3 roblox/tools/validate_games.py
 
       - name: Keep web addresses off the client
         run: |
-          if grep -RInE "https?://|bahasacerdas\\.com|www\\." roblox/src/client roblox/src/shared; then
+          if grep -RInE --include='*.luau' "https?://|bahasacerdas\\.com|www\\." roblox \
+            | grep -vE '/src/server/|/src/kernel/'; then
             echo "Teks klien tidak boleh memuat alamat situs."
             exit 1
           fi
@@ -56,6 +59,9 @@ jobs:
           bash tools/build.sh
           test -s build/KotaAksara-Lobby.rbxl
           test -s build/KotaAksara-PasarEjaan.rbxl
+          test -s build/BenarAtauSalah.rbxl
+          test -s build/SusunKata.rbxl
+          test -s build/Nusantara.rbxl
 
       - uses: actions/upload-artifact@v4
         with:
