@@ -27,13 +27,13 @@ local function stroke(parent: Instance, color: Color3)
 	local ui = Instance.new("UIStroke")
 	ui.Color = color
 	ui.Thickness = 1
-	ui.Transparency = 0.35
+	ui.Transparency = 0.55
 	ui.Parent = parent
 end
 
 local function plate(frame: GuiObject)
 	frame.BackgroundColor3 = Palette.Plate
-	frame.BackgroundTransparency = 0.04
+	frame.BackgroundTransparency = 0.22
 	frame.BorderSizePixel = 0
 	corner(frame, 12)
 	stroke(frame, Palette.WoodDark)
@@ -76,43 +76,46 @@ function Theme.mount(options)
 	local top = Instance.new("Frame")
 	top.BackgroundTransparency = 1
 	top.Position = UDim2.fromOffset(8, 8)
-	top.Size = UDim2.new(1, -16, 0, 36)
+	top.Size = UDim2.new(1, -16, 0, 28)
 	top.Parent = gui
 	plate(top)
-	local title = label(top, options.Title or "BahasaCerdas", FONT_TITLE, Palette.Ink, 16)
-	title.Position = UDim2.fromOffset(12, 0)
-	title.Size = UDim2.fromScale(0.46, 1)
-	local stats = label(top, "", FONT_BODY, Palette.Navy, 14)
-	stats.Position = UDim2.fromScale(0.46, 0)
-	stats.Size = UDim2.new(0.54, -12, 1, 0)
+	local topCap = Instance.new("UISizeConstraint")
+	topCap.MaxSize = Vector2.new(1920, 28)
+	topCap.Parent = top
+	local title = label(top, options.Title or "BahasaCerdas", FONT_TITLE, Palette.Ink, 12)
+	title.Position = UDim2.fromOffset(8, 0)
+	title.Size = UDim2.fromScale(0.34, 1)
+	local stats = label(top, "", FONT_BODY, Palette.Navy, 12)
+	stats.Position = UDim2.fromScale(0.34, 0)
+	stats.Size = UDim2.new(0.66, -140, 1, 0)
 	stats.TextXAlignment = Enum.TextXAlignment.Right
 
 	local menuButton = Instance.new("TextButton")
-	menuButton.AnchorPoint = Vector2.new(1, 0)
-	menuButton.Position = UDim2.new(1, -8, 0, 50)
-	menuButton.Size = UDim2.fromOffset(88, 36)
+	menuButton.AnchorPoint = Vector2.new(1, 0.5)
+	menuButton.Position = UDim2.new(1, -4, 0.5, 0)
+	menuButton.Size = UDim2.fromOffset(52, 22)
 	menuButton.BackgroundColor3 = Palette.Kunyit
 	menuButton.Font = FONT_TITLE
 	menuButton.Text = "Menu"
-	menuButton.TextSize = 15
+	menuButton.TextSize = 12
 	menuButton.TextColor3 = Palette.Ink
 	menuButton.AutoLocalize = false
-	menuButton.Parent = gui
-	corner(menuButton, 10)
+	menuButton.Parent = top
+	corner(menuButton, 8)
 
 	local homeButton = Instance.new("TextButton")
-	homeButton.AnchorPoint = Vector2.new(1, 0)
-	homeButton.Position = UDim2.new(1, -104, 0, 50)
-	homeButton.Size = UDim2.fromOffset(120, 36)
+	homeButton.AnchorPoint = Vector2.new(1, 0.5)
+	homeButton.Position = UDim2.new(1, -60, 0.5, 0)
+	homeButton.Size = UDim2.fromOffset(72, 22)
 	homeButton.BackgroundColor3 = Palette.Teal
 	homeButton.Font = FONT_TITLE
 	homeButton.Text = "Alun-Alun"
-	homeButton.TextSize = 15
+	homeButton.TextSize = 12
 	homeButton.TextColor3 = Palette.Ink
 	homeButton.AutoLocalize = false
 	homeButton.Visible = options.ReturnLobby == true
-	homeButton.Parent = gui
-	corner(homeButton, 10)
+	homeButton.Parent = top
+	corner(homeButton, 8)
 	homeButton.MouseButton1Click:Connect(function()
 		Juice.click()
 		NetClient.fire("home", {})
@@ -120,25 +123,28 @@ function Theme.mount(options)
 
 	local prompt = Instance.new("Frame")
 	prompt.AnchorPoint = Vector2.new(0.5, 0)
-	prompt.Position = UDim2.new(0.5, 0, 0, 96)
-	prompt.Size = UDim2.new(0.92, 0, 0, 118)
+	prompt.Position = UDim2.new(0.5, 0, 0, 40)
+	prompt.Size = UDim2.new(0.9, 0, 0, 64)
 	prompt.Parent = gui
 	plate(prompt)
-	local promptTitle = label(prompt, "", FONT_TITLE, Palette.Navy, 14)
-	promptTitle.Position = UDim2.fromOffset(12, 6)
-	promptTitle.Size = UDim2.new(1, -24, 0, 18)
-	local promptBody = label(prompt, "", FONT_BODY, Palette.Ink, 18)
-	promptBody.Position = UDim2.fromOffset(12, 26)
-	promptBody.Size = UDim2.new(1, -24, 0, 62)
+	local promptLimit = Instance.new("UISizeConstraint")
+	promptLimit.MaxSize = Vector2.new(560, 64)
+	promptLimit.Parent = prompt
+	local promptTitle = label(prompt, "", FONT_TITLE, Palette.Navy, 12)
+	promptTitle.Position = UDim2.fromOffset(8, 2)
+	promptTitle.Size = UDim2.new(1, -16, 0, 14)
+	local promptBody = label(prompt, "", FONT_BODY, Palette.Ink, 13)
+	promptBody.Position = UDim2.fromOffset(8, 16)
+	promptBody.Size = UDim2.new(1, -16, 0, 30)
 	promptBody.TextYAlignment = Enum.TextYAlignment.Top
-	local promptFoot = label(prompt, "", FONT_BODY, Palette.WoodDark, 13)
-	promptFoot.Position = UDim2.fromOffset(12, 90)
-	promptFoot.Size = UDim2.new(1, -24, 0, 22)
+	local promptFoot = label(prompt, "", FONT_BODY, Palette.WoodDark, 12)
+	promptFoot.Position = UDim2.fromOffset(8, 46)
+	promptFoot.Size = UDim2.new(1, -16, 0, 16)
 
 	local choiceBar = Instance.new("Frame")
 	choiceBar.AnchorPoint = Vector2.new(0.5, 1)
 	choiceBar.Position = UDim2.new(0.5, 0, 1, -18)
-	choiceBar.Size = UDim2.new(0.96, 0, 0, 64)
+	choiceBar.Size = UDim2.new(0.92, 0, 0, 36)
 	choiceBar.BackgroundTransparency = 1
 	choiceBar.Parent = gui
 	local choiceLayout = Instance.new("UIListLayout")
@@ -149,18 +155,18 @@ function Theme.mount(options)
 
 	local tileBar = Instance.new("Frame")
 	tileBar.AnchorPoint = Vector2.new(0.5, 1)
-	tileBar.Position = UDim2.new(0.5, 0, 1, -92)
-	tileBar.Size = UDim2.new(0.96, 0, 0, 120)
+	tileBar.Position = UDim2.new(0.5, 0, 1, -64)
+	tileBar.Size = UDim2.new(0.92, 0, 0, 88)
 	tileBar.Visible = false
 	tileBar.Parent = gui
 	plate(tileBar)
-	local pickedLabel = label(tileBar, "", FONT_BODY, Palette.Ink, 16)
-	pickedLabel.Position = UDim2.fromOffset(10, 6)
-	pickedLabel.Size = UDim2.new(1, -20, 0, 24)
+	local pickedLabel = label(tileBar, "", FONT_BODY, Palette.Ink, 12)
+	pickedLabel.Position = UDim2.fromOffset(8, 2)
+	pickedLabel.Size = UDim2.new(1, -16, 0, 16)
 	local tileRow = Instance.new("ScrollingFrame")
 	tileRow.BackgroundTransparency = 1
-	tileRow.Position = UDim2.fromOffset(8, 34)
-	tileRow.Size = UDim2.new(1, -16, 0, 48)
+	tileRow.Position = UDim2.fromOffset(8, 20)
+	tileRow.Size = UDim2.new(1, -16, 0, 32)
 	tileRow.ScrollBarThickness = 4
 	tileRow.AutomaticCanvasSize = Enum.AutomaticSize.X
 	tileRow.CanvasSize = UDim2.new()
@@ -171,27 +177,27 @@ function Theme.mount(options)
 	tileLayout.Parent = tileRow
 	local tileActions = Instance.new("Frame")
 	tileActions.BackgroundTransparency = 1
-	tileActions.Position = UDim2.new(0, 8, 1, -34)
-	tileActions.Size = UDim2.new(1, -16, 0, 28)
+	tileActions.Position = UDim2.new(0, 8, 1, -26)
+	tileActions.Size = UDim2.new(1, -16, 0, 22)
 	tileActions.Parent = tileBar
 	local actionLayout = Instance.new("UIListLayout")
 	actionLayout.FillDirection = Enum.FillDirection.Horizontal
 	actionLayout.Padding = UDim.new(0, 8)
 	actionLayout.Parent = tileActions
 
-	local toast = label(gui, "", FONT_BODY, Palette.Ink, 15)
+	local toast = label(gui, "", FONT_BODY, Palette.Ink, 12)
 	toast.AnchorPoint = Vector2.new(0.5, 1)
-	toast.Position = UDim2.new(0.5, 0, 1, -168)
-	toast.Size = UDim2.new(0.9, 0, 0, 36)
+	toast.Position = UDim2.new(0.5, 0, 1, -120)
+	toast.Size = UDim2.new(0.86, 0, 0, 28)
 	toast.TextXAlignment = Enum.TextXAlignment.Center
 	toast.BackgroundColor3 = Palette.Plate
 	toast.BackgroundTransparency = 1
 	corner(toast, 10)
 
-	local speech = label(gui, "", FONT_BODY, Palette.Ink, 15)
+	local speech = label(gui, "", FONT_BODY, Palette.Ink, 12)
 	speech.AnchorPoint = Vector2.new(0.5, 1)
-	speech.Position = UDim2.new(0.5, 0, 1, -210)
-	speech.Size = UDim2.new(0.9, 0, 0, 48)
+	speech.Position = UDim2.new(0.5, 0, 1, -154)
+	speech.Size = UDim2.new(0.8, 0, 0, 28)
 	speech.TextXAlignment = Enum.TextXAlignment.Center
 	speech.BackgroundColor3 = Palette.White
 	speech.BackgroundTransparency = 0.08
@@ -199,9 +205,10 @@ function Theme.mount(options)
 	corner(speech, 10)
 
 	local menu = Instance.new("Frame")
+	menu.AnchorPoint = Vector2.new(1, 0)
 	menu.Visible = false
-	menu.Position = UDim2.fromOffset(12, 96)
-	menu.Size = UDim2.new(1, -24, 1, -180)
+	menu.Position = UDim2.new(1, -8, 0, 40)
+	menu.Size = UDim2.fromOffset(240, 280)
 	menu.Parent = gui
 	plate(menu)
 	local scroller = Instance.new("ScrollingFrame")
@@ -222,13 +229,13 @@ function Theme.mount(options)
 	pad.PaddingBottom = UDim.new(0, 10)
 	pad.Parent = scroller
 
-	local goal = label(scroller, "", FONT_BODY, Palette.Navy, 15)
-	goal.Size = UDim2.new(1, 0, 0, 36)
+	local goal = label(scroller, "", FONT_BODY, Palette.Navy, 12)
+	goal.Size = UDim2.new(1, 0, 0, 28)
 	local dailyButton = Instance.new("TextButton")
-	dailyButton.Size = UDim2.new(1, 0, 0, 40)
+	dailyButton.Size = UDim2.new(1, 0, 0, 28)
 	dailyButton.BackgroundColor3 = Palette.Kunyit
 	dailyButton.Font = FONT_TITLE
-	dailyButton.TextSize = 15
+	dailyButton.TextSize = 12
 	dailyButton.TextColor3 = Palette.Ink
 	dailyButton.Text = "Ambil hadiah hari ini"
 	dailyButton.AutoLocalize = false
@@ -240,10 +247,10 @@ function Theme.mount(options)
 	end)
 
 	local linkBox = Instance.new("TextBox")
-	linkBox.Size = UDim2.new(1, 0, 0, 36)
+	linkBox.Size = UDim2.new(1, 0, 0, 28)
 	linkBox.BackgroundColor3 = Palette.White
 	linkBox.Font = FONT_BODY
-	linkBox.TextSize = 15
+	linkBox.TextSize = 12
 	linkBox.PlaceholderText = "Kode tautan"
 	linkBox.Text = ""
 	linkBox.ClearTextOnFocus = false
@@ -252,10 +259,10 @@ function Theme.mount(options)
 	linkBox.Parent = scroller
 	corner(linkBox, 8)
 	local linkButton = Instance.new("TextButton")
-	linkButton.Size = UDim2.new(1, 0, 0, 36)
+	linkButton.Size = UDim2.new(1, 0, 0, 28)
 	linkButton.BackgroundColor3 = Palette.Teal
 	linkButton.Font = FONT_TITLE
-	linkButton.TextSize = 15
+	linkButton.TextSize = 12
 	linkButton.TextColor3 = Palette.Ink
 	linkButton.Text = "Simpan kode"
 	linkButton.AutoLocalize = false
@@ -270,11 +277,11 @@ function Theme.mount(options)
 		"Punya kode tautan? Masukkan di sini untuk menyimpan XP-mu.",
 		FONT_BODY,
 		Palette.WoodDark,
-		13
+		12
 	)
 	linkNote.Size = UDim2.new(1, 0, 0, 32)
 
-	local board = label(scroller, "Peringkat mingguan belum dimuat.", FONT_BODY, Palette.Navy, 14)
+	local board = label(scroller, "Peringkat mingguan belum dimuat.", FONT_BODY, Palette.Navy, 12)
 	board.Size = UDim2.new(1, 0, 0, 96)
 
 	menuButton.MouseButton1Click:Connect(function()
@@ -310,7 +317,7 @@ function Theme.mount(options)
 		button.Size = UDim2.new(1, 0, 0, height)
 		button.BackgroundColor3 = color
 		button.Font = FONT_TITLE
-		button.TextSize = 14
+		button.TextSize = 12
 		button.TextColor3 = Palette.Ink
 		button.TextWrapped = true
 		button.Text = text
@@ -358,7 +365,7 @@ function Theme.mount(options)
 				scroller,
 				text,
 				if row.Done and not row.Claimed then Palette.Leaf else Palette.White,
-				40
+				28
 			)
 			button.LayoutOrder = 20
 			button.MouseButton1Click:Connect(function()
@@ -382,7 +389,7 @@ function Theme.mount(options)
 			if item.Owned then
 				text = item.Name .. " · pakai"
 			end
-			local button = smallButton(scroller, text, Palette.Krem, 34)
+			local button = smallButton(scroller, text, Palette.Krem, 28)
 			button.LayoutOrder = 40
 			button.MouseButton1Click:Connect(function()
 				Juice.click()
@@ -446,14 +453,14 @@ function Theme.mount(options)
 				wide = true
 			end
 		end
-		choiceBar.Size = UDim2.new(0.96, 0, 0, if wide then 96 else 64)
-		local width = if #list >= 3 then 0.33 else 0.48
+		choiceBar.Size = UDim2.new(0.92, 0, 0, if wide then 52 else 32)
+		local width = if #list >= 3 then 0.33 else 0.46
 		for _, item in list do
 			local button = Instance.new("TextButton")
 			button.Size = UDim2.new(width, -8, 1, 0)
 			button.BackgroundColor3 = item.Color or Palette.White
 			button.Font = FONT_TITLE
-			button.TextSize = if wide then 15 else 20
+			button.TextSize = 12
 			button.TextWrapped = true
 			button.TextColor3 = Palette.Ink
 			button.Text = item.Text
@@ -501,10 +508,10 @@ function Theme.mount(options)
 		for _, item in list do
 			tileMap[item.Id] = item.Text
 			local button = Instance.new("TextButton")
-			button.Size = UDim2.fromOffset(math.clamp(#item.Text * 12 + 24, 48, 160), 42)
+			button.Size = UDim2.fromOffset(math.clamp(#item.Text * 8 + 18, 36, 140), 28)
 			button.BackgroundColor3 = Palette.White
 			button.Font = FONT_TITLE
-			button.TextSize = 16
+			button.TextSize = 12
 			button.TextColor3 = Palette.Ink
 			button.Text = item.Text
 			button.AutoLocalize = false
@@ -526,10 +533,10 @@ function Theme.mount(options)
 			end)
 		end
 		local undo = Instance.new("TextButton")
-		undo.Size = UDim2.fromOffset(90, 28)
+		undo.Size = UDim2.fromOffset(72, 22)
 		undo.BackgroundColor3 = Palette.Stone
 		undo.Font = FONT_TITLE
-		undo.TextSize = 14
+		undo.TextSize = 12
 		undo.TextColor3 = Palette.Ink
 		undo.Text = "Urung"
 		undo.AutoLocalize = false
@@ -546,10 +553,10 @@ function Theme.mount(options)
 			paintPicked()
 		end)
 		local lock = Instance.new("TextButton")
-		lock.Size = UDim2.fromOffset(110, 28)
+		lock.Size = UDim2.fromOffset(84, 22)
 		lock.BackgroundColor3 = Palette.Teal
 		lock.Font = FONT_TITLE
-		lock.TextSize = 14
+		lock.TextSize = 12
 		lock.TextColor3 = Palette.Ink
 		lock.Text = "Kunci"
 		lock.AutoLocalize = false

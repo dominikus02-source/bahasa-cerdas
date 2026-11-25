@@ -35,7 +35,7 @@ function World.build()
 	Build.lamp(folder, Vector3.new(20, 0, -16))
 	local notice =
 		Build.part(folder, "PapanDermaga", Vector3.new(12, 4, 0.5), CFrame.new(0, 5, -24), Palette.Plate)
-	Build.label(notice, "Delapan wilayah. Dua sudah terbuka.", Enum.NormalId.Front, 22, Palette.Ink)
+	Build.label(notice, "Delapan wilayah. Dua sudah terbuka.", Enum.NormalId.Front, 16, Palette.Ink)
 	Build.label(notice, "Kota Aksara adalah petualangan lain.", Enum.NormalId.Back, 18, Palette.Ink)
 
 	local gates = {}
@@ -85,7 +85,7 @@ function World.build()
 		Palette.Ink
 	)
 	local jurusPad = Build.part(folder, "Jurus", Vector3.new(8, 1, 8), CFrame.new(10, 1, -422), Palette.Ungu)
-	Build.label(jurusPad, "Jurus", Enum.NormalId.Top, 20, Palette.Krem)
+	Build.label(jurusPad, "Jurus", Enum.NormalId.Top, 16, Palette.Krem)
 	local backJawa =
 		Build.part(folder, "PulangJawa", Vector3.new(6, 5, 1), CFrame.new(-20, 2.6, -400), Palette.Navy)
 	Build.label(backJawa, "Dermaga", Enum.NormalId.Front, 18, Palette.Krem)
@@ -97,7 +97,7 @@ function World.build()
 		Palette.Kunyit,
 		Enum.Material.Slate
 	)
-	Build.label(secretJawa, "Prasasti", Enum.NormalId.Front, 20, Palette.Ink)
+	Build.label(secretJawa, "Prasasti", Enum.NormalId.Front, 16, Palette.Ink)
 
 	-- Pesisir Sumatra
 	Build.plate(folder, Vector3.new(430, -1, 0), 60, 46, Palette.Grass, 2)
@@ -174,7 +174,7 @@ function World.build()
 	end
 	local bossSign =
 		Build.part(folder, "PapanBos", Vector3.new(14, 4, 0.5), CFrame.new(0, 6, -856), Palette.Navy)
-	Build.label(bossSign, "Penjaga Makna", Enum.NormalId.Front, 28, Palette.Krem)
+	Build.label(bossSign, "Penjaga Makna", Enum.NormalId.Front, 18, Palette.Krem)
 	Build.label(bossSign, "Bukan musuh bahasa daerah.", Enum.NormalId.Back, 18, Palette.Krem)
 	local backBoss =
 		Build.part(folder, "PulangBos", Vector3.new(6, 5, 1), CFrame.new(-22, 2.6, -800), Palette.Navy)

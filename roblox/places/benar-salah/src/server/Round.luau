@@ -56,7 +56,7 @@ local function paintBoard(text: string)
 		gui.Name = "Soal"
 		gui.Face = face
 		gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-		gui.PixelsPerStud = 40
+		gui.PixelsPerStud = 22
 		gui.Parent = board
 	end
 	for _, child in board:GetChildren() do
@@ -67,7 +67,7 @@ local function paintBoard(text: string)
 			label.Font = Enum.Font.GothamBold
 			label.Text = text
 			label.TextColor3 = Palette.Ink
-			label.TextSize = 22
+			label.TextSize = 20
 			label.TextWrapped = true
 			label.AutoLocalize = false
 			label.Parent = child

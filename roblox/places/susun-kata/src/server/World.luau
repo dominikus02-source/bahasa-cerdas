@@ -62,8 +62,8 @@ function World.build()
 	shelf.CanTouch = false
 
 	local sign = Build.part(folder, "Papan", Vector3.new(14, 5, 0.6), CFrame.new(0, 6, -30), Palette.Plate)
-	Build.label(sign, "Susun balok, lalu kunci.", Enum.NormalId.Front, 28, Palette.Ink)
-	Build.label(sign, "Susun balok, lalu kunci.", Enum.NormalId.Back, 28, Palette.Ink)
+	Build.label(sign, "Susun balok, lalu kunci.", Enum.NormalId.Front, 16, Palette.Ink)
+	Build.label(sign, "Susun balok, lalu kunci.", Enum.NormalId.Back, 16, Palette.Ink)
 
 	Build.lamp(folder, Vector3.new(-28, 0, 10))
 	Build.lamp(folder, Vector3.new(28, 0, 10))
@@ -71,15 +71,15 @@ function World.build()
 	Build.tree(folder, Vector3.new(40, 0, -8), 0.9)
 
 	local home = Build.part(folder, "Pulang", Vector3.new(10, 7, 2), CFrame.new(0, 3.5, 40), Palette.Navy)
-	Build.label(home, "Alun-Alun", Enum.NormalId.Front, 28, Palette.Krem)
-	Build.label(home, "Alun-Alun", Enum.NormalId.Back, 28, Palette.Krem)
+	Build.label(home, "Alun-Alun", Enum.NormalId.Front, 18, Palette.Krem)
+	Build.label(home, "Alun-Alun", Enum.NormalId.Back, 18, Palette.Krem)
 
 	local huruf = Build.part(folder, "Huruf", Vector3.new(9, 1, 8), CFrame.new(-12, 1, 18), Palette.Teal)
-	Build.label(huruf, "Huruf", Enum.NormalId.Top, 22, Palette.Ink)
+	Build.label(huruf, "Huruf", Enum.NormalId.Top, 16, Palette.Ink)
 	local kalimat = Build.part(folder, "Kalimat", Vector3.new(9, 1, 8), CFrame.new(12, 1, 18), Palette.Kunyit)
-	Build.label(kalimat, "Kalimat", Enum.NormalId.Top, 22, Palette.Ink)
+	Build.label(kalimat, "Kalimat", Enum.NormalId.Top, 16, Palette.Ink)
 	local waktu = Build.part(folder, "Waktu", Vector3.new(8, 1, 6), CFrame.new(0, 1, 18), Palette.Koral)
-	Build.label(waktu, "Waktu", Enum.NormalId.Top, 18, Palette.Ink)
+	Build.label(waktu, "Waktu", Enum.NormalId.Top, 16, Palette.Ink)
 
 	local npc =
 		Build.part(folder, "MakBengkel", Vector3.new(2, 4.4, 1.3), CFrame.new(-22, 2.3, 8), Palette.LeafDark)

@@ -21,8 +21,8 @@ function World.build()
 	path.CanTouch = false
 	Build.spawnPad(folder, CFrame.new(0, 1.2, 42))
 	local board = Build.board(folder, CFrame.new(0, 0, -34), Palette.Plate)
-	Build.label(board, "Pernyataan ada di papan ini dan di kartu atas.", Enum.NormalId.Front, 28, Palette.Ink)
-	Build.label(board, "Pernyataan ada di papan ini dan di kartu atas.", Enum.NormalId.Back, 28, Palette.Ink)
+	Build.label(board, "Pernyataan ada di papan ini dan di kartu atas.", Enum.NormalId.Front, 16, Palette.Ink)
+	Build.label(board, "Pernyataan ada di papan ini dan di kartu atas.", Enum.NormalId.Back, 16, Palette.Ink)
 
 	local benar = Build.arch(folder, CFrame.new(-18, 0, -8), Palette.Teal, "Benar")
 	benar:SetAttribute("Choice", "benar")
@@ -39,17 +39,17 @@ function World.build()
 	Build.rock(folder, Vector3.new(30, 0, 34), 0.7)
 
 	local home = Build.part(folder, "Pulang", Vector3.new(10, 8, 2), CFrame.new(0, 4, 52), Palette.Navy)
-	Build.label(home, "Alun-Alun", Enum.NormalId.Front, 32, Palette.Krem)
-	Build.label(home, "Alun-Alun", Enum.NormalId.Back, 32, Palette.Krem)
+	Build.label(home, "Alun-Alun", Enum.NormalId.Front, 18, Palette.Krem)
+	Build.label(home, "Alun-Alun", Enum.NormalId.Back, 18, Palette.Krem)
 	local homePrompt = Build.prompt(home, "Pulang", "Alun-Alun")
 
 	local santai = Build.part(folder, "Santai", Vector3.new(8, 1, 8), CFrame.new(-14, 1, 28), Palette.Teal)
-	Build.label(santai, "Santai", Enum.NormalId.Top, 22, Palette.Ink)
+	Build.label(santai, "Santai", Enum.NormalId.Top, 16, Palette.Ink)
 	local santaiPrompt = Build.prompt(santai, "Main", "Mode Santai")
 
 	local tantang =
 		Build.part(folder, "Tantangan", Vector3.new(8, 1, 8), CFrame.new(14, 1, 28), Palette.Kunyit)
-	Build.label(tantang, "Tantangan", Enum.NormalId.Top, 22, Palette.Ink)
+	Build.label(tantang, "Tantangan", Enum.NormalId.Top, 16, Palette.Ink)
 	local tantangPrompt = Build.prompt(tantang, "Main", "Mode Tantangan")
 
 	local npc =

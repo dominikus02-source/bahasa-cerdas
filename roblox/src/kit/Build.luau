@@ -89,8 +89,10 @@ function Build.label(part: BasePart, text: string, face: Enum.NormalId?, textSiz
 	local gui = Instance.new("SurfaceGui")
 	gui.Face = face or Enum.NormalId.Front
 	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = 42
+	local size = textSize or 16
+	gui.PixelsPerStud = if size >= 20 then 22 else 18
 	gui.LightInfluence = 0.2
+	gui.MaxDistance = 90
 	gui.Parent = part
 	local label = Instance.new("TextLabel")
 	label.BackgroundTransparency = 1
@@ -98,7 +100,7 @@ function Build.label(part: BasePart, text: string, face: Enum.NormalId?, textSiz
 	label.Font = Enum.Font.GothamBold
 	label.Text = text
 	label.TextColor3 = color or Palette.Ink
-	label.TextSize = textSize or 28
+	label.TextSize = size
 	label.TextWrapped = true
 	label.TextScaled = false
 	label.AutoLocalize = false
@@ -176,9 +178,9 @@ function Build.arch(parent: Instance, cframe: CFrame, color: Color3, text: strin
 	end
 	localPart("TiangKiri", Vector3.new(1.6, 12, 1.6), CFrame.new(-5.2, 6, 0), Palette.Wood)
 	localPart("TiangKanan", Vector3.new(1.6, 12, 1.6), CFrame.new(5.2, 6, 0), Palette.Wood)
-	local header = localPart("Palang", Vector3.new(12, 2.2, 1.4), CFrame.new(0, 12.2, 0), color)
-	Build.label(header, text, Enum.NormalId.Front, 36, Palette.Ink)
-	Build.label(header, text, Enum.NormalId.Back, 36, Palette.Ink)
+	local header = localPart("Palang", Vector3.new(8, 1.6, 0.7), CFrame.new(0, 11.4, 0), color)
+	Build.label(header, text, Enum.NormalId.Front, 20, Palette.Ink)
+	Build.label(header, text, Enum.NormalId.Back, 20, Palette.Ink)
 	local trigger = localPart("Pemicu", Vector3.new(8, 10, 3), CFrame.new(0, 5, 0), color)
 	trigger.Transparency = 1
 	trigger.CanCollide = false

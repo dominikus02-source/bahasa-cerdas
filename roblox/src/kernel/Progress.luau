@@ -331,7 +331,7 @@ function Progress.applyLook(player: Player, profile)
 	local titleItem = Cosmetics.ById[equipped.title]
 	if head and titleItem and titleItem.Title then
 		local billboard = Instance.new("BillboardGui")
-		billboard.Size = UDim2.fromOffset(140, 22)
+		billboard.Size = UDim2.fromOffset(110, 18)
 		billboard.StudsOffsetWorldSpace = Vector3.new(0, 1.8, 0)
 		billboard.MaxDistance = 45
 		billboard.Parent = head
@@ -341,7 +341,7 @@ function Progress.applyLook(player: Player, profile)
 		label.Size = UDim2.fromScale(1, 1)
 		label.Font = Enum.Font.GothamBold
 		label.TextColor3 = Palette.Kunyit
-		label.TextSize = 13
+		label.TextSize = 11
 		label.Text = titleItem.Title
 		label.AutoLocalize = false
 		label.Parent = billboard
