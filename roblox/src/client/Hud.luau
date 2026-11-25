@@ -29,13 +29,13 @@ local function stroke(parent: Instance, color: Color3, thickness: number?)
 	local ui = Instance.new("UIStroke")
 	ui.Color = color
 	ui.Thickness = thickness or 1
-	ui.Transparency = 0.35
+	ui.Transparency = 0.55
 	ui.Parent = parent
 end
 
 local function warmPlate(frame: GuiObject)
 	frame.BackgroundColor3 = Palette.Plate
-	frame.BackgroundTransparency = 0.06
+	frame.BackgroundTransparency = 0.22
 	frame.BorderSizePixel = 0
 	corner(frame, 12)
 	stroke(frame, Palette.WoodDark, 1)
@@ -51,7 +51,7 @@ local function label(parent: Instance, text: string, font: Enum.Font, color: Col
 	ui.Font = font
 	ui.Text = text
 	ui.TextColor3 = color
-	ui.TextSize = textSize or 15
+	ui.TextSize = textSize or 13
 	ui.TextScaled = false
 	ui.TextWrapped = true
 	ui.TextTruncate = Enum.TextTruncate.AtEnd
@@ -73,7 +73,7 @@ local function button(parent: Instance, text: string, color: Color3)
 	ui.Font = FONT_TITLE
 	ui.Text = text
 	ui.TextColor3 = Palette.Ink
-	ui.TextSize = 15
+	ui.TextSize = 13
 	ui.TextScaled = false
 	ui.TextWrapped = true
 	ui.TextTruncate = Enum.TextTruncate.AtEnd
@@ -106,49 +106,51 @@ function Hud.mount(fire)
 	-- Persistent chrome is one 36px bar. On a 667x375 phone that is under 10% of the screen.
 	local top = Instance.new("Frame")
 	top.Position = UDim2.fromOffset(8, 8)
-	top.Size = UDim2.new(1, -16, 0, 36)
+	top.Size = UDim2.new(1, -16, 0, 28)
 	top.Parent = gui
 	warmPlate(top)
 	local topCap = Instance.new("UISizeConstraint")
-	topCap.MaxSize = Vector2.new(1920, 36)
+	topCap.MaxSize = Vector2.new(1920, 28)
 	topCap.Parent = top
-	local coins = label(top, "Koin 0", FONT_TITLE, Palette.Ink, 15)
-	coins.Position = UDim2.fromOffset(10, 0)
-	coins.Size = UDim2.fromOffset(110, 36)
-	local stars = label(top, "Bintang 0", FONT_BODY, Palette.Kunyit, 14)
-	stars.Position = UDim2.fromOffset(120, 0)
-	stars.Size = UDim2.new(1, -210, 0, 36)
+	local coins = label(top, "Koin 0", FONT_TITLE, Palette.Ink, 12)
+	coins.Position = UDim2.fromOffset(8, 0)
+	coins.Size = UDim2.fromOffset(88, 28)
+	local stars = label(top, "Bintang 0", FONT_BODY, Palette.Kunyit, 12)
+	stars.Position = UDim2.fromOffset(96, 0)
+	stars.Size = UDim2.new(1, -168, 0, 28)
 
 	local menuButton = button(top, "Menu", Palette.Teal)
 	menuButton.AnchorPoint = Vector2.new(1, 0.5)
 	menuButton.Position = UDim2.new(1, -4, 0.5, 0)
-	menuButton.Size = UDim2.fromOffset(72, 28)
+	menuButton.Size = UDim2.fromOffset(58, 22)
+	menuButton.TextSize = 12
 
 	local promptCard = Instance.new("Frame")
 	promptCard.AnchorPoint = Vector2.new(0.5, 0)
-	promptCard.Position = UDim2.new(0.5, 0, 0, 48)
-	promptCard.Size = UDim2.new(1, -16, 0, 48)
+	promptCard.Position = UDim2.new(0.5, 0, 0, 40)
+	promptCard.Size = UDim2.new(1, -24, 0, 34)
 	promptCard.Visible = false
 	promptCard.Parent = gui
 	warmPlate(promptCard)
 	local promptLimit = Instance.new("UISizeConstraint")
-	promptLimit.MaxSize = Vector2.new(720, 48)
+	promptLimit.MaxSize = Vector2.new(560, 34)
 	promptLimit.Parent = promptCard
-	local promptText = label(promptCard, "", FONT_BODY, Palette.Ink, 16)
+	local promptText = label(promptCard, "", FONT_BODY, Palette.Ink, 13)
 	promptText.Size = UDim2.new(1, -78, 1, 0)
 	promptText.Position = UDim2.fromOffset(8, 0)
 	promptText.TextXAlignment = Enum.TextXAlignment.Center
 	local timer = label(promptCard, "", FONT_TITLE, Palette.Koral, 15)
 	timer.AnchorPoint = Vector2.new(1, 0)
 	timer.Position = UDim2.new(1, -8, 0, 0)
-	timer.Size = UDim2.fromOffset(36, 48)
+	timer.Size = UDim2.fromOffset(28, 34)
 	timer.TextXAlignment = Enum.TextXAlignment.Right
 	timer.Visible = false
 
 	local combo = label(gui, "", FONT_TITLE, Palette.Navy, 16)
 	combo.AnchorPoint = Vector2.new(0.5, 0)
 	combo.Position = UDim2.new(0.5, 0, 0, 100)
-	combo.Size = UDim2.fromOffset(140, 22)
+	combo.Size = UDim2.fromOffset(120, 18)
+	combo.TextSize = 12
 	combo.BackgroundColor3 = Palette.Kunyit
 	combo.BackgroundTransparency = 1
 	combo.TextXAlignment = Enum.TextXAlignment.Center
@@ -157,12 +159,12 @@ function Hud.mount(fire)
 	local answers = Instance.new("Frame")
 	answers.AnchorPoint = Vector2.new(1, 1)
 	answers.Position = UDim2.new(1, -8, 1, -72)
-	answers.Size = UDim2.fromOffset(210, 152)
+	answers.Size = UDim2.fromOffset(176, 120)
 	answers.BackgroundTransparency = 1
 	answers.Visible = false
 	answers.Parent = gui
 	local answerLimit = Instance.new("UISizeConstraint")
-	answerLimit.MaxSize = Vector2.new(210, 152)
+	answerLimit.MaxSize = Vector2.new(176, 120)
 	answerLimit.Parent = answers
 	local grid = Instance.new("UIListLayout")
 	grid.Padding = UDim.new(0, 4)
@@ -171,8 +173,8 @@ function Hud.mount(fire)
 	local answerButtons = {}
 	for index = 1, 4 do
 		local choice = button(answers, "", Palette.Plate)
-		choice.Size = UDim2.new(1, 0, 0, 34)
-		choice.TextSize = 13
+		choice.Size = UDim2.new(1, 0, 0, 28)
+		choice.TextSize = 12
 		choice.TextXAlignment = Enum.TextXAlignment.Center
 		choice.LayoutOrder = index
 		choice.MouseButton1Click:Connect(function()
@@ -185,14 +187,14 @@ function Hud.mount(fire)
 	local speech = Instance.new("Frame")
 	speech.AnchorPoint = Vector2.new(0.5, 0)
 	speech.Position = UDim2.new(0.5, 0, 0, 48)
-	speech.Size = UDim2.new(1, -24, 0, 36)
+	speech.Size = UDim2.new(1, -32, 0, 28)
 	speech.Visible = false
 	speech.Parent = gui
 	warmPlate(speech)
 	local speechLimit = Instance.new("UISizeConstraint")
-	speechLimit.MaxSize = Vector2.new(520, 36)
+	speechLimit.MaxSize = Vector2.new(420, 28)
 	speechLimit.Parent = speech
-	local speechText = label(speech, "", FONT_BODY, Palette.Ink, 14)
+	local speechText = label(speech, "", FONT_BODY, Palette.Ink, 12)
 	speechText.Size = UDim2.new(1, -12, 1, 0)
 	speechText.Position = UDim2.fromOffset(6, 0)
 
@@ -256,7 +258,7 @@ function Hud.mount(fire)
 	local menu = Instance.new("Frame")
 	menu.AnchorPoint = Vector2.new(1, 0)
 	menu.Position = UDim2.new(1, -12, 0, 64)
-	menu.Size = UDim2.fromOffset(148, 248)
+	menu.Size = UDim2.fromOffset(132, 200)
 	menu.Visible = false
 	menu.ZIndex = 6
 	menu.Parent = gui
@@ -312,7 +314,8 @@ function Hud.mount(fire)
 
 	local function rowButton(text: string, color: Color3, callback)
 		local ui = button(scroller, text, color)
-		ui.Size = UDim2.new(1, -8, 0, 36)
+		ui.Size = UDim2.new(1, -8, 0, 30)
+		ui.TextSize = 13
 		ui.ZIndex = 7
 		ui.MouseButton1Click:Connect(function()
 			Juice.click()
@@ -502,7 +505,8 @@ function Hud.mount(fire)
 		}
 	do
 		local ui = button(menu, spec[1], Palette.Plate)
-		ui.Size = UDim2.new(1, -16, 0, 36)
+		ui.Size = UDim2.new(1, -12, 0, 26)
+		ui.TextSize = 12
 		ui.ZIndex = 7
 		ui.MouseButton1Click:Connect(function()
 			Juice.click()
