@@ -35,6 +35,7 @@ export const XP_SOURCES = [
   "BADGE",
   "ACHIEVEMENT",
   "SYSTEM",
+  "ROBLOX",
 ] as const;
 
 export type XpSource = (typeof XP_SOURCES)[number];

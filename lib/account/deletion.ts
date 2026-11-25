@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { AccountError } from "./security";
 import cache from "@/lib/redis";
@@ -5,8 +6,35 @@ import cache from "@/lib/redis";
 export const DELETED_EMAIL_DOMAIN = "@account.invalid";
 export function isDeletedAccount(user: { email: string }) { return user.email.endsWith(DELETED_EMAIL_DOMAIN); }
 
+/** Lepas tautan Roblox sebelum akun dianonimkan. Tabel yang belum dimigrasi tidak boleh menggagalkan penghapusan. */
+async function unlinkRobloxOnDelete(userId: string) {
+  try {
+    const robloxLink = await db.robloxLink.findUnique({ where: { userId } });
+    if (!robloxLink) {
+      await db.robloxLinkCode.deleteMany({ where: { userId } });
+      return;
+    }
+    await db.$transaction(async (tx) => {
+      await tx.robloxLinkRevocation.create({
+        data: {
+          userId,
+          robloxUserId: robloxLink.robloxUserId,
+          robloxUsername: robloxLink.robloxUsername,
+          linkedAt: robloxLink.linkedAt,
+        },
+      });
+      await tx.robloxLink.delete({ where: { userId } });
+      await tx.robloxLinkCode.deleteMany({ where: { userId } });
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && (error.code === "P2021" || error.code === "P2022")) return;
+    throw error;
+  }
+}
+
 /** Keep referential/financial evidence; remove personal identity and private work. */
 export async function anonymizeAccount(userId: string, supabaseId: string) {
+  await unlinkRobloxOnDelete(userId);
   await db.$transaction(async tx => {
     const user = await tx.user.findUniqueOrThrow({ where: { id: userId } });
     const wallet = await tx.teacherWallet.findUnique({ where: { teacherId: userId } });

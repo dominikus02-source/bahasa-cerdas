@@ -33,6 +33,17 @@ const cache = {
     }
   },
 
+  /** SET NX dengan TTL. true = baru, false = sudah ada, null = Redis tidak siap. */
+  async setNx(key: string, value: string, ttlSeconds: number): Promise<boolean | null> {
+    if (!redis) return null
+    try {
+      const result = await redis.set(key, value, { nx: true, ex: ttlSeconds })
+      return result === "OK"
+    } catch {
+      return null
+    }
+  },
+
   async del(key: string): Promise<void> {
     if (!redis) return
     try {

@@ -20,6 +20,7 @@ export const XP_SOURCE_LABELS: Record<string, string> = {
   BADGE: "Badge",
   ACHIEVEMENT: "Pencapaian",
   SYSTEM: "Sistem",
+  ROBLOX: "Roblox",
 };
 
 export { XP_SOURCES };
@@ -44,4 +45,5 @@ export const XP_SOURCE_ICONS: Record<string, string> = {
   BADGE: "🏅",
   ACHIEVEMENT: "🏆",
   SYSTEM: "⚙️",
+  ROBLOX: "🎮",
 };

@@ -30,6 +30,7 @@ export const BATAS_XP_PER_SUBMIT: Record<string, number> = {
   MENARA: 120,
   JALUR_CERDAS: 200,
   ADAPTIVE_PRACTICE: 200,
+  ROBLOX: 200,
   KOMPETENSI: 1000,
   PENUGASAN: 500,
 };
