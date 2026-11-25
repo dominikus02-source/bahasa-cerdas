@@ -1,0 +1,64 @@
+{
+  "name": "Kota Aksara",
+  "tree": {
+    "$className": "DataModel",
+    "HttpService": {
+      "$properties": {
+        "HttpEnabled": true
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0.28, 0.24, 0.2],
+        "Brightness": 2.2,
+        "ClockTime": 17.15,
+        "GeographicLatitude": -6.2,
+        "GlobalShadows": true,
+        "OutdoorAmbient": [0.55, 0.48, 0.4],
+        "Technology": "Future"
+      }
+    },
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "src/shared"
+      },
+      "PlaceRole": {
+        "$className": "StringValue",
+        "$properties": {
+          "Value": "lobby"
+        }
+      }
+    },
+    "ServerScriptService": {
+      "Server": {
+        "$path": "src/server"
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    },
+    "StarterPlayer": {
+      "$properties": {
+        "CameraMaxZoomDistance": 80,
+        "CameraMinZoomDistance": 6,
+        "CharacterWalkSpeed": 18,
+        "EnableMouseLockOption": true
+      },
+      "StarterPlayerScripts": {
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "FallenPartsDestroyHeight": -80,
+        "StreamingEnabled": true,
+        "StreamingMinRadius": 64,
+        "StreamingTargetRadius": 320
+      }
+    }
+  }
+}
