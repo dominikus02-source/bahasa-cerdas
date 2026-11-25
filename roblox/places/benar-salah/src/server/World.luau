@@ -74,6 +74,8 @@ function World.build()
 		Enum.Material.Wood
 	)
 	low.CanTouch = false
+	Build.sky(15.5)
+	Build.kampung(folder, Vector3.new(0, 0, 6), "putusan")
 
 	return {
 		board = board,

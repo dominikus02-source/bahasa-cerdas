@@ -20,6 +20,8 @@ function World.build()
 	Build.water(folder, Vector3.new(0, -0.2, 18), 70, 28)
 	Build.boat(folder, CFrame.new(-16, 1.2, 22))
 	Build.boat(folder, CFrame.new(18, 1.2, 26) * CFrame.Angles(0, 0.6, 0))
+	Build.sky(10.2)
+	Build.kampung(folder, Vector3.new(0, 0, -6), "dermaga")
 	Build.spawnPad(folder, CFrame.new(0, 3, -8))
 	local map = Build.part(
 		folder,
@@ -60,6 +62,7 @@ function World.build()
 
 	-- Gapura Jawa
 	Build.plate(folder, Vector3.new(0, -1, -430), 70, 50, Palette.Grass, 2)
+	Build.kampung(folder, Vector3.new(0, 0, -430), "jawa")
 	marker(folder, "JawaSpawn", CFrame.new(0, 1, -410))
 	Build.tree(folder, Vector3.new(-18, 0, -430), 1.1)
 	Build.tree(folder, Vector3.new(16, 0, -448), 0.8)
@@ -101,6 +104,7 @@ function World.build()
 
 	-- Pesisir Sumatra
 	Build.plate(folder, Vector3.new(430, -1, 0), 60, 46, Palette.Grass, 2)
+	Build.kampung(folder, Vector3.new(430, 0, -4), "sumatra")
 	Build.water(folder, Vector3.new(430, -0.4, 20), 40, 12)
 	marker(folder, "SumatraSpawn", CFrame.new(430, 1, -6))
 	local house = Build.part(

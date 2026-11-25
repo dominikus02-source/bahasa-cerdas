@@ -20,6 +20,12 @@ Shell.start({
 		if action == "choice" then
 			Round.choice(player, payload)
 			return true
+		elseif action == "again" then
+			Round.begin(player, if payload.Mode == "tantangan" then "tantangan" else "santai")
+			return true
+		elseif action == "next" then
+			Round.begin(player, "tantangan")
+			return true
 		end
 		return false
 	end,

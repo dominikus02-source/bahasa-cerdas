@@ -14,7 +14,7 @@ local Bank = require(script.Parent.Bank)
 local Round = {}
 
 local rounds = {}
-local ROUND_SIZE = 8
+local ROUND_SIZE = 5
 
 local function starsFor(mode: string, correct: number, elapsed: number): number
 	local ratio = correct / ROUND_SIZE
@@ -64,11 +64,14 @@ local function paintBoard(text: string)
 			local label = Instance.new("TextLabel")
 			label.BackgroundColor3 = Palette.Plate
 			label.Size = UDim2.fromScale(1, 1)
-			label.Font = Enum.Font.GothamBold
+			label.Font = Enum.Font.Gotham
 			label.Text = text
-			label.TextColor3 = Palette.Ink
-			label.TextSize = 20
-			label.TextWrapped = true
+			label.TextColor3 = Color3.fromRGB(42, 46, 54)
+			label.TextSize = 14
+			label.TextWrapped = false
+			label.TextStrokeTransparency = 1
+			label.RichText = false
+			label.TextTruncate = Enum.TextTruncate.AtEnd
 			label.AutoLocalize = false
 			label.Parent = child
 		end
@@ -112,11 +115,11 @@ local function finish(player: Player, round)
 	local elapsed = os.clock() - round.began
 	local stars = starsFor(round.mode, round.correct, elapsed)
 	local profile = Shell.profile(player)
+	local coins = round.correct * 6 + math.min(round.bestCombo, 6) * 2
 	if profile then
 		local arena = if round.mode == "tantangan" then "bs_tantang" else "bs_santai"
 		Progress.keepStars(profile, arena, stars)
 		Progress.noteArena(profile, round.mode)
-		local coins = round.correct * 6 + math.min(round.bestCombo, 6) * 2
 		Progress.addCoins(profile, coins)
 		if stars >= 2 and not profile.flags.bsBadge then
 			profile.flags.bsBadge = true
@@ -128,9 +131,16 @@ local function finish(player: Player, round)
 	Remotes.fire(player, "result", {
 		Correct = true,
 		Head = "Ronde selesai",
-		Body = tostring(round.correct) .. " dari " .. tostring(ROUND_SIZE) .. " tepat.",
-		Foot = tostring(stars) .. " bintang. Pilih mode untuk main lagi.",
+		Body = tostring(round.correct)
+			.. " benar. +"
+			.. tostring(coins)
+			.. " koin. "
+			.. tostring(stars)
+			.. " bintang.",
+		Foot = "",
 		Done = true,
+		Next = round.mode == "santai",
+		Mode = round.mode,
 	})
 	rounds[player] = nil
 end

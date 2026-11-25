@@ -158,15 +158,15 @@ local function finishBoss(player: Player, session)
 		Shell.push(player)
 	end
 	growPena(0)
-	local body = if won
-		then "Makna tulisan resmi tetap jernih. Bahasa daerah tidak kamu kalahkan. Kamu menjaganya supaya tidak tertukar dengan ejaan yang rusak."
-		else "Penjaga Makna masih berjaga. Ulangi dari gapura kalau kamu mau mencoba lagi."
+	local body = if won then "Makna resmi tetap jernih." else "Belum cukup jernih."
 	Remotes.fire(player, "result", {
 		Correct = won,
 		Done = true,
 		Head = if won then "Penjaga Makna undur" else "Belum cukup jernih",
-		Body = body,
-		Foot = tostring(session.correct) .. " tepat dari " .. tostring(session.asked) .. ".",
+		Body = body .. " " .. tostring(session.correct) .. " tepat.",
+		Foot = "",
+		Next = true,
+		Mode = "boss",
 	})
 	closeSession(player)
 	task.delay(2, function()
@@ -228,8 +228,13 @@ local function advance(player: Player, session)
 					Correct = true,
 					Done = true,
 					Head = "Selesai",
-					Body = session.closing,
-					Foot = tostring(session.correct) .. " tepat.",
+					Body = tostring(session.correct)
+						.. " tepat. +"
+						.. tostring(session.correct * 8)
+						.. " koin.",
+					Foot = "",
+					Next = true,
+					Mode = session.phase,
 				})
 				closeSession(player)
 			end)
@@ -387,7 +392,7 @@ function Quest.order(player: Player, order)
 		Foot = session.line.Note,
 	})
 	session.phase = "boss3"
-	session.items = Picker.take(profile, Bank.BossFast, 6, "ejaan", {})
+	session.items = Picker.take(profile, Bank.BossFast, 4, "ejaan", {})
 	session.index = 1
 	session.label = "Fase tiga"
 	task.delay(1.3, function()
@@ -648,6 +653,43 @@ function Quest.welcome(player: Player, profile)
 	if not profile.flags.nsWelcomed then
 		profile.flags.nsWelcomed = true
 		Shell.mark(player)
+	end
+end
+
+function Quest.replay(player: Player, phase: string)
+	if phase == "sumatra" then
+		move(player, SUMATRA)
+		Quest.sumatra(player)
+	elseif phase == "jurus" then
+		move(player, JAWA)
+		Quest.jurus(player)
+	elseif phase == "boss" then
+		Quest.boss(player)
+	else
+		move(player, JAWA)
+		Quest.jawaQuiz(player)
+	end
+end
+
+function Quest.follow(player: Player)
+	local profile = Shell.profile(player)
+	if not profile then
+		return
+	end
+	local row = journey(profile)
+	if not row.jawa then
+		move(player, JAWA)
+		Quest.jawaQuiz(player)
+	elseif (profile.stars.ns_jurus or 0) < 1 then
+		move(player, JAWA)
+		Quest.jurus(player)
+	elseif not row.boss then
+		Quest.boss(player)
+	elseif not row.sumatra then
+		move(player, SUMATRA)
+		Quest.sumatra(player)
+	else
+		Quest.jawaQuiz(player)
 	end
 end
 

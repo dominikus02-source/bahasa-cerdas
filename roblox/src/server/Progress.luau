@@ -347,10 +347,13 @@ function Progress.applyLook(player: Player, profile)
 		label.BackgroundColor3 = Palette.Navy
 		label.BackgroundTransparency = 0.2
 		label.Size = UDim2.fromScale(1, 1)
-		label.Font = Enum.Font.GothamBold
+		label.Font = Enum.Font.Gotham
 		label.TextColor3 = Palette.Kunyit
-		label.TextSize = 11
+		label.TextSize = 14
 		label.TextScaled = false
+		label.TextWrapped = false
+		label.TextStrokeTransparency = 1
+		label.RichText = false
 		label.Text = titleItem.Title
 		label.AutoLocalize = false
 		label.Parent = billboard

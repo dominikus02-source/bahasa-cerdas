@@ -23,9 +23,9 @@ local Config = {
 		Click = "rbxasset://sounds/switch.wav",
 	},
 	Timer = {
-		[1] = 18,
-		[2] = 13,
-		[3] = 9,
+		[1] = 10,
+		[2] = 8,
+		[3] = 6,
 	},
 	Lanes = {
 		tutorial = 2,

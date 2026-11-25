@@ -34,6 +34,16 @@ NetClient.on(function(kind, payload)
 		ui.clearChoices()
 		if payload.Done then
 			Juice.reward()
+			ui.roundOver({
+				Title = tostring(payload.Head or ""),
+				Body = tostring(payload.Body or ""),
+				Foot = tostring(payload.Foot or ""),
+				Next = payload.Next == true,
+			}, function()
+				NetClient.fire("again", { Mode = payload.Mode or "santai" })
+			end, function()
+				NetClient.fire("next", {})
+			end)
 		elseif payload.Correct then
 			Juice.good()
 		else

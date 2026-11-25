@@ -19,6 +19,12 @@ Shell.start({
 		if action == "choice" then
 			Quest.choice(player, payload)
 			return true
+		elseif action == "again" then
+			Quest.replay(player, tostring(payload.Phase or "jawa"))
+			return true
+		elseif action == "next" then
+			Quest.follow(player)
+			return true
 		elseif action == "order" then
 			if not Shell.allow(player, "answer", 8, 8) then
 				return true

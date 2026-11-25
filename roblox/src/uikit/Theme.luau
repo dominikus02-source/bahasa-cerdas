@@ -7,12 +7,11 @@ local NetClient = require(script.Parent.NetClient)
 
 local Theme = {}
 
-local FONT_TITLE = Enum.Font.GothamBold
-local FONT_BODY = Enum.Font.GothamMedium
+local FONT_BODY = Enum.Font.Gotham
+local FONT_TITLE = Enum.Font.Gotham
 for _, item in Enum.Font:GetEnumItems() do
 	if item.Name == "BuilderSans" then
 		FONT_BODY = item
-	elseif item.Name == "BuilderSansBold" then
 		FONT_TITLE = item
 	end
 end
@@ -46,7 +45,9 @@ local function label(parent: Instance, text: string, font: Enum.Font, color: Col
 	ui.Text = text
 	ui.TextColor3 = color
 	ui.TextSize = textSize
-	ui.TextWrapped = true
+	ui.TextWrapped = false
+	ui.TextStrokeTransparency = 1
+	ui.RichText = false
 	ui.TextTruncate = Enum.TextTruncate.AtEnd
 	ui.TextXAlignment = Enum.TextXAlignment.Left
 	ui.AutoLocalize = false
@@ -82,10 +83,10 @@ function Theme.mount(options)
 	local topCap = Instance.new("UISizeConstraint")
 	topCap.MaxSize = Vector2.new(1920, 28)
 	topCap.Parent = top
-	local title = label(top, options.Title or "BahasaCerdas", FONT_TITLE, Palette.Ink, 12)
+	local title = label(top, options.Title or "BahasaCerdas", FONT_TITLE, Palette.Ink, 14)
 	title.Position = UDim2.fromOffset(8, 0)
 	title.Size = UDim2.fromScale(0.34, 1)
-	local stats = label(top, "", FONT_BODY, Palette.Navy, 12)
+	local stats = label(top, "", FONT_BODY, Palette.Navy, 14)
 	stats.Position = UDim2.fromScale(0.34, 0)
 	stats.Size = UDim2.new(0.66, -140, 1, 0)
 	stats.TextXAlignment = Enum.TextXAlignment.Right
@@ -97,7 +98,7 @@ function Theme.mount(options)
 	menuButton.BackgroundColor3 = Palette.Kunyit
 	menuButton.Font = FONT_TITLE
 	menuButton.Text = "Menu"
-	menuButton.TextSize = 12
+	menuButton.TextSize = 14
 	menuButton.TextColor3 = Palette.Ink
 	menuButton.AutoLocalize = false
 	menuButton.Parent = top
@@ -110,7 +111,7 @@ function Theme.mount(options)
 	homeButton.BackgroundColor3 = Palette.Teal
 	homeButton.Font = FONT_TITLE
 	homeButton.Text = "Alun-Alun"
-	homeButton.TextSize = 12
+	homeButton.TextSize = 14
 	homeButton.TextColor3 = Palette.Ink
 	homeButton.AutoLocalize = false
 	homeButton.Visible = options.ReturnLobby == true
@@ -317,9 +318,11 @@ function Theme.mount(options)
 		button.Size = UDim2.new(1, 0, 0, height)
 		button.BackgroundColor3 = color
 		button.Font = FONT_TITLE
-		button.TextSize = 12
+		button.TextSize = 14
 		button.TextColor3 = Palette.Ink
-		button.TextWrapped = true
+		button.TextWrapped = false
+		button.TextStrokeTransparency = 1
+		button.RichText = false
 		button.Text = text
 		button.AutoLocalize = false
 		button.Parent = parent
@@ -328,12 +331,12 @@ function Theme.mount(options)
 	end
 
 	function api.applyState(state)
-		stats.Text = tostring(state.Coins or 0)
-			.. " koin · "
-			.. tostring(state.StarTotal or 0)
-			.. " bintang · "
-			.. tostring(state.Streak or 0)
-			.. " hari"
+		local streak = state.Streak or 0
+		local line = tostring(state.Coins or 0) .. " koin · " .. tostring(state.StarTotal or 0) .. " bintang"
+		if streak >= 1 then
+			line = line .. " · Hari ke-" .. tostring(streak)
+		end
+		stats.Text = line
 		goal.Text = tostring(state.Goal or "")
 		if state.CanClaimDaily then
 			dailyButton.Text = "Ambil hadiah hari ke-" .. tostring(state.DailyDay or 1)
@@ -431,6 +434,24 @@ function Theme.mount(options)
 		end)
 	end
 
+	function api.roundOver(info, onAgain, onNext)
+		api.setPrompt(info.Title or "", info.Body or "", info.Foot or "")
+		api.clearTiles()
+		local list = {
+			{ Id = "again", Text = "Main lagi", Color = Palette.Teal },
+		}
+		if info.Next then
+			table.insert(list, { Id = "next", Text = "Level berikutnya", Color = Palette.Kunyit })
+		end
+		api.setChoices(list, function(id)
+			if id == "next" and onNext then
+				onNext()
+			elseif onAgain then
+				onAgain()
+			end
+		end)
+	end
+
 	function api.setPrompt(head: string, body: string, foot: string?)
 		promptTitle.Text = head
 		promptBody.Text = body
@@ -460,14 +481,15 @@ function Theme.mount(options)
 			button.Size = UDim2.new(width, -8, 1, 0)
 			button.BackgroundColor3 = item.Color or Palette.White
 			button.Font = FONT_TITLE
-			button.TextSize = 12
-			button.TextWrapped = true
+			button.TextSize = 15
+			button.TextWrapped = false
+			button.TextStrokeTransparency = 1
+			button.RichText = false
 			button.TextColor3 = Palette.Ink
 			button.Text = item.Text
 			button.AutoLocalize = false
 			button.Parent = choiceBar
 			corner(button, 12)
-			stroke(button, Palette.WoodDark)
 			button.MouseButton1Click:Connect(function()
 				Juice.click()
 				onPick(item.Id)

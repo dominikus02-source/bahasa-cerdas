@@ -12,7 +12,7 @@ local Bank = require(script.Parent.Bank)
 local Round = {}
 
 local rounds = {}
-local ROUND_SIZE = 6
+local ROUND_SIZE = 4
 
 local function shuffle(items)
 	local rng = Random.new()
@@ -127,6 +127,7 @@ local function finish(player: Player, round)
 	round.open = false
 	local stars = starsFor(round.mode, round.correct, os.clock() - round.began)
 	local profile = Shell.profile(player)
+	local coins = round.correct * 8
 	if profile then
 		local arena = if round.kind == "huruf" then "sk_huruf" else "sk_kalimat"
 		if round.mode == "tantangan" then
@@ -134,7 +135,7 @@ local function finish(player: Player, round)
 		end
 		Progress.keepStars(profile, arena, stars)
 		Progress.noteArena(profile, round.mode)
-		Progress.addCoins(profile, round.correct * 8)
+		Progress.addCoins(profile, coins)
 		if stars >= 2 and not profile.flags.skBadge then
 			profile.flags.skBadge = true
 			BahasaApi.badge(player, profile, { "roblox-susun-kata" })
@@ -146,8 +147,16 @@ local function finish(player: Player, round)
 		Correct = true,
 		Done = true,
 		Head = "Ronde selesai",
-		Body = tostring(round.correct) .. " dari " .. tostring(ROUND_SIZE) .. " tersusun.",
-		Foot = tostring(stars) .. " bintang.",
+		Body = tostring(round.correct)
+			.. " tersusun. +"
+			.. tostring(coins)
+			.. " koin. "
+			.. tostring(stars)
+			.. " bintang.",
+		Foot = "",
+		Next = round.kind == "huruf" or round.mode == "santai",
+		Kind = round.kind,
+		Mode = round.mode,
 	})
 	rounds[player] = nil
 end

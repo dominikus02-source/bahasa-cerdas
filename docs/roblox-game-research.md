@@ -254,3 +254,16 @@ Gerbang lama di lobi sudah memanggil ketiga place ID itu lewat `TeleportService`
 - DataStore studio sering mati sampai API Services dinyalakan. Place memberitahu pemain dan tetap main di memori.
 - Cuplikan layar Studio tidak dibuat di mesin ini. Tidak ada perender tanpa kepala.
 - Raid Si Galat, Adu Cepat, dan delapan wilayah penuh tetap di luar irisan ini.
+
+## 8. Riset dekorasi
+
+Dunia anak di Roblox yang mudah dibaca (Adopt Me, Brookhaven, Grow a Garden) tidak menang karena mesh mahal. Mereka menang karena setiap zona punya satu penanda, jalan yang mengarahkan mata ke pintu berikutnya, dan palet yang tidak berubah-ubah. Dokumentasi Roblox memisahkan cahaya (Technology Future, Atmosphere, Bloom dan ColorCorrection yang halus) dari isi dunia, dan streaming supaya HP hanya memuat yang dekat.
+
+Sumber: [Lighting](https://create.roblox.com/docs/environment/lighting), [Atmosphere](https://create.roblox.com/docs/environment/atmosphere), [Post-processing](https://create.roblox.com/docs/environment/post-processing), [Streaming](https://create.roblox.com/docs/workspace/streaming), [Improve performance](https://create.roblox.com/docs/performance-optimization/improve).
+
+Yang dipakai di kota dan tiga permainan:
+
+- Langit tropis sore/pagi, Atmosphere hangat, Bloom kecil, ColorCorrection sedikit jenuh. Tanpa SunRays berat.
+- Jalan batu atau jejak kunyit menuju gerbang. Gerbang tetap titik fokus. Nama gerbang satu baris, tanpa papan tebal.
+- Palem, beringin di Jawa, kain lapak, becak, perahu di dermaga dan Sumatra, burung kecil. Semua dari Part. Bayangan dimatikan pada properti kecil.
+- Tidak ada id aset luar. Suara suasana panjang tidak dipasang karena tidak ada berkas tropis bawaan Roblox yang aman. Umpan balik tetap memakai suara bawaan yang sudah ada.

@@ -29,7 +29,22 @@ NetClient.on(function(kind, payload)
 	elseif kind == "result" then
 		if payload.Done then
 			Juice.reward()
-			ui.clearTiles()
+			ui.roundOver({
+				Title = tostring(payload.Head or ""),
+				Body = tostring(payload.Body or ""),
+				Foot = tostring(payload.Foot or ""),
+				Next = payload.Next == true,
+			}, function()
+				NetClient.fire("mode", { Kind = payload.Kind or "huruf", Mode = payload.Mode or "santai" })
+			end, function()
+				local stepKind = if payload.Kind == "huruf" and payload.Mode ~= "tantangan"
+					then "huruf"
+					else "kalimat"
+				local stepMode = if payload.Kind == "huruf" and payload.Mode ~= "tantangan"
+					then "tantangan"
+					else "santai"
+				NetClient.fire("mode", { Kind = stepKind, Mode = stepMode })
+			end)
 		elseif payload.Correct then
 			Juice.good()
 			ui.clearTiles()

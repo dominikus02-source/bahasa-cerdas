@@ -81,6 +81,8 @@ function World.build()
 	local waktu = Build.part(folder, "Waktu", Vector3.new(8, 1, 6), CFrame.new(0, 1, 18), Palette.Koral)
 	Build.label(waktu, "Waktu", Enum.NormalId.Top, 16, Palette.Ink)
 
+	Build.sky(16.2)
+	Build.kampung(folder, Vector3.new(0, 0, 4), "bengkel")
 	local npc =
 		Build.part(folder, "MakBengkel", Vector3.new(2, 4.4, 1.3), CFrame.new(-22, 2.3, 8), Palette.LeafDark)
 	Build.decor(

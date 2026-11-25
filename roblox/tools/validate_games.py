@@ -141,6 +141,19 @@ def check_clients() -> int:
     return 0
 
 
+def check_plain_text() -> int:
+    import importlib.util
+
+    path = Path(__file__).with_name("validate_text_style.py")
+    spec = importlib.util.spec_from_file_location("textstyle", path)
+    if spec is None or spec.loader is None:
+        print("pemeriksa teks hilang")
+        return 1
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.main()
+
+
 def main() -> int:
     status = 0
     status |= check_tf("benar", (PLACES / "benar-salah/src/server/Bank.luau").read_text(encoding="utf-8"), 70)
@@ -155,6 +168,7 @@ def main() -> int:
     status |= check_mcq("bos tanya", section(nusa, "BossAsk"), 6)
     status |= check_lines("semboyan", LINE_RE, section(nusa, "BossLine"), 4)
     status |= check_clients()
+    status |= check_plain_text()
     if status == 0:
         print("bank tiga permainan ok")
     return status

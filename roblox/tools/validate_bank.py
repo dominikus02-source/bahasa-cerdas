@@ -53,5 +53,21 @@ def main() -> int:
     return 0
 
 
+def check_plain_text() -> int:
+    import importlib.util
+
+    path = Path(__file__).with_name("validate_text_style.py")
+    spec = importlib.util.spec_from_file_location("textstyle", path)
+    if spec is None or spec.loader is None:
+        print("pemeriksa teks hilang")
+        return 1
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module.main()
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    code = main()
+    if code == 0:
+        code = check_plain_text()
+    sys.exit(code)

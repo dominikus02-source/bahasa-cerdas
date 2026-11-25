@@ -9,12 +9,11 @@ local Palette = require(ReplicatedStorage.Shared.Palette)
 
 local Hud = {}
 
-local FONT_TITLE = Enum.Font.GothamBold
-local FONT_BODY = Enum.Font.GothamMedium
+local FONT_BODY = Enum.Font.Gotham
+local FONT_TITLE = Enum.Font.Gotham
 for _, item in Enum.Font:GetEnumItems() do
 	if item.Name == "BuilderSans" then
 		FONT_BODY = item
-	elseif item.Name == "BuilderSansBold" then
 		FONT_TITLE = item
 	end
 end
@@ -51,9 +50,11 @@ local function label(parent: Instance, text: string, font: Enum.Font, color: Col
 	ui.Font = font
 	ui.Text = text
 	ui.TextColor3 = color
-	ui.TextSize = textSize or 13
+	ui.TextSize = textSize or 14
 	ui.TextScaled = false
-	ui.TextWrapped = true
+	ui.TextWrapped = false
+	ui.TextStrokeTransparency = 1
+	ui.RichText = false
 	ui.TextTruncate = Enum.TextTruncate.AtEnd
 	ui.TextXAlignment = Enum.TextXAlignment.Left
 	ui.TextYAlignment = Enum.TextYAlignment.Center
@@ -73,14 +74,15 @@ local function button(parent: Instance, text: string, color: Color3)
 	ui.Font = FONT_TITLE
 	ui.Text = text
 	ui.TextColor3 = Palette.Ink
-	ui.TextSize = 13
+	ui.TextSize = 15
 	ui.TextScaled = false
-	ui.TextWrapped = true
+	ui.TextWrapped = false
 	ui.TextTruncate = Enum.TextTruncate.AtEnd
+	ui.TextStrokeTransparency = 1
+	ui.RichText = false
 	ui.AutoLocalize = false
 	ui.Parent = parent
 	corner(ui, 10)
-	stroke(ui, Palette.WoodDark, 1)
 	return ui
 end
 
@@ -112,10 +114,10 @@ function Hud.mount(fire)
 	local topCap = Instance.new("UISizeConstraint")
 	topCap.MaxSize = Vector2.new(1920, 28)
 	topCap.Parent = top
-	local coins = label(top, "Koin 0", FONT_TITLE, Palette.Ink, 12)
+	local coins = label(top, "Koin 0", FONT_TITLE, Palette.Ink, 14)
 	coins.Position = UDim2.fromOffset(8, 0)
 	coins.Size = UDim2.fromOffset(88, 28)
-	local stars = label(top, "Bintang 0", FONT_BODY, Palette.Kunyit, 12)
+	local stars = label(top, "Bintang 0", FONT_BODY, Palette.Kunyit, 14)
 	stars.Position = UDim2.fromOffset(96, 0)
 	stars.Size = UDim2.new(1, -168, 0, 28)
 
@@ -123,7 +125,7 @@ function Hud.mount(fire)
 	menuButton.AnchorPoint = Vector2.new(1, 0.5)
 	menuButton.Position = UDim2.new(1, -4, 0.5, 0)
 	menuButton.Size = UDim2.fromOffset(58, 22)
-	menuButton.TextSize = 12
+	menuButton.TextSize = 14
 
 	local promptCard = Instance.new("Frame")
 	promptCard.AnchorPoint = Vector2.new(0.5, 0)
@@ -135,7 +137,7 @@ function Hud.mount(fire)
 	local promptLimit = Instance.new("UISizeConstraint")
 	promptLimit.MaxSize = Vector2.new(560, 34)
 	promptLimit.Parent = promptCard
-	local promptText = label(promptCard, "", FONT_BODY, Palette.Ink, 13)
+	local promptText = label(promptCard, "", FONT_BODY, Palette.Ink, 14)
 	promptText.Size = UDim2.new(1, -78, 1, 0)
 	promptText.Position = UDim2.fromOffset(8, 0)
 	promptText.TextXAlignment = Enum.TextXAlignment.Center
@@ -150,7 +152,7 @@ function Hud.mount(fire)
 	combo.AnchorPoint = Vector2.new(0.5, 0)
 	combo.Position = UDim2.new(0.5, 0, 0, 100)
 	combo.Size = UDim2.fromOffset(120, 18)
-	combo.TextSize = 12
+	combo.TextSize = 14
 	combo.BackgroundColor3 = Palette.Kunyit
 	combo.BackgroundTransparency = 1
 	combo.TextXAlignment = Enum.TextXAlignment.Center
@@ -174,7 +176,7 @@ function Hud.mount(fire)
 	for index = 1, 4 do
 		local choice = button(answers, "", Palette.Plate)
 		choice.Size = UDim2.new(1, 0, 0, 28)
-		choice.TextSize = 12
+		choice.TextSize = 15
 		choice.TextXAlignment = Enum.TextXAlignment.Center
 		choice.LayoutOrder = index
 		choice.MouseButton1Click:Connect(function()
@@ -194,7 +196,7 @@ function Hud.mount(fire)
 	local speechLimit = Instance.new("UISizeConstraint")
 	speechLimit.MaxSize = Vector2.new(420, 28)
 	speechLimit.Parent = speech
-	local speechText = label(speech, "", FONT_BODY, Palette.Ink, 12)
+	local speechText = label(speech, "", FONT_BODY, Palette.Ink, 14)
 	speechText.Size = UDim2.new(1, -12, 1, 0)
 	speechText.Position = UDim2.fromOffset(6, 0)
 
@@ -315,7 +317,7 @@ function Hud.mount(fire)
 	local function rowButton(text: string, color: Color3, callback)
 		local ui = button(scroller, text, color)
 		ui.Size = UDim2.new(1, -8, 0, 30)
-		ui.TextSize = 13
+		ui.TextSize = 14
 		ui.ZIndex = 7
 		ui.MouseButton1Click:Connect(function()
 			Juice.click()
@@ -431,14 +433,16 @@ function Hud.mount(fire)
 		box.Font = FONT_BODY
 		box.PlaceholderText = "Kode tautan"
 		box.Text = ""
-		box.TextSize = 16
+		box.TextSize = 14
 		box.TextScaled = false
+		box.TextWrapped = false
+		box.TextStrokeTransparency = 1
+		box.RichText = false
 		box.ClearTextOnFocus = false
 		box.AutoLocalize = false
 		box.ZIndex = 7
 		box.Parent = scroller
 		corner(box, 12)
-		stroke(box, Palette.Navy)
 		rowButton("Simpan tautan", Palette.Teal, function()
 			fire("link", { Code = box.Text })
 		end)
@@ -486,13 +490,20 @@ function Hud.mount(fire)
 		end
 	end
 
+	local panelName = ""
+	local function remember(name: string, opener)
+		return function()
+			panelName = name
+			opener()
+		end
+	end
 	local panels = {
-		toko = openShop,
-		misi = openQuests,
-		hadiah = openDaily,
-		album = openAlbum,
-		tautan = openLink,
-		peringkat = openBoard,
+		toko = remember("toko", openShop),
+		misi = remember("misi", openQuests),
+		hadiah = remember("hadiah", openDaily),
+		album = remember("album", openAlbum),
+		tautan = remember("tautan", openLink),
+		peringkat = remember("peringkat", openBoard),
 	}
 	for _, spec in
 		{
@@ -506,7 +517,7 @@ function Hud.mount(fire)
 	do
 		local ui = button(menu, spec[1], Palette.Plate)
 		ui.Size = UDim2.new(1, -12, 0, 26)
-		ui.TextSize = 12
+		ui.TextSize = 14
 		ui.ZIndex = 7
 		ui.MouseButton1Click:Connect(function()
 			Juice.click()
@@ -545,12 +556,18 @@ function Hud.mount(fire)
 		if linked and linked.Linked then
 			linkNote = " · " .. tostring(linked.Xp) .. " XP"
 		end
-		stars.Text = "Bintang "
-			.. tostring(payload.StarTotal or 0)
-			.. " · hari "
-			.. tostring(payload.Streak or 0)
-			.. linkNote
+		local streak = payload.Streak or 0
+		local starLine = "Bintang " .. tostring(payload.StarTotal or 0)
+		if streak >= 1 then
+			starLine = starLine .. " · Hari ke-" .. tostring(streak)
+		end
+		stars.Text = starLine .. linkNote
 		Juice.paintFruits(payload)
+		if modal.Visible and panelName == "misi" then
+			openQuests()
+		elseif modal.Visible and panelName == "hadiah" then
+			openDaily()
+		end
 	end
 
 	function api.question(payload)
@@ -627,6 +644,12 @@ function Hud.mount(fire)
 			rowButton("Main lagi", Palette.Teal, function()
 				hideModal()
 				fire("replay", { Arena = payload.Arena, Mode = payload.Mode })
+			end)
+		end
+		if type(payload.NextArena) == "string" and payload.NextArena ~= "" then
+			rowButton("Level berikutnya", Palette.Kunyit, function()
+				hideModal()
+				fire("replay", { Arena = payload.NextArena, Mode = payload.NextMode or "santai" })
 			end)
 		end
 		rowButton("Ke Alun-Alun", Palette.White, function()

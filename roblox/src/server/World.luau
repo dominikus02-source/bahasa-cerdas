@@ -16,9 +16,7 @@ local function fontNamed(name: string, fallback: Enum.Font): Enum.Font
 	return fallback
 end
 
-local FONT_BODY = fontNamed("BuilderSans", Enum.Font.GothamMedium)
-local FONT_BOLD = fontNamed("BuilderSansBold", Enum.Font.GothamBold)
-local FONT_DISPLAY = fontNamed("FredokaOne", Enum.Font.GothamBold)
+local FONT_BODY = fontNamed("BuilderSans", Enum.Font.Gotham)
 
 local function part(parent, name, size, cf, color, material, collide)
 	local piece = Instance.new("Part")
@@ -38,65 +36,96 @@ local function part(parent, name, size, cf, color, material, collide)
 	return piece
 end
 
--- Papan krem, teks tinta. "jawaban" cukup besar untuk dibaca sambil berlari, tanpa TextScaled.
+-- Label tipis satu baris. Tanpa papan krem, tanpa garis, tanpa huruf tebal.
 local function faceLabel(host: BasePart, text: string, kind: string)
-	host.Color = Palette.Plate
-	host.Material = Enum.Material.SmoothPlastic
-	local gui = Instance.new("SurfaceGui")
+	local gui = Instance.new("BillboardGui")
 	gui.Name = "Tulisan"
-	gui.Face = Enum.NormalId.Front
-	gui.SizingMode = Enum.SurfaceGuiSizingMode.PixelsPerStud
-	gui.PixelsPerStud = if kind == "jawaban" then 22 else 18
+	gui.Size = UDim2.fromOffset(if kind == "jawaban" then 150 else 190, 22)
+	gui.StudsOffsetWorldSpace = Vector3.new(0, if kind == "jawaban" then 1.1 else 1.6, 0)
+	gui.MaxDistance = 70
+	gui.AlwaysOnTop = false
 	gui.LightInfluence = 0
-	gui.MaxDistance = 90
 	gui.Parent = host
 	local label = Instance.new("TextLabel")
 	label.Name = "Teks"
-	label.BackgroundColor3 = Palette.Plate
-	label.BackgroundTransparency = 0.04
+	label.BackgroundTransparency = 1
 	label.Size = UDim2.fromScale(1, 1)
-	label.TextColor3 = Palette.Ink
+	label.Font = FONT_BODY
+	label.TextColor3 = Color3.fromRGB(42, 46, 54)
+	label.TextSize = if kind == "jawaban" then 16 else 14
 	label.TextScaled = false
-	label.TextWrapped = true
+	label.TextWrapped = false
+	label.TextTruncate = Enum.TextTruncate.AtEnd
+	label.TextStrokeTransparency = 1
+	label.RichText = false
 	label.TextXAlignment = Enum.TextXAlignment.Center
 	label.TextYAlignment = Enum.TextYAlignment.Center
 	label.Text = text
 	label.AutoLocalize = false
 	label.Parent = gui
-	if kind == "judul" then
-		label.Font = FONT_DISPLAY
-		label.TextSize = 18
-	elseif kind == "jawaban" then
-		label.Font = FONT_BOLD
-		label.TextSize = 20
-	else
-		label.Font = FONT_BODY
-		label.TextSize = 16
-	end
-	local plateCorner = Instance.new("UICorner")
-	plateCorner.CornerRadius = UDim.new(0, 10)
-	plateCorner.Parent = label
-	local plateEdge = Instance.new("UIStroke")
-	plateEdge.Color = Palette.WoodDark
-	plateEdge.Thickness = 2
-	plateEdge.Parent = label
-	local pad = Instance.new("UIPadding")
-	pad.PaddingTop = UDim.new(0, 6)
-	pad.PaddingBottom = UDim.new(0, 6)
-	pad.PaddingLeft = UDim.new(0, 8)
-	pad.PaddingRight = UDim.new(0, 8)
-	pad.Parent = label
 	return label
 end
 
-local function lookBack(cf: CFrame, offset: Vector3): CFrame
-	local position = (cf * CFrame.new(offset)).Position
-	return CFrame.lookAt(position, position - cf.LookVector)
+local function palm(parent: Instance, position: Vector3)
+	local trunk = part(
+		parent,
+		"BatangPalem",
+		Vector3.new(7, 0.55, 0.55),
+		CFrame.new(position + Vector3.new(0, 3.5, 0)) * CFrame.Angles(0, 0, math.rad(90)),
+		Palette.Wood,
+		Enum.Material.Wood,
+		false
+	)
+	trunk.Shape = Enum.PartType.Cylinder
+	trunk.CastShadow = false
+	for leaf = 1, 3 do
+		local crown = part(
+			parent,
+			"DaunPalem",
+			Vector3.new(2.4, 0.45, 3.2),
+			CFrame.new(position + Vector3.new(0, 7.1, 0)) * CFrame.Angles(0.5, leaf * 2.05, 0),
+			Palette.Leaf,
+			Enum.Material.Grass,
+			false
+		)
+		crown.CastShadow = false
+	end
 end
 
-local function faceToward(cf: CFrame, offset: Vector3): CFrame
-	local position = (cf * CFrame.new(offset)).Position
-	return CFrame.lookAt(position, position + cf.LookVector)
+local function becak(parent: Instance, cf: CFrame)
+	local body = part(
+		parent,
+		"Becak",
+		Vector3.new(2.4, 1.2, 4.2),
+		cf * CFrame.new(0, 1.4, 0),
+		Palette.Koral,
+		Enum.Material.SmoothPlastic,
+		false
+	)
+	body.CastShadow = false
+	local hood = part(
+		parent,
+		"AtapBecak",
+		Vector3.new(2.6, 0.3, 2.2),
+		cf * CFrame.new(0, 2.6, -0.6),
+		Palette.Kunyit,
+		Enum.Material.SmoothPlastic,
+		false
+	)
+	hood.CastShadow = false
+	for _, offset in { Vector3.new(1.1, 0.55, 1.2), Vector3.new(-1.1, 0.55, 1.2), Vector3.new(0, 0.55, -1.6) } do
+		local wheel = part(
+			parent,
+			"Roda",
+			Vector3.new(0.3, 1.1, 1.1),
+			cf * CFrame.new(offset),
+			Palette.Ink,
+			Enum.Material.SmoothPlastic,
+			false
+		)
+		wheel.Shape = Enum.PartType.Cylinder
+		wheel.CastShadow = false
+	end
 end
 
 local function arch(model, cf: CFrame, color: Color3)
@@ -118,7 +147,7 @@ local function arch(model, cf: CFrame, color: Color3)
 		Enum.Material.WoodPlanks,
 		true
 	)
-	part(
+	local beam = part(
 		model,
 		"Balok",
 		Vector3.new(8.4, 1.2, 1.4),
@@ -139,16 +168,7 @@ local function arch(model, cf: CFrame, color: Color3)
 	gate.Transparency = 0.55
 	gate.CanTouch = true
 	gate.CanQuery = true
-	local sign = part(
-		model,
-		"PapanGerbang",
-		Vector3.new(6.2, 1.7, 0.22),
-		lookBack(cf, Vector3.new(0, 9.2, 0)),
-		Palette.Plate,
-		Enum.Material.SmoothPlastic,
-		false
-	)
-	local label = faceLabel(sign, "", "jawaban")
+	local label = faceLabel(beam, "", "jawaban")
 	return gate, label
 end
 
@@ -472,12 +492,14 @@ function World.build(role: string, onPrompt)
 		local treeSign = part(
 			lobby,
 			"NamaPohon",
-			Vector3.new(10, 2, 0.4),
-			CFrame.lookAt(Vector3.new(0, 11, 6), Vector3.new(0, 11, 20)),
-			Palette.Navy,
-			Enum.Material.SmoothPlastic,
+			Vector3.new(0.4, 0.4, 0.4),
+			CFrame.new(0, 12, 0),
+			Palette.Wood,
+			Enum.Material.Wood,
 			false
 		)
+		treeSign.Transparency = 1
+		treeSign.CastShadow = false
 		faceLabel(treeSign, "Pohon Aksara", "judul")
 
 		local nara = Instance.new("Model")
@@ -522,23 +544,28 @@ function World.build(role: string, onPrompt)
 		nameLabel.Size = UDim2.fromScale(1, 1)
 		nameLabel.BackgroundColor3 = Palette.Navy
 		nameLabel.BackgroundTransparency = 0.25
-		nameLabel.Font = Enum.Font.GothamBold
+		nameLabel.Font = FONT_BODY
 		nameLabel.TextColor3 = Palette.Krem
-		nameLabel.TextSize = 12
+		nameLabel.TextSize = 14
 		nameLabel.TextScaled = false
+		nameLabel.TextWrapped = false
+		nameLabel.TextStrokeTransparency = 1
+		nameLabel.RichText = false
 		nameLabel.Text = "Mbak Nara"
 		nameLabel.AutoLocalize = false
 		nameLabel.Parent = name
 		local speech = part(
 			nara,
 			"Ucapan",
-			Vector3.new(8, 2.2, 0.3),
-			CFrame.lookAt(Vector3.new(-16, 9.4, 100.2), Vector3.new(-16, 9.4, 112)),
-			Palette.Navy,
+			Vector3.new(0.3, 0.3, 0.3),
+			CFrame.new(-16, 7.2, 102),
+			Palette.Kunyit,
 			Enum.Material.SmoothPlastic,
 			false
 		)
-		faceLabel(speech, "Lari ke gerbang. Pilih kalimat yang tepat.", "isi")
+		speech.Transparency = 1
+		speech.CastShadow = false
+		faceLabel(speech, "Lari ke gerbang di depan.", "isi")
 		local talk = Instance.new("ProximityPrompt")
 		talk.ActionText = "Sapa"
 		talk.ObjectText = "Mbak Nara"
@@ -566,12 +593,13 @@ function World.build(role: string, onPrompt)
 			local sign = part(
 				lobby,
 				info.Name,
-				Vector3.new(8, 2.2, 0.4),
-				faceToward(cf, Vector3.new(0, 7.5, 0)),
-				Palette.Navy,
-				Enum.Material.SmoothPlastic,
+				Vector3.new(0.45, 5.5, 0.45),
+				cf * CFrame.new(0, 3, 0),
+				Palette.WoodDark,
+				Enum.Material.Wood,
 				false
 			)
+			sign.CastShadow = false
 			faceLabel(sign, info.Text, "judul")
 			local button = Instance.new("ProximityPrompt")
 			button.ActionText = "Buka"
@@ -593,29 +621,20 @@ function World.build(role: string, onPrompt)
 				color = Palette.Ungu
 				mist(lobby, cf)
 			end
-			local gate = arch(lobby, cf, color)
+			local gate, label = arch(lobby, cf, color)
 			gate.CanTouch = false
-			local sign = part(
-				lobby,
-				district.Id,
-				Vector3.new(8.4, 2.6, 0.3),
-				faceToward(cf, Vector3.new(0, 12.2, 0)),
-				Palette.Navy,
-				Enum.Material.SmoothPlastic,
-				false
-			)
 			local caption = district.Name
 			if not district.Open then
-				caption = district.Name .. "\nSegera hadir"
+				caption = district.Name .. ", segera"
 			end
-			faceLabel(sign, caption, "judul")
+			label.Text = caption
 			local button = Instance.new("ProximityPrompt")
 			button.ActionText = if district.Open then "Masuk" else "Lihat"
 			button.ObjectText = district.Name
 			button.HoldDuration = 0.12
 			button.MaxActivationDistance = 14
 			button.RequiresLineOfSight = false
-			button.Parent = sign
+			button.Parent = gate
 			if district.Open then
 				hook(button, { Kind = "portal", Id = district.Id })
 			else
@@ -633,27 +652,18 @@ function World.build(role: string, onPrompt)
 		}
 		for _, info in legacy do
 			local cf = CFrame.lookAt(info.Position, info.Position + Vector3.new(-1, 0, 0))
-			local gate = arch(lobby, cf, Palette.Kunyit)
+			local gate, label = arch(lobby, cf, Palette.Kunyit)
 			gate.CanTouch = false
-			local sign = part(
-				lobby,
-				info.Id,
-				Vector3.new(9, 2.4, 0.4),
-				faceToward(cf, Vector3.new(0, 12, 0)),
-				Palette.Navy,
-				Enum.Material.SmoothPlastic,
-				false
-			)
-			faceLabel(sign, info.Title, "judul")
+			label.Text = info.Title
 			local button = Instance.new("ProximityPrompt")
 			button.ActionText = "Masuk"
 			button.ObjectText = info.Title
 			button.HoldDuration = 0.15
 			button.MaxActivationDistance = 14
 			button.RequiresLineOfSight = false
-			button.Parent = sign
-			registry.legacy[info.Id] = sign
-			hook(button, { Kind = "legacy", Id = info.Id, Part = sign })
+			button.Parent = gate
+			registry.legacy[info.Id] = gate
+			hook(button, { Kind = "legacy", Id = info.Id, Part = gate })
 		end
 
 		registry.lanes.tutorial = laneRow(
@@ -700,6 +710,39 @@ function World.build(role: string, onPrompt)
 		local firstGate = registry.lanes.tutorial[1].gates[2]
 		guideMark("gerbang", firstGate.CFrame * CFrame.new(0, 6, 0))
 		guideMark("pasar", CFrame.new(0, 8, -86))
+		local from = registry.lobbySpawn.Position
+		local goal = firstGate.Position
+		for step = 1, 5 do
+			local point = from:Lerp(goal, step / 6)
+			local tile = part(
+				lobby,
+				"Jejak",
+				Vector3.new(1.5, 0.12, 1.5),
+				CFrame.new(point.X, 0.28, point.Z),
+				Palette.Kunyit,
+				Enum.Material.SmoothPlastic,
+				false
+			)
+			tile.CastShadow = false
+		end
+		palm(lobby, Vector3.new(-26, 0, 78))
+		palm(lobby, Vector3.new(30, 0, 72))
+		palm(lobby, Vector3.new(-54, 0, 18))
+		palm(lobby, Vector3.new(58, 0, -16))
+		palm(lobby, Vector3.new(-20, 0, -48))
+		becak(lobby, CFrame.new(18, 0, 36))
+		for _, birdAt in { Vector3.new(-8, 18, 24), Vector3.new(14, 16, -10), Vector3.new(4, 20, 40) } do
+			local bird = part(
+				lobby,
+				"Burung",
+				Vector3.new(0.7, 0.35, 1.1),
+				CFrame.new(birdAt),
+				Palette.Ink,
+				Enum.Material.SmoothPlastic,
+				false
+			)
+			bird.CastShadow = false
+		end
 	end
 
 	local marketOrigin = if role == "pasar-ejaan" then Vector3.new(0, 0, 40) else Vector3.new(0, 0, -430)
@@ -729,21 +772,36 @@ function World.build(role: string, onPrompt)
 		local stall = base * CFrame.new(index * 22, 0, if index % 2 == 0 then -8 else 10)
 		joglo(market, stall, 14, 10, Palette.White)
 		lamp(market, stall * CFrame.new(8, 0, 0))
+		local cloth = part(
+			market,
+			"Kain",
+			Vector3.new(8, 0.25, 4),
+			stall * CFrame.new(0, 5.4, 0),
+			if index % 2 == 0 then Palette.Awning else Palette.Kunyit,
+			Enum.Material.SmoothPlastic,
+			false
+		)
+		cloth.CastShadow = false
 	end
+	palm(market, (base * CFrame.new(-40, 0, 8)).Position)
+	palm(market, (base * CFrame.new(42, 0, 6)).Position)
+	palm(market, (base * CFrame.new(8, 0, -48)).Position)
+	becak(market, base * CFrame.new(16, 0, 16))
 	local bannerPos = (base * CFrame.new(0, 10, 18)).Position
 	local banner = part(
 		market,
 		"Spanduk",
-		Vector3.new(12, 2.2, 0.4),
-		CFrame.lookAt(bannerPos, bannerPos + Vector3.new(0, 0, 1)),
-		Palette.Navy,
+		Vector3.new(10, 0.3, 3),
+		CFrame.new(bannerPos),
+		Palette.Awning,
 		Enum.Material.SmoothPlastic,
 		false
 	)
+	banner.CastShadow = false
 	faceLabel(banner, "Pasar Ejaan", "judul")
 
 	local function entrance(
-		name: string,
+		_name: string,
 		offset: Vector3,
 		arena: string?,
 		mode: string?,
@@ -751,25 +809,16 @@ function World.build(role: string, onPrompt)
 		action: string
 	)
 		local cf = base * CFrame.new(offset)
-		local gate = arch(market, cf, Palette.Teal)
+		local gate, label = arch(market, cf, Palette.Teal)
 		gate.CanTouch = false
-		local sign = part(
-			market,
-			name,
-			Vector3.new(9, 2.6, 0.4),
-			lookBack(cf, Vector3.new(0, 12, 0)),
-			Palette.Navy,
-			Enum.Material.SmoothPlastic,
-			false
-		)
-		faceLabel(sign, labelText, "judul")
+		label.Text = string.gsub(labelText, "%s*\n%s*", " ")
 		local button = Instance.new("ProximityPrompt")
 		button.ActionText = action
-		button.ObjectText = labelText
+		button.ObjectText = label.Text
 		button.HoldDuration = 0.08
 		button.MaxActivationDistance = 14
 		button.RequiresLineOfSight = false
-		button.Parent = sign
+		button.Parent = gate
 		if arena then
 			hook(button, { Kind = "arena", Arena = arena, Mode = mode })
 		else
@@ -777,24 +826,10 @@ function World.build(role: string, onPrompt)
 		end
 	end
 
-	entrance("KapitalSantai", Vector3.new(-28, 0, -24), "a01", "santai", "Lapak Kapital\nSantai", "Mulai")
-	entrance(
-		"KapitalTantang",
-		Vector3.new(-28, 0, -38),
-		"a01",
-		"tantangan",
-		"Lapak Kapital\nTantangan",
-		"Mulai"
-	)
-	entrance("TandaSantai", Vector3.new(28, 0, -24), "a02", "santai", "Gang Tanda Baca\nSantai", "Mulai")
-	entrance(
-		"TandaTantang",
-		Vector3.new(28, 0, -38),
-		"a02",
-		"tantangan",
-		"Gang Tanda Baca\nTantangan",
-		"Mulai"
-	)
+	entrance("KapitalSantai", Vector3.new(-28, 0, -24), "a01", "santai", "Kapital, santai", "Mulai")
+	entrance("KapitalTantang", Vector3.new(-28, 0, -38), "a01", "tantangan", "Kapital, tantangan", "Mulai")
+	entrance("TandaSantai", Vector3.new(28, 0, -24), "a02", "santai", "Tanda baca, santai", "Mulai")
+	entrance("TandaTantang", Vector3.new(28, 0, -38), "a02", "tantangan", "Tanda baca, tantangan", "Mulai")
 	entrance("Boss", Vector3.new(0, 0, -62), "boss", "boss", "Raksasa Typo", "Tantang")
 	entrance("Kembali", Vector3.new(0, 0, 24), nil, nil, "Alun-Alun", "Kembali")
 
