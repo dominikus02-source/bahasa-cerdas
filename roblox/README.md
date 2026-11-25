@@ -16,7 +16,7 @@ Place yang sudah terbit:
 - Tiga gerbang tutorial di depan pohon. Jawaban benar memberi confetti, suara, koin, dan rentetan.
 - Pasar Ejaan di dalam place yang sama: Lapak Kapital, Gang Tanda Baca, dan mini-boss Raksasa Typo. Mode Santai (tanpa waktu, bintang maks 2) dan Tantangan (waktu, bintang 3).
 - Portal utara membawa pemain ke pasar tanpa pindah place. Distrik lain menampilkan **segera hadir**.
-- Gerbang lama tetap ada: Benar atau Salah (`94365112072969`), Susun Kata (`137487012250171`), dan NUSANTARA (`135622689114243`).
+- Gerbang lama di lobi tetap mengarah ke tiga place di bawah. Isi place itu sekarang dibangun di repositori ini.
 - Bank lokal 70+ soal EYD V. Kunci jawaban hanya di server. Klien tidak pernah mengirim skor.
 - DataStore `PlayerData_v1` dengan kunci sesi, simpan ulang, dan antrean kalau HTTP putus.
 - Pemain yang menautkan akun bisa **Setor XP** lewat soal yang diterbitkan situs. Soal pasar tetap dinilai di server game supaya umpan balik langsung.
@@ -31,6 +31,11 @@ File kedua sudah siap diunggah setelah place baru ada:
 |---|---|---|
 | `default.project.json` | `build/KotaAksara-Lobby.rbxl` | place root `83804286143888` |
 | `places/pasar-ejaan.project.json` | `build/KotaAksara-PasarEjaan.rbxl` | place baru di universe yang sama |
+| `places/benar-salah/default.project.json` | `build/BenarAtauSalah.rbxl` | `94365112072969` |
+| `places/susun-kata/default.project.json` | `build/SusunKata.rbxl` | `137487012250171` |
+| `places/nusantara/default.project.json` | `build/Nusantara.rbxl` | `135622689114243` (universe `10778596245`, simpanan `Nusantara_v1`) |
+
+Benar atau Salah dan Susun Kata memakai `PlayerData_v1` yang sama dengan lobi. NUSANTARA tidak memindahkan pemain ke lobi karena experience-nya terpisah. Cara main dan risetnya ada di `docs/roblox-game-research.md`.
 
 Setelah place baru punya id, isi `PasarPlaceId` di `src/shared/Config.luau`, lalu bangun dan terbitkan ulang lobi. Portal akan memakai `TeleportService`. Berkas pasar sudah punya gerbang kembali ke `83804286143888`.
 
@@ -45,7 +50,7 @@ rokit install --no-trust-check
 bash tools/build.sh
 ```
 
-`rokit.toml` memasang Rojo 7.7.1, Selene, dan StyLua. CI menjalankan lint, cek bank soal, dan mengunggah kedua `.rbxl` sebagai artifact.
+`rokit.toml` memasang Rojo 7.7.1, Selene, dan StyLua. CI menjalankan lint, cek bank soal lobi dan tiga permainan, lalu mengunggah lima `.rbxl` sebagai artifact.
 
 ## Sinkron di Studio
 

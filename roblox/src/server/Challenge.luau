@@ -156,12 +156,12 @@ local function questionsFor(profile, arenaId: string, mode: string)
 		end
 		return packed
 	end
-	local count = 6
+	local count = 4
 	if mode == "tantangan" then
-		count = 8
+		count = 5
 	end
 	if arenaId == "boss" then
-		count = 5
+		count = 4
 	end
 	local packed = {}
 	for _, item in QuestionBank.pick(profile, arenaId, count, mode) do
@@ -219,16 +219,33 @@ local function finish(player: Player, round, skipped: boolean?)
 	local elapsed = os.clock() - round.startedAt
 	local stars = if skipped then 0 else starsFor(round, elapsed)
 	local best = 0
+	if not skipped and (round.mode == "tantangan" or round.arenaId == "boss") then
+		Progress.noteArena(profile, if round.arenaId == "boss" then "boss" else round.mode)
+	end
 	if stars > 0 then
 		best = Progress.keepStars(profile, round.arenaId, stars)
 		Leaderboard.publish(player.UserId, profile.stats.week, profile.stats.weeklyStars or 0)
-		Progress.noteArena(profile, if round.arenaId == "boss" then "boss" else round.mode)
 		if round.arenaId == "boss" then
 			profile.flags.boss = true
 		end
 		if round.arenaId == "a01" or round.arenaId == "a02" then
 			BahasaApi.badge(player, profile, { "roblox-pasar-ejaan" })
 		end
+	end
+	local nextArena = ""
+	local nextMode = ""
+	if round.arenaId == "a01" and round.mode == "santai" then
+		nextArena = "a01"
+		nextMode = "tantangan"
+	elseif round.arenaId == "a01" then
+		nextArena = "a02"
+		nextMode = "santai"
+	elseif round.arenaId == "a02" and round.mode == "santai" then
+		nextArena = "a02"
+		nextMode = "tantangan"
+	elseif round.arenaId == "a02" and (profile.stars.a01 or 0) >= 1 then
+		nextArena = "boss"
+		nextMode = "boss"
 	end
 	if round.arenaId == "tutorial" and not skipped then
 		Progress.grantTutorial(player, profile)
@@ -252,6 +269,8 @@ local function finish(player: Player, round, skipped: boolean?)
 		Skipped = skipped == true,
 		Xp = round.xp or 0,
 		Next = Progress.nextGoal(profile),
+		NextArena = nextArena,
+		NextMode = nextMode,
 	})
 	if round.arenaId == "tutorial" and not skipped then
 		Remotes.fire(player, "guide", { Target = "pasar" })
@@ -425,7 +444,7 @@ local function runRound(player: Player, round)
 			return
 		end
 		resolveChoice(player, round, round.choice)
-		task.wait(if round.choice and round.questions[index] then 0.85 else 0.45)
+		task.wait(if round.choice and round.questions[index] then 1.05 else 0.45)
 	end
 	finish(player, round, false)
 end

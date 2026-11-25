@@ -97,3 +97,6 @@ data/alat-ajar-import/scan-log.txt
 
 !.env.example
 public/jumpa/mediapipe/*/wasm/
+
+__pycache__/
+*.pyc

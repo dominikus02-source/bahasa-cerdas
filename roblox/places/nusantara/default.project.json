@@ -1,0 +1,79 @@
+{
+  "name": "NUSANTARA",
+  "tree": {
+    "$className": "DataModel",
+    "HttpService": {
+      "$properties": {
+        "HttpEnabled": true
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0.34, 0.3, 0.24],
+        "Brightness": 2.4,
+        "ClockTime": 10.2,
+        "GeographicLatitude": -2.5,
+        "GlobalShadows": true,
+        "OutdoorAmbient": [0.58, 0.52, 0.42],
+        "Technology": "Future"
+      }
+    },
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "../../src/shared"
+      },
+      "PlaceRole": {
+        "$className": "StringValue",
+        "$properties": {
+          "Value": "nusantara"
+        }
+      },
+      "DataStoreName": {
+        "$className": "StringValue",
+        "$properties": {
+          "Value": "Nusantara_v1"
+        }
+      }
+    },
+    "ServerScriptService": {
+      "Kernel": {
+        "$path": "../../src/kernel"
+      },
+      "Kit": {
+        "$path": "../../src/kit"
+      },
+      "Game": {
+        "$path": "src/server"
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    },
+    "StarterPlayer": {
+      "$properties": {
+        "CameraMaxZoomDistance": 80,
+        "CameraMinZoomDistance": 8,
+        "CharacterWalkSpeed": 18,
+        "EnableMouseLockOption": true
+      },
+      "StarterPlayerScripts": {
+        "UiKit": {
+          "$path": "../../src/uikit"
+        },
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "FallenPartsDestroyHeight": -80,
+        "StreamingEnabled": true,
+        "StreamingMinRadius": 64,
+        "StreamingTargetRadius": 384
+      }
+    }
+  }
+}

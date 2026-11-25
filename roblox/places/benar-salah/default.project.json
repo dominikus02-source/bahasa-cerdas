@@ -1,0 +1,73 @@
+{
+  "name": "Benar atau Salah",
+  "tree": {
+    "$className": "DataModel",
+    "HttpService": {
+      "$properties": {
+        "HttpEnabled": true
+      }
+    },
+    "Lighting": {
+      "$properties": {
+        "Ambient": [0.32, 0.28, 0.24],
+        "Brightness": 2.3,
+        "ClockTime": 15.5,
+        "GeographicLatitude": -6.2,
+        "GlobalShadows": true,
+        "OutdoorAmbient": [0.55, 0.5, 0.42],
+        "Technology": "Future"
+      }
+    },
+    "ReplicatedStorage": {
+      "Shared": {
+        "$path": "../../src/shared"
+      },
+      "PlaceRole": {
+        "$className": "StringValue",
+        "$properties": {
+          "Value": "benar-salah"
+        }
+      }
+    },
+    "ServerScriptService": {
+      "Kernel": {
+        "$path": "../../src/kernel"
+      },
+      "Kit": {
+        "$path": "../../src/kit"
+      },
+      "Game": {
+        "$path": "src/server"
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    },
+    "StarterPlayer": {
+      "$properties": {
+        "CameraMaxZoomDistance": 70,
+        "CameraMinZoomDistance": 8,
+        "CharacterWalkSpeed": 18,
+        "EnableMouseLockOption": true
+      },
+      "StarterPlayerScripts": {
+        "UiKit": {
+          "$path": "../../src/uikit"
+        },
+        "Client": {
+          "$path": "src/client"
+        }
+      }
+    },
+    "Workspace": {
+      "$properties": {
+        "FallenPartsDestroyHeight": -80,
+        "StreamingEnabled": true,
+        "StreamingMinRadius": 64,
+        "StreamingTargetRadius": 384
+      }
+    }
+  }
+}

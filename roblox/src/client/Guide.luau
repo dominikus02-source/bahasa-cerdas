@@ -7,6 +7,7 @@ local Guide = {}
 
 local beam: Beam? = nil
 local fromAttachment: Attachment? = nil
+local current = ""
 
 local function clear()
 	if beam then
@@ -33,12 +34,13 @@ end
 
 function Guide.aim(targetName: string?)
 	clear()
-	if type(targetName) ~= "string" or targetName == "" then
+	current = if type(targetName) == "string" then targetName else ""
+	if current == "" then
 		return
 	end
 	local character = Players.LocalPlayer.Character
 	local root = character and character:FindFirstChild("HumanoidRootPart")
-	local goal = findTarget(targetName)
+	local goal = findTarget(current)
 	if not root or not goal then
 		return
 	end
@@ -50,8 +52,8 @@ function Guide.aim(targetName: string?)
 	local line = Instance.new("Beam")
 	line.Attachment0 = source
 	line.Attachment1 = goal
-	line.Width0 = 0.35
-	line.Width1 = 0.15
+	line.Width0 = 0.7
+	line.Width1 = 0.25
 	line.FaceCamera = true
 	line.LightEmission = 0.6
 	line.Color = ColorSequence.new(Palette.Kunyit)
@@ -62,7 +64,13 @@ end
 
 function Guide.bind()
 	Players.LocalPlayer.CharacterAdded:Connect(function()
+		local target = current
 		clear()
+		task.defer(function()
+			if target ~= "" then
+				Guide.aim(target)
+			end
+		end)
 	end)
 end
 
