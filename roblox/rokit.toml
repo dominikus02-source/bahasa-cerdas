@@ -1,0 +1,5 @@
+# Alat baris perintah untuk membangun place Roblox. Pasang dengan `rokit install`.
+[tools]
+rojo = "rojo-rbx/rojo@7.7.1"
+selene = "Kampfkarren/selene@0.32.0"
+stylua = "JohnnyMorganz/StyLua@2.6.0"

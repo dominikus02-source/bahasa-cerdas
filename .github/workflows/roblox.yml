@@ -1,0 +1,64 @@
+name: Roblox
+
+on:
+  pull_request:
+    paths:
+      - "roblox/**"
+      - ".github/workflows/roblox.yml"
+  push:
+    branches: [main]
+    paths:
+      - "roblox/**"
+      - ".github/workflows/roblox.yml"
+
+concurrency:
+  group: roblox-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rojo:
+    name: Rojo build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rokit
+        run: curl -fsSL https://raw.githubusercontent.com/rojo-rbx/rokit/v1.2.0/scripts/install.sh | bash
+
+      - name: Install Rojo, Selene, and StyLua
+        working-directory: roblox
+        run: |
+          export PATH="$HOME/.rokit/bin:$PATH"
+          rokit install --no-trust-check
+
+      - name: Lint
+        working-directory: roblox
+        run: |
+          export PATH="$HOME/.rokit/bin:$PATH"
+          selene src
+          stylua --check src
+
+      - name: Validate question bank
+        run: python3 roblox/tools/validate_bank.py
+
+      - name: Keep web addresses off the client
+        run: |
+          if grep -RInE "https?://|bahasacerdas\\.com|www\\." roblox/src/client roblox/src/shared; then
+            echo "Teks klien tidak boleh memuat alamat situs."
+            exit 1
+          fi
+
+      - name: Build place files
+        working-directory: roblox
+        run: |
+          export PATH="$HOME/.rokit/bin:$PATH"
+          bash tools/build.sh
+          test -s build/KotaAksara-Lobby.rbxl
+          test -s build/KotaAksara-PasarEjaan.rbxl
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: kota-aksara-places-${{ github.sha }}
+          path: roblox/build/*.rbxl
+          retention-days: 14
