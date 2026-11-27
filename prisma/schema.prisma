@@ -357,6 +357,13 @@ model User {
   financeLedgerCreated  FinanceLedgerEntry[] @relation("FinanceLedgerCreatedBy")
   financeLedgerUpdated  FinanceLedgerEntry[] @relation("FinanceLedgerUpdatedBy")
 
+  // Roblox (Kota Aksara). Satu tautan aktif per akun BC dan per userId Roblox.
+  robloxLink            RobloxLink?
+  robloxLinkCodes       RobloxLinkCode[]
+  robloxLinkRevocations RobloxLinkRevocation[]
+  robloxAgeAttestation  RobloxAgeAttestation?
+  robloxPlaySessions    RobloxPlaySession[]
+
   @@index([role, lastActiveAt])
   @@index([xp])
   @@index([role, xp]) // leaderboard: role=MURID ORDER BY xp DESC
@@ -4628,4 +4635,76 @@ enum StudentGuardianConsentStatus {
   GRANTED
   DECLINED
   REVOKED
+}
+
+/// Tautan aktif BahasaCerdas ↔ akun Roblox. Unik di kedua arah.
+/// Putus tautan menghapus baris ini dan menyimpan salinannya di RobloxLinkRevocation.
+model RobloxLink {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  robloxUserId      String   @unique
+  robloxUsername    String?
+  robloxDisplayName String?
+  linkedAt          DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Riwayat tautan yang diputus. Bukan kunci unik: akun boleh menaut lagi.
+model RobloxLinkRevocation {
+  id             String   @id @default(cuid())
+  userId         String
+  robloxUserId   String
+  robloxUsername String?
+  linkedAt       DateTime
+  revokedAt      DateTime @default(now())
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, revokedAt])
+  @@index([robloxUserId])
+}
+
+/// Kode sekali pakai, berumur pendek, diketik pemain di dalam Roblox.
+model RobloxLinkCode {
+  id                 String    @id @default(cuid())
+  userId             String
+  code               String    @unique
+  expiresAt          DateTime
+  usedAt             DateTime?
+  usedByRobloxUserId String?
+  createdAt          DateTime  @default(now())
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+/// Konfirmasi usia di web. Angka yang disimpan adalah batas yang dikonfirmasi,
+/// bukan tanggal lahir. Gerbang hidup di konfigurasi, bukan di angka yang tersebar.
+model RobloxAgeAttestation {
+  userId          String   @id
+  confirmedMinAge Int
+  confirmedAt     DateTime @default(now())
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+/// Sesi soal untuk satu permainan. answerKey hanya dibaca server saat menilai.
+model RobloxPlaySession {
+  id             String    @id @default(cuid())
+  userId         String
+  robloxUserId   String
+  level          Int?
+  unitId         String?
+  unitTitle      String?
+  answerKey      Json
+  questionCount  Int
+  expiresAt      DateTime
+  consumedAt     DateTime?
+  idempotencyKey String?
+  result         Json?
+  createdAt      DateTime  @default(now())
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([robloxUserId, createdAt])
+  @@index([idempotencyKey])
 }

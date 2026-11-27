@@ -8,7 +8,7 @@
  */
 
 import {
-  Swords, Mountain, Clock, ThumbsUp, TreePine, BookOpen, Type, Grid3x3, Puzzle, Zap, Users, Gauge, Shield,
+  Swords, Mountain, Clock, ThumbsUp, TreePine, BookOpen, Type, Grid3x3, Puzzle, Zap, Users, Gauge, Shield, Gamepad2,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -260,6 +260,20 @@ export const GAME_REGISTRY: GameDefinition[] = [
     players: "2–8 pemain",
     time: "~5 menit",
     multiplayer: true,
+  },
+  {
+    id: "roblox",
+    title: "BahasaCerdas Kota Aksara",
+    description: "Main di Roblox dengan akunmu. Jawaban, XP, dan lencana masuk ke akun BahasaCerdas.",
+    categories: ["Tantangan", "Literasi"],
+    icon: Gamepad2,
+    gradient: "from-indigo-500 via-violet-600 to-fuchsia-700",
+    accentColor: "#6366F1",
+    href: "/arena/game/roblox",
+    xp: "+50 XP",
+    players: "Akun Roblox",
+    time: "~10 menit",
+    badge: { text: "Baru", type: "new" },
   },
 ];
 

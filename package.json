@@ -240,6 +240,7 @@
     "test:avatar-unlock": "tsx scripts/test-avatar-unlock.ts",
     "test:game-question-quality": "npx tsx scripts/test-game-question-quality.ts",
     "test:game-question-shuffle": "npx tsx scripts/test-game-question-shuffle.ts",
+    "test:roblox-integration": "npx tsx scripts/test-roblox-integration.ts",
     "test:tts-generator": "npx tsx scripts/test-tts-generator.ts",
     "test:kuis-tempur-progression": "npx tsx scripts/test-kuis-tempur-progression.ts",
     "test:kuis-tempur-world": "npx tsx scripts/test-kuis-tempur-world.ts",

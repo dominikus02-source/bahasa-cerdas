@@ -84,6 +84,7 @@ export const UMUM_GAME_IDS = [
   "menara",
   "lari-kata",
   "teka-teki-silang",
+  "roblox",
 ] as const;
 
 const UMUM_ARENA_PREFIXES: readonly string[] = [

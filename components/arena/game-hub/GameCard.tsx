@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { Clock, Crown, Flame, Play, Sparkles, Zap } from "lucide-react";
 import { GAME_CARD_ARTWORK, type GameDefinition } from "@/lib/arena/game-registry";
@@ -23,6 +23,22 @@ import { GAME_CARD_ARTWORK, type GameDefinition } from "@/lib/arena/game-registr
  */
 
 export type GameView = GameDefinition & { status: "LIVE" | "SOON" };
+
+/** Label CTA di dalam kartu. Hover mengikuti seluruh kartu (group-hover). */
+export const GAME_CARD_CTA_CLASS =
+  "mt-2.5 inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all group-hover:brightness-110 group-hover:gap-2 active:scale-[0.97]";
+
+/** Tombol/tautan berdiri sendiri dengan bentuk yang sama dengan CTA kartu. */
+export const GAME_CARD_BUTTON_CLASS =
+  "inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all hover:brightness-110 hover:gap-2 active:scale-[0.97] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50";
+
+/** Aksi kedua (buat ulang, putuskan tautan) — tinggi, radius, dan huruf sama dengan CTA. */
+export const GAME_CARD_QUIET_CLASS =
+  "inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-slate-700 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md active:scale-[0.97] focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:border-violet-900/40 dark:bg-slate-950 dark:text-white";
+
+export function gameCardCtaStyle(accentColor: string): CSSProperties {
+  return { background: `linear-gradient(110deg, ${accentColor}, ${accentColor}cc)` };
+}
 
 export interface GameCardProps {
   game: GameView;
@@ -164,8 +180,7 @@ export default function GameCard({ game, index = 0, onPlay }: GameCardProps) {
       <div className="flex flex-1 flex-col gap-1.5 p-4">
         {content}
         {/* CTA — span di dalam <Link>: seluruh kartu tetap dapat diklik (behavior lama) */}
-        <span className="mt-2.5 inline-flex min-h-[44px] w-full items-center justify-center gap-1.5 rounded-2xl px-4 py-2.5 text-[12px] font-extrabold uppercase tracking-wide text-white shadow-md transition-all group-hover:brightness-110 group-hover:gap-2 active:scale-[0.97]"
-          style={{ background: `linear-gradient(110deg, ${game.accentColor}, ${game.accentColor}cc)` }}>
+        <span className={GAME_CARD_CTA_CLASS} style={gameCardCtaStyle(game.accentColor)}>
           <Play size={13} fill="currentColor" /> MAIN SEKARANG
         </span>
       </div>

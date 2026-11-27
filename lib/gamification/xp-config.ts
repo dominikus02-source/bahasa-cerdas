@@ -26,7 +26,8 @@ export type XpSourceName =
   | "ACHIEVEMENT"
   | "BADGE"
   | "CHALLENGE"
-  | "EVENT";
+  | "EVENT"
+  | "ROBLOX";
 
 export interface XpSourceConfig {
   /** Label Bahasa Indonesia untuk UI. */
@@ -54,6 +55,7 @@ export const XP_CONFIG: Record<XpSourceName, XpSourceConfig> = {
   BADGE:           { label: "Badge",           baseXp: 25,  description: "Buka badge baru" },
   CHALLENGE:       { label: "Tantangan",       baseXp: 75,  description: "Selesaikan challenge/event" },
   EVENT:           { label: "Event",           baseXp: 100, description: "Partisipasi event khusus" },
+  ROBLOX:          { label: "Roblox",          baseXp: 50,  description: "Selesaikan sesi soal di BahasaCerdas Kota Aksara (skala jawaban benar)" },
 };
 
 /** Ambil konfigurasi XP sebuah sumber. */
