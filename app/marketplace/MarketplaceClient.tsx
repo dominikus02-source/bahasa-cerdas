@@ -65,11 +65,11 @@ export default function MarketplaceClient({ initialItems }: { initialItems: Item
   }, [items, search, type, sort]);
 
   return (
-    <div className="min-h-screen ui-app-bg">
-      <div className="max-w-7xl mx-auto px-4 py-8 pt-24">
+    <div className="min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 py-8">
         {/* Hero */}
         <div className="bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-2xl border border-primary/10 px-6 py-8 mb-8">
-          <h1 className="text-3xl font-bold text-bc-text mb-2">Toko Karya</h1>
+          <h2 className="text-3xl font-bold text-bc-text mb-2">Toko Karya</h2>
           <p className="text-bc-text-3">
             RPP, modul, soal, dan media ajar dari guru Bahasa Indonesia. Beli sekali, pakai selama.
           </p>

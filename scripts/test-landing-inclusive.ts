@@ -118,8 +118,8 @@ test("9. tiap jalur 3 manfaat + CTA ke rute yang ada", () =>
   peran.includes("MGMP digital"));
 
 console.log("\n── Navigasi & footer ──");
-test("10. nav sederhana: Produk, Toko Karya, dan menu Untuk Siapa", () => {
-  const top = ["Produk", "Toko Karya"];
+test("10. nav sederhana: Produk, Publikasi, Toko Karya, dan menu Untuk Siapa", () => {
+  const top = ["Produk", "Publikasi", "Toko Karya"];
   let last = -1;
   for (const label of top) {
     const i = nav.indexOf(`label: "${label}"`);
@@ -137,7 +137,8 @@ test("10. nav sederhana: Produk, Toko Karya, dan menu Untuk Siapa", () => {
   return topLevelCount === 1 &&
     nav.includes("Untuk Siapa") &&
     nav.includes('href: "/#produk"') &&
-    nav.includes('href: "/marketplace"') &&
+    nav.includes('href: "/marketplace#publikasi", label: "Publikasi"') &&
+    nav.includes('href: "/marketplace#toko-karya", label: "Toko Karya"') &&
     nav.includes('href: "/#untuk-umum"') &&
     nav.includes('href: "/#untuk-murid"') &&
     nav.includes('href: "/#untuk-guru"') &&
@@ -150,6 +151,18 @@ test("10b. navbar logo saja, tanpa slogan/tagline kecil di bawah wordmark", () =
   !brand.includes("BRAND_SLOGAN") &&
   nav.includes("Logo BahasaCerdas") &&
   nav.includes("BahasaCerdas"));
+test("10c. Publikasi dan Toko Karya punya tujuan terpisah di halaman marketplace", () => {
+  const marketplace = read("app/marketplace/page.tsx");
+  const publications = read("app/marketplace/PublisherPublications.tsx");
+  return footer.includes('href: "/marketplace#publikasi", label: "Publikasi"') &&
+    footer.includes('href: "/marketplace#toko-karya", label: "Toko Karya"') &&
+    marketplace.includes("<PublisherPublications />") &&
+    marketplace.includes('id="toko-karya"') &&
+    publications.includes('id="publikasi"') &&
+    publications.includes("COMPANY.legalName") &&
+    ["Terang Kata", "Jelajah Kata", "Cakrawala Kata", "Dalam persiapan terbit"].every((value) =>
+      publications.includes(value));
+});
 test("11. FAQ dan Tentang tidak di navbar, ada di footer", () =>
   !nav.includes('href: "/faq"') &&
   !nav.includes('href: "/tentang"') &&
@@ -311,7 +324,8 @@ test("24b. JSON-LD memakai gelar publik final, tanpa Head of Content atau Co-Fou
     !layout.includes("Komisaris");
 });
 test("25. footer copyright PT, tautan Tim ke /tentang#tim", () =>
-  footer.includes("PT Bahasa Cerdas Indonesia") &&
+  footer.includes("{COMPANY.legalName}") &&
+  read("lib/company.ts").includes('legalName: "PT Bahasa Cerdas Indonesia"') &&
   footer.includes('href: "/tentang#tim"'));
 test("26. privasi, syarat, JSON-LD, dan llms.txt memakai PT (bukan CV lama)", () =>
   privacy.includes("PT Bahasa Cerdas Indonesia") &&

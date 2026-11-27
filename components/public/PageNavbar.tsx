@@ -8,7 +8,8 @@ import { Menu, X, ShoppingCart, Package, ChevronDown } from "lucide-react";
 
 const navLinks = [
   { href: "/#produk", label: "Produk" },
-  { href: "/marketplace", label: "Toko Karya" },
+  { href: "/marketplace#publikasi", label: "Publikasi" },
+  { href: "/marketplace#toko-karya", label: "Toko Karya" },
 ];
 
 const audienceLinks = [
@@ -24,7 +25,8 @@ function isMarketplacePage(pathname: string): boolean {
 }
 
 function isActivePath(pathname: string, href: string): boolean {
-  if (href.startsWith("/#")) return false;
+  if (href === "/marketplace#toko-karya") return pathname.startsWith("/marketplace/");
+  if (href.includes("#")) return false;
   return pathname === href || pathname.startsWith(href + "/");
 }
 
@@ -143,7 +145,7 @@ export default function PageNavbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav: at most 3 text items */}
+        {/* Desktop navigation */}
         <nav aria-label="Navigasi utama" className="hidden lg:flex min-w-0 items-center justify-center gap-0.5">
           {navLinks.map((link) => (
             <Link

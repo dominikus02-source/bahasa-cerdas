@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { COMPANY } from "@/lib/company";
 
 export const metadata: Metadata = {
-  title: "Toko Karya Guru — BahasaCerdas",
-  description: "Toko karya digital untuk guru Bahasa Indonesia. Temukan dan jual Rencana Pembelajaran, PPT, soal, video pembelajaran, ebook, dan administrasi guru.",
+  title: "Publikasi dan Toko Karya",
+  description: `Profil penerbit dan katalog buku Bahasa Indonesia dari ${COMPANY.legalName}, serta toko karya digital guru.`,
   openGraph: {
-    title: "Toko Karya Guru | BahasaCerdas",
-    description: "Jual-beli Rencana Pembelajaran, modul, soal, dan karya guru Bahasa Indonesia. Toko Karya edukasi untuk guru Indonesia.",
+    title: "Publikasi dan Toko Karya | BahasaCerdas",
+    description: "Kenali penerbit, lihat katalog buku Bahasa Indonesia, dan jelajahi karya guru.",
   },
 };
 

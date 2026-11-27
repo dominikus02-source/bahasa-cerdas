@@ -14,7 +14,8 @@ const footerLinks = [
       { href: "/arena", label: "Arena" },
       { href: "/arena/jalur-cerdas", label: "Jalur Cerdas" },
       { href: "/#bigt", label: "BIGT" },
-      { href: "/marketplace", label: "Toko Karya" },
+      { href: "/marketplace#publikasi", label: "Publikasi" },
+      { href: "/marketplace#toko-karya", label: "Toko Karya" },
     ],
   },
   {
@@ -116,7 +117,7 @@ export default function PageFooter() {
       <div className="border-t border-white/10">
         <div className="section-container py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-white/70">
-            &copy; {new Date().getFullYear()} PT Bahasa Cerdas Indonesia. NIB {COMPANY.nib}.
+            &copy; {new Date().getFullYear()} {COMPANY.legalName}. NIB {COMPANY.nib}.
             <br />
             {COMPANY.address}
           </p>
