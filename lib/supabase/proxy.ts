@@ -56,7 +56,9 @@ const publicPaths = [
 // /umum (dasbor UMUM) menggerbangi sendiri per halaman lewat requireUmumPage()
 // dengan ?next= agar pengunjung kembali ke dasbornya setelah login;
 // /umum/aku-sastrawan hanya meneruskan ke /aku-sastrawan (yang mewajibkan login).
-const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/", "/umum"];
+// /b/ (tautan pendek QR buku teks) memilah sendiri di Server Component: kode tak
+// dikenal → 404 ramah, halaman publik → langsung, sisanya → /login?next=/b/{KODE}.
+const selfAuthPaths = ["/api/", "/arena/", "/guru/", "/admin/", "/murid/", "/game/", "/auth/", "/kompetisi/", "/junior/", "/t/", "/jumpa/", "/umum", "/b/"];
 
 // Dashboard routes that require onboarding
 const dashboardPaths = ["/guru/", "/admin/", "/murid/"];
@@ -219,7 +221,10 @@ export async function updateSession(request: NextRequest, nonce?: string) {
   // unauthenticated visitor there to the shared /login would drop them out of the
   // app into a browser tab on the very first launch, so arena traffic gets the
   // arena-flavoured login instead. Same screen, reachable without leaving scope.
-  const loginPath = pathname.startsWith("/arena") ? "/arena/login" : "/login";
+  const loginPath = pathname.startsWith("/arena")
+    ? "/arena/login"
+    // Tautan QR buku: sesi kedaluwarsa tetap kembali ke kode yang dipindai.
+    : pathname.startsWith("/b/") ? `/login?next=${encodeURIComponent(pathname)}` : "/login";
 
   // `/arena` adalah URL yang dibuka APK saat diluncurkan — satu-satunya jalur
   // Arena yang sampai ke pemeriksaan auth jaringan di bawah, karena semua
